@@ -5,28 +5,14 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 
 import androidx.recyclerview.widget.RecyclerView
-import com.example.petify.base.BaseAdapter
-import com.example.petify.databinding.LayoutItemIntroBinding
+import com.example.petify.databinding.ItemIntroBinding
 import com.example.petify.model.IntroModel
 
-class ViewPagerAdapter(val context: Context, list: MutableList<IntroModel>) :
-    BaseAdapter<LayoutItemIntroBinding, IntroModel>() {
-    init {
-        listData = list
-    }
+class ViewPagerAdapter(val list: MutableList<IntroModel>) :
+    RecyclerView.Adapter<ViewPagerAdapter.ViewHoler>() {
 
-    override fun createBinding(
-        inflater: LayoutInflater,
-        parent: ViewGroup,
-        viewType: Int
-    ): LayoutItemIntroBinding = LayoutItemIntroBinding.inflate(inflater, parent, false)
-
-    override fun createVH(binding: LayoutItemIntroBinding): RecyclerView.ViewHolder =
-        IntroVH(binding)
-
-    inner class IntroVH(binding: LayoutItemIntroBinding) : BaseVH<IntroModel>(binding) {
-        override fun bind(data: IntroModel) {
-            super.bind(data)
+    inner class ViewHoler(val binding: ItemIntroBinding):RecyclerView.ViewHolder(binding.root){
+        fun bind(data:IntroModel){
             try {
                 binding.ivIntro.setImageResource(data.image)
                 binding.tvTitle.setText(data.title)
@@ -35,5 +21,18 @@ class ViewPagerAdapter(val context: Context, list: MutableList<IntroModel>) :
 
             }
         }
+
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHoler {
+        val binding=ItemIntroBinding.inflate(LayoutInflater.from(parent.context),parent,false)
+        return ViewHoler(binding)
+    }
+
+    override fun getItemCount(): Int =list.size
+
+    override fun onBindViewHolder(holder: ViewHoler, position: Int) {
+        val currenItem=list[position]
+        holder.bind(currenItem)
     }
 }

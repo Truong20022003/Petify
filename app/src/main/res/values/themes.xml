@@ -6,4 +6,7 @@
     </style>
 
     <style name="Theme.Petify" parent="Base.Theme.Petify" />
+    <style name="CustomProgressbar">
+        <item name="colorAccent">#000000</item>
+    </style>
 </resources>

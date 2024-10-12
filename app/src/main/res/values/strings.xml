@@ -10,5 +10,23 @@
     <string name="title_intro_3">Thể Hiện Tình Yêu Với Thú Cưng!</string>
     <string name="content_intro_3">Petify mang đến những sản phẩm tuyệt vời giúp thú cưng của bạn luôn vui vẻ và hạnh phúc!</string>
     <string name="tv_continue">Continue</string>
+    <string name="tiep_theo">Tiếp theo</string>
+    <string name="bat_dau">Bắt đầu</string>
+    <string name="tv_dangnhap">Đăng nhập vào tài khoản của bạn bằng email hoặc mạng xã hội</string>
+    <string name="chao_mung">Chào mừng trở lại</string>
+    <string name="tao_moi">Tạo tài khoản mới</string>
+    <string name="tv_tai_khoan">Có vẻ như bạn không có tài khoản hoặc kết nối với mạng xã hội</string>
+    <string name="chua_co_tai_khoan">Chưa có tài khoản?</string>
+    <string name="dang_ky"> Đăng ký</string>
+    <string name="dang_nhap">" Đăng nhập"</string>
+    <string name="da_co_tai_khoan">Đã có tài khoản?</string>
+    <string name="google">Google</string>
+    <string name="nhap_lai_mat_khau">Nhập lại mật khẩu</string>
+    <string name="email">Email</string>
+    <string name="ten">Tên</string>
+    <string name="hoac">Hoặc</string>
+    <string name="facebook">Facebook</string>
+    <string name="quen_mat_khau">Quên mật khẩu?</string>
+    <string name="mat_khau">Mật khẩu</string>
 
 </resources>
