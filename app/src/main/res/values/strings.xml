@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">Petify</string>
+
+    <string name="this_is_item_sample">This is item sample!</string>
+
+    <string name="title_intro_1">Khám Phá Ngay Hôm Nay!</string>
+    <string name="content_intro_1">Nơi tình yêu dành cho thú cưng trở thành hiện thực!</string>
+    <string name="title_intro_2">Khám Phá Sản Phẩm Đỉnh Cao</string>
+    <string name="content_intro_2">Từ đồ chơi đến thức ăn, tất cả chỉ với vài cú chạm!</string>
+    <string name="title_intro_3">Thể Hiện Tình Yêu Với Thú Cưng!</string>
+    <string name="content_intro_3">Petify mang đến những sản phẩm tuyệt vời giúp thú cưng của bạn luôn vui vẻ và hạnh phúc!</string>
+    <string name="tv_continue">Continue</string>
+
 </resources>
