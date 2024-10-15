@@ -21,7 +21,7 @@ abstract class BaseActivity<VB : ViewBinding, V: ViewModel> : AppCompatActivity(
     protected open fun initView() {}
     protected open fun bindView() {}
     protected open fun viewModel() {}
-    open fun initData() {}
+    protected open fun initData() {}
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
