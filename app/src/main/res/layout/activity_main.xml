@@ -47,7 +47,7 @@
         android:orientation="horizontal"
         android:padding="10dp"
         android:paddingVertical="2dp"
-        app:layout_constraintBottom_toTopOf="@+id/frAdBottom"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
@@ -63,7 +63,7 @@
                 android:id="@+id/ivHome"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/icon_home" />
+                android:src="@drawable/ic_home" />
 
 
         </LinearLayout>
@@ -80,7 +80,7 @@
                 android:id="@+id/ivCart"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/icon_cart" />
+                android:src="@drawable/ic_cart" />
 
 
         </LinearLayout>
@@ -97,7 +97,7 @@
                 android:id="@+id/ivLove"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/icon_love" />
+                android:src="@drawable/ic_love" />
 
         </LinearLayout>
 
@@ -114,17 +114,12 @@
                 android:id="@+id/ivFavorite"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/icon_favorite" />
+                android:src="@drawable/ic_favorite" />
 
         </LinearLayout>
 
     </LinearLayout>
 
-    <FrameLayout
-        android:id="@+id/frAdBottom"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

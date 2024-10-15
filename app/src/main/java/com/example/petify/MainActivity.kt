@@ -1,10 +1,5 @@
 package com.example.petify
 
-import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.viewpager2.widget.ViewPager2
 import com.example.petify.databinding.ActivityMainBinding
 import com.example.petify.view.tap
@@ -19,37 +14,27 @@ class MainActivity : BaseActivity<ActivityMainBinding, BaseViewModel>() {
 
         val mainAdapter = MainAdapter(this)
         binding.viewPager.adapter = mainAdapter
-        binding.viewPager.offscreenPageLimit = 5
+        binding.viewPager.offscreenPageLimit = 4
         binding.viewPager.isUserInputEnabled = false
 
         binding.viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
 
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
-
-
-                //data process
                 when (position) {
                     0 -> {
-//                        binding.fragmentNameTextView.setText(R.string.app_name)
                         setDefault()
                         binding.ivHome.setColorFilter(getColor(R.color.primaryColor))
                     }
-
                     1 -> {
-//                        binding.fragmentNameTextView.setText(R.string.customization)
                         setDefault()
                         binding.ivCart.setColorFilter(getColor(R.color.primaryColor))
                     }
-
                     2 -> {
-//                        binding.fragmentNameTextView.setText(R.string.historynav)
                         setDefault()
                         binding.ivLove.setColorFilter(getColor(R.color.primaryColor))
                     }
-
                     3 -> {
-//                        binding.fragmentNameTextView.setText(R.string.settingnav)
                         setDefault()
                         binding.ivFavorite.setColorFilter(getColor(R.color.primaryColor))
                     }

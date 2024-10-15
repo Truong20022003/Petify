@@ -19,6 +19,10 @@ class SlideshowAdapter(private val images: List<Int>) : RecyclerView.Adapter<Sli
     }
 
     override fun onBindViewHolder(holder: SlideshowViewHolder, position: Int) {
+
+        // Kiểm tra xem hình ảnh tại vị trí đó có null không
+        val imageRes = images[position] ?: R.drawable.img_slide2
+        holder.imageView.setImageResource(imageRes)
         holder.imageView.setImageResource(images[position])
     }
 

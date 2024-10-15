@@ -1,58 +1,40 @@
 package com.example.petify.model
 
 import android.os.Parcelable
-import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
 
-//data class ProductModel(
-//    val id: String,
-//    val supplierId: String,
-//    val price: Int,
-//    val date: String,
-//    val expiryDate: String,
-//    val quantity: Int,
-//    val name: String,
-//    val image: List<Int>,
-//    val status: String,
-//    val description: String,
-//    val sale: Int
-//)
-
-
-
 @Parcelize
-@Keep
 data class ProductModel(
     @SerializedName("product")
-    val product: String?, // Tên loại sản phẩm
+    val product: String?,
     @SerializedName("items")
-    val items: List<ProductItem>? // Danh sách mặt hàng sản phẩm
+    val items: List<ProductItem>?
 ) : Parcelable
 
 @Parcelize
-@Keep
 data class ProductItem(
     @SerializedName("id")
-    val id: String,  // Mã sản phẩm
+    val id: String,
     @SerializedName("supplierId")
-    val supplierId: String,  // Mã nhà cung cấp
+    val supplierId: String,
     @SerializedName("price")
-    val price: Int,  // Giá sản phẩm
+    val price: Int,
     @SerializedName("date")
-    val date: String,  // Ngày nhập hàng
+    val date: String,
     @SerializedName("expiryDate")
-    val expiryDate: String,  // Ngày hết hạn
+    val expiryDate: String,
     @SerializedName("quantity")
-    val quantity: Int,  // Số lượng
+    val quantity: Int,
     @SerializedName("name")
-    val name: String,  // Tên sản phẩm
+    val name: String,
     @SerializedName("image")
-    val image: List<Int>,  // Danh sách hình ảnh (ID hoặc URL)
+    val image: List<Int>,
     @SerializedName("status")
-    val status: String,  // Trạng thái sản phẩm
+    val status: String,
     @SerializedName("description")
-    val description: String,  // Mô tả sản phẩm
+    val description: String,
     @SerializedName("sale")
-    val sale: Int // Giảm giá
+    val sale: Int
 ) : Parcelable
+
