@@ -1,4 +1,3 @@
-package com.example.petify.model
 
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
