@@ -35,7 +35,7 @@ class ProductDetailActivity : BaseActivity<ActivityProductDetailBinding, BaseVie
     }
 
     private fun setupViewPager(images: List<String>) {
-        val adapter = ProductDetail_ImageAdapter(images)
+        val adapter = ProductDetailImageAdapter(images)
         binding.viewPager2.adapter = adapter
     }
 
