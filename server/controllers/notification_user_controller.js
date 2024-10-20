@@ -1,4 +1,4 @@
-const {notification_userModel} = require("../models/notification_user_model")
+const { notification_userModel } = require("../models/notification_user_model")
 
 exports.getListnotification_user = async (req, res, next) => {
     try {
@@ -6,5 +6,61 @@ exports.getListnotification_user = async (req, res, next) => {
         res.json(listnotification_user);
     } catch (error) {
         res.json({ status: "not found", result: error });
+    }
+};
+
+exports.addnotification_user = async (req, res, next) => {
+    try {
+        let obj = new notification_userModel({
+            user_id: req.body.user_id,
+            notification_id: req.body.notification_id
+        })
+        let result = await obj.save();
+        res.json({ status: "Add successfully", result: result });
+    } catch (error) {
+        res.json({ status: "Add failed" })
+    }
+}
+
+exports.updatenotification_user = async (req, res, next) => {
+    try {
+        let id = req.params.id;
+        let obj = {};
+        obj.user_id = req.body.user_id;
+        obj.notification_id = req.body.notification_id;
+        let result = await notification_userModel.findByIdAndUpdate(id, obj, { new: true });
+        res.json({ status: "Update successfully", result: result });
+    } catch (error) {
+        res.json({ status: "Update falied", result: error });
+    }
+};
+
+exports.deletenotification_user = async (req, res, next) => {
+    try {
+        let id = req.params.id;
+        let result = await notification_userModel.findByIdAndDelete(id);
+        res.json({ status: "Delete successfully", result: result });
+    } catch (error) {
+        res.json({ status: "Delete falied", result: error });
+    }
+};
+
+exports.getnotification_user = async (req, res, next) => {
+    try {
+        let id = req.params.id;
+        let result = await notification_userModel.findById(id);
+        res.json({ status: "Successfully", result: result });
+    } catch (error) {
+        res.json({ status: "Not found", result: error });
+    }
+};
+
+exports.getnotification_userById = async (req, res, next) => {
+    try {
+        let id = req.params.id;
+        let result = await notification_userModel.findById(id);
+        res.json({ status: "Successfully", result: result });
+    } catch (error) {
+        res.json({ status: "Not found", result: error });
     }
 };
