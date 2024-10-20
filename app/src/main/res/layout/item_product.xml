@@ -2,13 +2,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_margin="10dp"
-    android:background="@drawable/bg_item_home"
+    android:padding="10dp"
+    android:background="@drawable/img_bg_item1"
     >
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="155dp"
         android:layout_height="wrap_content"
+        android:paddingBottom="5dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -16,10 +17,13 @@
         <TextView
             android:id="@+id/tv_discount"
             android:layout_width="34dp"
-            android:layout_height="34dp"
-            android:background="@drawable/custom_sale"
-            android:textColor="@android:color/holo_red_dark"
+            android:layout_height="24dp"
+            android:background="@color/light_gray"
+            android:text="-30%"
+            android:gravity="center"
             android:textStyle="bold"
+            android:textSize="12sp"
+            android:textColor="#FF5722"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -35,7 +39,6 @@
             android:id="@+id/iv_product_image"
             android:layout_width="match_parent"
             android:layout_height="160dp"
-            android:background="@drawable/img_item_sp1"
             android:scaleType="fitCenter"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

@@ -7,7 +7,7 @@ import com.example.petify.view.tap
 class MainActivity : BaseActivity<ActivityMainBinding, BaseViewModel>() {
     override fun createBinding() = ActivityMainBinding.inflate(layoutInflater)
 
-    override fun setViewModel()= BaseViewModel()
+    override fun setViewModel() = BaseViewModel()
 
     override fun initView() {
         super.initView()
@@ -26,14 +26,17 @@ class MainActivity : BaseActivity<ActivityMainBinding, BaseViewModel>() {
                         setDefault()
                         binding.ivHome.setColorFilter(getColor(R.color.primaryColor))
                     }
+
                     1 -> {
                         setDefault()
                         binding.ivCart.setColorFilter(getColor(R.color.primaryColor))
                     }
+
                     2 -> {
                         setDefault()
                         binding.ivLove.setColorFilter(getColor(R.color.primaryColor))
                     }
+
                     3 -> {
                         setDefault()
                         binding.ivFavorite.setColorFilter(getColor(R.color.primaryColor))

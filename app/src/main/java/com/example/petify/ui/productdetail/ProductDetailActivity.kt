@@ -1,13 +1,13 @@
-package com.example.petify.ui.home
+package com.example.petify.ui.productdetail
 
 import android.util.Log
 import android.widget.Toast
 import com.example.petify.BaseActivity
 import com.example.petify.BaseViewModel
 import com.example.petify.databinding.ActivityProductDetailBinding
-import com.example.petify.model.ProductItem
+import com.example.petify.model.ProductModel
 
-class Product_DetailActivity : BaseActivity<ActivityProductDetailBinding, BaseViewModel>() {
+class ProductDetailActivity : BaseActivity<ActivityProductDetailBinding, BaseViewModel>() {
 
     override fun createBinding() = ActivityProductDetailBinding.inflate(layoutInflater)
 
@@ -16,13 +16,14 @@ class Product_DetailActivity : BaseActivity<ActivityProductDetailBinding, BaseVi
     override fun initView() {
         super.initView()
 
-        val productItem: ProductItem? = intent.getParcelableExtra("PRODUCT_ITEM")
+        val productItem: ProductModel? = intent.getParcelableExtra("PRODUCT_ITEM")
 
         productItem?.let { product ->
             binding.tvProductName.text = product.name
             binding.tvProductPrice.text = "${product.price} VNĐ"
-            binding.title5.text = product.description
+            binding.tvDescribe.text = product.description
             binding.tvSold.text = "Số lượng: ${product.quantity}"
+
 
             setupViewPager(product.image)
         } ?: run {
@@ -33,8 +34,8 @@ class Product_DetailActivity : BaseActivity<ActivityProductDetailBinding, BaseVi
         setListeners()
     }
 
-    private fun setupViewPager(images: List<Int>) {
-        val adapter = ProductImageAdapter(images)
+    private fun setupViewPager(images: List<String>) {
+        val adapter = ProductDetail_ImageAdapter(images)
         binding.viewPager2.adapter = adapter
     }
 
@@ -48,29 +49,19 @@ class Product_DetailActivity : BaseActivity<ActivityProductDetailBinding, BaseVi
         }
 
         binding.ivShare.setOnClickListener {
-            shareProduct()
+            Toast.makeText(this, "Chia sẻ sản phẩm", Toast.LENGTH_SHORT).show()
         }
 
         binding.ivShoppingCart.setOnClickListener {
         }
 
         binding.btnAddToCart.setOnClickListener {
-            addToCart()
+            Toast.makeText(this, "Sản phẩm đã được thêm vào giỏ hàng", Toast.LENGTH_SHORT).show()
         }
 
         binding.btnBuyNow.setOnClickListener {
-            buyNow()
+            Toast.makeText(this, "Bạn đã chọn mua sản phẩm ", Toast.LENGTH_SHORT).show()
         }
     }
 
-    private fun shareProduct() {
-        Toast.makeText(this, "Chia sẻ sản phẩm", Toast.LENGTH_SHORT).show()
-    }
-
-    private fun addToCart() {
-        Toast.makeText(this, "Sản phẩm đã được thêm vào giỏ hàng", Toast.LENGTH_SHORT).show()
-    }
-
-    private fun buyNow() {
-    }
 }

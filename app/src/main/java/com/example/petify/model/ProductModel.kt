@@ -6,14 +6,6 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class ProductModel(
-    @SerializedName("product")
-    val product: String?,
-    @SerializedName("items")
-    val items: List<ProductItem>?
-) : Parcelable
-
-@Parcelize
-data class ProductItem(
     @SerializedName("id")
     val id: String,
     @SerializedName("supplierId")
@@ -29,7 +21,7 @@ data class ProductItem(
     @SerializedName("name")
     val name: String,
     @SerializedName("image")
-    val image: List<Int>,
+    val image: List<String>,
     @SerializedName("status")
     val status: String,
     @SerializedName("description")

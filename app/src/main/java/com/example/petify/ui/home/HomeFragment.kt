@@ -1,30 +1,31 @@
 package com.example.petify.ui.home
 
-import HomeAdapter
 import android.content.Intent
-import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
 import com.example.petify.BaseFragment
 import com.example.petify.R
 import com.example.petify.databinding.FragmentHomeBinding
-import com.example.petify.model.ProductItem
+import com.example.petify.model.CategoryModel
 import com.example.petify.model.ProductModel
+import com.example.petify.ui.productdetail.ProductDetailActivity
 
 class HomeFragment : BaseFragment<FragmentHomeBinding>() {
-    private lateinit var adapter: HomeAdapter
+    private lateinit var adapter: CategoryAdapter
     val handler = Handler(Looper.getMainLooper())
 
     val images =
-        listOf(R.drawable.img_slide1, R.drawable.img_slide2, R.drawable.img_slide3, R.drawable.img_slide2)
+        listOf(
+            R.drawable.img_slide1,
+            R.drawable.img_slide2,
+            R.drawable.img_slide3,
+            R.drawable.img_slide2
+        )
 
-    val productItems = listOf(
-        ProductItem(
+    val productModel = listOf(
+        ProductModel(
             id = "1",
             supplierId = "sup1",
             price = 200000,
@@ -32,12 +33,15 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
             expiryDate = "2025-10-01",
             quantity = 100,
             name = "Sản phẩm A",
-            image = listOf(R.drawable.img_item_sp1, R.drawable.img_slide2),
+            image = listOf(
+                "https://kinpetshop.com/wp-content/uploads/thuc-an-hat-cho-meo-kit-cat-kitten-pregnant-cat-1-2kg.jpg",
+                "https://kinpetshop.com/wp-content/uploads/thuc-an-hat-cho-meo-kit-cat-kitten-pregnant-cat-1-2kg.jpg"
+            ),
             status = "Còn hàng",
             description = "Mô tả chi tiết cho sản phẩm A",
             sale = 10 // Giảm giá 10%
         ),
-        ProductItem(
+        ProductModel(
             id = "2",
             supplierId = "sup2",
             price = 150000,
@@ -45,12 +49,15 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
             expiryDate = "2025-10-05",
             quantity = 50,
             name = "Sản phẩm B",
-            image = listOf(R.drawable.img_item_sp1),
+            image = listOf(
+                "https://kinpetshop.com/wp-content/uploads/thuc-an-hat-cho-meo-kit-cat-kitten-pregnant-cat-1-2kg.jpg",
+                "https://kinpetshop.com/wp-content/uploads/thuc-an-hat-cho-meo-kit-cat-kitten-pregnant-cat-1-2kg.jpg"
+            ),
             status = "Còn hàng",
             description = "Mô tả chi tiết cho sản phẩm B",
             sale = 5 // Giảm giá 5%
         ),
-        ProductItem(
+        ProductModel(
             id = "3",
             supplierId = "sup3",
             price = 300000,
@@ -58,7 +65,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
             expiryDate = "2025-10-07",
             quantity = 0,
             name = "Sản phẩm C",
-            image = listOf(R.drawable.img_item_sp1),
+            image = listOf(
+                "https://kinpetshop.com/wp-content/uploads/thuc-an-hat-cho-meo-kit-cat-kitten-pregnant-cat-1-2kg.jpg",
+                "https://kinpetshop.com/wp-content/uploads/thuc-an-hat-cho-meo-kit-cat-kitten-pregnant-cat-1-2kg.jpg"
+            ),
             status = "Hết hàng",
             description = "Mô tả chi tiết cho sản phẩm C",
             sale = 0 // Không có giảm giá
@@ -66,14 +76,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
     )
 
 
-    val productModels = listOf(
-        ProductModel(
+    val categoryModels = listOf(
+        CategoryModel(
             product = "Loại sản phẩm 1",
-            items = productItems
+            items = productModel
         ),
-        ProductModel(
+        CategoryModel(
             product = "Loại sản phẩm 2",
-            items = productItems
+            items = productModel
         )
     )
 
@@ -82,38 +92,27 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
     }
 
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Khởi tạo viewBinding
-        viewBinding = FragmentHomeBinding.inflate(inflater, container, false)
-        return viewBinding.root
-    }
-
     override fun initView() {
         super.initView()
 
-
-
-        viewBinding.rcvHome.layoutManager =
+        viewBinding.rcvCategory.layoutManager =
             LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
 
 
         // Khởi tạo adapter
-        adapter = HomeAdapter(productModels) { productItem ->
-            val intent = Intent(context, Product_DetailActivity::class.java).apply {
-                putExtra("PRODUCT_ITEM", productItem)
+        adapter = CategoryAdapter(categoryModels) { productModel ->
+            val intent = Intent(context, ProductDetailActivity::class.java).apply {
+                putExtra("PRODUCT_ITEM", productModel)
             }
             startActivity(intent)
         }
 
-        viewBinding.rcvHome.layoutManager = LinearLayoutManager(context)
+        viewBinding.rcvCategory.layoutManager = LinearLayoutManager(context)
 
-        viewBinding.rcvHome.adapter = adapter
+        viewBinding.rcvCategory.adapter = adapter
 
 
-        val slideshowAdapter = SlideshowAdapter(images)
+        val slideshowAdapter = Home_SlideshowAdapter(images)
         viewBinding.viewPager.adapter = slideshowAdapter
 
         viewBinding.viewPager.registerOnPageChangeCallback(object :

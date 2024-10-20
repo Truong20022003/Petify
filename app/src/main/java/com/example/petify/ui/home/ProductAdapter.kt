@@ -1,15 +1,17 @@
 package com.example.petify.ui.home
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.petify.databinding.ItemProductBinding
-import com.example.petify.model.ProductItem
+import com.example.petify.model.ProductModel
 
-class ItemAdapter(
-    private val productList: List<ProductItem>,
-    private val itemClickListener: (ProductItem) -> Unit
-) : RecyclerView.Adapter<ItemAdapter.ProductViewHolder>() {
+class ProductAdapter(
+    private val productList: List<ProductModel>,
+    private val itemClickListener: (ProductModel) -> Unit
+) : RecyclerView.Adapter<ProductAdapter.ProductViewHolder>() {
 
     class ProductViewHolder(val binding: ItemProductBinding) : RecyclerView.ViewHolder(binding.root)
 
@@ -20,9 +22,24 @@ class ItemAdapter(
 
     override fun onBindViewHolder(holder: ProductViewHolder, position: Int) {
         val product = productList[position]
+        Log.d("TAG1111", "Url ${product.image[0]}")
         holder.binding.apply {
-            ivProductImage.setImageResource(product.image.first())
+            // Lấy URL ảnh đầu tiên từ danh sách images trong product
+            val imageUrl = product.image[0]  // Lấy ảnh đầu tiên từ danh sách (index 0)
+
+//            if (imageUrl.isNotEmpty()) {
+
+            // Tải ảnh với Glide
+            Glide.with(holder.binding.root.context)
+                .load(imageUrl)  // URL của hình ảnh
+                .into(ivProductImage)  // Sử dụng đúng ImageView
+//            }
+//            else {
+//                // Nếu danh sách ảnh trống, bạn có thể sử dụng ảnh mặc định
+//                ivProductImage.setImageResource(R.drawable.img_item_sp1)
+//            }
             tvProductName.text = product.name
+            tvDiscount.text = "${product.sale} %"
             tvSalePrice.text = "${product.price} đ"
             tvOriginalPrice.apply {
                 text = "${product.price} đ"

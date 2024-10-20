@@ -7,19 +7,19 @@ import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.petify.R
 
-class SlideshowAdapter(private val images: List<Int>) : RecyclerView.Adapter<SlideshowAdapter.SlideshowViewHolder>() {
+class Home_SlideshowAdapter(private val images: List<Int>) :
+    RecyclerView.Adapter<Home_SlideshowAdapter.SlideshowViewHolder>() {
 
     class SlideshowViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val imageView: ImageView = itemView.findViewById(R.id.imageView)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SlideshowViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_slideshow, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_home_slideshow, parent, false)
         return SlideshowViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: SlideshowViewHolder, position: Int) {
-
         // Kiểm tra xem hình ảnh tại vị trí đó có null không
         val imageRes = images[position] ?: R.drawable.img_slide2
         holder.imageView.setImageResource(imageRes)
