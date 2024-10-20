@@ -1,21 +1,20 @@
-const {carrierModel} = require("../models/carrier_model")
+const {categoryModel} = require("../models/category_model")
 
-exports.getListCarrier = async (req, res, next) => {
+exports.getListcategory = async (req, res, next) => {
     try {
-        let listCarrier = await carrierModel.find({});
-        res.json(listCarrier);
+        let listcategory = await categoryModel.find({});
+        res.json(listcategory);
     } catch (error) {
-        res.json({ status: "Not found", result: error });
+        res.json({ status: "not found", result: error });
     }
 };
 
-exports.addCarrier = async (req, res, next) => {
+exports.addcategory = async (req, res, next) => {
     try {
-        let obj = new carrierModel({
+        let obj = new categoryModel({
             name: req.body.name,
-            phone: req.body.phone
+            image: req.body.image
         })
-        
         let result = await obj.save();
         res.json({ status: "Add successfully", result: result });
     } catch (error) {
@@ -23,43 +22,43 @@ exports.addCarrier = async (req, res, next) => {
     }
 }
 
-exports.updateCarrier = async (req, res, next) => {
+exports.updatecategory = async (req, res, next) => {
     try {
         let id = req.params.id;
         let obj = {};
         obj.name= req.body.name;
-        obj.phone= req.body.phone;
-        let result = await carrierModel.findByIdAndUpdate(id, obj, { new: true });
+        obj.image= req.body.image;
+        let result = await categoryModel.findByIdAndUpdate(id, obj, { new: true });
         res.json({ status: "Update successfully", result: result });
     } catch (error) {
         res.json({ status: "Update falied", result: error });
     }
 };
 
-exports.deletecarrier = async (req, res, next) => {
+exports.deletecategory = async (req, res, next) => {
     try {
         let id = req.params.id;
-        let result = await carrierModel.findByIdAndDelete(id);
+        let result = await categoryModel.findByIdAndDelete(id);
         res.json({ status: "Delete successfully", result: result });
     } catch (error) {
         res.json({ status: "Delete falied", result: error });
     }
 };
 
-exports.getcarrier = async (req, res, next) => {
+exports.getcategory = async (req, res, next) => {
     try {
         let id = req.params.id;
-        let result = await carrierModel.findById(id);
+        let result = await categoryModel.findById(id);
         res.json({ status: "Successfully", result: result });
     } catch (error) {
         res.json({ status: "Not found", result: error });
     }
 };
 
-exports.getCarrierById = async (req, res, next) => {
+exports.getcategoryById = async (req, res, next) => {
     try {
         let id = req.params.id;
-        let result = await carrierModel.findById(id);
+        let result = await categoryModel.findById(id);
         res.json({ status: "Successfully", result: result });
     } catch (error) {
         res.json({ status: "Not found", result: error });
