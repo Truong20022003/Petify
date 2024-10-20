@@ -4,7 +4,7 @@ const supplierController = require("../controllers/supplier_controller");
 router.get("/getListSupplier", supplierController.getListsupplier);
 
 router.post("/addsupplier",supplierController.addsupplier)
-router.put("/updatesupplier",supplierController.updatesupplier)
-router.delete("/deletesupplier",supplierController.deletesupplier)
-router.get("/getsupplierById",supplierController.getsupplierById)
+router.put("/updatesupplier/:id",supplierController.updatesupplier)
+router.delete("/deletesupplier/:id",supplierController.deletesupplier)
+router.get("/getsupplierById/:id",supplierController.getsupplierById)
 module.exports = router;

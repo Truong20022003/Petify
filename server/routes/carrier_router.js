@@ -3,7 +3,7 @@ var router = express.Router();
 const carrierController = require("../controllers/carrier_controller");
 router.get("/getListCarier", carrierController.getListCarrier);
 router.post("/addCarrier",carrierController.addCarrier)
-router.put("/updateCarrier",carrierController.updateCarrier)
-router.delete("/deleteCarrier",carrierController.deletecarrier)
-router.get("/getCarrierById",carrierController.getCarrierById)
+router.put("/updateCarrier/:id",carrierController.updateCarrier)
+router.delete("/deleteCarrier/:id",carrierController.deletecarrier)
+router.get("/getCarrierById/:id",carrierController.getCarrierById)
 module.exports = router;
