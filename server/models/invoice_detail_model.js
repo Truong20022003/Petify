@@ -21,9 +21,9 @@ const invoiceDetailSchema = new db.mongoose.Schema(
     
   },
   {
-    collection: "invoiceDetail",
+    collection: "invoice_detail",
   }
 );
-const invoiceDetailModel = db.mongoose.model("invoiceDetailModel", invoiceDetailSchema);
-module.exports = { invoiceDetailModel };
+const invoice_detailModel = db.mongoose.model("invoiceDetailModel", invoiceDetailSchema);
+module.exports = { invoice_detailModel };
 

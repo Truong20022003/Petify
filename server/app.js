@@ -21,7 +21,6 @@ var roleRouter = require('./routes/role_router');
 var supplierRouter = require('./routes/supplier_router');
 var user_roleRouter = require('./routes/user_role_router');
 var userRouter = require('./routes/user_router');
-
 var app = express();
 
 // view engine setup
@@ -42,7 +41,7 @@ app.use("/invoiceDetail",invoice_detailRouter)
 app.use("/invoice",invoiceRouter)
 app.use("/notification",notificationRouter)
 app.use("/notificationUser",notification_userRouter)
-app.use("/oder",orderRouter)
+app.use("/order",orderRouter)
 app.use("/productCategory",product_categoryRouter)
 app.use("/product",productRouter)
 app.use("/reviewProduct",review_productRouter)
