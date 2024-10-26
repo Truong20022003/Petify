@@ -35,8 +35,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-app.use("/carrierRouter",carrierRouter)
-app.use("/categoryRouter",categoryRouter)
+app.use("/carrier",carrierRouter)
+app.use("/category",categoryRouter)
 app.use("/invoiceDetail",invoice_detailRouter)
 app.use("/invoice",invoiceRouter)
 app.use("/notification",notificationRouter)

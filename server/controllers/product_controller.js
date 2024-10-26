@@ -106,7 +106,7 @@ const getproductById = async (req, res, next) => {
 module.exports = {
   addproduct,
   updateproduct,
-  getListproduct, // Đảm bảo có hàm này
+  getListproduct, 
   deleteproduct,
   getproductById,
 };
