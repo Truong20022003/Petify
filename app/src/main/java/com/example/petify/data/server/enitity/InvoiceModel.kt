@@ -13,5 +13,6 @@ data class InvoiceModel(
     @field:SerializedName("shipping_fee") var shippingFee: Double = 0.0,
     @field:SerializedName("supplier_id") var supplierId: String = "",
     @field:SerializedName("carrier_id") var carrierId: String = "",
-    @field:SerializedName("order_id") var orderId: String = ""
+    @field:SerializedName("order_id") var orderId: String = "",
+    @field:SerializedName("create_at") var createAt : String = ""
 )
