@@ -36,6 +36,10 @@ const invoiceSchema = new db.mongoose.Schema(
         order_id: {
             type: String,
             require: true
+        },
+        create_at: {
+            type: String,
+            require: true
         }
     },
     {
