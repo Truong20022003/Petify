@@ -1,6 +1,8 @@
 const {productModel} = require("../models/product_model")
 
-exports.getListproduct = async (req, res, next) => {
+const fs = require('fs');
+const { uploadToCloudinary } = require('../routes/uploads');
+const getListproduct = async (req, res, next) => {
     try {
         let listproduct = await productModel.find({});
         res.json(listproduct);
@@ -8,49 +10,71 @@ exports.getListproduct = async (req, res, next) => {
         res.json({ status: "not found", result: error });
     }
 };
-exports.addproduct = async (req, res, next) => {
-    try {
-        let obj = new productModel({
-            supplier_id: req.body.supplier_id,
-            price: req.body.price,
-            date: req.body.date,
-            expiry_Date: req.body.expiry_Date,
-            quantity: req.body.quantity,
-            name: req.body.name,
-            image: req.body.image,
-            status: req.body.status,
-            description: req.body.description,
-            sale: req.body.sale,
-        })
-        let result = await obj.save();
-        res.json({ status: "Add successfully", result: result });
-    } catch (error) {
-        res.json({status: "Add failed" })
-    }
-}
 
-exports.updateproduct = async (req, res, next) => {
-    try {
-        let id = req.params.id;
-        let obj = {};
-        obj.supplier_id= req.body.supplier_id;
-        obj.price= req.body.price;
-        obj.date= req.body.date;
-        obj.expiry_Date= req.body.expiry_Date;
-        obj.quantity= req.body.quantity;
-        obj.name= req.body.name;
-        obj.image= req.body.image;
-        obj.status= req.body.status;
-        obj.description= req.body.description;
-        obj.sale= req.body.sale;
-        let result = await productModel.findByIdAndUpdate(id, obj, { new: true });
-        res.json({ status: "Update successfully", result: result });
-    } catch (error) {
-        res.json({ status: "Update falied", result: error });
-    }
+const addproduct = async (req, res) => {
+  console.log("Files received in addproduct:", req.files); 
+
+  if (!req.files || req.files.length === 0) {
+      return res.status(400).json({ success: false, message: 'No files uploaded' });
+  }
+
+  try {
+      const imageUrls = [];
+
+      for (const file of req.files) {
+          const filePath = file.path;
+          const result = await uploadToCloudinary(filePath);
+          imageUrls.push(result.secure_url); 
+
+          fs.unlinkSync(filePath);
+      }
+
+      const newProduct = {
+          ...req.body,
+          image: imageUrls
+      };
+
+      await productModel.create(newProduct);
+
+      res.json({ success: true, product: newProduct });
+  } catch (error) {
+      console.error('Error uploading files:', error);
+      res.status(500).json({ success: false, message: 'Error uploading files', error });
+  }
 };
 
-exports.deleteproduct = async (req, res, next) => {
+
+const updateproduct = async (req, res) => {
+  if (!req.files || req.files.length === 0) {
+      return res.status(400).json({ success: false, message: 'No files uploaded' });
+  }
+
+  try {
+      const imageUrls = [];
+
+      for (const file of req.files) {
+          const filePath = file.path;
+          const result = await uploadToCloudinary(filePath);
+          imageUrls.push(result.secure_url); 
+
+          fs.unlinkSync(filePath);
+      }
+
+      const updatedProduct = {
+          ...req.body,
+          image: imageUrls 
+      };
+
+      const product = await productModel.findByIdAndUpdate(req.params.id, updatedProduct, { new: true });
+
+      res.json({ success: true, product });
+  } catch (error) {
+      console.error('Error uploading files:', error);
+      res.status(500).json({ success: false, message: 'Error uploading files', error });
+  }
+};
+
+ const deleteproduct = async (req, res, next) => {
     try {
         let id = req.params.id;
         let result = await productModel.findByIdAndDelete(id);
@@ -60,7 +84,7 @@ exports.deleteproduct = async (req, res, next) => {
     }
 };
 
-exports.getproduct = async (req, res, next) => {
+ const getproduct = async (req, res, next) => {
     try {
         let id = req.params.id;
         let result = await productModel.findById(id);
@@ -70,7 +94,7 @@ exports.getproduct = async (req, res, next) => {
     }
 };
 
-exports.getproductById = async (req, res, next) => {
+const getproductById = async (req, res, next) => {
     try {
         let id = req.params.id;
         let result = await productModel.findById(id);
@@ -78,4 +102,11 @@ exports.getproductById = async (req, res, next) => {
     } catch (error) {
         res.json({ status: "Not found", result: error });
     }
+};
+module.exports = {
+  addproduct,
+  updateproduct,
+  getListproduct, 
+  deleteproduct,
+  getproductById,
 };
