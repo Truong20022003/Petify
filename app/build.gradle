@@ -1,7 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    id 'kotlin-parcelize'
 }
 
 android {
@@ -65,4 +64,6 @@ dependencies {
     implementation libs.retrofit
     implementation libs.converter.gson
     implementation libs.okhttp
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.6"  // Use the latest version
+
 }
