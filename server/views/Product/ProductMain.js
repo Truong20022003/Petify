@@ -229,7 +229,7 @@ function createProductDetailHTML(
     </div>
   `;
 }
-
+///
 ////back
 function restoreRow() {
   getListProduct();

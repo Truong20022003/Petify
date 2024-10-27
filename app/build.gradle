@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    id 'kotlin-parcelize'
 }
 
 android {
@@ -30,7 +31,7 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
-    buildFeatures{
+    buildFeatures {
         viewBinding = true
         buildConfig = true
     }
@@ -42,6 +43,11 @@ android {
 }
 
 dependencies {
+    //Model
+    implementation 'com.google.code.gson:gson:2.10.1'
+    //img
+    implementation 'com.github.bumptech.glide:glide:4.12.0'
+
 
     implementation libs.androidx.core.ktx
     implementation libs.androidx.appcompat
@@ -51,5 +57,12 @@ dependencies {
     testImplementation libs.junit
     androidTestImplementation libs.androidx.junit
     androidTestImplementation libs.androidx.espresso.core
-
+    // Retrofit: này để call api nha mấy bé
+    implementation libs.logging.interceptor
+    implementation libs.adapter.rxjava3
+    implementation libs.rxandroid
+    implementation libs.google.gson
+    implementation libs.retrofit
+    implementation libs.converter.gson
+    implementation libs.okhttp
 }

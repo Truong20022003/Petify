@@ -12,7 +12,7 @@ exports.addproduct_category = async (req, res, next) => {
     try {
         let obj = new product_categoryModel({
             product_id: req.body.product_id,
-            product_category_id: req.body.product_category_id
+            category_id: req.body.category_id
         })
         let result = await obj.save();
         res.json({ status: "Add successfully", result: result });
@@ -26,7 +26,7 @@ exports.updateproduct_category = async (req, res, next) => {
         let id = req.params.id;
         let obj = {};
         obj.product_id = req.body.product_id;
-        obj.product_category_id = req.body.product_category_id;
+        obj.category_id = req.body.category_id;
         let result = await product_categoryModel.findByIdAndUpdate(id, obj, { new: true });
         res.json({ status: "Update successfully", result: result });
     } catch (error) {
