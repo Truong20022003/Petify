@@ -1,0 +1,158 @@
+<html>
+  <head>
+    <title>Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        background-image: url("https://images.unsplash.com/photo-1650440792328-4f3ac5237eb6?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        padding: 10px;
+        overflow: hidden;
+      }
+      .submenu {
+        display: none;
+      }
+      .submenu-active {
+        display: block;
+      }
+      .submenu a {
+        background-color: white;
+      }
+      .submenu a.active {
+        border-bottom: 2px solid #000;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-800">
+    <div class="flex h-screen">
+      <!-- Sidebar -->
+      <div class="w-64 h-screen bg-white shadow-md" style="border-radius: 10px">
+        <div class="flex items-center justify-center py-6">
+          <img
+            alt="Logo"
+            class="w-10 h-10 rounded-full"
+            height="40"
+            src="https://storage.googleapis.com/a1aa/image/OUExK5J28dq6OpuT5zLsmJVfrR67zP22lhUtahVkXZlgpz0JA.jpg"
+            width="40"
+          />
+          <span class="ml-3 text-xl font-semibold"> Petify </span>
+        </div>
+        <nav class="mt-10">
+          <a
+            class="flex items-center py-2 px-6 text-gray-700 hover:bg-gray-200"
+            href="/views/Home/HomeScreen.html"
+          >
+            <i class="fas fa-home"> </i>
+            <span class="ml-3"> Trang chủ </span>
+          </a>
+          <!--  -->
+          <div id="manageMenu">
+            <a
+              class="flex items-center py-2 px-6 cursor-pointer bg-yellow-500 text-white"
+              onclick="toggleUserSubmenu()"
+            >
+              <i class="fas fa-user"> </i>
+              <span class="ml-3"> Quản lý người dùng </span>
+              <i id="userManageIcon" class="fas fa-chevron-down ml-auto"></i>
+            </a>
+            <div id="userSubmenuItems" class="submenu pl-12">
+              <a
+                class="block py-2 px-6 text-gray-700 hover:bg-gray-200 block py-2 px-6 text-gray-700 hover:bg-gray-200 active"
+                href="/views/User/user/UserScreen.html"
+                onclick="activateSubmenu(this)"
+              >
+                Quản lý người dùng
+              </a>
+              <a
+                class="block py-2 px-6 text-gray-700 hover:bg-gray-200 "
+                href="/views/User/role/RoleScreen.html"
+                onclick="activateSubmenu(this)"
+              >
+                Quản lý loại người dùng
+              </a>
+            </div>
+          </div>
+          <!--  -->
+          <div id="manageMenu">
+            <a
+              class="flex items-center py-2 px-6 text-gray-700 hover:bg-gray-200 cursor-pointer"
+              onclick="toggleSubmenu()"
+            >
+              <i class="fas fa-tasks"> </i>
+              <span class="ml-3"> Quản lý </span>
+              <i id="manageIcon" class="fas fa-chevron-down ml-auto"> </i>
+            </a>
+            <div id="submenuItems" class="submenu pl-12">
+              <a
+                class="block py-2 px-6 text-gray-700 hover:bg-gray-200"
+                href="/views/Product/ProductScreen.html"
+                onclick="activateSubmenu(this)"
+              >
+                Quản lý sản phẩm
+              </a>
+              <a
+                class="block py-2 px-6 text-gray-700 hover:bg-gray-200"
+                href="/views/Product/category/CategoryScreen.html"
+                onclick="activateSubmenu(this)"
+              >
+                Quản lý loại sản phẩm
+              </a>
+              <a
+                class="block py-2 px-6 text-gray-700 hover:bg-gray-200"
+                href="#"
+                onclick="activateSubmenu(this)"
+              >
+                Quản lý hóa đơn
+              </a>
+            </div>
+          </div>
+          <a
+            class="flex items-center py-2 px-6 text-gray-700 hover:bg-gray-200"
+            href="#"
+          >
+            <i class="fas fa-list"> </i>
+            <span class="ml-3"> Danh sách đánh giá </span>
+          </a>
+          <a
+            class="flex items-center py-2 px-6 text-gray-700 hover:bg-gray-200"
+            href="#"
+          >
+            <i class="fas fa-chart-bar"> </i>
+            <span class="ml-3"> Thống kê </span>
+          </a>
+        </nav>
+      </div>
+      <!-- Main Content -->
+      <div
+        class="flex-grow bg-gray-100 p-6 overflow-y-auto"
+        style="border-radius: 10px; margin-left: 10px"
+      >
+        <div class="flex justify-between items-center mb-6">
+          <h1 class="text-2xl font-bold">Quản lý người dùng</h1>
+          <div class="flex items-center">
+            <img
+              id="userAvatar"
+              class="w-10 h-10 rounded-full mr-5"
+              src=""
+              alt="User Avatar"
+            />
+            <div id="nameuser" class="text-lg font-bold "></div>
+          </div>
+        </div>
+        <div class="bg-white p-4 rounded shadow">
+          <table class="content w-full border-collapse">
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <script src="./UserMain.js"></script>
+    <script src="/views/MenuMain.js"></script>
+  </body>
+</html>

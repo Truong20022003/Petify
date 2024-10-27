@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chọn ảnh</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        .remove-btn {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            cursor: pointer;
+            background-color: red;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body  >
+    <div class="container mx-auto  ">
+        <h1 class="text-2xl font-bold mb-4">Chọn ảnh từ desktop</h1>
+        <input type="file" id="file-input" multiple accept="image/*" class="mb-4" />
+        <div id="image-container" class="flex flex-wrap gap-4 overflow-y-scroll h-64 w-[500px] border border-gray-300 p-2">
+            <!-- Các ảnh sẽ được hiển thị ở đây -->
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('file-input').addEventListener('change', function(event) {
+            const imageContainer = document.getElementById('image-container');
+            const files = event.target.files;
+
+            for (const file of files) {
+                const reader = new FileReader();
+
+                reader.onload = function(e) {
+                    const imgWrapper = document.createElement('div');
+                    imgWrapper.classList.add('relative', 'w-32', 'h-32');
+
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.classList.add('w-full', 'h-full', 'object-cover', 'rounded', 'shadow-md');
+
+                    const removeBtn = document.createElement('button');
+                    removeBtn.innerHTML = 'X';
+                    removeBtn.classList.add('remove-btn');
+                    removeBtn.onclick = function() {
+                        imageContainer.removeChild(imgWrapper);
+                    };
+
+                    imgWrapper.appendChild(img);
+                    imgWrapper.appendChild(removeBtn);
+                    imageContainer.appendChild(imgWrapper);
+                };
+
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
+</body>
+</html>

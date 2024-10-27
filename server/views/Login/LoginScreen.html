@@ -1,0 +1,201 @@
+<html>
+  <head>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      .clickable {
+        cursor: pointer;
+      }
+      .transition {
+        transition: all 0.5s ease-in-out;
+      }
+      .main-image {
+        z-index: 10;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .thumbnail-image {
+        z-index: 20;
+        transition: transform 0.3s ease-in-out; /* Hiệu ứng chuyển tiếp */
+      }
+
+      .thumbnail-image:hover {
+        transform: scale(1.1) translateY(-10px); /* Nổi lên và dịch chuyển lên trên */
+        z-index: 30; /* Đảm bảo ảnh nổi lên nằm trên các ảnh khác */
+      }
+
+      .hover-button:hover {
+        background-color: #4a5568;
+      }
+      .floating {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        background-color: white;
+        padding: 2rem;
+        z-index: 50;
+      }
+      .password-container {
+        position: relative;
+      }
+      .password-container input {
+        padding-right: 2.5rem; /* Điều chỉnh khoảng cách bên phải */
+      }
+      .password-container .toggle-password {
+        position: absolute;
+        right: 1rem; /* Khoảng cách từ bên phải */
+        top: 50%; /* Canh giữa theo chiều dọc */
+        transform: translateY(-50%); /* Điều chỉnh vị trí để canh giữa */
+        cursor: pointer;
+      }
+      .welcome-text {
+        background: linear-gradient(to right, #4a90e2, #50c9c3);
+        background-clip: text; /* Cú pháp tiêu chuẩn, nếu có */
+        -webkit-background-clip: text; /* Được hỗ trợ trong WebKit */
+        -webkit-text-fill-color: transparent;
+        font-size: 3rem;
+        font-weight: bold;
+        margin-bottom: 1rem;
+        text-align: center;
+      }
+      .logo {
+        position: absolute;
+        top: 1rem;
+        left: 1rem;
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #4a90e2;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        animation: pulse 1.5s infinite;
+      }
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.1);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+      .error-message {
+        color: red;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+        position: relative;
+      }
+      .error-border {
+        border-color: red;
+      }
+    </style>
+  </head>
+  <body class="bg-white font-roboto">
+    <div class="flex h-screen">
+      <!-- Left Section -->
+      <div
+        class="w-1/2 flex flex-col justify-center items-center floating relative"
+      >
+        <h1 class="logo">Petify</h1>
+        <h2 class="welcome-text">Welcome</h2>
+        <h3 class="text-xl text-gray-500 mb-8">Đăng nhập</h3>
+        <form id="loginForm" class="w-1/2">
+          <div class="mb-4">
+            <input
+              id="email"
+              class="w-full p-3 border border-gray-300 rounded"
+              placeholder="Email"
+              type="text"
+            />
+            <div id="emailError" class="error-message hidden">
+              Email is required
+            </div>
+          </div>
+          <div class="mb-4 password-container">
+            <input
+              id="password"
+              class="w-full p-3 border border-gray-300 rounded"
+              placeholder="Mật khẩu"
+              type="password"
+            />
+            <i class="fas fa-eye toggle-password text-gray-400"></i>
+            <div id="passwordError" class="error-message hidden">
+              Password is required
+            </div>
+          </div>
+          <button
+            type="submit"
+            class="w-full bg-gray-300 text-white p-3 rounded mb-4 hover-button"
+          >
+            Đăng nhập
+          </button>
+        </form>
+      </div>
+      <!-- Right Section -->
+      <div
+        class="w-1/2 bg-blue-100 flex justify-center items-center relative overflow-hidden"
+      >
+        <img
+          id="mainImage"
+          alt="A happy brown and white puppy"
+          class="rounded-lg transition main-image absolute"
+          src="https://storage.googleapis.com/a1aa/image/IRxTKdGIRp7kLpycaGj4fb1XijIXstg5ZsOGVxKbrS7Any0JA.jpg"
+        />
+        <div class="absolute bottom-4 right-4 flex space-x-2">
+          <img
+            id="thumbnailImage1"
+            alt="A white kitten with blue eyes and a pink bow"
+            class="rounded-lg border-2 border-white clickable transition thumbnail-image"
+            height="100"
+            src="https://storage.googleapis.com/a1aa/image/VpkkM5P4ZX4PJNEQ94INVk3K9jAIxvLYJsd2jUe8QxeAOlpTA.jpg"
+            width="100"
+          />
+          <img
+            id="thumbnailImage2"
+            alt="A brown and white puppy with a happy expression"
+            class="rounded-lg border-2 border-white clickable transition thumbnail-image"
+            height="100"
+            src="https://cdn.pixabay.com/photo/2020/03/01/21/12/cat-4894153_1280.jpg"
+            width="100"
+          />
+          <img
+            id="thumbnailImage3"
+            alt="A 1"
+            class="rounded-lg border-2 border-white clickable transition thumbnail-image"
+            height="100"
+            src="https://cdn.pixabay.com/photo/2017/02/15/12/12/cat-2068462_1280.jpg"
+            width="100"
+          />
+          <img
+            id="thumbnailImage4"
+            alt="A 2"
+            class="rounded-lg border-2 border-white clickable transition thumbnail-image"
+            height="100"
+            src="https://storage.googleapis.com/a1aa/image/kugSRRF2Ce02BiW1hcXSjgnzqL6lNdorjorcIlCcXrjmVz0JA.jpg"
+            width="100"
+          />
+          <img
+            id="thumbnailImage5"
+            alt="A 2"
+            class="rounded-lg border-2 border-white clickable transition thumbnail-image"
+            height="100"
+            src="https://storage.googleapis.com/a1aa/image/ttok7gGW0Ca1A5a377E5QRA8YUZSm0gFhDKZB23HLLoltZ6E.jpg"
+            width="100"
+          />
+        </div>
+      </div>
+    </div>
+    <script src="LoginMain.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+    />
+  </body>
+</html>
