@@ -63,3 +63,22 @@ exports.getuser_roleById = async (req, res, next) => {
         res.json({ status: "Not found", result: error });
     }
 };
+exports.getRolesByUserId = async (req, res, next) => {
+    try {
+        let userId = req.params.user_id;
+        let result = await user_roleModel.find({ user_id: userId });
+        res.json({ status: "Successfully", result: result });
+    } catch (error) {
+        res.json({ status: "Not found", result: error });
+    }
+};
+
+exports.getUsersByRoleId = async (req, res, next) => {
+    try {
+        let roleId = req.params.role_id;
+        let result = await user_roleModel.find({ role_id: roleId });
+        res.json({ status: "Successfully", result: result });
+    } catch (error) {
+        res.json({ status: "Not found", result: error });
+    }
+};

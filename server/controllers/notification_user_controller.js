@@ -64,3 +64,23 @@ exports.getnotification_userById = async (req, res, next) => {
         res.json({ status: "Not found", result: error });
     }
 };
+
+exports.getNotificationByUser = async (req, res, next) => {
+    try {
+        let userId = req.params.user_id;
+        let notifications = await notification_userModel.find({ user_id: userId });
+        res.json({ status: "Successfully", result: notifications });
+    } catch (error) {
+        res.json({ status: "Not found", result: error });
+    }
+};
+
+exports.getUserByNotification = async (req, res, next) => {
+    try {
+        let notificationId = req.params.notification_id;
+        let user = await notification_userModel.findOne({ notification_id: notificationId });
+        res.json({ status: "Successfully", result: user });
+    } catch (error) {
+        res.json({ status: "Not found", result: error });
+    }
+};
