@@ -7,7 +7,7 @@ const notificationSchema = new db.mongoose.Schema(
         required: true
     },
     total_price: {
-        type: Number,
+        type: String,
         require: true
     },
     status: {
