@@ -22,6 +22,19 @@ var supplierRouter = require('./routes/supplier_router');
 var user_roleRouter = require('./routes/user_role_router');
 var userRouter = require('./routes/user_router');
 var app = express();
+
+// Middleware kiểm tra header Authorization
+function checkHeader(req, res, next) {
+  const authorizationHeader = req.header("Authorization");
+
+  if (!authorizationHeader || authorizationHeader !== "trinh_nhung") {
+      // Nếu thiếu header hoặc header không đúng, trả về lỗi
+      return res.status(403).json({ message: "Forbidden: Missing or incorrect Authorization header" });
+  }
+
+  next(); // Tiếp tục nếu header hợp lệ
+}
+
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*"); // Cho phép tất cả các origin
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS"); // Các phương thức được phép
@@ -32,7 +45,7 @@ app.use((req, res, next) => {
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 app.use(express.static("views"));
-
+app.use(checkHeader);
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -40,22 +53,22 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
-app.use("/carrier",carrierRouter)
-app.use("/category",categoryRouter)
-app.use("/invoiceDetail",invoice_detailRouter)
-app.use("/invoice",invoiceRouter)
-app.use("/notification",notificationRouter)
-app.use("/notificationUser",notification_userRouter)
-app.use("/order",orderRouter)
-app.use("/productCategory",product_categoryRouter)
-app.use("/product",productRouter)
-app.use("/reviewProduct",review_productRouter)
-app.use("/review",reviewRouter)
-app.use("/role",roleRouter)
-app.use("/supplier",supplierRouter)
-app.use("/userRole",user_roleRouter)
-app.use("/user",userRouter)
+app.use('/users', checkHeader, usersRouter);
+app.use("/carrier", checkHeader,carrierRouter)
+app.use("/category", checkHeader,categoryRouter)
+app.use("/invoiceDetail", checkHeader,invoice_detailRouter)
+app.use("/invoice", checkHeader,invoiceRouter)
+app.use("/notification", checkHeader,notificationRouter)
+app.use("/notificationUser", checkHeader,notification_userRouter)
+app.use("/order", checkHeader,orderRouter)
+app.use("/productCategory", checkHeader,product_categoryRouter)
+app.use("/product", checkHeader,productRouter)
+app.use("/reviewProduct", checkHeader,review_productRouter)
+app.use("/review", checkHeader,reviewRouter)
+app.use("/role", checkHeader,roleRouter)
+app.use("/supplier", checkHeader,supplierRouter)
+app.use("/userRole", checkHeader,user_roleRouter)
+app.use("/user", checkHeader,userRouter)
 var userRouter = require('./routes/user_router')
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
