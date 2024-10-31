@@ -63,3 +63,23 @@ exports.getreview_productById = async (req, res, next) => {
         res.json({ status: "Not found", result: error });
     }
 };
+
+exports.getReviewsByProductId = async (req, res, next) => {
+    try {
+        let productId = req.params.product_id;
+        let result = await review_productModel.find({ product_id: productId });
+        res.json({ status: "Successfully", result: result });
+    } catch (error) {
+        res.json({ status: "Not found", result: error });
+    }
+};
+
+exports.getProductsByReviewId = async (req, res, next) => {
+    try {
+        let reviewId = req.params.review_id;
+        let result = await review_productModel.find({ review_id: reviewId });
+        res.json({ status: "Successfully", result: result });
+    } catch (error) {
+        res.json({ status: "Not found", result: error });
+    }
+};

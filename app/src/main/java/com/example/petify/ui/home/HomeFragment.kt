@@ -102,7 +102,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
         // Khởi tạo adapter
         adapter = CategoryAdapter(categoryModels) { productModel ->
             val intent = Intent(context, ProductDetailActivity::class.java).apply {
-                putExtra("PRODUCT_ITEM", productModel)
+//                putExtra("PRODUCT_ITEM", productModel)
             }
             startActivity(intent)
         }
