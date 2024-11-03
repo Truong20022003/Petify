@@ -7,6 +7,7 @@ exports.getListinvoice = async (req, res, next) => {
     } catch (error) {
         res.json({ status: "not found", result: error });
     }
+    
 };
 
 exports.addinvoice = async (req, res, next) => {

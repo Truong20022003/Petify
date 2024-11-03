@@ -39,6 +39,8 @@ const userSchema = new db.mongoose.Schema(
   },
   {
     collection: "user",
+    timestamps: true, 
+    versionKey: false 
   }
 );
 const userModel = db.mongoose.model("userModel", userSchema);

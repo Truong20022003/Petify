@@ -45,6 +45,8 @@ const productSchema = new db.mongoose.Schema(
   },
   {
     collection: "product",
+    timestamps: true, 
+    versionKey: false 
   }
 );
 const productModel = db.mongoose.model("productModel", productSchema);

@@ -13,6 +13,8 @@ const product_categorySchema = new db.mongoose.Schema(
   },
   {
     collection: "product_category",
+    timestamps: true, 
+    versionKey: false 
   }
 );
 const product_categoryModel = db.mongoose.model("product_categoryModel", product_categorySchema);
