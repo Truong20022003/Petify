@@ -1,6 +1,7 @@
 var createError = require("http-errors");
 var express = require("express");
 var path = require("path");
+const cors = require("cors"); // Import module cors
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 
@@ -35,12 +36,11 @@ function checkHeader(req, res, next) {
   next(); // Tiếp tục nếu header hợp lệ
 }
 
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*"); // Cho phép tất cả các origin
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS"); // Các phương thức được phép
-  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization"); // Các header được phép
-  next(); // Chuyển tiếp đến middleware tiếp theo
-});
+app.use(cors({
+  origin: '*', 
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+}));
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
