@@ -4,7 +4,13 @@ let url = "http://localhost:3000/user";
 let tbody = document.querySelector("tbody");
 let table = document.querySelector("table");
 const getListUser = () => {
-  fetch(`${url}/getListUser`)
+  fetch(`${url}/getListUser`,{
+    method: "GET",
+    headers: {
+      "Authorization": "trinh_nhung",
+       "Content-Type": "application/json"
+  }
+  })
     .then((response) => response.json())
     .then((data) => {
       console.log(data);
@@ -76,7 +82,12 @@ const getListUser = () => {
           id = btn.dataset.id;
           console.log(id);
           if (confirm("ban co chac muon xoa khong")) {
-            fetch(`${url}/deleteuser/${id}`, { method: "DELETE" })
+            fetch(`${url}/deleteuser/${id}`, { method: "DELETE",
+              headers: {
+                "Authorization": "trinh_nhung",
+                 "Content-Type": "application/json"
+            }
+            })
               .then((rep) => rep.json())
               .then(() => {
                 restoreRow();
@@ -92,7 +103,13 @@ const getListUser = () => {
           console.log("detail");
           id = btn.dataset.id;
           console.log(id);
-          fetch(`${url}/getuserById/${id}`)
+          fetch(`${url}/getuserById/${id}`,{
+            method: "GET",
+            headers: {
+              "Authorization": "trinh_nhung",
+               "Content-Type": "application/json"
+          }
+          })
             .then((response) => response.json())
             .then((data) => {
               console.log(data, "kkkk");
@@ -119,7 +136,12 @@ const getListUser = () => {
         btn.addEventListener("click", () => {
           console.log("edit");
           id = btn.dataset.id;
-          fetch(`${url}/getuserById/${id}`)
+          fetch(`${url}/getuserById/${id}`,{
+            headers: {
+              "Authorization": "trinh_nhung",
+               "Content-Type": "application/json"
+          }
+          })
             .then((response) => response.json())
             .then((data) => {
               console.log(data, "kkkk");
@@ -262,6 +284,7 @@ function saveEditUser(_id) {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
+      "Authorization": "trinh_nhung",
     },
     body: JSON.stringify(updatedUser),
   })
@@ -297,6 +320,7 @@ function saveAddUser() {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      "Authorization": "trinh_nhung",
     },
     body: JSON.stringify(newUser),
   })

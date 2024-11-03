@@ -37,7 +37,7 @@ function checkHeader(req, res, next) {
 }
 
 app.use(cors({
-  origin: '*', // Thay đổi "*" bằng origin cụ thể nếu cần
+  origin: '*', 
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
 }));

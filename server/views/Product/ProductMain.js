@@ -219,6 +219,11 @@ const getListProduct = () => {
             fetch("http://localhost:3000/product/addproduct", {
               method: "POST",
               body: formData,
+          
+                headers: {
+                  "Authorization": "trinh_nhung",
+                   "Content-Type": "application/json"
+              }
             })
               .then((response) => {
                 console.log("HTTP Status:", response.status);
