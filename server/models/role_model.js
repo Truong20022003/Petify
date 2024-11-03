@@ -13,6 +13,8 @@ const roleSchema = new db.mongoose.Schema(
   },
   {
     collection: "role",
+    timestamps: true, 
+    versionKey: false 
   }
 );
 const roleModel = db.mongoose.model("roleModel", roleSchema);

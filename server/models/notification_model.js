@@ -17,6 +17,8 @@ const notificationSchema = new db.mongoose.Schema(
   },
   {
     collection: "notification",
+    timestamps: true, 
+    versionKey: false 
   }
 );
 const notificationModel = db.mongoose.model("notificationModel", notificationSchema);

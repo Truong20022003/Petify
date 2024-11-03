@@ -44,6 +44,8 @@ const invoiceSchema = new db.mongoose.Schema(
     },
     {
         collection: "invoice",
+        timestamps: true, 
+        versionKey: false 
     }
 );
 const invoiceModel = db.mongoose.model("invoiceModel", invoiceSchema);
