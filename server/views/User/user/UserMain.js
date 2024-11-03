@@ -191,7 +191,7 @@ function createUserDetailHTML(
       }">Lưu</button>`
     : "";
 
-  return `
+  return /*html*/`
     <h2 class="text-xl font-bold mb-4">${title}</h2>
     <div class="flex">
       <div class="w-1/4 flex justify-center items-center">
