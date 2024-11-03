@@ -21,6 +21,8 @@ const orderSchema = new db.mongoose.Schema(
   },
   {
     collection: "order",
+    timestamps: true, 
+    versionKey: false 
   }
 );
 const orderModel = db.mongoose.model("orderModel", orderSchema);

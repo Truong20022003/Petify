@@ -1,4 +1,9 @@
 package com.example.petify.ui.login
 
-class LoginViewmodel {
+import com.example.petify.BaseViewModel
+
+class LoginViewmodel: BaseViewModel() {
+
+
+
 }

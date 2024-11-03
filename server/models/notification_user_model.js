@@ -13,6 +13,8 @@ const notificationUserSchema = new db.mongoose.Schema(
   },
   {
     collection: "notification_user",
+    timestamps: true, 
+    versionKey: false 
   }
 );
 const notification_userModel = db.mongoose.model("notification_userModel", notificationUserSchema);
