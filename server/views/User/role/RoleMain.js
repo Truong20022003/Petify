@@ -4,18 +4,18 @@ let url = "http://localhost:3000/role";
 let tbody = document.querySelector("tbody");
 let table = document.querySelector("table");
 const getListUser = () => {
-  fetch(`${url}/getListRole`,{
+  fetch(`${url}/getListRole`, {
     method: "GET",
     headers: {
-      "Authorization": "trinh_nhung",
-       "Content-Type": "application/json"
-  }
+      Authorization: "trinh_nhung",
+      "Content-Type": "application/json",
+    },
   })
     .then((response) => response.json())
     .then((data) => {
       console.log(data);
       content.innerHTML =
-        `<div class="flex mb-4">
+        /*html*/ `<div class="flex mb-4">
             <button class="bg-yellow-500 text-white px-4 py-2 rounded mr-2 btnadd">
               Thêm mới
             </button>
@@ -41,7 +41,7 @@ const getListUser = () => {
             </thead>` +
         data
           .map(
-            (item, index) => `<tr id="row-${item._id}">
+            (item, index) => /*html*/ `<tr id="row-${item._id}">
                 <td class="border border-gray-300 px-4 py-2">${index + 1}</td>
                 <td class="border border-gray-300 px-4 py-2">${item._id}</td>
                 <td class="border border-gray-300 px-4 py-2">${item.name}</td> 
@@ -200,7 +200,7 @@ function createUserDetailHTML(
       }">Lưu</button>`
     : "";
 
-  return `
+  return /*html*/ `
     <h2 class="text-xl font-bold mb-4">${title}</h2>
     <div class="flex">
       <div class="w-1/4 flex justify-center items-center">
