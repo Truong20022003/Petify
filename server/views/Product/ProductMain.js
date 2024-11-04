@@ -1,15 +1,20 @@
-
 const content = document.querySelector(".shadow");
 let url = "http://localhost:3000/product";
 let tbody = document.querySelector("tbody");
 
 const getListProduct = () => {
-  fetch(`${url}/getListProduct`)
+  fetch(`${url}/getListProduct`,{
+    method: "GET",
+    headers: {
+      "Authorization": "trinh_nhung",
+       "Content-Type": "application/json"
+  }
+  })
     .then((response) => response.json())
     .then((data) => {
       console.log(data);
       content.innerHTML =
-        /*html*/` <div class="flex mb-4">
+        /*html*/ ` <div class="flex mb-4">
             <button class="bg-yellow-500 text-white px-4 py-2 rounded mr-2 btnadd">
               Thêm mới
             </button>
@@ -38,7 +43,7 @@ const getListProduct = () => {
             </thead>` +
         data
           .map(
-            (item, index) => /*html*/`<tr id="row-${item._id}">
+            (item, index) => /*html*/ `<tr id="row-${item._id}">
                 <td class="border border-gray-300 px-4 py-2">${index + 1}</td>
                 <td class="border border-gray-300 px-4 py-2">${item._id}</td>
                 <td class="border border-gray-300 px-4 py-2">${item.name}</td>
@@ -80,7 +85,13 @@ const getListProduct = () => {
           id = btn.dataset.id;
           console.log(id);
           if (confirm("ban co chac muon xoa khong")) {
-            fetch(`${url}/deleteproduct/${id}`, { method: "DELETE" })
+            fetch(`${url}/deleteproduct/${id}`, { method: "DELETE",
+              method: "GET",
+              headers: {
+                "Authorization": "trinh_nhung",
+                 "Content-Type": "application/json"
+            }
+            } )
               .then((rep) => rep.json())
               .then(() => {
                 restoreRow();
@@ -96,7 +107,13 @@ const getListProduct = () => {
           console.log("detail");
           id = btn.dataset.id;
           console.log(id);
-          fetch(`${url}/getproductById/${id}`)
+          fetch(`${url}/getproductById/${id}`,{
+            method: "GET",
+            headers: {
+              "Authorization": "trinh_nhung",
+               "Content-Type": "application/json"
+          }
+          })
             .then((response) => response.json())
             .then((data) => {
               console.log(data, "kkkk");
@@ -118,22 +135,25 @@ const getListProduct = () => {
         btn.addEventListener("click", () => {
           console.log("edit");
           const id = btn.dataset.id;
-          fetch(`${url}/getproductById/${id}`)
+          fetch(`${url}/getproductById/${id}`,{
+            method: "GET",
+            headers: {
+              "Authorization": "trinh_nhung",
+               "Content-Type": "application/json"
+          }
+          })
             .then((response) => response.json())
             .then((data) => {
               console.log(data, "kkkk");
-              content.innerHTML =
-                `` +
-                createProductDetailHTML(
-                  data.result,
-                  false,
-                  true,
-                  "Cập san pham"
-                );
+              content.innerHTML = createProductDetailHTML(
+                data.result,
+                false,
+                true,
+                "Cập san pham"
+              );
               ////
 
               ///
-
               handleImageUpload(data.result.image);
               ///
               document.querySelector(".back")?.addEventListener("click", () => {
@@ -144,6 +164,116 @@ const getListProduct = () => {
         });
       });
       /////
+      ///add
+      document.querySelector(".btnadd")?.addEventListener("click", () => {
+        console.log("add");
+        const selectedFiles = [];
+
+        content.innerHTML = createProductDetailHTML(
+          {},
+          false,
+          true,
+          "Thêm người san pham"
+        );
+        ////
+        handleImageUploadAdd(selectedFiles);
+        ///
+        document
+          .getElementById("upload-btn")
+          .addEventListener("click", function () {
+            if (selectedFiles.length === 0) {
+              alert("Vui lòng chọn ít nhất một ảnh!");
+              return;
+            }
+
+            // Dữ liệu ảo
+            const name = "doando";
+            const supplier_id = "nhummmmmm";
+            const price = 2424;
+            const date = "ewewe";
+            const expiry_Date = "sfsfs";
+            const quantity = 34343;
+            const status = "sfsfs";
+            const description = "dfsf";
+            const sale = 3434;
+
+            // Tạo đối tượng FormData
+            const formData = new FormData();
+
+            // Thêm dữ liệu ảo vào FormData
+            formData.append("name", name);
+            formData.append("supplier_id", supplier_id);
+            formData.append("price", price);
+            formData.append("date", date);
+            formData.append("expiry_Date", expiry_Date);
+            formData.append("quantity", quantity);
+            formData.append("status", status);
+            formData.append("description", description);
+            formData.append("sale", sale);
+
+            // Thêm file ảnh vào FormData
+            for (const file of selectedFiles) {
+              formData.append("image", file); // Đổi từ "image" thành "images" nếu server yêu cầu
+            }
+
+            fetch("http://localhost:3000/product/addproduct", {
+              method: "POST",
+              body: formData,
+          
+                headers: {
+                  "Authorization": "trinh_nhung",
+                   "Content-Type": "application/json"
+              }
+            })
+              .then((response) => {
+                console.log("HTTP Status:", response.status);
+                if (response.status === 202) {
+                  return new Promise((resolve) => {
+                    const interval = setInterval(() => {
+                      fetch("http://localhost:3000/product/checkUploadStatus",{
+                        method: "GET",
+                        headers: {
+                          "Authorization": "trinh_nhung",
+                           "Content-Type": "application/json"
+                      }
+                      }) 
+                        .then((statusResponse) => {
+                          if (statusResponse.ok) {
+                            return statusResponse.json();
+                          } else {
+                            throw new Error(`Failed to check upload status: ${statusResponse.status}`);
+                          }
+                        })
+                        .then((statusData) => {
+                          if (statusData.success) {
+                            clearInterval(interval);
+                            resolve(statusData);
+                          }
+                        });
+                    }, 2000); 
+                  });
+                } else {
+                  return response.json().then((data) => {
+                    throw new Error(
+                      `Server error: ${response.status} ${data.message || response.statusText}`
+                    );
+                  });
+                }
+              })
+              .then((data) => {
+                console.log("Upload thành công:", data);
+                alert("Upload thành công!");
+              })
+              .catch((error) => {
+                console.error("Error:", error);
+                alert(`Error: ${error.message}`);
+              });
+          });
+        ///
+        document.querySelector(".back")?.addEventListener("click", () => {
+          restoreRow();
+        });
+      });
     });
 };
 ///
@@ -154,7 +284,6 @@ function createProductDetailHTML(
   product = {}, // Accept an empty object for adding
   isReadonly = false,
   showSaveButton = false,
-  showChoose = false,
   title = ""
 ) {
   const {
@@ -170,13 +299,12 @@ function createProductDetailHTML(
     description = "",
     sale = "",
   } = product;
-
+  console.log(_id);
   const readonlyAttr = isReadonly ? "readonly" : "";
 
   const saveButtonHTML = showSaveButton
-    ? `<button class="bg-green-500 text-white px-4 py-2 rounded save" onclick="${
-        _id ? `saveEditUser('${_id}')` : "saveAddUser()"
-      }">Lưu</button>`
+    ? `<button id="upload-btn" class="bg-green-500 text-white px-4 py-2 rounded save" onclick="saveEditProduct('${_id}')">Lưu</button>
+`
     : "";
 
   return /*html*/ `
@@ -230,6 +358,8 @@ function createProductDetailHTML(
   `;
 }
 ///
+//luu edit
+
 ////back
 function restoreRow() {
   getListProduct();

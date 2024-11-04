@@ -1,9 +1,15 @@
 const content = document.querySelector(".shadow");
-let url = "http://localhost:3000/categoryRouter";
+let url = "http://localhost:3000/category";
 let tbody = document.querySelector("tbody");
 
 const getList = () => {
-  fetch(`${url}/getListCategory`)
+  fetch(`${url}/getListCategory`,{
+    method: "GET",
+    headers: {
+      "Authorization": "trinh_nhung",
+       "Content-Type": "application/json"
+  }
+  })
     .then((response) => response.json())
     .then((data) => {
       console.log(data);
@@ -71,7 +77,12 @@ const getList = () => {
           id = btn.dataset.id;
           console.log(id);
           if (confirm("ban co chac muon xoa khong")) {
-            fetch(`${url}/deleteproduct/${id}`, { method: "DELETE" })
+            fetch(`${url}/deleteproduct/${id}`, { method: "DELETE" ,
+              headers: {
+                "Authorization": "trinh_nhung",
+                 "Content-Type": "application/json"
+            }
+            })
               .then((rep) => rep.json())
               .then(() => {
                 restoreRow();
@@ -87,7 +98,13 @@ const getList = () => {
           console.log("detail");
           id = btn.dataset.id;
           console.log(id);
-          fetch(`${url}/getcategoryById/${id}`)
+          fetch(`${url}/getcategoryById/${id}`,{
+            method: "GET",
+            headers: {
+              "Authorization": "trinh_nhung",
+               "Content-Type": "application/json"
+          }
+          })
             .then((response) => response.json())
             .then((data) => {
               console.log(data, "kkkk");
