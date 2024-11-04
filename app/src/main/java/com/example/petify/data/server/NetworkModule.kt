@@ -28,7 +28,7 @@ class NetworkModule<T>(
 
         val headerInterceptor = Interceptor { chain ->
             val request = chain.request().newBuilder()
-                .addHeader("Authorization", "expectedHeaderValue")
+                .addHeader("Authorization", "trinh_nhung")
                 .build()
             chain.proceed(request)
         }
