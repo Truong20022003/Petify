@@ -115,3 +115,16 @@ exports.loginUser = async (req, res, next) => {
         res.json({ status: "Login failed", error: error.message });
     }
 };
+
+exports.resetPassword = async (req, res, next) => {
+    const { email } = req.body;
+
+    try {
+        // Gửi email đặt lại mật khẩu thông qua Firebase Authentication
+        const resetLink = await admin.auth().generatePasswordResetLink(email);
+        
+        res.json({ status: "Reset password email sent successfully", resetLink });
+    } catch (error) {
+        res.json({ status: "Failed to send reset password email", error: error.message });
+    }
+};

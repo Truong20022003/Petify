@@ -18,7 +18,7 @@ import com.example.petify.data.server.service.UserService
 
 
 object CreateInteface {
-    const val DOMAIN = "http://192.168.0.104:3000/"
+    const val DOMAIN = "http://192.168.0.103:3000/"
     fun createCarrier(): CarrierService {
         return NetworkModule<CarrierService>(DOMAIN).create(
             CarrierService::class.java
