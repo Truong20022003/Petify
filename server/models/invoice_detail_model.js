@@ -22,6 +22,8 @@ const invoiceDetailSchema = new db.mongoose.Schema(
   },
   {
     collection: "invoice_detail",
+    timestamps: true, 
+    versionKey: false 
   }
 );
 const invoice_detailModel = db.mongoose.model("invoiceDetailModel", invoiceDetailSchema);

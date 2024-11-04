@@ -4,7 +4,7 @@ const userSchema = new db.mongoose.Schema(
 
     name: {
         type: String,
-        require: true
+        require: false
     },
     
     email: {
@@ -14,7 +14,7 @@ const userSchema = new db.mongoose.Schema(
     
     phone_number: {
         type: String,
-        require: true
+        require: false
     },
     
     password: {
@@ -24,21 +24,23 @@ const userSchema = new db.mongoose.Schema(
     
     user_name: {
         type: String,
-        require: true
+        require: false
     },
     
     location: {
         type: String,
-        require: true
+        require: false
     },
     
     avata: {
         type: String,
-        require: true
+        require: false
     },
   },
   {
     collection: "user",
+    timestamps: true, 
+    versionKey: false 
   }
 );
 const userModel = db.mongoose.model("userModel", userSchema);

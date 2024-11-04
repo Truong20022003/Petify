@@ -14,6 +14,8 @@ const carrierSchemma = new db.mongoose.Schema(
   },
   {
     collection: "carrier",
+    timestamps: true, 
+    versionKey: false 
   }
 );
 const carrierModel = db.mongoose.model("carrierModel", carrierSchemma);
