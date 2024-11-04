@@ -29,6 +29,49 @@ class UserRepository(private val api: UserService) {
         }
     }
 
+    // xử lý token đăng nhap, luu token de request quen mat khau, theo uid
+    suspend fun registerUser(
+        name: String,
+        email: String,
+        password: String,
+        phoneNumber: String,
+        userName: String,
+        location: String,
+        avatar: String
+    ): UserModel? = withContext(Dispatchers.IO) {
+        val response = api.register(email, password, name)
+        if (response.isSuccessful) {
+            Log.d("UserRepository", "registerUser Success: ${response.body()}")
+            response.body()
+        } else {
+            Log.e("UserRepository", "registerUser Error: ${response.errorBody()}")
+            null
+        }
+    }
+
+    suspend fun loginUser(email: String, password: String): UserModel? =
+        withContext(Dispatchers.IO) {
+            val response = api.login(email, password)
+            if (response.isSuccessful) {
+                Log.d("UserRepository", "loginUser Success: ${response.body()}")
+                response.body()
+            } else {
+                Log.e("UserRepository", "loginUser Error: ${response.errorBody()}")
+                null
+            }
+        }
+
+    suspend fun resetPassword(email: String): Boolean = withContext(Dispatchers.IO) {
+        val response = api.resetPassword(email)
+        if (response.isSuccessful) {
+            Log.d("UserRepository", "resetPassword Success: Password reset email sent")
+            true
+        } else {
+            Log.e("UserRepository", "resetPassword Error: ${response.errorBody()}")
+            false
+        }
+    }
+
     suspend fun getUserById(id: String): UserModel? = withContext(Dispatchers.IO) {
         val response = api.getUserById(id)
         if (response.isSuccessful) {
@@ -41,7 +84,8 @@ class UserRepository(private val api: UserService) {
     }
 
     suspend fun updateUser(id: String, User: UserModel): UserModel? = withContext(
-        Dispatchers.IO) {
+        Dispatchers.IO
+    ) {
         val response = api.updateUser(id, User)
         if (response.isSuccessful) {
             Log.d("UserRepository", "updateUser Success: ${response.body()}")
