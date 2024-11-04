@@ -10,8 +10,9 @@
 .DS_Store
 /build
 /captures
-/.idea
-/server/node_modules
+/.idea/
+/server/node_modules/
+/app/google-services.json
 .externalNativeBuild
 .cxx
 local.properties

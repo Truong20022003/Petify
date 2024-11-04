@@ -34,23 +34,23 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, BaseViewModel>() {
         super.initView()
         binding.root.setBackgroundResource(R.drawable.bg_login)
 
-        binding.tvLuuMk.setOnClickListener {
+        binding.tvSavePassword.setOnClickListener {
             checkPass = !checkPass
             if (checkPass) {
-                binding.tvLuuMk.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_selected_savepassword, 0, 0, 0)
+                binding.tvSavePassword.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_selected_savepassword, 0, 0, 0)
             } else {
-                binding.tvLuuMk.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_savepassword, 0, 0, 0)
+                binding.tvSavePassword.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_savepassword, 0, 0, 0)
             }
         }
 
-        binding.tvDangky.setOnClickListener {
+        binding.tvSignUp.setOnClickListener {
             val intent = Intent(this, SignupActivity::class.java)
             startActivity(intent)
         }
 
-        binding.btnDangnhap.setOnClickListener {
+        binding.btnLogin.setOnClickListener {
             val email = binding.etEmail.text.toString()
-            val password = binding.etMatkhau.text.toString()
+            val password = binding.etPassword.text.toString()
             loginUser(email, password)
         }
     }
