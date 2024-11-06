@@ -196,7 +196,6 @@ const getListProduct = () => {
             const status = "sfsfs";
             const description = "dfsf";
             const sale = 3434;
-
             // Tạo đối tượng FormData
             const formData = new FormData();
 
@@ -210,64 +209,27 @@ const getListProduct = () => {
             formData.append("status", status);
             formData.append("description", description);
             formData.append("sale", sale);
-
             // Thêm file ảnh vào FormData
             for (const file of selectedFiles) {
               formData.append("image", file); // Đổi từ "image" thành "images" nếu server yêu cầu
             }
-
-            fetch("http://localhost:3000/product/addproduct", {
-              method: "POST",
-              body: formData,
-          
-                headers: {
-                  "Authorization": "trinh_nhung",
-                   "Content-Type": "application/json"
-              }
-            })
-              .then((response) => {
-                console.log("HTTP Status:", response.status);
-                if (response.status === 202) {
-                  return new Promise((resolve) => {
-                    const interval = setInterval(() => {
-                      fetch("http://localhost:3000/product/checkUploadStatus",{
-                        method: "GET",
-                        headers: {
-                          "Authorization": "trinh_nhung",
-                           "Content-Type": "application/json"
-                      }
-                      }) 
-                        .then((statusResponse) => {
-                          if (statusResponse.ok) {
-                            return statusResponse.json();
-                          } else {
-                            throw new Error(`Failed to check upload status: ${statusResponse.status}`);
-                          }
-                        })
-                        .then((statusData) => {
-                          if (statusData.success) {
-                            clearInterval(interval);
-                            resolve(statusData);
-                          }
-                        });
-                    }, 2000); 
+               fetch(`${url}/addproduct`, {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "trinh_nhung"
+                  },
+                  body: JSON.stringify(formData)
+                })
+                  .then((response) => response.json())
+                  .then((data) => {
+                    console.log("Upload thành công:", data);
+                    alert("Upload thành công!");
+                  })
+                  .catch((error) => {
+                    console.error("Đã xảy ra lỗi:", error);
+                    alert(`Đã xảy ra lỗi: ${error.message}`);
                   });
-                } else {
-                  return response.json().then((data) => {
-                    throw new Error(
-                      `Server error: ${response.status} ${data.message || response.statusText}`
-                    );
-                  });
-                }
-              })
-              .then((data) => {
-                console.log("Upload thành công:", data);
-                alert("Upload thành công!");
-              })
-              .catch((error) => {
-                console.error("Error:", error);
-                alert(`Error: ${error.message}`);
-              });
           });
         ///
         document.querySelector(".back")?.addEventListener("click", () => {
