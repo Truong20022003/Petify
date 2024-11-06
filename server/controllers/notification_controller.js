@@ -1,5 +1,5 @@
 const {notificationModel} = require("../models/notification_model")
-
+const admin = require("../db/firebase_admin");
 exports.getListnotification = async (req, res, next) => {
     try {
         let listnotification = await notificationModel.find({});
@@ -8,19 +8,50 @@ exports.getListnotification = async (req, res, next) => {
         res.json({ status: "not found", result: error });
     }
 };
+
+exports.saveToken = async (req, res) => {
+    const { fcmToken } = req.body;
+    if (!fcmToken) {
+        return res.status(400).json({ message: "Token is required" });
+    }
+    try {
+        await TokenModel.updateOne({ userId: req.user.id }, { fcmToken }, { upsert: true });
+        res.json({ message: "Token saved successfully" });
+    } catch (error) {
+        res.status(500).json({ error: "Failed to save token" });
+    }
+};
+
 exports.addnotification = async (req, res, next) => {
     try {
         let obj = new notificationModel({
             order_date: req.body.order_date,
             total_price: req.body.total_price,
             status: req.body.status
-        })
+        });
         let result = await obj.save();
-        res.json({ status: "Add successfully", result: result });
+        const userToken = await TokenModel.findOne({ userId: req.body.userId });
+        const message = {
+            notification: {
+                title: "Thông báo mới",
+                body: `Đơn hàng của bạn đã được thêm với giá trị: ${req.body.total_price}`
+            },
+            token: userToken?.fcmToken || "" 
+        };
+
+        try {
+            const response = await admin.messaging().send(message);
+            console.log("Notification sent successfully:", response);
+            res.json({ status: "Add successfully and notification sent", result: result });
+        } catch (error) {
+            console.error("Error sending notification:", error);
+            res.json({ status: "Add successfully, but notification failed", result: result });
+        }
     } catch (error) {
-        res.json({status: "Add failed" })
+        res.json({ status: "Add failed" });
     }
-}
+};
+
 
 exports.updatenotification = async (req, res, next) => {
     try {

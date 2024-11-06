@@ -2,9 +2,7 @@ package com.example.petify.model
 
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
-import kotlinx.parcelize.Parcelize
 
-@Parcelize
 data class ProductModel(
     @SerializedName("id")
     val id: String,
@@ -28,5 +26,5 @@ data class ProductModel(
     val description: String,
     @SerializedName("sale")
     val sale: Int
-) : Parcelable
+)
 

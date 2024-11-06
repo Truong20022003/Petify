@@ -4,7 +4,13 @@ let url = "http://localhost:3000/role";
 let tbody = document.querySelector("tbody");
 let table = document.querySelector("table");
 const getListUser = () => {
-  fetch(`${url}/getListRole`)
+  fetch(`${url}/getListRole`,{
+    method: "GET",
+    headers: {
+      "Authorization": "trinh_nhung",
+       "Content-Type": "application/json"
+  }
+  })
     .then((response) => response.json())
     .then((data) => {
       console.log(data);
@@ -38,10 +44,10 @@ const getListUser = () => {
             (item, index) => `<tr id="row-${item._id}">
                 <td class="border border-gray-300 px-4 py-2">${index + 1}</td>
                 <td class="border border-gray-300 px-4 py-2">${item._id}</td>
+                <td class="border border-gray-300 px-4 py-2">${item.name}</td> 
                 <td class="border border-gray-300 px-4 py-2">${
-                  item.name
+                  item.description
                 }</td> 
-                <td class="border border-gray-300 px-4 py-2">${item.description}</td> 
                 <td class="border border-gray-300 px-4 py-2">
                   <div class="button-group flex flex-col space-y-2">
                     <button class="bg-blue-500 text-white px-2 py-1 rounded btnedit" data-id="${
@@ -67,7 +73,13 @@ const getListUser = () => {
           id = btn.dataset.id;
           console.log(id);
           if (confirm("ban co chac muon xoa khong")) {
-            fetch(`${url}/deleteuser/${id}`, { method: "DELETE" })
+            fetch(`${url}/deleteuser/${id}`, {
+              method: "DELETE",
+              headers: {
+                Authorization: "trinh_nhung",
+                "Content-Type": "application/json",
+              },
+            })
               .then((rep) => rep.json())
               .then(() => {
                 restoreRow();
@@ -110,7 +122,13 @@ const getListUser = () => {
         btn.addEventListener("click", () => {
           console.log("edit");
           id = btn.dataset.id;
-          fetch(`${url}/getuserById/${id}`)
+          fetch(`${url}/getuserById/${id}`, {
+            method: "GET",
+            headers: {
+              Authorization: "trinh_nhung",
+              "Content-Type": "application/json",
+            },
+          })
             .then((response) => response.json())
             .then((data) => {
               console.log(data, "kkkk");
@@ -253,6 +271,7 @@ function saveEditUser(_id) {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
+      Authorization: "trinh_nhung",
     },
     body: JSON.stringify(updatedUser),
   })
@@ -288,6 +307,7 @@ function saveAddUser() {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      Authorization: "trinh_nhung",
     },
     body: JSON.stringify(newUser),
   })

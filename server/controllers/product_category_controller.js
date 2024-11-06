@@ -63,3 +63,22 @@ exports.getproduct_categoryById = async (req, res, next) => {
         res.json({ status: "Not found", result: error });
     }
 };
+exports.getProductCategoryByProductId = async (req, res, next) => {
+    try {
+        let productId = req.params.product_id;
+        let result = await product_categoryModel.find({ product_id: productId });
+        res.json({ status: "Successfully", result: result });
+    } catch (error) {
+        res.json({ status: "Not found", result: error });
+    }
+};
+
+exports.getProductCategoryByCategoryId = async (req, res, next) => {
+    try {
+        let categoryId = req.params.category_id;
+        let result = await product_categoryModel.find({ category_id: categoryId });
+        res.json({ status: "Successfully", result: result });
+    } catch (error) {
+        res.json({ status: "Not found", result: error });
+    }
+};

@@ -1,4 +1,5 @@
-const {userModel} = require("../models/user_model")
+const { userModel } = require("../models/user_model")
+const admin = require("../db/firebase_admin");
 
 exports.getListuser = async (req, res, next) => {
     try {
@@ -15,7 +16,7 @@ exports.adduser = async (req, res, next) => {
         let obj = new userModel({
             name: req.body.name,
             email: req.body.email,
-            phone_number: req.body. phone_number,
+            phone_number: req.body.phone_number,
             password: req.body.password,
             user_name: req.body.user_name,
             location: req.body.location,
@@ -24,7 +25,7 @@ exports.adduser = async (req, res, next) => {
         let result = await obj.save();
         res.json({ status: "Add successfully", result: result });
     } catch (error) {
-        res.json({status: "Add failed" })
+        res.json({ status: "Add failed" })
     }
 }
 
@@ -32,13 +33,13 @@ exports.updateuser = async (req, res, next) => {
     try {
         let id = req.params.id;
         let obj = {};
-        obj.name= req.body.name;
-        obj.email= req.body.email;
-        obj.phone_number= req.body.phone_number;
-        obj.password= req.body.password;
-        obj.user_name= req.body.user_name;
-        obj.location= req.body.location;
-        obj.avata= req.body.avata;
+        obj.name = req.body.name;
+        obj.email = req.body.email;
+        obj.phone_number = req.body.phone_number;
+        obj.password = req.body.password;
+        obj.user_name = req.body.user_name;
+        obj.location = req.body.location;
+        obj.avata = req.body.avata;
         let result = await userModel.findByIdAndUpdate(id, obj, { new: true });
         res.json({ status: "Update successfully", result: result });
     } catch (error) {
@@ -73,5 +74,57 @@ exports.getuserById = async (req, res, next) => {
         res.json({ status: "Successfully", result: result });
     } catch (error) {
         res.json({ status: "Not found", result: error });
+    }
+};
+exports.registerUser = async (req, res, next) => {
+    const { name, email, phone_number, password, user_name, location, avata } = req.body;
+
+    try {
+        const userRecord = await admin.auth().createUser({
+            email: email,
+            password: password,
+        });
+
+        let newUser = new userModel({
+            name,
+            email,
+            phone_number,
+            password,
+            user_name,
+            location,
+            avata,
+            uid: userRecord.uid
+        });
+
+        const result = await newUser.save();
+        res.json({ status: "Registration successful", result });
+    } catch (error) {
+        res.json({ status: "Registration failed", error: error.message });
+    }
+};
+
+exports.loginUser = async (req, res, next) => {
+    const { email, password } = req.body;
+
+    try {
+        const userRecord = await admin.auth().getUserByEmail(email);
+
+        const token = await admin.auth().createCustomToken(userRecord.uid);
+        res.json({ status: "Login successful", token });
+    } catch (error) {
+        res.json({ status: "Login failed", error: error.message });
+    }
+};
+
+exports.resetPassword = async (req, res, next) => {
+    const { email } = req.body;
+
+    try {
+        // Gửi email đặt lại mật khẩu thông qua Firebase Authentication
+        const resetLink = await admin.auth().generatePasswordResetLink(email);
+        
+        res.json({ status: "Reset password email sent successfully", resetLink });
+    } catch (error) {
+        res.json({ status: "Failed to send reset password email", error: error.message });
     }
 };

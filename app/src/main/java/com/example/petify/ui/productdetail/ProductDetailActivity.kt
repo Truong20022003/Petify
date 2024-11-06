@@ -16,20 +16,20 @@ class ProductDetailActivity : BaseActivity<ActivityProductDetailBinding, BaseVie
     override fun initView() {
         super.initView()
 
-        val productItem: ProductModel? = intent.getParcelableExtra("PRODUCT_ITEM")
+//        val productItem: ProductModel? = intent.getParcelableExtra("PRODUCT_ITEM")
 
-        productItem?.let { product ->
-            binding.tvProductName.text = product.name
-            binding.tvProductPrice.text = "${product.price} VNĐ"
-            binding.tvDescribe.text = product.description
-            binding.tvSold.text = "Số lượng: ${product.quantity}"
-
-
-            setupViewPager(product.image)
-        } ?: run {
-            Log.e("Product_DetailActivity", "Không nhận được thông tin sản phẩm")
-            Toast.makeText(this, "Không nhận được thông tin sản phẩm", Toast.LENGTH_SHORT).show()
-        }
+//        productItem?.let { product ->
+//            binding.tvProductName.text = product.name
+//            binding.tvProductPrice.text = "${product.price} VNĐ"
+//            binding.tvDescribe.text = product.description
+//            binding.tvSold.text = "Số lượng: ${product.quantity}"
+//
+//
+//            setupViewPager(product.image)
+//        } ?: run {
+//            Log.e("Product_DetailActivity", "Không nhận được thông tin sản phẩm")
+//            Toast.makeText(this, "Không nhận được thông tin sản phẩm", Toast.LENGTH_SHORT).show()
+//        }
 
         setListeners()
     }

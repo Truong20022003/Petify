@@ -3,6 +3,8 @@ package com.example.petify.ui.home
 import android.content.Intent
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
 import com.example.petify.BaseFragment
@@ -11,6 +13,7 @@ import com.example.petify.databinding.FragmentHomeBinding
 import com.example.petify.model.CategoryModel
 import com.example.petify.model.ProductModel
 import com.example.petify.ui.productdetail.ProductDetailActivity
+import com.example.petify.viewmodel.ProductViewModel
 
 class HomeFragment : BaseFragment<FragmentHomeBinding>() {
     private lateinit var adapter: CategoryAdapter
@@ -91,9 +94,17 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
         return FragmentHomeBinding.inflate(layoutInflater)
     }
 
+    private lateinit var productViewModel: ProductViewModel
 
     override fun initView() {
         super.initView()
+
+        productViewModel = ViewModelProvider(requireActivity())[ProductViewModel::class.java]
+        productViewModel.getListProduct() // gọi cái này để call list về trước
+        productViewModel.productList.observe(requireActivity()){ productList ->
+            Log.d("TAG12345","productList: $productList") // lấy cái list này  gắn lên recycleview của product là được mà, còn chia nó theo category thì tự xử lý
+        }
+
 
         viewBinding.rcvCategory.layoutManager =
             LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
@@ -102,7 +113,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
         // Khởi tạo adapter
         adapter = CategoryAdapter(categoryModels) { productModel ->
             val intent = Intent(context, ProductDetailActivity::class.java).apply {
-                putExtra("PRODUCT_ITEM", productModel)
+//                putExtra("PRODUCT_ITEM", productModel)
             }
             startActivity(intent)
         }

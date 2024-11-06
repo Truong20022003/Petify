@@ -1,5 +1,6 @@
 package com.example.petify.data.server
 
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -22,12 +23,22 @@ class NetworkModule<T>(
             .create(className)
     }
 
-    private fun createClient(): OkHttpClient{
+    private fun createClient(): OkHttpClient {
         val logger = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BASIC }
+
+        val headerInterceptor = Interceptor { chain ->
+            val request = chain.request().newBuilder()
+                .addHeader("Authorization", "trinh_nhung")
+                .build()
+            chain.proceed(request)
+        }
+
         return OkHttpClient.Builder()
+            .addInterceptor(headerInterceptor)
             .addInterceptor(logger)
             .readTimeout(TIME_OUT, TimeUnit.SECONDS)
             .connectTimeout(TIME_OUT, TimeUnit.SECONDS)
             .build()
     }
+
 }

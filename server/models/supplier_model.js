@@ -9,6 +9,8 @@ const supplierSchema = new db.mongoose.Schema(
   },
   {
     collection: "supplier",
+    timestamps: true, 
+    versionKey: false 
   }
 );
 const supplierModel = db.mongoose.model("supplierModel", supplierSchema);

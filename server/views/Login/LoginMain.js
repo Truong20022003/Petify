@@ -99,7 +99,12 @@ document
     }
 
     if (isValid) {
-      fetch("http://localhost:3000/user/getListUser")
+      fetch("http://localhost:3000/user/getListUser",{
+        method: "GET",
+        headers: {
+          "Authorization": "trinh_nhung" // replace with your actual token if needed
+      }
+      })
         .then((response) => response.json())
         .then((data) => {
           console.table(data);
