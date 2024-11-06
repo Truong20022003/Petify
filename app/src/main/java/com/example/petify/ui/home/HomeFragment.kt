@@ -111,12 +111,19 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
 
 
         // Khởi tạo adapter
-        adapter = CategoryAdapter(categoryModels) { productModel ->
-            val intent = Intent(context, ProductDetailActivity::class.java).apply {
-//                putExtra("PRODUCT_ITEM", productModel)
+        adapter = CategoryAdapter(
+            categoryModels = categoryModels,
+            itemClickListener = { productModel ->
+                val intent = Intent(context, ProductDetailActivity::class.java).apply {
+//                    putExtra("PRODUCT_ITEM", productModel)
+                }
+                startActivity(intent)
+            },
+            onFavoriteChanged = { productModel, isFavorite ->
+                // Xử lý khi trạng thái yêu thích của sản phẩm thay đổi
+                // Ví dụ: lưu trạng thái yêu thích của sản phẩm hoặc cập nhật trong cơ sở dữ liệu
             }
-            startActivity(intent)
-        }
+        )
 
         viewBinding.rcvCategory.layoutManager = LinearLayoutManager(context)
 

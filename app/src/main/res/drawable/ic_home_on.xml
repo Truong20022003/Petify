@@ -5,7 +5,7 @@
     android:viewportWidth="28"
     android:viewportHeight="27">
     <path
-        android:strokeColor="#FFA7A7AC"
+        android:strokeColor="#FF2E626A"
         android:strokeWidth="1.5"
         android:strokeLineJoin="round"
         android:pathData="M9.39 26H4.36C2.5 26 1 24.54 1 22.74v-9.58c0-0.7 0.16-1.4 0.45-2.03 0.3-0.63 0.74-1.2 1.28-1.66L11.8 1.8C12.4 1.28 13.19 1 14 1c0.8 0 1.6 0.28 2.2 0.8l9.07 7.67c0.54 0.46 0.98 1.03 1.28 1.66 0.3 0.64 0.45 1.33 0.45 2.03v9.58c0 0.87-0.35 1.7-0.98 2.3-0.63 0.62-1.48 0.96-2.37 0.96h-4.62v-9.77c0-1.35-1.12-2.45-2.51-2.45H11.9c-1.39 0-2.51 1.1-2.51 2.45V26Zm0 0h9.64"/>

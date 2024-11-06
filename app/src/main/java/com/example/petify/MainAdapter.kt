@@ -14,8 +14,8 @@ class MainAdapter(fragmentActivity: FragmentActivity) : FragmentStateAdapter(fra
         return when (position) {
             0 -> HomeFragment()
             1 -> CartFragment()
-            2 -> LoveFragment()
-            3 -> FavoritesFragment()
+            2 -> FavoritesFragment()
+            3 -> LoveFragment()
             else -> throw IllegalArgumentException("Invalid position")
         }
     }

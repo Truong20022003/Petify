@@ -2,8 +2,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_margin="10dp"
-    >
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_margin="10dp">
     <TextView
         android:id="@+id/tvDes"
         android:layout_width="wrap_content"
@@ -32,10 +32,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clipToPadding="false"
+        android:layout_marginTop="10dp"
         android:nestedScrollingEnabled="false"
         android:orientation="horizontal"
         android:paddingHorizontal="8dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintTop_toBottomOf="@+id/tvDes" />
+        app:layout_constraintTop_toBottomOf="@+id/tvDes"
+        tools:listitem="@layout/item_favorites"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
