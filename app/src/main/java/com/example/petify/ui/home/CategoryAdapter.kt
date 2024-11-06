@@ -10,7 +10,8 @@ import com.example.petify.model.ProductModel
 
 class CategoryAdapter(
     private val categoryModels: List<CategoryModel>,
-    private val onItemClick: (ProductModel) -> Unit
+    private val itemClickListener: (ProductModel) -> Unit,
+    private val onFavoriteChanged: (ProductModel, Boolean) -> Unit
 ) : RecyclerView.Adapter<CategoryAdapter.ProductViewHolder>() {
 
     class ProductViewHolder(val binding: ItemRcvCategoryBinding) :
@@ -28,10 +29,12 @@ class CategoryAdapter(
             tvDes.text = categoryModel.product
             Log.d("TAG1111", "list product ${categoryModel.items}")
 
-            val productAdapter =
-                ProductAdapter(categoryModel.items ?: emptyList()) { selectedItem ->
-                    onItemClick(selectedItem)
-                }
+            // Khởi tạo ProductAdapter với các lambda để xử lý sự kiện
+            val productAdapter = ProductAdapter(
+                categoryModel.items ?: emptyList(),
+                itemClickListener,
+                onFavoriteChanged
+            )
             rvItemCategory.adapter = productAdapter
 
             tvViewMore.setOnClickListener {

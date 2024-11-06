@@ -8,8 +8,8 @@
     <color name="gray_200">#EAECF0</color>
     <color name="light_gray">#D7D7D6</color>
     <color name="lighter_gray">#696D6D</color>
-
-
+    <color name="color_ff2e626a">#FF2E626A</color>
+    <color name="color_ffa7a7ac">#FFA7A7AC</color>
     <color name="primaryColor">#5AB2FF</color>
     <color name="primaryDarkColor">#5AB2FF</color>
     <color name="activeIndicator">#5AB2FF</color>

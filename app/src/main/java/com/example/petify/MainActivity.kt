@@ -24,22 +24,22 @@ class MainActivity : BaseActivity<ActivityMainBinding, BaseViewModel>() {
                 when (position) {
                     0 -> {
                         setDefault()
-                        binding.ivHome.setColorFilter(getColor(R.color.primaryColor))
+                        binding.ivHome.setColorFilter(getColor(R.color.color_ff2e626a))
                     }
 
                     1 -> {
                         setDefault()
-                        binding.ivCart.setColorFilter(getColor(R.color.primaryColor))
+                        binding.ivCart.setColorFilter(getColor(R.color.color_ff2e626a))
                     }
 
                     2 -> {
                         setDefault()
-                        binding.ivLove.setColorFilter(getColor(R.color.primaryColor))
+                        binding.ivFavorite.setColorFilter(getColor(R.color.color_ff2e626a))
                     }
 
                     3 -> {
                         setDefault()
-                        binding.ivFavorite.setColorFilter(getColor(R.color.primaryColor))
+                        binding.ivProfile.setColorFilter(getColor(R.color.color_ff2e626a))
                     }
                 }
             }
@@ -51,19 +51,19 @@ class MainActivity : BaseActivity<ActivityMainBinding, BaseViewModel>() {
         binding.btnCart.tap {
             binding.viewPager.currentItem = 1
         }
-        binding.btnLove.tap {
+        binding.btnFavorite.tap {
             binding.viewPager.currentItem = 2
         }
-        binding.btnFavorite.tap {
+        binding.btnProfile.tap {
             binding.viewPager.currentItem = 3
         }
     }
 
     private fun setDefault() {
-        binding.ivHome.setColorFilter(getColor(R.color.color_C3C4C4))
-        binding.ivCart.setColorFilter(getColor(R.color.color_C3C4C4))
-        binding.ivLove.setColorFilter(getColor(R.color.color_C3C4C4))
-        binding.ivFavorite.setColorFilter(getColor(R.color.color_C3C4C4))
+        binding.ivHome.setColorFilter(getColor(R.color.color_ffa7a7ac))
+        binding.ivCart.setColorFilter(getColor(R.color.color_ffa7a7ac))
+        binding.ivFavorite.setColorFilter(getColor(R.color.color_ffa7a7ac))
+        binding.ivProfile.setColorFilter(getColor(R.color.color_ffa7a7ac))
     }
 
 
