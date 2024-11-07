@@ -3,8 +3,9 @@ const orderSchema = new db.mongoose.Schema(
   {
 
     user_id: {
-        type: String,
-        required: true
+      type: db.mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: "user"
     },
     oder_date: {
         type: String,

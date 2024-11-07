@@ -82,3 +82,33 @@ exports.getProductCategoryByCategoryId = async (req, res, next) => {
         res.json({ status: "Not found", result: error });
     }
 };
+
+exports.getProductsGroupedByCategory = async (req, res, next) => {
+    try {
+        let groupedProducts = await product_categoryModel.aggregate([
+            {
+                $addFields: { 
+                    product_id: { $toObjectId: "$product_id" } 
+                }
+            },
+            {
+                $lookup: {
+                    from: "product", // tên collection sản phẩm
+                    localField: "product_id",
+                    foreignField: "_id",
+                    as: "product"
+                }
+            },
+            {
+                $group: {
+                    _id: "$category_id",
+                    product: { $push: "$product"}
+                }
+            }
+        ]);
+        
+        res.json({ status: "Successfully", result: groupedProducts });
+    } catch (error) {
+        res.json({ status: "Failed to group products by category", result: error });
+    }
+};
