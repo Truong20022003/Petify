@@ -11,8 +11,9 @@ const reviewSchema = new db.mongoose.Schema(
         require: true
     },
     user_id: {
-        type: String,
-        require: true
+      type: db.mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: "user"
     }
   },
   {

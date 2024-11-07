@@ -8,7 +8,6 @@ import com.example.petify.BaseViewModel
 import com.example.petify.data.server.CreateInteface
 import com.example.petify.data.server.enitity.InvoiceDetailModel
 import com.example.petify.data.server.repository.InvoiceDetailRepository
-import com.example.petify.data.server.repository.UserRepository
 import kotlinx.coroutines.launch
 
 class InvoiceDetailViewModel : BaseViewModel() {

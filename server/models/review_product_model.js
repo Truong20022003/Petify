@@ -3,12 +3,14 @@ const review_productSchema = new db.mongoose.Schema(
   {
 
     review_id: {
-        type: String,
-        require: true
+      type: db.mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: "review"
     },
     product_id: {
-        type: String,
-        require: true
+      type: db.mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: "product"
     }
   },
   {

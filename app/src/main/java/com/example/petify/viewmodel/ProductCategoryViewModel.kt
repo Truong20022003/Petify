@@ -6,14 +6,17 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.petify.BaseViewModel
 import com.example.petify.data.server.CreateInteface
+import com.example.petify.data.server.enitity.CategoryWithProductsModel
 import com.example.petify.data.server.enitity.ProductCategoryModel
 import com.example.petify.data.server.repository.ProductCategoryRepository
-import com.example.petify.data.server.repository.UserRepository
 import kotlinx.coroutines.launch
 
 class ProductCategoryViewModel : BaseViewModel() {
     private val _productCategoryList = MutableLiveData<List<ProductCategoryModel>?>()
     val productCategoryList: LiveData<List<ProductCategoryModel>?> get() = _productCategoryList
+
+    private val _responseProductCategoryList = MutableLiveData<List<CategoryWithProductsModel>?>()
+    val responseProductCategoryList: LiveData<List<CategoryWithProductsModel>?> get() = _responseProductCategoryList
 
     private val _productCategory = MutableLiveData<ProductCategoryModel?>()
     val productCategory: LiveData<ProductCategoryModel?> get() = _productCategory
@@ -26,6 +29,21 @@ class ProductCategoryViewModel : BaseViewModel() {
 
     private val _isProductCategoryDeleted = MutableLiveData<Boolean>()
     val isProductCategoryDeleted: LiveData<Boolean> get() = _isProductCategoryDeleted
+
+    fun getProductsGroupedByCategory() {
+        viewModelScope.launch {
+            try {
+                val apiService = CreateInteface.createProductCategory()
+                val productCategoryRepository = ProductCategoryRepository(apiService)
+                val result = productCategoryRepository.getProductsGroupedByCategory()
+                _responseProductCategoryList.value = result
+                Log.d("ProductCategoryViewModel", " product categories $result")
+            } catch (e: Exception) {
+                Log.e("ProductCategoryViewModel", "Error geting product categories", e)
+                _responseProductCategoryList.value = null
+            }
+        }
+    }
 
     fun getProductCategories() {
         viewModelScope.launch {

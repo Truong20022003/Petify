@@ -3,12 +3,14 @@ const notificationUserSchema = new db.mongoose.Schema(
   {
 
     user_id: {
-        type: String,
-        required: true
+      type: db.mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: "user"
     },
     notification_id: {
-        type: String,
-        require: true
+      type: db.mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: "notification"
     }
   },
   {
