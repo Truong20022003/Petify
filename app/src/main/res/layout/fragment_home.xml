@@ -179,7 +179,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/constraint_home_2" />
 
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rcv_category"
+                    android:id="@+id/rv_product"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_marginTop="24sp"
