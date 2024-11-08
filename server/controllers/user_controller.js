@@ -77,7 +77,7 @@ exports.getuserById = async (req, res, next) => {
     }
 };
 exports.registerUser = async (req, res, next) => {
-    const { name, email, phone_number, password, user_name, location, avata } = req.body;
+    const { name, email, password } = req.body;
 
     try {
         const userRecord = await admin.auth().createUser({
@@ -88,12 +88,7 @@ exports.registerUser = async (req, res, next) => {
         let newUser = new userModel({
             name,
             email,
-            phone_number,
-            password,
-            user_name,
-            location,
-            avata,
-            uid: userRecord.uid
+            password
         });
 
         const result = await newUser.save();

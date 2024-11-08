@@ -1,6 +1,8 @@
 package com.example.petify.data.server.repository
 
 import android.util.Log
+import com.example.petify.data.server.enitity.LoginRequest
+import com.example.petify.data.server.enitity.RegisterUser
 import com.example.petify.data.server.enitity.UserModel
 import com.example.petify.data.server.service.UserService
 import kotlinx.coroutines.Dispatchers
@@ -33,13 +35,10 @@ class UserRepository(private val api: UserService) {
     suspend fun registerUser(
         name: String,
         email: String,
-        password: String,
-        phoneNumber: String,
-        userName: String,
-        location: String,
-        avatar: String
+        password: String
     ): UserModel? = withContext(Dispatchers.IO) {
-        val response = api.register(email, password, name)
+        val responsePost = RegisterUser(name,email, password)
+        val response = api.register(responsePost)
         if (response.isSuccessful) {
             Log.d("UserRepository", "registerUser Success: ${response.body()}")
             response.body()
@@ -51,7 +50,8 @@ class UserRepository(private val api: UserService) {
 
     suspend fun loginUser(email: String, password: String): UserModel? =
         withContext(Dispatchers.IO) {
-            val response = api.login(email, password)
+            val responsePost = LoginRequest(email, password)
+            val response = api.login(responsePost)
             if (response.isSuccessful) {
                 Log.d("UserRepository", "loginUser Success: ${response.body()}")
                 response.body()

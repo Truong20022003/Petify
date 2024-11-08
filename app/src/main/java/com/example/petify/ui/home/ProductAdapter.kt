@@ -6,8 +6,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.petify.R
+import com.example.petify.data.server.enitity.ProductModel
 import com.example.petify.databinding.ItemProductBinding
-import com.example.petify.model.ProductModel
 
 class ProductAdapter(
     private val productList: List<ProductModel>,
