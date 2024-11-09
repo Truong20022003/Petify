@@ -77,7 +77,7 @@ exports.getuserById = async (req, res, next) => {
     }
 };
 exports.registerUser = async (req, res, next) => {
-    const { name, email, phone_number, password, user_name, location, avata } = req.body;
+    const { name, email, password } = req.body;
 
     try {
         const userRecord = await admin.auth().createUser({
@@ -88,12 +88,7 @@ exports.registerUser = async (req, res, next) => {
         let newUser = new userModel({
             name,
             email,
-            phone_number,
-            password,
-            user_name,
-            location,
-            avata,
-            uid: userRecord.uid
+            password
         });
 
         const result = await newUser.save();
@@ -113,5 +108,18 @@ exports.loginUser = async (req, res, next) => {
         res.json({ status: "Login successful", token });
     } catch (error) {
         res.json({ status: "Login failed", error: error.message });
+    }
+};
+
+exports.resetPassword = async (req, res, next) => {
+    const { email } = req.body;
+
+    try {
+        // Gửi email đặt lại mật khẩu thông qua Firebase Authentication
+        const resetLink = await admin.auth().generatePasswordResetLink(email);
+        
+        res.json({ status: "Reset password email sent successfully", resetLink });
+    } catch (error) {
+        res.json({ status: "Failed to send reset password email", error: error.message });
     }
 };

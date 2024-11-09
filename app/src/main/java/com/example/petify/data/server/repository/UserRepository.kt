@@ -1,7 +1,9 @@
 package com.example.petify.data.server.repository
 
 import android.util.Log
-import com.example.petify.data.server.enitity.UserModel
+import com.example.petify.data.server.enitities.LoginRequest
+import com.example.petify.data.server.enitities.RegisterUser
+import com.example.petify.data.server.enitities.UserModel
 import com.example.petify.data.server.service.UserService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -29,6 +31,47 @@ class UserRepository(private val api: UserService) {
         }
     }
 
+    // xử lý token đăng nhap, luu token de request quen mat khau, theo uid
+    suspend fun registerUser(
+        name: String,
+        email: String,
+        password: String
+    ): UserModel? = withContext(Dispatchers.IO) {
+        val responsePost = RegisterUser(name,email, password)
+        val response = api.register(responsePost)
+        if (response.isSuccessful) {
+            Log.d("UserRepository", "registerUser Success: ${response.body()}")
+            response.body()
+        } else {
+            Log.e("UserRepository", "registerUser Error: ${response.errorBody()}")
+            null
+        }
+    }
+
+    suspend fun loginUser(email: String, password: String): UserModel? =
+        withContext(Dispatchers.IO) {
+            val responsePost = LoginRequest(email, password)
+            val response = api.login(responsePost)
+            if (response.isSuccessful) {
+                Log.d("UserRepository", "loginUser Success: ${response.body()}")
+                response.body()
+            } else {
+                Log.e("UserRepository", "loginUser Error: ${response.errorBody()}")
+                null
+            }
+        }
+
+    suspend fun resetPassword(email: String): Boolean = withContext(Dispatchers.IO) {
+        val response = api.resetPassword(email)
+        if (response.isSuccessful) {
+            Log.d("UserRepository", "resetPassword Success: Password reset email sent")
+            true
+        } else {
+            Log.e("UserRepository", "resetPassword Error: ${response.errorBody()}")
+            false
+        }
+    }
+
     suspend fun getUserById(id: String): UserModel? = withContext(Dispatchers.IO) {
         val response = api.getUserById(id)
         if (response.isSuccessful) {
@@ -41,7 +84,8 @@ class UserRepository(private val api: UserService) {
     }
 
     suspend fun updateUser(id: String, User: UserModel): UserModel? = withContext(
-        Dispatchers.IO) {
+        Dispatchers.IO
+    ) {
         val response = api.updateUser(id, User)
         if (response.isSuccessful) {
             Log.d("UserRepository", "updateUser Success: ${response.body()}")

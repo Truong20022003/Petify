@@ -82,3 +82,55 @@ exports.getProductCategoryByCategoryId = async (req, res, next) => {
         res.json({ status: "Not found", result: error });
     }
 };
+
+exports.getProductsGroupedByCategory = async (req, res, next) => {
+    try {
+        let groupedProducts = await product_categoryModel.aggregate([
+            {
+                $addFields: { 
+                    product_id: { $toObjectId: "$product_id" },
+                    category_id: { $toObjectId: "$category_id" }
+                }
+            },
+            {
+                $lookup: {
+                    from: "product", 
+                    localField: "product_id",
+                    foreignField: "_id",
+                    as: "product"
+                }
+            },
+            {
+                $lookup: {
+                    from: "category",
+                    localField: "category_id",
+                    foreignField: "_id",
+                    as: "category"
+                }
+            },
+            {
+                $addFields: {
+                    category_name: { $arrayElemAt: ["$category.name", 0] }
+                }
+            },
+            // Giải nén mảng product nếu có
+            {
+                $unwind: {
+                    path: "$product", 
+                    preserveNullAndEmptyArrays: true  // Giữ lại nếu không có sản phẩm
+                }
+            },
+            {
+                $group: {
+                    _id: "$category_id",
+                    category_name: { $first: "$category_name" },
+                    product: { $push: "$product" }  // Sử dụng $push để gom lại các sản phẩm vào mảng phẳng
+                }
+            }
+        ]);
+
+        res.json({ status: "Successfully", result: groupedProducts });
+    } catch (error) {
+        res.json({ status: "Failed to group products by category", result: error });
+    }
+};

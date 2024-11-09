@@ -1,6 +1,8 @@
 package com.example.petify.data.server.service
 
-import com.example.petify.data.server.enitity.UserModel
+import com.example.petify.data.server.enitities.LoginRequest
+import com.example.petify.data.server.enitities.RegisterUser
+import com.example.petify.data.server.enitities.UserModel
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -17,10 +19,10 @@ interface UserService {
     suspend fun addUser(@Body user: UserModel): Response<UserModel>
 
     @POST("user/login")
-    suspend fun login(@Body email: String, password: String): Response<UserModel>
+    suspend fun login(@Body user : LoginRequest): Response<UserModel>
 
     @POST("user/register")
-    suspend fun register(@Body email: String, password: String): Response<UserModel>
+    suspend fun register(@Body user : RegisterUser): Response<UserModel>
 
     @GET("user/getuserById/{id}")
     suspend fun getUserById(@Path("id") id: String): Response<UserModel>
@@ -33,4 +35,7 @@ interface UserService {
 
     @DELETE("user/deleteuser/{id}")
     suspend fun deleteUser(@Path("id") id: String): Response<Unit>
+
+    @POST("user/reset-password")
+    suspend fun resetPassword(@Body email: String): Response<Unit>
 }

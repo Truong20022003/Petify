@@ -1,60 +1,155 @@
 package com.example.petify.ui.favorites
 
-import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
+import android.content.Intent
 import android.view.View
-import android.view.ViewGroup
-import com.example.petify.R
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.petify.BaseFragment
+import com.example.petify.databinding.FragmentFavoritesBinding
+import com.example.petify.model.ProductModel
+import com.example.petify.ui.home.MenuProductAdapter
+import com.example.petify.ui.productdetail.ProductDetailActivity
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [FavoritesFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
-class FavoritesFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+class FavoritesFragment : BaseFragment<FragmentFavoritesBinding>() {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private lateinit var adapter: FavoritesAdapter
+    private lateinit var menuAdapter: MenuProductAdapter // Adapter cho menu
+    private val favoriteProducts = mutableListOf<ProductModel>()
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_favorites, container, false)
-    }
+    override fun inflateViewBinding() = FragmentFavoritesBinding.inflate(layoutInflater)
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment FavoritesFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            FavoritesFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
+    // Dữ liệu mẫu cho danh sách menu
+    private val menuItems = listOf("All", "Settings", "Profile", "Logout")
+
+    val ListProduct = listOf(
+        ProductModel(
+            id = "1",
+            supplierId = "sup1",
+            price = 200000,
+            date = "2024-10-01",
+            expiryDate = "2025-10-01",
+            quantity = 100,
+            name = "Sản phẩm A",
+            image = listOf(
+                "https://kinpetshop.com/wp-content/uploads/thuc-an-hat-cho-meo-kit-cat-kitten-pregnant-cat-1-2kg.jpg",
+                "https://kinpetshop.com/wp-content/uploads/thuc-an-hat-cho-meo-kit-cat-kitten-pregnant-cat-1-2kg.jpg"
+            ),
+            status = "Còn hàng",
+            description = "Mô tả chi tiết cho sản phẩm A",
+            sale = 10 // Giảm giá 10%
+        ),
+        ProductModel(
+            id = "2",
+            supplierId = "sup2",
+            price = 150000,
+            date = "2024-10-05",
+            expiryDate = "2025-10-05",
+            quantity = 50,
+            name = "Sản phẩm B",
+            image = listOf(
+                "https://kinpetshop.com/wp-content/uploads/thuc-an-hat-cho-meo-kit-cat-kitten-pregnant-cat-1-2kg.jpg",
+                "https://kinpetshop.com/wp-content/uploads/thuc-an-hat-cho-meo-kit-cat-kitten-pregnant-cat-1-2kg.jpg"
+            ),
+            status = "Còn hàng",
+            description = "Mô tả chi tiết cho sản phẩm B",
+            sale = 5 // Giảm giá 5%
+        ),
+        ProductModel(
+            id = "3",
+            supplierId = "sup3",
+            price = 300000,
+            date = "2024-10-07",
+            expiryDate = "2025-10-07",
+            quantity = 0,
+            name = "Sản phẩm C",
+            image = listOf(
+                "https://kinpetshop.com/wp-content/uploads/thuc-an-hat-cho-meo-kit-cat-kitten-pregnant-cat-1-2kg.jpg",
+                "https://kinpetshop.com/wp-content/uploads/thuc-an-hat-cho-meo-kit-cat-kitten-pregnant-cat-1-2kg.jpg"
+            ),
+            status = "Hết hàng",
+            description = "Mô tả chi tiết cho sản phẩm C",
+            sale = 0 // Không có giảm giá
+        ),
+        ProductModel(
+            id = "3",
+            supplierId = "sup3",
+            price = 300000,
+            date = "2024-10-07",
+            expiryDate = "2025-10-07",
+            quantity = 0,
+            name = "Sản phẩm C",
+            image = listOf(
+                "https://kinpetshop.com/wp-content/uploads/thuc-an-hat-cho-meo-kit-cat-kitten-pregnant-cat-1-2kg.jpg",
+                "https://kinpetshop.com/wp-content/uploads/thuc-an-hat-cho-meo-kit-cat-kitten-pregnant-cat-1-2kg.jpg"
+            ),
+            status = "Hết hàng",
+            description = "Mô tả chi tiết cho sản phẩm C",
+            sale = 0 // Không có giảm giá
+        ),
+        ProductModel(
+            id = "3",
+            supplierId = "sup3",
+            price = 300000,
+            date = "2024-10-07",
+            expiryDate = "2025-10-07",
+            quantity = 0,
+            name = "Sản phẩm C",
+            image = listOf(
+                "https://kinpetshop.com/wp-content/uploads/thuc-an-hat-cho-meo-kit-cat-kitten-pregnant-cat-1-2kg.jpg",
+                "https://kinpetshop.com/wp-content/uploads/thuc-an-hat-cho-meo-kit-cat-kitten-pregnant-cat-1-2kg.jpg"
+            ),
+            status = "Hết hàng",
+            description = "Mô tả chi tiết cho sản phẩm C",
+            sale = 0 // Không có giảm giá
+        )
+    )
+
+
+    override fun initView() {
+        super.initView()
+
+        // Thiết lập RecyclerView cho menu
+        viewBinding.rcvMenu.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        menuAdapter = MenuProductAdapter(menuItems)
+        viewBinding.rcvMenu.adapter = menuAdapter
+
+        // Thiết lập RecyclerView cho sản phẩm
+        viewBinding.rcvFragment.layoutManager = GridLayoutManager(context, 2)
+//        adapter = ProductAdapter(ListProduct) { productModel ->
+//            val intent = Intent(context, ProductDetailActivity::class.java).apply {
+//                putExtra("PRODUCT_ITEM", productModel)
+//            }
+//            startActivity(intent)
+//        }
+
+
+        // Set up ProductAdapter with favorite change callback
+        adapter = FavoritesAdapter(ListProduct, { product ->
+            // Handle product click if needed
+            val intent = Intent(context, ProductDetailActivity::class.java).apply {
+//                putExtra("PRODUCT_ITEM", product)
             }
+            startActivity(intent)
+        }, { product, isFavorite ->
+            // Update favorite products list based on selection
+            if (isFavorite) {
+                favoriteProducts.add(product)
+            } else {
+                favoriteProducts.remove(product)
+            }
+        })
+        viewBinding.rcvFragment.adapter = adapter
+
+        // Kiểm tra nếu danh sách yêu thích trống
+        if (ListProduct.isEmpty()) {
+            viewBinding.tvEmptyFavorites.visibility = View.VISIBLE
+        } else {
+            viewBinding.tvEmptyFavorites.visibility = View.GONE
+        }
+
     }
+
+
 }

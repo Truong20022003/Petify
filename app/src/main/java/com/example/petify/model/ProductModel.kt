@@ -15,7 +15,7 @@ data class ProductModel(
     @SerializedName("expiryDate")
     val expiryDate: String,
     @SerializedName("quantity")
-    val quantity: Int,
+    var quantity: Int = 0,
     @SerializedName("name")
     val name: String,
     @SerializedName("image")
