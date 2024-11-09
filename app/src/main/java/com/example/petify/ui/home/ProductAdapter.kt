@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.petify.R
-import com.example.petify.data.server.enitity.ProductModel
+import com.example.petify.data.server.enitities.ProductModel
 import com.example.petify.databinding.ItemProductBinding
 
 class ProductAdapter(

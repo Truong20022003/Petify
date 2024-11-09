@@ -1,6 +1,6 @@
 package com.example.petify.data.server.service
 
-import com.example.petify.data.server.enitity.ReviewProductModel
+import com.example.petify.data.server.enitities.ReviewProductModel
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE

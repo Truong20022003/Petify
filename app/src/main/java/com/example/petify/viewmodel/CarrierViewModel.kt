@@ -6,7 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.petify.BaseViewModel
 import com.example.petify.data.server.CreateInteface
-import com.example.petify.data.server.enitity.CarrierModel
+import com.example.petify.data.server.enitities.CarrierModel
 import com.example.petify.data.server.repository.CarrierRepository
 import kotlinx.coroutines.launch
 

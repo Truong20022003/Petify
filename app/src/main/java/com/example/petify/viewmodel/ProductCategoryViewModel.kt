@@ -6,8 +6,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.petify.BaseViewModel
 import com.example.petify.data.server.CreateInteface
-import com.example.petify.data.server.enitity.CategoryWithProductsModel
-import com.example.petify.data.server.enitity.ProductCategoryModel
+import com.example.petify.data.server.enitities.CategoryWithProductsModel
+import com.example.petify.data.server.enitities.ProductCategoryModel
 import com.example.petify.data.server.repository.ProductCategoryRepository
 import kotlinx.coroutines.launch
 

@@ -6,7 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.petify.BaseViewModel
 import com.example.petify.data.server.CreateInteface
-import com.example.petify.data.server.enitity.ReviewModel
+import com.example.petify.data.server.enitities.ReviewModel
 import com.example.petify.data.server.repository.ReviewRepository
 import kotlinx.coroutines.launch
 
