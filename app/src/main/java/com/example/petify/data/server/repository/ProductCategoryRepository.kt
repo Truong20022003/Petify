@@ -1,9 +1,8 @@
 package com.example.petify.data.server.repository
 
 import android.util.Log
-import com.example.petify.data.server.enitity.CategoryWithProductsModel
-import com.example.petify.data.server.enitity.ProductCategoryModel
-import com.example.petify.data.server.enitity.ResponeCategoryProduct
+import com.example.petify.data.server.enitities.CategoryWithProductsModel
+import com.example.petify.data.server.enitities.ProductCategoryModel
 import com.example.petify.data.server.service.ProductCategoryService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

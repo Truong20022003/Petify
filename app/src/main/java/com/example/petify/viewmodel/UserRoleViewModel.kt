@@ -6,7 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.petify.BaseViewModel
 import com.example.petify.data.server.CreateInteface
-import com.example.petify.data.server.enitity.UserRoleModel
+import com.example.petify.data.server.enitities.UserRoleModel
 import com.example.petify.data.server.repository.UserRoleRepository
 import kotlinx.coroutines.launch
 

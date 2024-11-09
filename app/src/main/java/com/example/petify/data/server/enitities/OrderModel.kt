@@ -1,4 +1,4 @@
-package com.example.petify.data.server.enitity
+package com.example.petify.data.server.enitities
 
 import com.google.gson.annotations.SerializedName
 

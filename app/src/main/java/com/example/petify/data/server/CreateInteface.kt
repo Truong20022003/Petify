@@ -15,96 +15,96 @@ import com.example.petify.data.server.service.RoleService
 import com.example.petify.data.server.service.SupplierService
 import com.example.petify.data.server.service.UserRoleService
 import com.example.petify.data.server.service.UserService
+import com.example.petify.ultils.Constans
 
 
 object CreateInteface {
-    const val DOMAIN = "http://192.168.0.104:3000/"
     fun createCarrier(): CarrierService {
-        return NetworkModule<CarrierService>(DOMAIN).create(
+        return NetworkModule<CarrierService>(Constans.DOMAIN).create(
             CarrierService::class.java
         )
     }
 
     fun createCategory(): CategoryService {
-        return NetworkModule<CategoryService>(DOMAIN).create(
+        return NetworkModule<CategoryService>(Constans.DOMAIN).create(
             CategoryService::class.java
         )
     }
 
     fun createInvoice(): InvoiceService {
-        return NetworkModule<InvoiceService>(DOMAIN).create(
+        return NetworkModule<InvoiceService>(Constans.DOMAIN).create(
             InvoiceService::class.java
         )
     }
 
     fun createInvoiceDetail(): InvoiceDetailService {
-        return NetworkModule<InvoiceDetailService>(DOMAIN).create(
+        return NetworkModule<InvoiceDetailService>(Constans.DOMAIN).create(
             InvoiceDetailService::class.java
         )
     }
 
     fun createNotification(): NotificationService {
-        return NetworkModule<NotificationService>(DOMAIN).create(
+        return NetworkModule<NotificationService>(Constans.DOMAIN).create(
             NotificationService::class.java
         )
     }
 
     fun createNotificationUser(): NotificationUserService {
-        return NetworkModule<NotificationUserService>(DOMAIN).create(
+        return NetworkModule<NotificationUserService>(Constans.DOMAIN).create(
             NotificationUserService::class.java
         )
     }
 
     fun createOrder(): OrderService {
-        return NetworkModule<OrderService>(DOMAIN).create(
+        return NetworkModule<OrderService>(Constans.DOMAIN).create(
             OrderService::class.java
         )
     }
 
     fun createProductCategory(): ProductCategoryService {
-        return NetworkModule<ProductCategoryService>(DOMAIN).create(
+        return NetworkModule<ProductCategoryService>(Constans.DOMAIN).create(
             ProductCategoryService::class.java
         )
     }
 
     fun createProduct(): ProductService {
-        return NetworkModule<ProductService>(DOMAIN).create(
+        return NetworkModule<ProductService>(Constans.DOMAIN).create(
             ProductService::class.java
         )
     }
 
     fun createReview(): ReviewService {
-        return NetworkModule<ReviewService>(DOMAIN).create(
+        return NetworkModule<ReviewService>(Constans.DOMAIN).create(
             ReviewService::class.java
         )
     }
 
     fun createReviewProduct(): ReviewProductService {
-        return NetworkModule<ReviewProductService>(DOMAIN).create(
+        return NetworkModule<ReviewProductService>(Constans.DOMAIN).create(
             ReviewProductService::class.java
         )
     }
 
     fun createRole(): RoleService {
-        return NetworkModule<RoleService>(DOMAIN).create(
+        return NetworkModule<RoleService>(Constans.DOMAIN).create(
             RoleService::class.java
         )
     }
 
     fun createSupplier(): SupplierService {
-        return NetworkModule<SupplierService>(DOMAIN).create(
+        return NetworkModule<SupplierService>(Constans.DOMAIN).create(
             SupplierService::class.java
         )
     }
 
     fun createUserRole(): UserRoleService {
-        return NetworkModule<UserRoleService>(DOMAIN).create(
+        return NetworkModule<UserRoleService>(Constans.DOMAIN).create(
             UserRoleService::class.java
         )
     }
 
     fun createUser(): UserService {
-        return NetworkModule<UserService>(DOMAIN).create(
+        return NetworkModule<UserService>(Constans.DOMAIN).create(
             UserService::class.java
         )
     }

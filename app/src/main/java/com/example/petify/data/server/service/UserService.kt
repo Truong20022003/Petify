@@ -1,8 +1,8 @@
 package com.example.petify.data.server.service
 
-import com.example.petify.data.server.enitity.LoginRequest
-import com.example.petify.data.server.enitity.RegisterUser
-import com.example.petify.data.server.enitity.UserModel
+import com.example.petify.data.server.enitities.LoginRequest
+import com.example.petify.data.server.enitities.RegisterUser
+import com.example.petify.data.server.enitities.UserModel
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE

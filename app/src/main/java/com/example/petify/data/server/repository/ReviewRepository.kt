@@ -1,7 +1,7 @@
 package com.example.petify.data.server.repository
 
 import android.util.Log
-import com.example.petify.data.server.enitity.ReviewModel
+import com.example.petify.data.server.enitities.ReviewModel
 import com.example.petify.data.server.service.ReviewService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

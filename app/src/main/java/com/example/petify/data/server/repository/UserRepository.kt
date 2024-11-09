@@ -1,9 +1,9 @@
 package com.example.petify.data.server.repository
 
 import android.util.Log
-import com.example.petify.data.server.enitity.LoginRequest
-import com.example.petify.data.server.enitity.RegisterUser
-import com.example.petify.data.server.enitity.UserModel
+import com.example.petify.data.server.enitities.LoginRequest
+import com.example.petify.data.server.enitities.RegisterUser
+import com.example.petify.data.server.enitities.UserModel
 import com.example.petify.data.server.service.UserService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
