@@ -1,4 +1,4 @@
-package com.example.petify.ui.home
+package com.example.petify.ui.favorites
 
 import android.util.Log
 import android.view.LayoutInflater
@@ -6,24 +6,32 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.petify.R
-import com.example.petify.data.server.enitity.ProductModel
-import com.example.petify.databinding.ItemProductBinding
+import com.example.petify.databinding.ItemFavoritesBinding
+import com.example.petify.model.ProductModel
 
-class ProductAdapter(
+class FavoritesAdapter(
     private val productList: List<ProductModel>,
     private val itemClickListener: (ProductModel) -> Unit,
     private val onFavoriteChanged: (ProductModel, Boolean) -> Unit
-) : RecyclerView.Adapter<ProductAdapter.ProductViewHolder>() {
+) : RecyclerView.Adapter<FavoritesAdapter.FavoritesViewHolder>() {
+
 
     private val favoriteProducts = mutableSetOf<ProductModel>()
-    class ProductViewHolder(val binding: ItemProductBinding) : RecyclerView.ViewHolder(binding.root)
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductViewHolder {
-        val binding = ItemProductBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return ProductViewHolder(binding)
+    class FavoritesViewHolder(val binding: ItemFavoritesBinding) :
+        RecyclerView.ViewHolder(binding.root)
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FavoritesViewHolder {
+        val binding =
+            ItemFavoritesBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return FavoritesViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: ProductViewHolder, position: Int) {
+    override fun getItemCount(): Int {
+        return productList.size
+    }
+
+    override fun onBindViewHolder(holder: FavoritesViewHolder, position: Int) {
         val product = productList[position]
         Log.d("TAG1111", "Url ${product.image[0]}")
         holder.binding.apply {
@@ -71,6 +79,4 @@ class ProductAdapter(
         }
     }
 
-    override fun getItemCount(): Int = productList.size
 }
-

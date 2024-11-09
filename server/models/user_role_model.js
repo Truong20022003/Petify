@@ -3,12 +3,14 @@ const user_roleSchema = new db.mongoose.Schema(
   {
 
     user_id: {
-        type: String,
-        require: true
+      type: db.mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: "user"
     },
     role_id: {
-        type: String,
-        require: true
+      type: db.mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: "role"
     }
   },
   {

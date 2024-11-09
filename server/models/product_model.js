@@ -3,8 +3,9 @@ const productSchema = new db.mongoose.Schema(
   {
 
     supplier_id: {
-        type: String,
-        required: true
+        type: db.mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: "supplier"
     },
     price: {
         type: Number,

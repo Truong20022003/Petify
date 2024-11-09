@@ -17,8 +17,14 @@ class UserViewModel : BaseViewModel() {
     private val _user = MutableLiveData<UserModel?>()
     val user: LiveData<UserModel?> get() = _user
 
+    private val _loginSuccess = MutableLiveData<Boolean>()
+    val loginSuccess: LiveData<Boolean> get() = _loginSuccess
+
     private val _isPasswordReset = MutableLiveData<Boolean>()
     val isPasswordReset: LiveData<Boolean> get() = _isPasswordReset
+
+    private val _registrationSuccess = MutableLiveData<Boolean>()
+    val registrationSuccess: LiveData<Boolean> get() = _registrationSuccess
 
     private val _isUserAdded = MutableLiveData<Boolean>()
     val isUserAdded: LiveData<Boolean> get() = _isUserAdded
@@ -63,30 +69,39 @@ class UserViewModel : BaseViewModel() {
     fun loginUser(email: String, password: String) {
         viewModelScope.launch {
             try {
-
                 val apiService = CreateInteface.createUser()
                 val userRepository = UserRepository(apiService)
-                _user.value = userRepository.loginUser(email, password)
+                val result = userRepository.loginUser(email, password)
+                if (result != null) {
+                    _user.value = result
+                    _loginSuccess.value = true
+                } else {
+                    _loginSuccess.value = false
+                }
             } catch (e: Exception) {
-                Log.e("UserViewModel", "Error logging in user", e)
+                _loginSuccess.value = false
                 _errorMessage.value = "Error logging in user: ${e.message}"
             }
         }
     }
 
+
     fun registerUser(name: String, email: String, password: String) {
         viewModelScope.launch {
             try {
-
                 val apiService = CreateInteface.createUser()
                 val userRepository = UserRepository(apiService)
-                _user.value = userRepository.registerUser(name, email, password, "", "", "", "")
+                val registeredUser = userRepository.registerUser(name, email, password)
+                _user.value = registeredUser
+                _registrationSuccess.value = registeredUser != null
             } catch (e: Exception) {
                 Log.e("UserViewModel", "Error registering user", e)
                 _errorMessage.value = "Error registering user: ${e.message}"
+                _registrationSuccess.value = false
             }
         }
     }
+
 
     fun resetPassword(email: String) {
         viewModelScope.launch {

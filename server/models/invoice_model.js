@@ -30,12 +30,14 @@ const invoiceSchema = new db.mongoose.Schema(
             require: true
         },
         carrier_id: {
-            type: String,
-            require: true
+            type: db.mongoose.Schema.Types.ObjectId,
+            required: true,
+            ref: "carrier"
         },
         order_id: {
-            type: String,
-            require: true
+            type: db.mongoose.Schema.Types.ObjectId,
+            required: true,
+            ref: "order"
         },
         create_at: {
             type: String,

@@ -1,5 +1,7 @@
 package com.example.petify.data.server.service
 
+import com.example.petify.data.server.enitity.LoginRequest
+import com.example.petify.data.server.enitity.RegisterUser
 import com.example.petify.data.server.enitity.UserModel
 import retrofit2.Response
 import retrofit2.http.Body
@@ -17,10 +19,10 @@ interface UserService {
     suspend fun addUser(@Body user: UserModel): Response<UserModel>
 
     @POST("user/login")
-    suspend fun login(@Body email: String, password: String): Response<UserModel>
+    suspend fun login(@Body user : LoginRequest): Response<UserModel>
 
     @POST("user/register")
-    suspend fun register(@Body email: String, password: String, name: String): Response<UserModel>
+    suspend fun register(@Body user : RegisterUser): Response<UserModel>
 
     @GET("user/getuserById/{id}")
     suspend fun getUserById(@Path("id") id: String): Response<UserModel>

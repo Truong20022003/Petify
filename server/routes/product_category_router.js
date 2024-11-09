@@ -9,4 +9,5 @@ router.delete("/deleteproduct_category/:id",product_categoryController.deletepro
 router.get("/getproduct_categoryById/:id",product_categoryController.getproduct_categoryById)
 router.get("/get-Product-Category-By-Product-Id/:id",product_categoryController.getProductCategoryByProductId)
 router.get("/get-ProductCategory-By-CategoryId/:id",product_categoryController.getProductCategoryByCategoryId)
+router.get("/getProductsGroupedByCategory",product_categoryController.getProductsGroupedByCategory)
 module.exports = router;
