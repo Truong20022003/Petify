@@ -29,7 +29,7 @@
     <string name="quen_mat_khau">Quên mật khẩu?</string>
     <string name="mat_khau">Mật khẩu</string>
 
-<string name="tv_dat_lai_mat_khau">Chọn chi tiết liên hệ nào chúng tôi sẽ sử dụng để đặt lại mật khẩu của bạn</string>
+    <string name="tv_dat_lai_mat_khau">Chọn chi tiết liên hệ nào chúng tôi sẽ sử dụng để đặt lại mật khẩu của bạn</string>
     <string name="tiep_tuc">Tiếp tục</string>
 
     <!-- TODO: Remove or change this placeholder text -->
