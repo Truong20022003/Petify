@@ -39,6 +39,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
     private lateinit var productViewModel: ProductViewModel
     private lateinit var categoryViewModel: CategoryViewModel
     private lateinit var productCategoryViewModel: ProductCategoryViewModel
+    private lateinit var categoryProductParentAdapter : CategoryProductParentAdapter
 
     override fun initView() {
         super.initView()
@@ -64,10 +65,33 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
                viewBinding.rvCategory.adapter = adapter
            }
         }
+
+
         productCategoryViewModel = ViewModelProvider(requireActivity())[ProductCategoryViewModel::class.java]
         productCategoryViewModel.getProductsGroupedByCategory()
         productCategoryViewModel.responseProductCategoryList.observe(this){
             Log.d("TAG12345","productCategoryList: $it")
+                it?.let { categories ->
+                    categoryProductParentAdapter = CategoryProductParentAdapter(
+                        categories.toMutableList(),
+                        itemClickListener = { productModel ->
+                            val intent = Intent(context, ProductDetailActivity::class.java)
+                            startActivity(intent)
+                        },
+                        onFavoriteChanged = { productModel, isFavorite ->
+                            Log.d(
+                                "TAG12345",
+                                "Product ${productModel.id} favorite status: $isFavorite"
+                            )
+                        }
+                    )
+
+                    viewBinding.rvProduct.adapter = categoryProductParentAdapter
+                    viewBinding.rvProduct.layoutManager = LinearLayoutManager(requireContext())
+
+
+                }
+
         }
 
         val slideshowAdapter = Home_SlideshowAdapter(images)
