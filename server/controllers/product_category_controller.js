@@ -101,9 +101,6 @@ exports.getProductsGroupedByCategory = async (req, res, next) => {
                 }
             },
             {
-                $unwind: "$product" 
-            },
-            {
                 $lookup: {
                     from: "category",
                     localField: "category_id",
@@ -113,14 +110,21 @@ exports.getProductsGroupedByCategory = async (req, res, next) => {
             },
             {
                 $addFields: {
-                    category_name: { $arrayElemAt: ["$category.name", 0] } 
+                    category_name: { $arrayElemAt: ["$category.name", 0] }
+                }
+            },
+            // Giải nén mảng product nếu có
+            {
+                $unwind: {
+                    path: "$product", 
+                    preserveNullAndEmptyArrays: true  // Giữ lại nếu không có sản phẩm
                 }
             },
             {
                 $group: {
                     _id: "$category_id",
                     category_name: { $first: "$category_name" },
-                    products: { $push: "$product" }
+                    product: { $push: "$product" }  // Sử dụng $push để gom lại các sản phẩm vào mảng phẳng
                 }
             }
         ]);
@@ -130,4 +134,3 @@ exports.getProductsGroupedByCategory = async (req, res, next) => {
         res.json({ status: "Failed to group products by category", result: error });
     }
 };
-
