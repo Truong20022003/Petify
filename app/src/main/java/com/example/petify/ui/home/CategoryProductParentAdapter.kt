@@ -4,8 +4,8 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.petify.data.server.enitity.CategoryWithProductsModel
-import com.example.petify.data.server.enitity.ProductModel
+import com.example.petify.data.server.enitities.CategoryWithProductsModel
+import com.example.petify.data.server.enitities.ProductModel
 import com.example.petify.databinding.ItemRcvCategoryBinding
 
 class CategoryProductParentAdapter(

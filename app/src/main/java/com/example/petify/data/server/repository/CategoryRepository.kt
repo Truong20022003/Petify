@@ -1,7 +1,7 @@
 package com.example.petify.data.server.repository
 
 import android.util.Log
-import com.example.petify.data.server.enitity.CategoryModel
+import com.example.petify.data.server.enitities.CategoryModel
 import com.example.petify.data.server.service.CategoryService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

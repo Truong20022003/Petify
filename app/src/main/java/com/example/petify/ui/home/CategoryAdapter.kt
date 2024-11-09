@@ -1,10 +1,9 @@
 package com.example.petify.ui.home
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.petify.data.server.enitity.CategoryModel
+import com.example.petify.data.server.enitities.CategoryModel
 import com.example.petify.databinding.ItemRvCategoryBinding
 import com.example.petify.view.tap
 

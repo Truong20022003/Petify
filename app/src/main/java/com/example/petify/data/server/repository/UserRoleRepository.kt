@@ -1,7 +1,7 @@
 package com.example.petify.data.server.repository
 
 import android.util.Log
-import com.example.petify.data.server.enitity.UserRoleModel
+import com.example.petify.data.server.enitities.UserRoleModel
 import com.example.petify.data.server.service.UserRoleService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

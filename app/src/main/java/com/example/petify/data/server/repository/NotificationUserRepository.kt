@@ -1,7 +1,7 @@
 package com.example.petify.data.server.repository
 
 import android.util.Log
-import com.example.petify.data.server.enitity.NotificationUserModel
+import com.example.petify.data.server.enitities.NotificationUserModel
 import com.example.petify.data.server.service.NotificationUserService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

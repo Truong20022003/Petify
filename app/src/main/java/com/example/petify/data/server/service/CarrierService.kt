@@ -1,6 +1,6 @@
 package com.example.petify.data.server.service
 
-import com.example.petify.data.server.enitity.CarrierModel
+import com.example.petify.data.server.enitities.CarrierModel
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -8,7 +8,6 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
-import retrofit2.http.Query
 
 interface CarrierService {
     @GET("carrier/getListCarier")
