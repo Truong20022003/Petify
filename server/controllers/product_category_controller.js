@@ -88,27 +88,46 @@ exports.getProductsGroupedByCategory = async (req, res, next) => {
         let groupedProducts = await product_categoryModel.aggregate([
             {
                 $addFields: { 
-                    product_id: { $toObjectId: "$product_id" } 
+                    product_id: { $toObjectId: "$product_id" },
+                    category_id: { $toObjectId: "$category_id" }
                 }
             },
             {
                 $lookup: {
-                    from: "product", // tên collection sản phẩm
+                    from: "product", 
                     localField: "product_id",
                     foreignField: "_id",
                     as: "product"
                 }
             },
             {
+                $unwind: "$product" 
+            },
+            {
+                $lookup: {
+                    from: "category",
+                    localField: "category_id",
+                    foreignField: "_id",
+                    as: "category"
+                }
+            },
+            {
+                $addFields: {
+                    category_name: { $arrayElemAt: ["$category.name", 0] } 
+                }
+            },
+            {
                 $group: {
                     _id: "$category_id",
-                    product: { $push: "$product"}
+                    category_name: { $first: "$category_name" },
+                    products: { $push: "$product" }
                 }
             }
         ]);
-        
+
         res.json({ status: "Successfully", result: groupedProducts });
     } catch (error) {
         res.json({ status: "Failed to group products by category", result: error });
     }
 };
+

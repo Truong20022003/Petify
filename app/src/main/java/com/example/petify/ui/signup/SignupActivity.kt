@@ -33,7 +33,6 @@ class SignupActivity : BaseActivity<ActivitySignupBinding,UserViewModel>() {
                 val intent = Intent(this, LoginActivity::class.java)
                 startActivity(intent)
                 Toast.makeText(this, "Registration successful!", Toast.LENGTH_SHORT).show()
-                // Optionally, navigate to another screen
             } else {
                 Toast.makeText(this, "Registration failed. Please try again.", Toast.LENGTH_SHORT).show()
             }
