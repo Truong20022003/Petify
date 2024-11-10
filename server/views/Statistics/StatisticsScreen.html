@@ -54,7 +54,7 @@
           <!--  -->
           <div id="manageMenu">
             <a
-              class="flex items-center py-2 px-6 cursor-pointer bg-yellow-500 text-white"
+              class="flex items-center py-2 px-6 cursor-pointer  "
               onclick="toggleUserSubmenu()"
             >
               <i class="fas fa-user"> </i>
@@ -63,7 +63,7 @@
             </a>
             <div id="userSubmenuItems" class="submenu pl-12">
               <a
-                class="block py-2 px-6 text-gray-700 hover:bg-gray-200 block py-2 px-6 text-gray-700 hover:bg-gray-200 active"
+                class="block py-2 px-6 text-gray-700 hover:bg-gray-200 block py-2 px-6 text-gray-700 hover:bg-gray-200  "
                 href="/views/User/user/UserScreen.html"
                 onclick="activateSubmenu(this)"
               >
@@ -119,54 +119,54 @@
               </a>
             </div>
           </div>
-        <!-- danh gia -->
-        <a
-        class="flex items-center py-2 px-6 text-gray-700 hover:bg-gray-200"
-        href="/views/Review/ReviewScreen.html"
-      >
-        <i class="fas fa-star"></i>
-        <span class="ml-3"> Quản lý đánh giá</span>
-      </a>
-      <!-- hóa đơn -->
-      <a
-        class="flex items-center py-2 px-6 text-gray-700 hover:bg-gray-200"
-        href="/views/Invoice/InvoiceScreen.html"
-      >
-        <i class="fas fa-file-invoice"></i>
-        <span class="ml-3"> Quản lý hóa đơn</span>
-      </a>
-      <!-- đơn hàng -->
-      <a
-        class="flex items-center py-2 px-6 text-gray-700 hover:bg-gray-200  "
-        href="/views/Oder/OderScreen.html"
-      >
-        <i class="fas fa-shopping-cart"></i>
-        <span class="ml-3"> Quản lý đơn hàng</span>
-      </a>
-      <!-- thông báo -->
-      <a
-        class="flex items-center py-2 px-6 text-gray-700 hover:bg-gray-200"
-        href="/views/Notification/NotificationScreen.html"
-      >
-        <i class="fas fa-bell"></i>
-        <span class="ml-3"> Quản lý thông báo</span>
-      </a>
-      <!-- nhà cung cấp -->
-      <a
-        class="flex items-center py-2 px-6 text-gray-700 hover:bg-gray-200"
-        href="/views/Supplier/SupplierScreen.html"
-      >
-        <i class="fas fa-truck"></i>
-        <span class="ml-3"> Quản lý nhà cung cấp</span>
-      </a>
-      <!-- Thống kê  -->
-      <a
-        class="flex items-center py-2 px-6 text-gray-700 hover:bg-gray-200"
-        href="/views/Statistics/StatisticsScreen.html"
-      >
-        <i class="fas fa-chart-bar"> </i>
-        <span class="ml-3"> Thống kê </span>
-      </a>
+           <!-- danh gia -->
+           <a
+           class="flex items-center py-2 px-6 text-gray-700 hover:bg-gray-200"
+           href="/views/Review/ReviewScreen.html"
+         >
+           <i class="fas fa-star"></i>
+           <span class="ml-3"> Quản lý đánh giá</span>
+         </a>
+         <!-- hóa đơn -->
+         <a
+           class="flex items-center py-2 px-6 text-gray-700 hover:bg-gray-200"
+           href="/views/Invoice/InvoiceScreen.html"
+         >
+           <i class="fas fa-file-invoice"></i>
+           <span class="ml-3"> Quản lý hóa đơn</span>
+         </a>
+         <!-- đơn hàng -->
+         <a
+           class="flex items-center py-2 px-6 text-gray-700 hover:bg-gray-200"
+           href="/views/Oder/OderScreen.html"
+         >
+           <i class="fas fa-shopping-cart"></i>
+           <span class="ml-3"> Quản lý đơn hàng</span>
+         </a>
+         <!-- thông báo -->
+         <a
+           class="flex items-center py-2 px-6 text-gray-700 hover:bg-gray-200 "
+           href="/views/Notification/NotificationScreen.html"
+         >
+           <i class="fas fa-bell"></i>
+           <span class="ml-3"> Quản lý thông báo</span>
+         </a>
+         <!-- nhà cung cấp -->
+         <a
+           class="flex items-center py-2 px-6 text-gray-700 hover:bg-gray-200"
+           href="/views/Supplier/SupplierScreen.html"
+         >
+           <i class="fas fa-truck"></i>
+           <span class="ml-3"> Quản lý nhà cung cấp</span>
+         </a>
+         <!-- Thống kê  -->
+         <a
+           class="flex items-center py-2 px-6 text-gray-700 hover:bg-gray-200 bg-yellow-500 text-white"
+           href="/views/Statistics/StatisticsScreen.html"
+         >
+           <i class="fas fa-chart-bar"> </i>
+           <span class="ml-3"> Thống kê </span>
+         </a>
         </nav>
       </div>
       <!-- Main Content -->
@@ -175,7 +175,7 @@
         style="border-radius: 10px; margin-left: 10px"
       >
         <div class="flex justify-between items-center mb-6">
-          <h1 class="text-2xl font-bold">Quản lý người dùng</h1>
+          <h1 class="text-2xl font-bold">Thống kê</h1>
           <div class="flex items-center">
             <img
               id="userAvatar"
@@ -193,7 +193,7 @@
         </div>
       </div>
     </div>
-    <script src="./UserMain.js"></script>
+    <script src="./StatisticsMain.js"></script>
     <script src="/views/MenuMain.js"></script>
   </body>
 </html>

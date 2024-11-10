@@ -3,12 +3,12 @@ let url = "http://localhost:3000/product";
 let tbody = document.querySelector("tbody");
 
 const getListProduct = () => {
-  fetch(`${url}/getListProduct`,{
+  fetch(`${url}/getListProduct`, {
     method: "GET",
     headers: {
-      "Authorization": "trinh_nhung",
-       "Content-Type": "application/json"
-  }
+      Authorization: "trinh_nhung",
+      "Content-Type": "application/json",
+    },
   })
     .then((response) => response.json())
     .then((data) => {
@@ -188,7 +188,7 @@ const getListProduct = () => {
 
             // Dữ liệu ảo từ form (bạn có thể thay thế bằng các giá trị thực tế từ input)
             const name = "doando";
-            const supplier_id = "nhummmmmm";
+            const supplier_id = "671da9ba08f0a23211562a9d";
             const price = 2424;
             const date = "ewewe";
             const expiry_Date = "sfsfs";
@@ -224,10 +224,10 @@ const getListProduct = () => {
                 console.log(pair[0] + ": " + pair[1]);
               }
             }
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 120000); // Timeout sau 2 phút
-
             try {
+              const controller = new AbortController();
+              const timeoutId = setTimeout(() => controller.abort(), 120000); // Timeout 2 phút
+
               const response = await fetch(`${url}/addproduct`, {
                 method: "POST",
                 headers: {
@@ -236,22 +236,20 @@ const getListProduct = () => {
                 body: formData,
                 signal: controller.signal,
               });
-              
-              clearTimeout(timeoutId); // Đặt ở đây để chỉ hủy timeout sau khi nhận response
-              
+
+              clearTimeout(timeoutId); // Xóa timeout khi có phản hồi thành công
+
               if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
+                throw new Error(`Lỗi HTTP: ${response.status}`);
               }
-              
-              const result = await response.json(); // Xử lý JSON sau khi xác nhận response hợp lệ
-              
+
+              const result = await response.json();
+              console.log(result);
             } catch (error) {
-              clearTimeout(timeoutId); // Hủy timeout khi có lỗi
-              console.error("Error:", error.message || error);
+              clearTimeout(timeoutId);
+              console.error("Lỗi:", error.message || error);
               alert(
-                `Có lỗi xảy ra khi thêm sản phẩm! Lỗi: ${
-                  error.message || error
-                }`
+                `Có lỗi xảy ra khi thêm sản phẩm: ${error.message || error}`
               );
             }
           });
