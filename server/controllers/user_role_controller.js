@@ -1,5 +1,6 @@
 const {user_roleModel} = require("../models/user_role_model")
-
+const { userModel } = require("../models/user_model");
+const { roleModel } = require("../models/role_model");
 exports.getListuser_role = async (req, res, next) => {
     try {
         let listuser_role = await user_roleModel.find({});
@@ -20,7 +21,6 @@ exports.adduser_role = async (req, res, next) => {
         res.json({status: "Add failed" })
     }
 }
-
 exports.updateuser_role = async (req, res, next) => {
     try {
         let id = req.params.id;
@@ -33,7 +33,6 @@ exports.updateuser_role = async (req, res, next) => {
         res.json({ status: "Update falied", result: error });
     }
 };
-
 exports.deleteuser_role = async (req, res, next) => {
     try {
         let id = req.params.id;
@@ -43,7 +42,6 @@ exports.deleteuser_role = async (req, res, next) => {
         res.json({ status: "Delete falied", result: error });
     }
 };
-
 exports.getuser_role = async (req, res, next) => {
     try {
         let id = req.params.id;
@@ -53,7 +51,6 @@ exports.getuser_role = async (req, res, next) => {
         res.json({ status: "Not found", result: error });
     }
 };
-
 exports.getuser_roleById = async (req, res, next) => {
     try {
         let id = req.params.id;
@@ -72,7 +69,6 @@ exports.getRolesByUserId = async (req, res, next) => {
         res.json({ status: "Not found", result: error });
     }
 };
-
 exports.getUsersByRoleId = async (req, res, next) => {
     try {
         let roleId = req.params.role_id;
@@ -80,5 +76,31 @@ exports.getUsersByRoleId = async (req, res, next) => {
         res.json({ status: "Successfully", result: result });
     } catch (error) {
         res.json({ status: "Not found", result: error });
+    }
+};
+
+
+exports.getAllUsersWithRoles = async (req, res, next) => {
+    try {
+        const usersWithRoles = await user_roleModel.find({})
+        .populate('user_id', '_id name email')
+        .populate('role_id', '_id name description'); 
+
+        const userMap = new Map();
+
+        usersWithRoles.forEach(item => {
+            const userId = item.user_id._id.toString();
+            if (!userMap.has(userId)) {
+                userMap.set(userId, { user: item.user_id, roles: [] });
+            }
+            userMap.get(userId).roles.push(item.role_id);
+        });
+        const result = Array.from(userMap.values());
+
+        res.json({ status: "Successfully", result: result });
+        console.log(result)
+    } catch (error) {
+        console.error("Error fetching users with roles:", error);
+        res.json({ status: "Failed to get users with roles", result: error });
     }
 };

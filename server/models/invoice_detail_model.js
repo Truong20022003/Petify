@@ -27,6 +27,6 @@ const invoiceDetailSchema = new db.mongoose.Schema(
     versionKey: false 
   }
 );
-const invoice_detailModel = db.mongoose.model("invoiceDetailModel", invoiceDetailSchema);
+const invoice_detailModel = db.mongoose.model("invoiceDetail", invoiceDetailSchema);
 module.exports = { invoice_detailModel };
 
