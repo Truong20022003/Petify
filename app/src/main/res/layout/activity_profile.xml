@@ -9,27 +9,26 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:gravity="center">
-
         <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/ic_back" />
-
+            android:id="@+id/img_back"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:padding="10dp"
+            android:src="@drawable/ic_back"
+            />
         <TextView
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
             android:text="Hồ sơ"
+            android:fontFamily="@font/bevietnampro_bold"
             android:textSize="24sp"
-            android:textStyle="bold"
-            android:textColor="@color/black"/>
-
+            android:gravity="center"
+            android:textColor="@color/black"
+            />
     </LinearLayout>
 
-    <RelativeLayout
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
@@ -39,15 +38,18 @@
             android:id="@+id/iv_profile_image"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:src="@drawable/img_avt_profile" />
 
         <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_alignBottom="@id/iv_profile_image"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center|bottom"
+            android:layout_marginBottom="5dp"
             android:layout_alignEnd="@id/iv_profile_image"
             android:src="@drawable/ic_edit_avt" />
-    </RelativeLayout>
+    </FrameLayout>
+
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -58,16 +60,21 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@drawable/bg_otp_email"
             android:orientation="horizontal"
             android:gravity="center_vertical"
             android:paddingBottom="16dp"
-            android:paddingTop="16dp">
+            android:paddingTop="16dp"
+            android:layout_marginBottom="10dp">
+            >
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Tên"
+                android:paddingLeft="10dp"
+                android:fontFamily="@font/bevietnampro_medium"
                 android:textSize="18sp" />
 
             <TextView
@@ -76,40 +83,44 @@
                 android:layout_height="wrap_content"
                 android:hint="Do the doan"
                 android:textSize="18sp"
+                android:fontFamily="@font/bevietnampro_regular"
+                android:drawableEnd="@drawable/ic_edit"
+                android:drawablePadding="10dp"
                 android:layout_marginEnd="8dp"/>
 
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/ic_edit" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@drawable/bg_otp_email"
             android:orientation="horizontal"
             android:gravity="center_vertical"
             android:paddingBottom="16dp"
-            android:paddingTop="16dp">
+            android:paddingTop="16dp"
+            android:layout_marginBottom="10dp">>
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Email"
+                android:paddingLeft="10dp"
+                android:fontFamily="@font/bevietnampro_medium"
                 android:textSize="18sp"/>
 
             <TextView
+                android:id="@+id/tv_email"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:hint="doandt@gmail.com"
                 android:textSize="18sp"
+                android:fontFamily="@font/bevietnampro_regular"
+
+                android:drawableEnd="@drawable/ic_edit"
+                android:drawablePadding="10dp"
                 android:layout_marginEnd="8dp"/>
 
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/ic_edit" />
         </LinearLayout>
 
         <LinearLayout
@@ -118,26 +129,30 @@
             android:orientation="horizontal"
             android:gravity="center_vertical"
             android:paddingBottom="16dp"
-            android:paddingTop="16dp">
+            android:background="@drawable/bg_otp_email"
+            android:paddingTop="16dp"
+            android:layout_marginBottom="10dp">>
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Số điện thoại"
+                android:fontFamily="@font/bevietnampro_medium"
+                android:paddingLeft="10dp"
                 android:textSize="18sp" />
 
             <TextView
+                android:id="@+id/tv_phonenumber"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="0365816188"
+                android:hint="0365816188"
                 android:textSize="18sp"
-                android:layout_marginEnd="8dp"/>
+                android:fontFamily="@font/bevietnampro_regular"
 
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/ic_edit" />
+                android:drawableEnd="@drawable/ic_edit"
+                android:drawablePadding="10dp"
+                android:layout_marginEnd="8dp"/>
         </LinearLayout>
 
         <LinearLayout
@@ -146,6 +161,7 @@
             android:orientation="horizontal"
             android:gravity="center_vertical"
             android:paddingBottom="16dp"
+            android:background="@drawable/bg_otp_email"
             android:paddingTop="16dp">
 
             <TextView
@@ -153,19 +169,20 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Địa chỉ"
+                android:fontFamily="@font/bevietnampro_medium"
+                android:paddingLeft="10dp"
                 android:textSize="18sp" />
 
             <TextView
+                android:id="@+id/tv_address"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Hà Nội"
+                android:hint="Hà Nội"
                 android:textSize="18sp"
+                android:fontFamily="@font/bevietnampro_regular"
+                android:drawableEnd="@drawable/ic_edit"
+                android:drawablePadding="10dp"
                 android:layout_marginEnd="8dp"/>
-
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/ic_edit" />
         </LinearLayout>
 
     </LinearLayout>

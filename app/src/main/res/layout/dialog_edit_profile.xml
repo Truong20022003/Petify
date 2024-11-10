@@ -5,41 +5,36 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <LinearLayout
+
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical">
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginStart="16dp"
-            android:text="Sửa thông tin"
-            android:textSize="18sp"
-            android:textStyle="bold" />
-
-        <ImageView
-            android:id="@+id/iv_save"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/ic_save" />
-    </LinearLayout>
+        android:text="Sửa thông tin"
+        android:textSize="24sp"
+        android:drawableEnd="@drawable/ic_save"
+        android:fontFamily="@font/bevietnampro_bold"
+        android:gravity="center"
+        android:drawablePadding="10dp"
+        android:layout_marginEnd="8dp"
+        android:textColor="@color/black"
+        android:paddingStart="10dp" />
 
     <TextView
         android:id="@+id/tv_edit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
+        android:textColor="@color/black"
+        android:fontFamily="@font/bevietnampro_medium"
         android:text="Số điện thoại"
-        android:textSize="16sp" />
+        android:textSize="20sp" />
 
     <EditText
         android:id="@+id/ed_edit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:hint="0365816188"
-        android:textSize="16sp"
+        android:textSize="20sp"
         android:background="?android:attr/editTextBackground" />
 </LinearLayout>
