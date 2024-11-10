@@ -14,6 +14,7 @@ exports.addinvoice_detail = async (req, res, next) => {
         let obj = new invoice_detailModel({
             user_id: req.body.user_id,
             product_id: req.body.product_id,
+            invoice_id: req.body.invoice_id,
             quantity: req.body.quantity,
             total_price: req.body.total_price,
         })
@@ -30,6 +31,7 @@ exports.updateinvoice_detail = async (req, res, next) => {
         let obj = {};
         obj.user_id = req.body.user_id
         obj.product_id = req.body.product_id
+        obj.invoice_id = req.body.invoice_id
         obj.quantity = req.body.quantity
         obj.total_price = req.body.total_price
         let result = await invoice_detailModel.findByIdAndUpdate(id, obj, { new: true });

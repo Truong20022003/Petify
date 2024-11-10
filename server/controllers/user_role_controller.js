@@ -104,3 +104,41 @@ exports.getAllUsersWithRoles = async (req, res, next) => {
         res.json({ status: "Failed to get users with roles", result: error });
     }
 };
+
+
+exports.removeRoleFromUser = async (req, res, next) => {
+    try {
+        const userId = req.params.user_id;
+        const roleId = req.body.role_id;
+
+        const result = await user_roleModel.findOneAndDelete({ user_id: userId, role_id: roleId });
+
+        if (result) {
+            res.json({ status: "Role removed from user successfully", result: result });
+        } else {
+            res.json({ status: "Role not found for user" });
+        }
+    } catch (error) {
+        res.json({ status: "Failed to remove role", result: error });
+    }
+};
+
+exports.addRoleToUser = async (req, res, next) => {
+    try {
+        const userId = req.params.user_id;
+        const roleId = req.body.role_id;
+
+        const existingRole = await user_roleModel.findOne({ user_id: userId, role_id: roleId });
+        if (existingRole) {
+            return res.json({ status: "Role already assigned to user" });
+        }
+        const newUserRole = new user_roleModel({
+            user_id: userId,
+            role_id: roleId,
+        });
+        const result = await newUserRole.save();
+        res.json({ status: "Role added to user successfully", result: result });
+    } catch (error) {
+        res.json({ status: "Failed to add role to user", result: error });
+    }
+};

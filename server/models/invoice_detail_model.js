@@ -11,6 +11,11 @@ const invoiceDetailSchema = new db.mongoose.Schema(
       required: true,
       ref: "product"
     },
+    invoice_id: {
+      type: db.mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: "invoice"
+    },
     quantity: {
         type: Number,
         require: true
