@@ -19,6 +19,6 @@ const user_roleSchema = new db.mongoose.Schema(
     versionKey: false 
   }
 );
-const user_roleModel = db.mongoose.model("user_roleModel", user_roleSchema);
+const user_roleModel = db.mongoose.model("user_roleM", user_roleSchema);
 module.exports = { user_roleModel };
 

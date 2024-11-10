@@ -19,6 +19,6 @@ const notificationUserSchema = new db.mongoose.Schema(
     versionKey: false 
   }
 );
-const notification_userModel = db.mongoose.model("notification_userModel", notificationUserSchema);
+const notification_userModel = db.mongoose.model("notification_user", notificationUserSchema);
 module.exports = { notification_userModel };
 

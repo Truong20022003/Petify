@@ -50,6 +50,6 @@ const productSchema = new db.mongoose.Schema(
     versionKey: false 
   }
 );
-const productModel = db.mongoose.model("productModel", productSchema);
+const productModel = db.mongoose.model("product", productSchema);
 module.exports = { productModel };
 

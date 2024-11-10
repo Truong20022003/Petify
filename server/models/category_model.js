@@ -18,6 +18,6 @@ const categorySchema = new db.mongoose.Schema(
     versionKey: false 
   }
 );
-const categoryModel = db.mongoose.model("categoryModel", categorySchema);
+const categoryModel = db.mongoose.model("category", categorySchema);
 module.exports = { categoryModel };
 
