@@ -9,4 +9,5 @@ router.delete("/deleteuser_role/:id",user_roleController.deleteuser_role)
 router.get("/getuser_roleById/:id",user_roleController.getuser_roleById)
 router.get("/get-Roles-By-UserId/:id",user_roleController.getRolesByUserId)
 router.get("/get-Users-By-RoleId/:id",user_roleController.getUsersByRoleId)
+router.get("/getAllUsersWithRoles",user_roleController.getAllUsersWithRoles)
 module.exports = router;

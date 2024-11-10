@@ -22,6 +22,6 @@ const reviewSchema = new db.mongoose.Schema(
     versionKey: false 
   }
 );
-const reviewModel = db.mongoose.model("reviewModel", reviewSchema);
+const reviewModel = db.mongoose.model("review", reviewSchema);
 module.exports = { reviewModel };
 

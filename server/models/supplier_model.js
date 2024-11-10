@@ -13,6 +13,6 @@ const supplierSchema = new db.mongoose.Schema(
     versionKey: false 
   }
 );
-const supplierModel = db.mongoose.model("supplierModel", supplierSchema);
+const supplierModel = db.mongoose.model("supplier", supplierSchema);
 module.exports = { supplierModel };
 

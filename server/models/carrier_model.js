@@ -18,6 +18,6 @@ const carrierSchemma = new db.mongoose.Schema(
     versionKey: false 
   }
 );
-const carrierModel = db.mongoose.model("carrierModel", carrierSchemma);
+const carrierModel = db.mongoose.model("carrier", carrierSchemma);
 module.exports = { carrierModel };
 
