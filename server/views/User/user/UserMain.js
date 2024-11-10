@@ -3,19 +3,20 @@ console.log(content);
 let url = "http://localhost:3000/user";
 let tbody = document.querySelector("tbody");
 let table = document.querySelector("table");
+var datagetListUser;
 const getListUser = () => {
-  fetch(`${url}/getListUser`,{
+  fetch(`${url}/getListUser`, {
     method: "GET",
     headers: {
-      "Authorization": "trinh_nhung",
-       "Content-Type": "application/json"
-  }
+      Authorization: "trinh_nhung",
+      "Content-Type": "application/json",
+    },
   })
     .then((response) => response.json())
     .then((data) => {
       console.log(data);
       content.innerHTML =
-        `<div class="flex mb-4">
+        /*html*/ `<div class="flex mb-4">
             <button class="bg-yellow-500 text-white px-4 py-2 rounded mr-2 btnadd">
               Thêm mới
             </button>
@@ -42,7 +43,7 @@ const getListUser = () => {
             </thead>` +
         data
           .map(
-            (item, index) => `<tr id="row-${item._id}">
+            (item, index) => /*html*/ `<tr id="row-${item._id}">
                 <td class="border border-gray-300 px-4 py-2">${index + 1}</td>
                 <td class="border border-gray-300 px-4 py-2">${item.name}</td>
                 <td class="border border-gray-300 px-4 py-2">${item.email}</td> 
@@ -82,11 +83,12 @@ const getListUser = () => {
           id = btn.dataset.id;
           console.log(id);
           if (confirm("ban co chac muon xoa khong")) {
-            fetch(`${url}/deleteuser/${id}`, { method: "DELETE",
+            fetch(`${url}/deleteuser/${id}`, {
+              method: "DELETE",
               headers: {
-                "Authorization": "trinh_nhung",
-                 "Content-Type": "application/json"
-            }
+                Authorization: "trinh_nhung",
+                "Content-Type": "application/json",
+              },
             })
               .then((rep) => rep.json())
               .then(() => {
@@ -103,12 +105,12 @@ const getListUser = () => {
           console.log("detail");
           id = btn.dataset.id;
           console.log(id);
-          fetch(`${url}/getuserById/${id}`,{
+          fetch(`${url}/getuserById/${id}`, {
             method: "GET",
             headers: {
-              "Authorization": "trinh_nhung",
-               "Content-Type": "application/json"
-          }
+              Authorization: "trinh_nhung",
+              "Content-Type": "application/json",
+            },
           })
             .then((response) => response.json())
             .then((data) => {
@@ -136,11 +138,11 @@ const getListUser = () => {
         btn.addEventListener("click", () => {
           console.log("edit");
           id = btn.dataset.id;
-          fetch(`${url}/getuserById/${id}`,{
+          fetch(`${url}/getuserById/${id}`, {
             headers: {
-              "Authorization": "trinh_nhung",
-               "Content-Type": "application/json"
-          }
+              Authorization: "trinh_nhung",
+              "Content-Type": "application/json",
+            },
           })
             .then((response) => response.json())
             .then((data) => {
@@ -172,6 +174,7 @@ const getListUser = () => {
           true,
           "Thêm người dùng"
         );
+
         const passwordInput = document.getElementById("password");
         const eyeIcon = document.querySelector(".fas.fa-eye");
         eyeIcon.addEventListener("click", () => {
@@ -183,6 +186,8 @@ const getListUser = () => {
       });
 
       ////
+      console.log(data, "jjjj");
+      return data;
     });
 };
 
@@ -213,7 +218,7 @@ function createUserDetailHTML(
       }">Lưu</button>`
     : "";
 
-  return /*html*/`
+  return /*html*/ `
     <h2 class="text-xl font-bold mb-4">${title}</h2>
     <div class="flex">
       <div class="w-1/4 flex justify-center items-center">
@@ -222,8 +227,18 @@ function createUserDetailHTML(
       <div class="w-3/4">
         <div class="grid grid-cols-2 gap-4">
           <div>
-            <label class="block text-sm font-medium text-gray-700" for="id">ID</label>
-            <input class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" id="id" type="text" value="${_id}" readonly />
+            <label class="block text-sm font-medium text-gray-700" for="id">Loại người dùng</label>
+            <form>
+        <label>
+            <input type="checkbox" name="option" value="672f2c435367fbd3bf9f6831"> admin
+        </label><br>
+        <label>
+            <input type="checkbox" name="option" value="672f3d695367fbd3bf9f68c4"> Nhân viên
+        </label><br>
+        <label>
+            <input type="checkbox" name="option" value="672f6ea15367fbd3bf9f69ff"> Ngươi dùng
+        </label>
+    </form>
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700" for="name">Tên</label>
@@ -265,7 +280,8 @@ function createUserDetailHTML(
     </div>
   `;
 }
-
+datagetListUser = getListUser();
+console.log(datagetListUser, "dataget");
 //luu edit
 function saveEditUser(_id) {
   console.log(_id, "hehehe");
@@ -284,7 +300,7 @@ function saveEditUser(_id) {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
-      "Authorization": "trinh_nhung",
+      Authorization: "trinh_nhung",
     },
     body: JSON.stringify(updatedUser),
   })
@@ -303,40 +319,117 @@ function saveEditUser(_id) {
     });
 }
 ///luu them moi
-function saveAddUser() {
+async function saveAddUser() {
   console.log("Thêm mới");
+
+  // Lấy dữ liệu từ form
+  const name = document.getElementById("name").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const location = document.getElementById("address").value.trim();
+  const phone = document.getElementById("phone").value.trim();
+  const user_name = document.getElementById("username").value.trim();
+  const password = document.getElementById("password").value.trim();
+  const avatar = document.getElementById("avatar-link").value.trim();
+
+  // Validate các trường nhập liệu
+  if (!name) {
+    alert("Tên không được để trống.");
+    return;
+  }
+
+  if (!email || !/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)) {
+    alert("Email không hợp lệ.");
+    return;
+  }
+
+  if (!location) {
+    alert("Địa chỉ không được để trống.");
+    return;
+  }
+
+  if (!phone || !/^\d{10,15}$/.test(phone)) {
+    alert("Số điện thoại phải là số từ 10 đến 15 chữ số.");
+    return;
+  }
+
+  if (!user_name) {
+    alert("Tên đăng nhập không được để trống.");
+    return;
+  }
+
+  if (!password || password.length < 6) {
+    alert("Mật khẩu phải có ít nhất 6 ký tự.");
+    return;
+  }
+
+  if (!avatar || !/^(http|https):\/\/[^ "]+$/.test(avatar)) {
+    alert(
+      "Link avatar không hợp lệ. Hãy chắc chắn rằng nó bắt đầu bằng http hoặc https."
+    );
+    return;
+  }
+
+  // Lấy các checkbox được chọn (validate ít nhất 1 vai trò)
+  const checkboxes = document.querySelectorAll('input[name="option"]:checked');
+  const selectedValues = Array.from(checkboxes).map((cb) => cb.value);
+  if (selectedValues.length === 0) {
+    alert("Hãy chọn ít nhất một vai trò.");
+    return;
+  }
+
+  // Dữ liệu hợp lệ, tiếp tục tạo đối tượng newUser
   const newUser = {
-    name: document.getElementById("name").value,
-    email: document.getElementById("email").value,
-    location: document.getElementById("address").value,
-    phone_number: document.getElementById("phone").value,
-    user_name: document.getElementById("username").value,
-    password: document.getElementById("password").value,
-    avata: document.getElementById("avatar-link").value,
+    name,
+    email,
+    location,
+    phone_number: phone,
+    user_name,
+    password,
+    avata: avatar,
   };
 
-  fetch(`${url}/adduser`, {
-    // Adjust the URL as necessary
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": "trinh_nhung",
-    },
-    body: JSON.stringify(newUser),
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      if (data.status) {
-        alert("Thêm người dùng thành công!");
-        restoreRow();
-      } else {
-        alert("Thêm thất bại. Vui lòng thử lại.");
-      }
-    })
-    .catch((error) => {
-      console.error("Lỗi khi thêm người dùng:", error);
-      alert("Đã xảy ra lỗi. Vui lòng thử lại.");
+  try {
+    // Gửi yêu cầu để tạo người dùng mới
+    const userResponse = await fetch(`${url}/adduser`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "trinh_nhung",
+      },
+      body: JSON.stringify(newUser),
     });
+
+    const userData = await userResponse.json();
+    if (userResponse.ok && userData.status && userData.result._id) {
+      const userId = userData.result._id;
+      console.log("Thêm người dùng thành công! User ID:", userId);
+
+      // Gửi vai trò đã chọn lên server
+      const userRolePromises = selectedValues.map((roleId) => {
+        const userRoleData = {
+          user_id: userId,
+          role_id: roleId,
+        };
+        return fetch(`http://localhost:3000/userRole/adduser_role`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "trinh_nhung",
+          },
+          body: JSON.stringify(userRoleData),
+        });
+      });
+
+      await Promise.all(userRolePromises);
+      alert("Thêm người dùng và vai trò thành công!");
+      restoreRow();
+    } else {
+      alert("Thêm người dùng thất bại. Vui lòng thử lại.");
+    }
+  } catch (err) {
+    console.error("Lỗi khi thêm người dùng hoặc vai trò:", err);
+    alert("Đã xảy ra lỗi. Vui lòng thử lại.");
+  }
 }
 
 ////hienmk
