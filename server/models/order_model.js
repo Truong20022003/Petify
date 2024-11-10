@@ -26,6 +26,6 @@ const orderSchema = new db.mongoose.Schema(
     versionKey: false 
   }
 );
-const orderModel = db.mongoose.model("orderModel", orderSchema);
+const orderModel = db.mongoose.model("order", orderSchema);
 module.exports = { orderModel };
 

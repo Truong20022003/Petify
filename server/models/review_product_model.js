@@ -19,6 +19,6 @@ const review_productSchema = new db.mongoose.Schema(
     versionKey: false 
   }
 );
-const review_productModel = db.mongoose.model("review_productModel", review_productSchema);
+const review_productModel = db.mongoose.model("review_product", review_productSchema);
 module.exports = { review_productModel };
 

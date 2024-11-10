@@ -19,6 +19,6 @@ const product_categorySchema = new db.mongoose.Schema(
     versionKey: false
   }
 );
-const product_categoryModel = db.mongoose.model("product_categoryModel", product_categorySchema);
+const product_categoryModel = db.mongoose.model("product_category", product_categorySchema);
 module.exports = { product_categoryModel };
 

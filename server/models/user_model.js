@@ -43,6 +43,6 @@ const userSchema = new db.mongoose.Schema(
     versionKey: false 
   }
 );
-const userModel = db.mongoose.model("userModel", userSchema);
+const userModel = db.mongoose.model("user", userSchema);
 module.exports = { userModel };
 

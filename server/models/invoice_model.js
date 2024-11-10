@@ -50,6 +50,6 @@ const invoiceSchema = new db.mongoose.Schema(
         versionKey: false 
     }
 );
-const invoiceModel = db.mongoose.model("invoiceModel", invoiceSchema);
+const invoiceModel = db.mongoose.model("invoice", invoiceSchema);
 module.exports = { invoiceModel };
 

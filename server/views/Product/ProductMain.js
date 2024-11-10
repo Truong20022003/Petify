@@ -3,12 +3,12 @@ let url = "http://localhost:3000/product";
 let tbody = document.querySelector("tbody");
 
 const getListProduct = () => {
-  fetch(`${url}/getListProduct`,{
+  fetch(`${url}/getListProduct`, {
     method: "GET",
     headers: {
-      "Authorization": "trinh_nhung",
-       "Content-Type": "application/json"
-  }
+      Authorization: "trinh_nhung",
+      "Content-Type": "application/json",
+    },
   })
     .then((response) => response.json())
     .then((data) => {
@@ -85,13 +85,13 @@ const getListProduct = () => {
           id = btn.dataset.id;
           console.log(id);
           if (confirm("ban co chac muon xoa khong")) {
-            fetch(`${url}/deleteproduct/${id}`, { method: "DELETE",
-              method: "GET",
+            fetch(`${url}/deleteproduct/${id}`, {
+              method: "DELETE",
               headers: {
-                "Authorization": "trinh_nhung",
-                 "Content-Type": "application/json"
-            }
-            } )
+                Authorization: "trinh_nhung",
+                "Content-Type": "application/json",
+              },
+            })
               .then((rep) => rep.json())
               .then(() => {
                 restoreRow();
@@ -107,12 +107,12 @@ const getListProduct = () => {
           console.log("detail");
           id = btn.dataset.id;
           console.log(id);
-          fetch(`${url}/getproductById/${id}`,{
+          fetch(`${url}/getproductById/${id}`, {
             method: "GET",
             headers: {
-              "Authorization": "trinh_nhung",
-               "Content-Type": "application/json"
-          }
+              Authorization: "trinh_nhung",
+              "Content-Type": "application/json",
+            },
           })
             .then((response) => response.json())
             .then((data) => {
@@ -135,12 +135,12 @@ const getListProduct = () => {
         btn.addEventListener("click", () => {
           console.log("edit");
           const id = btn.dataset.id;
-          fetch(`${url}/getproductById/${id}`,{
+          fetch(`${url}/getproductById/${id}`, {
             method: "GET",
             headers: {
-              "Authorization": "trinh_nhung",
-               "Content-Type": "application/json"
-          }
+              Authorization: "trinh_nhung",
+              "Content-Type": "application/json",
+            },
           })
             .then((response) => response.json())
             .then((data) => {
@@ -180,15 +180,15 @@ const getListProduct = () => {
         ///
         document
           .getElementById("upload-btn")
-          .addEventListener("click", function () {
+          .addEventListener("click", async function () {
             if (selectedFiles.length === 0) {
               alert("Vui lòng chọn ít nhất một ảnh!");
               return;
             }
 
-            // Dữ liệu ảo
+            // Dữ liệu ảo từ form (bạn có thể thay thế bằng các giá trị thực tế từ input)
             const name = "doando";
-            const supplier_id = "nhummmmmm";
+            const supplier_id = "671da9ba08f0a23211562a9d";
             const price = 2424;
             const date = "ewewe";
             const expiry_Date = "sfsfs";
@@ -199,7 +199,6 @@ const getListProduct = () => {
 
             // Tạo đối tượng FormData
             const formData = new FormData();
-
             // Thêm dữ liệu ảo vào FormData
             formData.append("name", name);
             formData.append("supplier_id", supplier_id);
@@ -211,63 +210,48 @@ const getListProduct = () => {
             formData.append("description", description);
             formData.append("sale", sale);
 
-            // Thêm file ảnh vào FormData
-            for (const file of selectedFiles) {
-              formData.append("image", file); // Đổi từ "image" thành "images" nếu server yêu cầu
-            }
+            // Thêm tất cả ảnh vào FormData (bao gồm tất cả file trong selectedFiles)
+            selectedFiles.forEach((file) => {
+              formData.append("image", file); // "image" có thể thay đổi thành "images" nếu server yêu cầu
+            });
 
-            fetch("http://localhost:3000/product/addproduct", {
-              method: "POST",
-              body: formData,
-          
-                headers: {
-                  "Authorization": "trinh_nhung",
-                   "Content-Type": "application/json"
+            for (var pair of formData.entries()) {
+              if (pair[0] === "image") {
+                console.log(
+                  `${pair[0]}: ${pair[1].name}, ${pair[1].size} bytes`
+                ); // Log chi tiết về ảnh
+              } else {
+                console.log(pair[0] + ": " + pair[1]);
               }
-            })
-              .then((response) => {
-                console.log("HTTP Status:", response.status);
-                if (response.status === 202) {
-                  return new Promise((resolve) => {
-                    const interval = setInterval(() => {
-                      fetch("http://localhost:3000/product/checkUploadStatus",{
-                        method: "GET",
-                        headers: {
-                          "Authorization": "trinh_nhung",
-                           "Content-Type": "application/json"
-                      }
-                      }) 
-                        .then((statusResponse) => {
-                          if (statusResponse.ok) {
-                            return statusResponse.json();
-                          } else {
-                            throw new Error(`Failed to check upload status: ${statusResponse.status}`);
-                          }
-                        })
-                        .then((statusData) => {
-                          if (statusData.success) {
-                            clearInterval(interval);
-                            resolve(statusData);
-                          }
-                        });
-                    }, 2000); 
-                  });
-                } else {
-                  return response.json().then((data) => {
-                    throw new Error(
-                      `Server error: ${response.status} ${data.message || response.statusText}`
-                    );
-                  });
-                }
-              })
-              .then((data) => {
-                console.log("Upload thành công:", data);
-                alert("Upload thành công!");
-              })
-              .catch((error) => {
-                console.error("Error:", error);
-                alert(`Error: ${error.message}`);
+            }
+            try {
+              const controller = new AbortController();
+              const timeoutId = setTimeout(() => controller.abort(), 120000); // Timeout 2 phút
+
+              const response = await fetch(`${url}/addproduct`, {
+                method: "POST",
+                headers: {
+                  Authorization: "trinh_nhung",
+                },
+                body: formData,
+                signal: controller.signal,
               });
+
+              clearTimeout(timeoutId); // Xóa timeout khi có phản hồi thành công
+
+              if (!response.ok) {
+                throw new Error(`Lỗi HTTP: ${response.status}`);
+              }
+
+              const result = await response.json();
+              console.log(result);
+            } catch (error) {
+              clearTimeout(timeoutId);
+              console.error("Lỗi:", error.message || error);
+              alert(
+                `Có lỗi xảy ra khi thêm sản phẩm: ${error.message || error}`
+              );
+            }
           });
         ///
         document.querySelector(".back")?.addEventListener("click", () => {
