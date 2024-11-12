@@ -1,32 +1,38 @@
 const content = document.querySelector(".shadow");
 console.log(content);
 let url = "http://localhost:3000/user";
+const headers = {
+  Authorization: "trinh_nhung",
+  "Content-Type": "application/json",
+};
 let tbody = document.querySelector("tbody");
 let table = document.querySelector("table");
-var datagetListUser;
-const getListUser = () => {
-  fetch(`${url}/getListUser`, {
-    method: "GET",
-    headers: {
-      Authorization: "trinh_nhung",
-      "Content-Type": "application/json",
-    },
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      console.log(data);
-      content.innerHTML =
-        /*html*/ `<div class="flex mb-4">
+const getListUser = async () => {
+  try {
+    const response = await fetch(`${url}/getListUser`, {
+      method: "GET",
+      headers,
+    });
+    const data = await response.json();
+
+    // Lấy danh sách `roles` cho từng người dùng bằng cách đợi tất cả các hàm async hoàn thành
+    const roles = await Promise.all(
+      data.map((item) => getAllUsersWithRoles(item._id))
+    );
+
+    // Hiển thị bảng với dữ liệu người dùng và vai trò
+    content.innerHTML = /*html*/ `<div class="flex mb-4">
             <button class="bg-yellow-500 text-white px-4 py-2 rounded mr-2 btnadd">
               Thêm mới
             </button>
             <input
+              id="searchInput"
               class="border border-gray-300 rounded px-4 py-2 flex-grow"
               placeholder="Tìm kiếm"
               type="text"
             />
             <button class="bg-yellow-500 text-white px-4 py-2 rounded ml-2">
-              TÌm kiếm
+              Tìm kiếm
             </button>
           </div>
           <table class="content w-full border-collapse">
@@ -34,190 +40,306 @@ const getListUser = () => {
               <tr class="bg-yellow-500 text-white">
                 <th class="border border-gray-300 px-4 py-2">STT</th>
                 <th class="border border-gray-300 px-4 py-2">Tên người dùng</th>
+                <th class="border border-gray-300 px-4 py-2" style="width: 300px;">Loại người dùng</th>
                 <th class="border border-gray-300 px-4 py-2">Email</th>
                 <th class="border border-gray-300 px-4 py-2">Địa chỉ</th>
                 <th class="border border-gray-300 px-4 py-2">Số điện thoại</th>
                 <th class="border border-gray-300 px-4 py-2">Ảnh</th>
                 <th class="border border-gray-300 px-4 py-2">Hành động</th>
               </tr>
-            </thead>` +
-        data
-          .map(
-            (item, index) => /*html*/ `<tr id="row-${item._id}">
-                <td class="border border-gray-300 px-4 py-2">${index + 1}</td>
-                <td class="border border-gray-300 px-4 py-2">${item.name}</td>
-                <td class="border border-gray-300 px-4 py-2">${item.email}</td> 
-                <td class="border border-gray-300 px-4 py-2">${
-                  item.location
-                }</td>
-                <td class="border border-gray-300 px-4 py-2">${
-                  item.phone_number
-                }</td>
-                <td class="border border-gray-300 px-4 py-2">
-                  <img alt="Product image" class="w-12 h-12" height="50" src="${
-                    item.avata
-                  }" width="50" />
-                </td>
-                <td class="border border-gray-300 px-4 py-2">
-                  <div class="button-group flex flex-col space-y-2">
-                    <button class="bg-blue-500 text-white px-2 py-1 rounded btnedit" data-id="${
-                      item._id
-                    }">Cập nhật</button>
-                    <button class="bg-red-500 text-white px-2 py-1 rounded btndelete" data-id="${
-                      item._id
-                    }">Xóa</button>
-                    <button class="bg-yellow-500 text-white px-2 py-1 rounded btndetail" data-id="${
-                      item._id
-                    }">
-                      Chi tiết
-                    </button>
-                  </div>
-                </td>
-              </tr>`
-          )
-          .join("");
-      /////xoa
-      document.querySelectorAll(".btndelete").forEach((btn) => {
-        btn.addEventListener("click", () => {
-          console.log("delete");
-          id = btn.dataset.id;
-          console.log(id);
-          if (confirm("ban co chac muon xoa khong")) {
-            fetch(`${url}/deleteuser/${id}`, {
-              method: "DELETE",
-              headers: {
-                Authorization: "trinh_nhung",
-                "Content-Type": "application/json",
-              },
-            })
-              .then((rep) => rep.json())
-              .then(() => {
-                restoreRow();
-                alert("xoa thanh cong");
-              })
-              .catch((err) => console.log(err));
-          }
-        });
-      });
-      /////chi tiet
-      document.querySelectorAll(".btndetail").forEach((btn) => {
-        btn.addEventListener("click", () => {
-          console.log("detail");
-          id = btn.dataset.id;
-          console.log(id);
-          fetch(`${url}/getuserById/${id}`, {
-            method: "GET",
-            headers: {
-              Authorization: "trinh_nhung",
-              "Content-Type": "application/json",
-            },
-          })
-            .then((response) => response.json())
-            .then((data) => {
-              console.log(data, "kkkk");
-              content.innerHTML = createUserDetailHTML(
-                data.result,
-                true,
-                false,
-                "Chi tiết người dùng"
-              );
-              const passwordInput = document.getElementById("password");
-              const eyeIcon = document.querySelector(".fas.fa-eye");
-              eyeIcon.addEventListener("click", () => {
-                togglePassword(passwordInput, eyeIcon);
-              });
-              document.querySelector(".back")?.addEventListener("click", () => {
-                restoreRow();
-              });
-            })
-            .catch((err) => console.log(err));
-        });
-      });
-      ///cap nhat
-      document.querySelectorAll(".btnedit").forEach((btn) => {
-        btn.addEventListener("click", () => {
-          console.log("edit");
-          id = btn.dataset.id;
-          fetch(`${url}/getuserById/${id}`, {
-            headers: {
-              Authorization: "trinh_nhung",
-              "Content-Type": "application/json",
-            },
-          })
-            .then((response) => response.json())
-            .then((data) => {
-              console.log(data, "kkkk");
-              content.innerHTML = createUserDetailHTML(
-                data.result,
-                false,
-                true,
-                "Cập nhật người dùng"
-              );
-              const passwordInput = document.getElementById("password");
-              const eyeIcon = document.querySelector(".fas.fa-eye");
-              eyeIcon.addEventListener("click", () => {
-                togglePassword(passwordInput, eyeIcon);
-              });
-              document.querySelector(".back")?.addEventListener("click", () => {
-                restoreRow();
-              });
-            })
-            .catch((err) => console.log(err));
-        });
-      });
-      ////add
-      document.querySelector(".btnadd")?.addEventListener("click", () => {
-        console.log("add");
-        content.innerHTML = createUserDetailHTML(
-          {},
-          false,
-          true,
-          "Thêm người dùng"
-        );
+            </thead>
+            <tbody id="userList">
+              <!-- Danh sách người dùng sẽ được chèn ở đây -->
+            </tbody>
+          </table>`;
 
-        const passwordInput = document.getElementById("password");
-        const eyeIcon = document.querySelector(".fas.fa-eye");
-        eyeIcon.addEventListener("click", () => {
-          togglePassword(passwordInput, eyeIcon);
-        });
-        document.querySelector(".back")?.addEventListener("click", () => {
-          restoreRow();
-        });
+    // Lắng nghe sự kiện tìm kiếm
+    document
+      .getElementById("searchInput")
+      .addEventListener("input", async (e) => {
+        const query = e.target.value; // Lấy giá trị người dùng nhập
+        const filteredUsers = searchUser(query, data); // Tìm kiếm theo query trong danh sách người dùng
+
+        // Cập nhật lại giao diện với kết quả tìm kiếm
+        renderUserList(filteredUsers, roles);
       });
 
-      ////
-      console.log(data, "jjjj");
-      return data;
-    });
+    // Gọi hàm renderUserList để hiển thị tất cả người dùng khi load lần đầu
+    renderUserList(data, roles);
+  } catch (error) {
+    console.log("Error fetching user data:", error);
+  }
 };
+
+// Hàm để render danh sách người dùng lên giao diện
+function renderUserList(users, roles) {
+  const tableBody = document.getElementById("userList");
+  tableBody.innerHTML = ""; // Xóa các hàng cũ trong bảng trước khi thêm các kết quả mới
+
+  if (users.length === 0) {
+    // Nếu không có người dùng nào trong kết quả tìm kiếm
+    const noDataRow = /*html*/ `
+      <tr>
+        <td colspan="8" class="border border-gray-300 px-4 py-2 text-center text-red-500">
+          Không có dữ liệu
+        </td>
+      </tr>`;
+    tableBody.innerHTML = noDataRow; // Hiển thị thông báo "Không có dữ liệu"
+  } else {
+    // Nếu có người dùng trong kết quả tìm kiếm, hiển thị bảng bình thường
+    users.forEach((user, index) => {
+      const row = /*html*/ `
+        <tr id="row-${user._id}">
+          <td class="border border-gray-300 px-4 py-2">${index + 1}</td>
+          <td class="border border-gray-300 px-4 py-2">${user.name}</td>
+          <td class="border border-gray-300 px-4 py-2">
+            ${
+              Array.isArray(roles[index]) && roles[index].length > 0
+                ? roles[index]
+                    .map((role, index) => {
+                      return `<span>${
+                        index + 1
+                      }_</span><span class="role-item px-2 py-1 rounded mr-2 mt-2 mb-2">${
+                        role.name
+                      }</span><br>`;
+                    })
+                    .join("")
+                : "Không có vai trò"
+            }
+          </td>
+          <td class="border border-gray-300 px-4 py-2">${user.email}</td>
+          <td class="border border-gray-300 px-4 py-2">${
+            user.location || ""
+          }</td>
+          <td class="border border-gray-300 px-4 py-2">${
+            user.phone_number || ""
+          }</td>
+          <td class="border border-gray-300 px-4 py-2">
+            <img alt="Product image" class="w-12 h-12" height="50" src="${
+              user.avata
+            }" width="50" />
+          </td>
+          <td class="border border-gray-300 px-4 py-2">
+            <div class="button-group flex flex-col space-y-2">
+              <button class="bg-blue-500 text-white px-2 py-1 rounded btnedit" data-id="${
+                user._id
+              }">Cập nhật</button>
+              <button class="bg-red-500 text-white px-2 py-1 rounded btndelete" data-id="${
+                user._id
+              }">Xóa</button>
+              <button class="bg-yellow-500 text-white px-2 py-1 rounded btndetail" data-id="${
+                user._id
+              }">Chi tiết</button>
+            </div>
+          </td>
+        </tr>`;
+      tableBody.innerHTML += row;
+    });
+  }
+
+  // Thiết lập lại các sự kiện cho các nút sau khi cập nhật giao diện
+  setupEventListeners(roles);
+}
+
+// Hàm tìm kiếm người dùng
+function searchUser(query, users) {
+  function removeVietnameseTones(str) {
+    return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  }
+  const queryNormalized = removeVietnameseTones(query.toLowerCase());
+
+  // Lọc danh sách người dùng
+  const filteredUsers = users.filter((user) => {
+    const userNameNormalized = removeVietnameseTones(user.name.toLowerCase());
+    return userNameNormalized.includes(queryNormalized);
+  });
+
+  return filteredUsers;
+}
+/////
+function setupEventListeners(roles) {
+  ///
+  document.querySelectorAll(".btndelete").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      console.log("delete");
+      id = btn.dataset.id;
+      console.log(id);
+      const rolesList = await getUserRole();
+      console.log(rolesList, "rolesList");
+      const rolecheck = rolesList.find((role) => role.user_id === id);
+      console.log(rolecheck, "rolecheck");
+      if (rolecheck) {
+        alert("Người dùng đang có trong user role");
+        return;
+      }
+      if (confirm("ban co chac muon xoa khong")) {
+        fetch(`${url}/deleteuser/${id}`, {
+          method: "DELETE",
+          headers,
+        })
+          .then((rep) => rep.json())
+          .then(() => {
+            restoreRow();
+            alert("xoa thanh cong");
+          })
+          .catch((err) => console.log(err));
+      }
+    });
+  });
+  /////chi tiet
+  document.querySelectorAll(".btndetail").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      console.log("detail");
+      id = btn.dataset.id;
+      console.log(id);
+      fetch(`${url}/getuserById/${id}`, {
+        method: "GET",
+        headers,
+      })
+        .then((response) => response.json())
+        .then(async (data) => {
+          // console.log(data, "kkkk");
+          const roles = await getAllUsersWithRoles(data.result._id);
+          content.innerHTML = createUserDetailHTML(
+            data.result,
+            true,
+            false,
+            "Chi tiết người dùng",
+            roles || []
+          );
+          const passwordInput = document.getElementById("password");
+          const eyeIcon = document.querySelector(".fas.fa-eye");
+          eyeIcon.addEventListener("click", () => {
+            togglePassword(passwordInput, eyeIcon);
+          });
+          document.querySelector(".back")?.addEventListener("click", () => {
+            restoreRow();
+          });
+        })
+        .catch((err) => console.log(err));
+    });
+  });
+  ///cap nhat
+  document.querySelectorAll(".btnedit").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      console.log("edit");
+      id = btn.dataset.id;
+      fetch(`${url}/getuserById/${id}`, {
+        headers,
+      })
+        .then((response) => response.json())
+        .then(async (data) => {
+          console.log(data, "kkkk");
+          const roles = await getAllUsersWithRoles(data.result._id);
+          const rolesList = await getRoles();
+          console.log(roles, "roles");
+          content.innerHTML = createUserDetailHTML(
+            data.result,
+            false,
+            true,
+            "Cập nhật người dùng",
+            roles || [],
+            rolesList || []
+          );
+          const passwordInput = document.getElementById("password");
+          const eyeIcon = document.querySelector(".fas.fa-eye");
+          eyeIcon.addEventListener("click", () => {
+            togglePassword(passwordInput, eyeIcon);
+          });
+          document.querySelector(".back")?.addEventListener("click", () => {
+            restoreRow();
+          });
+        })
+        .catch((err) => console.log(err));
+    });
+  });
+  ////add
+  document.querySelector(".btnadd")?.addEventListener("click", async () => {
+    console.log("add");
+
+    const rolesList = await getRoles();
+    content.innerHTML = createUserDetailHTML(
+      {},
+      false,
+      true,
+      "Thêm người dùng",
+      roles || [],
+      rolesList
+    );
+
+    const passwordInput = document.getElementById("password");
+    const eyeIcon = document.querySelector(".fas.fa-eye");
+    eyeIcon.addEventListener("click", () => {
+      togglePassword(passwordInput, eyeIcon);
+    });
+    document.querySelector(".back")?.addEventListener("click", () => {
+      restoreRow();
+    });
+  });
+}
+//
+function searchUser(query, users) {
+  // Hàm loại bỏ dấu trong chuỗi
+  function removeVietnameseTones(str) {
+    return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  }
+
+  // Chuyển cả chuỗi tìm kiếm và tên người dùng thành dạng không dấu và thường
+  const queryNormalized = removeVietnameseTones(query.toLowerCase());
+
+  // Lọc danh sách người dùng
+  const filteredUsers = users.filter((user) => {
+    // Loại bỏ dấu trong tên và so sánh không phân biệt chữ hoa/thường
+    const userNameNormalized = removeVietnameseTones(user.name.toLowerCase());
+    return userNameNormalized.includes(queryNormalized);
+  });
+
+  return filteredUsers;
+}
 
 ///bang
 function createUserDetailHTML(
-  user = {}, // Accept an empty object for adding
-  isReadonly = false,
-  showSaveButton = false,
-  title = ""
-) {
-  const {
-    avata = "",
+  {
     _id = "",
+    avata = "",
     name = "",
     email = "",
     location = "",
     phone_number = "",
     user_name = "",
     password = "",
-  } = user; // Destructure with default values
-
-  const readonlyAttr = isReadonly ? "readonly" : "";
-
-  // Condition to show the Save button
+  },
+  isReadonly = false,
+  showSaveButton = false,
+  title,
+  roles,
+  rolesList
+) {
   const saveButtonHTML = showSaveButton
     ? `<button class="bg-green-500 text-white px-4 py-2 rounded save" onclick="${
         _id ? `saveEditUser('${_id}')` : "saveAddUser()"
       }">Lưu</button>`
     : "";
+  const readonlyAttr = isReadonly ? "readonly" : "";
+  // Hàm kiểm tra xem vai trò có trong danh sách vai trò của người dùng không
+  console.log(roles, "heheh");
+  function isRoleChecked(roleId) {
+    return Array.isArray(roles) && roles.some((role) => role._id === roleId);
+  }
 
+  console.log(rolesList, "rolesList");
+  const roleCheckboxes = rolesList
+    .map(
+      (role) => `
+     <label>
+       <input type="checkbox" name="option" value="${role._id}" ${
+        isRoleChecked(role._id) ? "checked" : ""
+      }>
+       ${role.name}
+     </label><br>
+   `
+    )
+    .join("");
   return /*html*/ `
     <h2 class="text-xl font-bold mb-4">${title}</h2>
     <div class="flex">
@@ -227,19 +349,11 @@ function createUserDetailHTML(
       <div class="w-3/4">
         <div class="grid grid-cols-2 gap-4">
           <div>
-            <label class="block text-sm font-medium text-gray-700" for="id">Loại người dùng</label>
-            <form>
-        <label>
-            <input type="checkbox" name="option" value="672f2c435367fbd3bf9f6831"> admin
-        </label><br>
-        <label>
-            <input type="checkbox" name="option" value="672f3d695367fbd3bf9f68c4"> Nhân viên
-        </label><br>
-        <label>
-            <input type="checkbox" name="option" value="672f6ea15367fbd3bf9f69ff"> Ngươi dùng
-        </label>
-    </form>
-          </div>
+             <label class="block text-sm font-medium text-gray-700" for="id">Loại người dùng</label>
+             <form id="roles-form">
+                ${roleCheckboxes}
+            </form>
+           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700" for="name">Tên</label>
             <input class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" id="name" type="text" value="${name}" ${readonlyAttr} />
@@ -280,35 +394,127 @@ function createUserDetailHTML(
     </div>
   `;
 }
-datagetListUser = getListUser();
-console.log(datagetListUser, "dataget");
+
+// console.log(datagetListUser, "dataget");
 //luu edit
-function saveEditUser(_id) {
-  console.log(_id, "hehehe");
+async function saveEditUser(_id) {
+  console.log(_id, "saveEditUser");
+
   // Thu thập dữ liệu từ các trường input
+
+  const name= document.getElementById("name").value
+  const email=document.getElementById("email").value
+  const location= document.getElementById("address").value
+  const phone= document.getElementById("phone").value
+  const  user_name= document.getElementById("username").value
+    const  password=document.getElementById("password").value
+    const  avatar=document.getElementById("avatar-link").value
+
   const updatedUser = {
-    name: document.getElementById("name").value,
-    email: document.getElementById("email").value,
-    location: document.getElementById("address").value,
-    phone_number: document.getElementById("phone").value,
-    user_name: document.getElementById("username").value,
-    password: document.getElementById("password").value,
-    avata: document.getElementById("avatar-link").value,
+    name,
+    email,
+    location,
+    phone_number: phone,
+    user_name,
+    password,
+    avata: avatar,
   };
+  // Lấy các vai trò đã chọn từ checkbox
+  const selectedRoles = Array.from(
+    document.querySelectorAll('input[name="option"]:checked')
+  ).map((checkbox) => checkbox.value);
+
+  // Lấy các vai trò hiện tại của người dùng từ server
+  const currentRoles = await getAllUsersWithRoles(_id); // Lấy các vai trò hiện tại của người dùng từ server
+
+  // Kiểm tra xem currentRoles có phải là mảng không
+  if (!Array.isArray(currentRoles)) {
+    console.error("currentRoles không phải là một mảng:", currentRoles);
+    return; // Dừng việc xử lý nếu dữ liệu không hợp lệ
+  }
+
+  if (currentRoles.length === 0) {
+    for (const roleId of selectedRoles) {
+      await addRolesUser(_id, roleId); // Gọi hàm thêm vai trò
+    }
+  } else {
+    // Nếu người dùng có vai trò, thực hiện thêm và xóa vai trò
+    // Thêm vai trò mới nếu vai trò checkbox chưa có trong currentRoles
+    for (const roleId of selectedRoles) {
+      const isRoleAlreadyAssigned = currentRoles.some(
+        (role) => role._id === roleId
+      );
+      if (!isRoleAlreadyAssigned) {
+        await addRolesUser(_id, roleId); // Gọi hàm thêm vai trò
+      }
+    }
+
+    // Xóa vai trò nếu vai trò checkbox không còn được chọn
+    for (const role of currentRoles) {
+      if (!selectedRoles.includes(role._id)) {
+        await removeRolesUser(_id, role._id); // Gọi hàm xóa vai trò
+      }
+    }
+  }
+
+  // Cập nhật thông tin người dùng
+  updatedUser.roles = selectedRoles; // Thêm danh sách vai trò vào đối tượng người dùng
+  // Validate các trường nhập liệu
+  if (!name) {
+    alert("Tên không được để trống.");
+    return;
+  }
+
+  if (!email || !/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)) {
+    alert("Email không hợp lệ.");
+    return;
+  }
+
+  if (!location) {
+    alert("Địa chỉ không được để trống.");
+    return;
+  }
+
+  if (!phone || !/^\d{10,15}$/.test(phone)) {
+    alert("Số điện thoại phải là số từ 10 đến 15 chữ số.");
+    return;
+  }
+
+  if (!user_name) {
+    alert("Tên đăng nhập không được để trống.");
+    return;
+  }
+
+  if (!password || password.length < 6) {
+    alert("Mật khẩu phải có ít nhất 6 ký tự.");
+    return;
+  }
+
+  if (!avatar || !/^(http|https):\/\/[^ "]+$/.test(avatar)) {
+    alert(
+      "Link avatar không hợp lệ. Hãy chắc chắn rằng nó bắt đầu bằng http hoặc https."
+    );
+    return;
+  }
+
+  // Lấy các checkbox được chọn (validate ít nhất 1 vai trò)
+  const checkboxes = document.querySelectorAll('input[name="option"]:checked');
+  const selectedValues = Array.from(checkboxes).map((cb) => cb.value);
+  if (selectedValues.length === 0) {
+    alert("Hãy chọn ít nhất một vai trò.");
+    return;
+  }
 
   fetch(`${url}/updateuser/${_id}`, {
     method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: "trinh_nhung",
-    },
+    headers,
     body: JSON.stringify(updatedUser),
   })
     .then((response) => response.json())
     .then((data) => {
       if (data.status) {
         alert("Cập nhật người dùng thành công!");
-        restoreRow();
+        restoreRow(); // Gọi lại hàm này để hiển thị bảng người dùng sau khi cập nhật
       } else {
         alert("Cập nhật thất bại. Vui lòng thử lại.");
       }
@@ -318,10 +524,10 @@ function saveEditUser(_id) {
       alert("Đã xảy ra lỗi. Vui lòng thử lại.");
     });
 }
+
 ///luu them moi
 async function saveAddUser() {
   console.log("Thêm mới");
-
   // Lấy dữ liệu từ form
   const name = document.getElementById("name").value.trim();
   const email = document.getElementById("email").value.trim();
@@ -392,17 +598,14 @@ async function saveAddUser() {
     // Gửi yêu cầu để tạo người dùng mới
     const userResponse = await fetch(`${url}/adduser`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "trinh_nhung",
-      },
+      headers,
       body: JSON.stringify(newUser),
     });
 
     const userData = await userResponse.json();
     if (userResponse.ok && userData.status && userData.result._id) {
       const userId = userData.result._id;
-      console.log("Thêm người dùng thành công! User ID:", userId);
+      // console.log("Thêm người dùng thành công! User ID:", userId);
 
       // Gửi vai trò đã chọn lên server
       const userRolePromises = selectedValues.map((roleId) => {
@@ -412,10 +615,7 @@ async function saveAddUser() {
         };
         return fetch(`http://localhost:3000/userRole/adduser_role`, {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "trinh_nhung",
-          },
+          headers,
           body: JSON.stringify(userRoleData),
         });
       });
@@ -431,9 +631,117 @@ async function saveAddUser() {
     alert("Đã xảy ra lỗi. Vui lòng thử lại.");
   }
 }
+async function getAllUsersWithRoles(id) {
+  // console.log(id, "user");
+  try {
+    const response = await fetch(
+      `http://localhost:3000/userRole/getAllUsersWithRoles`,
+      {
+        method: "GET",
+        headers,
+      }
+    );
+
+    const data = await response.json();
+    // console.log(data.result, "InvoiceDetail");
+    const userRole = data.result.find((userRole) => userRole.user._id === id);
+    if (userRole) {
+      // console.log(userRole.roles, "Tên người dùng");
+      return userRole.roles;
+    } else {
+      console.log("User không tồn tại");
+      return [];
+    }
+  } catch (err) {
+    console.log(err);
+    return "";
+  }
+}
+////
+async function getUserRole() {
+  // console.log(id, "user");
+  try {
+    const response = await fetch(
+      `http://localhost:3000/userRole/getListUserRole`,
+      {
+        method: "GET",
+        headers,
+      }
+    );
+
+    const data = await response.json();
+    return data;
+  } catch (err) {
+    console.log(err);
+    return "";
+  }
+}
+/////
+async function getRoles() {
+  try {
+    const response = await fetch("http://localhost:3000/role/getListRole", {
+      method: "GET",
+      headers: headers,
+    });
+    const data = await response.json();
+    if (Array.isArray(data)) {
+      console.log(data, "Roles");
+      return data; // trả về danh sách vai trò
+    } else {
+      console.error("Invalid data format for roles", data);
+      return []; // trả về mảng trống nếu dữ liệu không đúng
+    }
+  } catch (err) {
+    console.error("Error fetching roles:", err);
+    return [];
+  }
+}
+///
+async function removeRolesUser(userId, roleId) {
+  try {
+    const response = await fetch(
+      `http://localhost:3000/userRole/user_roles/${userId}/remove`,
+      {
+        method: "POST",
+        headers,
+        body: JSON.stringify({ role_id: roleId }), // Gửi roleId trong body để xóa vai trò
+      }
+    );
+    const data = await response.json();
+    console.log(data, "removeRolesUser");
+    return data;
+  } catch (err) {
+    console.error("Error removing role:", err);
+    return null;
+  }
+}
+
+async function addRolesUser(userId, roleId) {
+  try {
+    const response = await fetch(
+      `http://localhost:3000/userRole/user_roles/${userId}/add`,
+      {
+        method: "POST",
+        headers,
+        body: JSON.stringify({ role_id: roleId }), // Gửi roleId trong body để thêm vai trò
+      }
+    );
+    const data = await response.json();
+    console.log(data, "addRolesUser");
+    return data;
+  } catch (err) {
+    console.error("Error adding role:", err);
+    return null;
+  }
+}
 
 ////hienmk
-togglePassword = (passwordInput, eyeIcon) => {
+const togglePassword = (passwordInput, eyeIcon) => {
+  if (!passwordInput || !eyeIcon) {
+    console.error("Password input or eye icon not found");
+    return; // Dừng hàm nếu không có các phần tử cần thiết
+  }
+
   if (passwordInput.type === "password") {
     passwordInput.type = "text";
     eyeIcon.classList.remove("fa-eye");
@@ -444,6 +752,7 @@ togglePassword = (passwordInput, eyeIcon) => {
     eyeIcon.classList.add("fa-eye");
   }
 };
+
 ////back
 function restoreRow() {
   getListUser();

@@ -10,4 +10,6 @@ router.get("/getuser_roleById/:id",user_roleController.getuser_roleById)
 router.get("/get-Roles-By-UserId/:id",user_roleController.getRolesByUserId)
 router.get("/get-Users-By-RoleId/:id",user_roleController.getUsersByRoleId)
 router.get("/getAllUsersWithRoles",user_roleController.getAllUsersWithRoles)
+router.post('/user_roles/:user_id/add', user_roleController.addRoleToUser);
+router.post('/user_roles/:user_id/remove', user_roleController.removeRoleFromUser);
 module.exports = router;

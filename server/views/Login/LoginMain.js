@@ -1,3 +1,6 @@
+const headers = {
+  Authorization: "trinh_nhung", // thay bằng token thực tế nếu cần
+};
 function swapImages(image1, image2) {
   var tempSrc = image1.src;
   image1.src = image2.src;
@@ -68,7 +71,7 @@ document
 
 document
   .getElementById("loginForm")
-  .addEventListener("submit", function (event) {
+  .addEventListener("submit", async function (event) {
     event.preventDefault();
     var email = document.getElementById("email");
     var password = document.getElementById("password");
@@ -76,6 +79,7 @@ document
     var passwordError = document.getElementById("passwordError");
     var isValid = true;
 
+    // Kiểm tra email
     if (email.value.trim() === "") {
       email.classList.add("error-border");
       emailError.classList.remove("hidden");
@@ -86,6 +90,7 @@ document
       emailError.classList.add("hidden");
     }
 
+    // Kiểm tra mật khẩu
     if (password.value.trim() === "") {
       password.classList.add("error-border");
       passwordError.classList.remove("hidden");
@@ -98,40 +103,86 @@ document
       passwordError.classList.add("hidden");
     }
 
+    // Nếu email và mật khẩu hợp lệ, thực hiện login
     if (isValid) {
-      fetch("http://localhost:3000/user/getListUser",{
-        method: "GET",
-        headers: {
-          "Authorization": "trinh_nhung" // replace with your actual token if needed
-      }
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          console.table(data);
-          if (
-            data.some(
-              (dt) =>
-                dt.email === email.value ||
-                (dt.user_name === email.value && dt.password === password.value)
-            )
-          ) {
-            alert("dang nhap thanh cong");
-            const user = data.find(
-              (dt) =>
-                (dt.email === email.value || dt.user_name === email.value) &&
-                dt.password === password.value
-            );
+      try {
+        // Gửi yêu cầu GET để lấy danh sách người dùng
+        const response = await fetch("http://localhost:3000/user/getListUser", {
+          method: "GET",
+          headers,
+        });
+
+        const data = await response.json(); // Chuyển đổi dữ liệu nhận được thành JSON
+
+        console.table(data); // Log ra để kiểm tra
+
+        // Kiểm tra nếu có người dùng khớp với email và mật khẩu
+        const user = data.find(
+          (dt) =>
+            (dt.email === email.value || dt.user_name === email.value) &&
+            dt.password === password.value
+        );
+
+        if (user) {
+          // Lấy vai trò người dùng
+          const roles = await getAllUsersWithRoles(user._id); // Gọi hàm lấy vai trò
+          console.log(roles, "checkuRole");
+
+          // Kiểm tra vai trò người dùng
+          const userRole = roles.some(
+            (role) =>
+              role._id === "672f2c435367fbd3bf9f6831" ||
+              role._id === "672f6ea15367fbd3bf9f69ff"
+          );
+          console.log(userRole, "userRole");
+
+          if (userRole) {
+            // Lưu thông tin người dùng vào localStorage
             localStorage.setItem("loggedInUser", user.name);
             localStorage.setItem("loggedInUserAvatar", user.avata);
-            console.log(`${user.name},hihih,   ${user.avata}`);
+
+            console.log(`${user.name}, ${user.avata}`);
+
+            // Chuyển hướng nếu cần
             window.location.href = "/views/Home/HomeScreen.html";
           } else {
-            alert("ban nhap sai tai khoan hoac mat khau");
+            alert("Bạn không có quyền truy cập");
           }
-        })
-        .catch((error) => console.error(error));
+        } else {
+          alert("Bạn nhập sai tài khoản hoặc mật khẩu");
+        }
+      } catch (error) {
+        console.error("Lỗi khi đăng nhập:", error); // Xử lý lỗi nếu có
+      }
     }
   });
+///
+async function getAllUsersWithRoles(id) {
+  // console.log(id, "user");
+  try {
+    const response = await fetch(
+      `http://localhost:3000/userRole/getAllUsersWithRoles`,
+      {
+        method: "GET",
+        headers,
+      }
+    );
+
+    const data = await response.json();
+    // console.log(data.result, "InvoiceDetail");
+    const userRole = data.result.find((userRole) => userRole.user._id === id);
+    if (userRole) {
+      // console.log(userRole.roles, "Tên người dùng");
+      return userRole.roles;
+    } else {
+      console.log("User không tồn tại");
+      return [];
+    }
+  } catch (err) {
+    console.log(err);
+    return "";
+  }
+}
 /////next image
 const thumbnailImages = [
   document.getElementById("thumbnailImage1"),
