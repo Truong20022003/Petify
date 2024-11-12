@@ -4,7 +4,7 @@ let url = "http://localhost:3000/userRole";
 let tbody = document.querySelector("tbody");
 let table = document.querySelector("table");
 
-const getListUser = async () => {
+const getList = async () => {
   try {
     const response = await fetch(`${url}/getListUserRole`, {
       method: "GET",
@@ -21,7 +21,7 @@ const getListUser = async () => {
     const namesrole = await Promise.all(
       data.map((item) => checkRole(item.role_id))
     );
-    // Tạo HTML cho bảng với danh sách các tên người dùng đã lấy
+    
     content.innerHTML = /*html*/ `<div class="flex mb-4">
             <!-- <button class="bg-yellow-500 text-white px-4 py-2 rounded mr-2 btnadd">
               Thêm mới
@@ -155,7 +155,7 @@ const setButtonEvents = () => {
           .then((response) => response.json())
           .then(() => {
             alert("Xóa thành công");
-            getListUser(); // Tải lại danh sách người dùng
+            getList(); // Tải lại danh sách người dùng
           })
           .catch((err) => console.log(err));
       }
@@ -247,8 +247,8 @@ async function createUserDetailHTML(
       </div>
       <div class="mt-4">
         ${saveButtonHTML}
-        <button class="bg-blue-500 text-white px-4 py-2 rounded back" onclick="getListUser()">Quay lại</button>
+        <button class="bg-blue-500 text-white px-4 py-2 rounded back" onclick="getList()">Quay lại</button>
       </div>
     `;
 }
-getListUser(); // Gọi hàm để tải danh sách người dùng
+getList(); // Gọi hàm để tải danh sách người dùng
