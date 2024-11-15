@@ -26,11 +26,43 @@
     <string name="ten">Tên</string>
     <string name="hoac">Hoặc</string>
     <string name="facebook">Facebook</string>
-    <string name="quen_mat_khau">Quên mật khẩu?</string>
+    <string name="quen_mat_khau"><u>Quên mật khẩu?</u></string>
     <string name="mat_khau">Mật khẩu</string>
 
-<string name="tv_dat_lai_mat_khau">Chọn chi tiết liên hệ nào chúng tôi sẽ sử dụng để đặt lại mật khẩu của bạn</string>
+    <string name="tv_update_pass_success">Cập nhật mật khẩu \n thành công</string>
+    <string name="tv_success_pass">Mật khẩu của bạn đã được cập nhật thành công</string>
+
+    <string name="tv_ma_xac_minh">Chúng tôi đã gửi mã xác minh đến số điện thoại di động của bạn</string>
+    <string name="tv_mat_khau_mơi">Vui lòng nhập mật khẩu của bạn</string>
+
+    <string name="tv_dat_lai_mat_khau">Chọn chi tiết liên hệ nào chúng tôi sẽ sử dụng để đặt lại mật khẩu của bạn</string>
     <string name="tiep_tuc">Tiếp tục</string>
+    <string name="xac_nhan">Xác nhận</string>
+
+    <string name="tv_chinh_sach_bao_mat">Chính Sách Bảo Mật Của Petify</string>
+    <string name="tv_pricacy1">Chúng tôi, đội ngũ phát triển ứng dụng Petify, cam kết bảo vệ quyền riêng tư của bạn. Chính sách bảo mật này giải thích cách chúng tôi thu thập, sử dụng, chia sẻ và bảo vệ thông tin cá nhân của bạn khi sử dụng ứng dụng Petify.</string>
+    <string name="tv_pricacy2">Chúng tôi có thể thu thập các thông tin sau từ người dùng:</string>
+    <string name="tv_pricacy3">Thông tin cá nhân: Tên, địa chỉ email, số điện thoại, địa chỉ giao hàng, và thông tin thanh toán để hoàn tất đơn hàng và giao hàng.</string>
+    <string name="tv_pricacy4">Thông tin hoạt động: Dữ liệu về các thao tác, lịch sử mua hàng và các hành động khác trong ứng dụng để tối ưu hóa dịch vụ và hỗ trợ khách hàng.</string>
+    <string name="tv_pricacy5">Chúng tôi sử dụng thông tin cá nhân của bạn cho các mục đích sau:</string>
+    <string name="tv_pricacy6">Xử lý đơn hàng và thanh toán: Để đảm bảo quá trình mua hàng và thanh toán diễn ra an toàn và chính xác.</string>
+    <string name="tv_pricacy7">Cải thiện dịch vụ: Phân tích dữ liệu để nâng cao hiệu suất ứng dụng, phát triển tính năng mới, và tối ưu hóa trải nghiệm người dùng.</string>
+    <string name="tv_pricacy8">Gửi thông báo và khuyến mãi: Cập nhật thông tin đơn hàng, thông báo bảo trì và các ưu đãi đặc biệt cho người dùng đã đăng ký.</string>
+    <string name="tv_pricacy9">Chúng tôi cam kết không chia sẻ thông tin cá nhân của bạn với bên thứ ba ngoại trừ các trường hợp sau:</string>
+    <string name="tv_pricacy10">Các đối tác giao hàng và thanh toán: Để hoàn thành các yêu cầu đơn hàng và quá trình giao hàng.</string>
+    <string name="tv_pricacy11">Theo yêu cầu pháp lý: Khi có yêu cầu từ cơ quan pháp luật hoặc để bảo vệ quyền lợi của chúng tôi và người dùng.</string>
+    <string name="tv_pricacy12">Chúng tôi áp dụng các biện pháp bảo mật phù hợp để bảo vệ thông tin cá nhân của bạn, bao gồm:</string>
+    <string name="tv_pricacy13">Mã hóa dữ liệu: Các thông tin nhạy cảm như thông tin thanh toán được mã hóa để bảo vệ an toàn.</string>
+    <string name="tv_pricacy14">Giới hạn quyền truy cập: Chỉ nhân viên cần thiết mới có quyền truy cập vào thông tin cá nhân của người dùng.</string>
+    <string name="tv_pricacy15">Người dùng có các quyền sau đối với thông tin cá nhân của mình:</string>
+    <string name="tv_pricacy16">Quyền truy cập: Bạn có thể yêu cầu truy cập hoặc sao chép dữ liệu cá nhân mà chúng tôi lưu trữ.</string>
+    <string name="tv_pricacy17">Quyền chỉnh sửa: Yêu cầu chỉnh sửa nếu thông tin của bạn không chính xác hoặc không đầy đủ.</string>
+    <string name="tv_pricacy18">Quyền xóa bỏ: Yêu cầu xóa dữ liệu cá nhân của bạn khỏi hệ thống của chúng tôi.</string>
+    <string name="tv_pricacy19">Chính sách bảo mật này có thể được cập nhật theo thời gian. Chúng tôi sẽ thông báo qua email hoặc trên ứng dụng nếu có bất kỳ thay đổi quan trọng nào.</string>
+    <string name="tv_pricacy20">Nếu có bất kỳ câu hỏi nào liên quan đến chính sách bảo mật hoặc cách chúng tôi xử lý thông tin cá nhân, vui lòng liên hệ với chúng tôi qua:</string>
+    <string name="tv_pricacy_email">Email: doan379a@gmail.com</string>
+    <string name="tv_pricacy_hotline">Hotline: 0123-456-789</string>
+
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

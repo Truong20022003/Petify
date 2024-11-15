@@ -51,6 +51,7 @@
             android:gravity="center"
             android:paddingHorizontal="50dp"
             android:paddingVertical="15dp"
+            android:fontFamily="@font/bevietnampro_semibold"
             android:text="@string/tiep_theo"
             android:textAllCaps="false"
             android:textColor="@android:color/white"

@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.privacypolicy.PrivacyPolicyActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center">
+            <ImageView
+                android:id="@+id/img_back"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:padding="10dp"
+                android:src="@drawable/ic_back"
+                />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Chính sách bảo mật"
+                android:textSize="24sp"
+                android:gravity="center"
+                android:fontFamily="@font/bevietnampro_bold"
+                android:textColor="@color/black"
+                />
+        </LinearLayout>
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="8dp"
+            android:fontFamily="@font/bevietnampro_extrabold"
+            android:text="@string/tv_chinh_sach_bao_mat"
+            android:textColor="@color/black"
+            android:textSize="20sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="30dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/tv_pricacy1"
+            android:fontFamily="@font/bevietnampro_regular"
+            android:textColor="@color/black"
+            android:textSize="18sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/tv_pricacy2"
+            android:fontFamily="@font/bevietnampro_medium"
+            android:textColor="@color/black"
+            android:textSize="20sp" />
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="30dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/tv_pricacy3"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:drawableStart="@drawable/ic_dot"
+            android:fontFamily="@font/bevietnampro_regular"
+            android:drawablePadding="10dp"
+            />
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="30dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/tv_pricacy4"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:fontFamily="@font/bevietnampro_regular"
+            android:drawableStart="@drawable/ic_dot"
+            android:drawablePadding="10dp" />
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/tv_pricacy5"
+            android:fontFamily="@font/bevietnampro_medium"
+            android:textColor="@color/black"
+            android:textSize="20sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="30dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/tv_pricacy6"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:fontFamily="@font/bevietnampro_regular"
+
+            android:drawableStart="@drawable/ic_dot"
+            android:drawablePadding="10dp"
+            />
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="30dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/tv_pricacy7"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:drawableStart="@drawable/ic_dot"
+            android:drawablePadding="10dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="30dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/tv_pricacy8"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:fontFamily="@font/bevietnampro_regular"
+
+            android:drawableStart="@drawable/ic_dot"
+            android:drawablePadding="10dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/tv_pricacy9"
+            android:fontFamily="@font/bevietnampro_medium"
+            android:textColor="@color/black"
+            android:textSize="20sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="30dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/tv_pricacy10"
+            android:textColor="@color/black"
+            android:fontFamily="@font/bevietnampro_regular"
+            android:textSize="18sp"
+            android:drawableStart="@drawable/ic_dot"
+            android:drawablePadding="10dp"
+            />
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="30dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/tv_pricacy11"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:fontFamily="@font/bevietnampro_regular"
+            android:drawableStart="@drawable/ic_dot"
+            android:drawablePadding="10dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="8dp"
+            android:fontFamily="@font/bevietnampro_medium"
+            android:text="@string/tv_pricacy12"
+            android:textColor="@color/black"
+            android:textSize="20sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="30dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/tv_pricacy13"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:fontFamily="@font/bevietnampro_regular"
+            android:drawableStart="@drawable/ic_dot"
+            android:drawablePadding="10dp"
+            />
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="30dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/tv_pricacy14"
+            android:textColor="@color/black"
+            android:fontFamily="@font/bevietnampro_regular"
+
+            android:textSize="18sp"
+            android:drawableStart="@drawable/ic_dot"
+            android:drawablePadding="10dp" />
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/tv_pricacy15"
+            android:fontFamily="@font/bevietnampro_medium"
+            android:textColor="@color/black"
+            android:textSize="20sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="30dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/tv_pricacy16"
+            android:textColor="@color/black"
+            android:fontFamily="@font/bevietnampro_regular"
+
+            android:textSize="18sp"
+            android:drawableStart="@drawable/ic_dot"
+            android:drawablePadding="10dp"
+            />
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="30dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/tv_pricacy17"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:fontFamily="@font/bevietnampro_regular"
+
+            android:drawableStart="@drawable/ic_dot"
+            android:drawablePadding="10dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="30dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/tv_pricacy18"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:fontFamily="@font/bevietnampro_regular"
+
+            android:drawableStart="@drawable/ic_dot"
+            android:drawablePadding="10dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/tv_pricacy19"
+            android:fontFamily="@font/bevietnampro_regular"
+
+            android:textColor="@color/black"
+            android:textSize="20sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/tv_pricacy20"
+            android:fontFamily="@font/bevietnampro_medium"
+            android:textColor="@color/black"
+            android:textSize="20sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="30dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/tv_pricacy_email"
+            android:fontFamily="@font/bevietnampro_semibold"
+
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:drawableStart="@drawable/ic_dot"
+            android:drawablePadding="10dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="30dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/tv_pricacy_hotline"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:fontFamily="@font/bevietnampro_semibold"
+            android:drawableStart="@drawable/ic_dot"
+            android:drawablePadding="10dp" />
+
+    </LinearLayout>
+
+</ScrollView>
