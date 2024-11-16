@@ -11,6 +11,7 @@ import com.example.petify.ui.signup.SignupActivity
 import com.example.petify.databinding.ActivityIntroBinding
 import com.example.petify.model.IntroModel
 import com.example.petify.ui.login.LoginActivity
+import com.example.petify.ui.zalopay.ZalopayMainActivity
 
 class IntroActivity : BaseActivity<ActivityIntroBinding, BaseViewModel> () {
 
@@ -87,7 +88,7 @@ class IntroActivity : BaseActivity<ActivityIntroBinding, BaseViewModel> () {
 
 
     private fun startNextScreen() {
-        var intent = Intent(this, LoginActivity::class.java)
+        var intent = Intent(this, ZalopayMainActivity::class.java)
         startActivity(intent)
         finishAffinity()
     }
