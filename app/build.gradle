@@ -80,7 +80,7 @@ dependencies {
 
 
     //zaloplay
-    implementation fileTree(dir: 'D:\\Du_an_tot_ngiep\\Demo', include: ['*.aar', '*.jar'], exclude: [])
+    implementation fileTree(dir: 'D:\\Du_an_tot_ngiep\\Petify\\Demo', include: ['*.aar', '*.jar'], exclude: [])
 
     implementation("com.squareup.okhttp3:okhttp:4.6.0")
     implementation("commons-codec:commons-codec:1.14")
