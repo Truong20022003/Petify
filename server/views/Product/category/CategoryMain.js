@@ -14,8 +14,8 @@ const getList = () => {
     .then((data) => {
       console.log(data);
       content.innerHTML =
-        /*html*/` <div class="flex mb-4">
-            <button class="bg-yellow-500 text-white px-4 py-2 rounded mr-2 btnadd">
+        /*html*/ ` <div class="flex mb-4">
+            <button class="bg-[#396060] text-white px-4 py-2 rounded mr-2 btnadd">
               Thêm mới
             </button>
             <input
@@ -23,13 +23,13 @@ const getList = () => {
               placeholder="Tìm kiếm"
               type="text"
             />
-            <button class="bg-yellow-500 text-white px-4 py-2 rounded ml-2">
+            <button class="bg-[#396060] text-white px-4 py-2 rounded ml-2">
               TÌm kiếm
             </button>
           </div>
           <table class="content w-full border-collapse">
             <thead>
-              <tr class="bg-yellow-500 text-white">
+              <tr class="bg-[#396060] text-white">
                 <th class="border border-gray-300 px-4 py-2">STT</th>
                 <th class="border border-gray-300 px-4 py-2">Mã loại sản phẩm</th>
                 <th class="border border-gray-300 px-4 py-2">Tên</th>
@@ -39,7 +39,7 @@ const getList = () => {
             </thead>` +
         data
           .map(
-            (item, index) => /*html*/`<tr id="row-${item._id}">
+            (item, index) => /*html*/ `<tr id="row-${item._id}">
                 <td class="border border-gray-300 px-4 py-2">${index + 1}</td>
                 <td class="border border-gray-300 px-4 py-2">${item._id}</td>
                 <td class="border border-gray-300 px-4 py-2">${item.name}</td>
@@ -60,7 +60,7 @@ const getList = () => {
                     <button class="bg-red-500 text-white px-2 py-1 rounded btndelete" data-id="${
                       item._id
                     }">Xóa</button>
-                    <button class="bg-yellow-500 text-white px-2 py-1 rounded btndetail" data-id="${
+                    <button class="bg-[#008080] text-white px-2 py-1 rounded btndetail" data-id="${
                       item._id
                     }">
                       Chi tiết

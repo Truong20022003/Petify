@@ -22,13 +22,13 @@ const getListUser = async () => {
 const renderTable = (data) => {
   content.innerHTML = /*html*/ `
     <div class="flex mb-4">
-      <button class="bg-yellow-500 text-white px-4 py-2 rounded mr-2 btnadd">Thêm mới</button>
+      <button class="bg-[#396060] text-white px-4 py-2 rounded mr-2 btnadd">Thêm mới</button>
       <input    id="searchInput" class="border border-gray-300 rounded px-4 py-2 flex-grow" placeholder="Tìm kiếm" type="text" />
-      <button class="bg-yellow-500 text-white px-4 py-2 rounded ml-2">Tìm kiếm</button>
+      <button class="bg-[#396060] text-white px-4 py-2 rounded ml-2">Tìm kiếm</button>
     </div>
     <table class="content w-full border-collapse">
       <thead>
-        <tr class="bg-yellow-500 text-white">
+        <tr class="bg-[#396060] text-white">
           <th class="border border-gray-300 px-4 py-2">STT</th>
           <th class="border border-gray-300 px-4 py-2">ID Role</th>
           <th class="border border-gray-300 px-4 py-2">Name</th>
@@ -70,19 +70,21 @@ const renderList = (data) => {
           <td class="border border-gray-300 px-4 py-2">${index + 1}</td>
           <td class="border border-gray-300 px-4 py-2">${item._id}</td>
           <td class="border border-gray-300 px-4 py-2">${item.name}</td>
-          <td class="border border-gray-300 px-4 py-2">${item.description
-          }</td>
+          <td class="border border-gray-300 px-4 py-2">${item.description}</td>
           <td class="border border-gray-300 px-4 py-2">
             <div class="button-group flex flex-col space-y-2">
-              <button class="bg-blue-500 text-white px-2 py-1 rounded btnedit" data-id="${item._id
-          }">Cập nhật</button>
-              <button class="bg-red-500 text-white px-2 py-1 rounded btndelete" data-id="${item._id
-          }">Xóa</button>
-              <button class="bg-yellow-500 text-white px-2 py-1 rounded btndetail" data-id="${item._id
-          }">Chi tiết</button>
+              <button class="bg-blue-500 text-white px-2 py-1 rounded btnedit" data-id="${
+                item._id
+              }">Cập nhật</button>
+              <button class="bg-red-500 text-white px-2 py-1 rounded btndelete" data-id="${
+                item._id
+              }">Xóa</button>
+              <button class="bg-[#008080] text-white px-2 py-1 rounded btndetail" data-id="${
+                item._id
+              }">Chi tiết</button>
             </div>
           </td>
-        </tr>`
+        </tr>`;
         tableBody.innerHTML += row;
       })
   }
