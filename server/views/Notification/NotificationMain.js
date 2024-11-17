@@ -195,5 +195,23 @@ const saveAddUser = async () => {
     alert("Đã xảy ra lỗi. Vui lòng thử lại.");
   }
 };
+async function getUserRoleID(id) {
+  // console.log(id, "user");
+  try {
+    const response = await fetch(
+      `http://localhost:3000/user/getuserById/${id}`,
+      {
+        method: "GET",
+        headers,
+      }
+    );
 
+    const data = await response.json();
+
+    return data.result.name;
+  } catch (err) {
+    console.log(err);
+    return "";
+  }
+}
 getListUser();

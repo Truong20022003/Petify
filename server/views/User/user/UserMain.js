@@ -93,43 +93,34 @@ function renderUserList(users, roles) {
           <td class="border border-gray-300 px-4 py-2">${index + 1}</td>
           <td class="border border-gray-300 px-4 py-2">${user.name}</td>
           <td class="border border-gray-300 px-4 py-2">
-            ${
-              Array.isArray(roles[index]) && roles[index].length > 0
-                ? roles[index]
-                    .map((role, index) => {
-                      return `<span>${
-                        index + 1
-                      }_</span><span class="role-item px-2 py-1 rounded mr-2 mt-2 mb-2">${
-                        role.name
-                      }</span><br>`;
-                    })
-                    .join("")
-                : "Không có vai trò"
-            }
+            ${Array.isArray(roles[index]) && roles[index].length > 0
+          ? roles[index]
+            .map((role, index) => {
+              return `<span>${index + 1
+                }_</span><span class="role-item px-2 py-1 rounded mr-2 mt-2 mb-2">${role.name
+                }</span><br>`;
+            })
+            .join("")
+          : "Không có vai trò"
+        }
           </td>
           <td class="border border-gray-300 px-4 py-2">${user.email}</td>
-          <td class="border border-gray-300 px-4 py-2">${
-            user.location || ""
-          }</td>
-          <td class="border border-gray-300 px-4 py-2">${
-            user.phone_number || ""
-          }</td>
+          <td class="border border-gray-300 px-4 py-2">${user.location || ""
+        }</td>
+          <td class="border border-gray-300 px-4 py-2">${user.phone_number || ""
+        }</td>
           <td class="border border-gray-300 px-4 py-2">
-            <img alt="Product image" class="w-12 h-12" height="50" src="${
-              user.avata
-            }" width="50" />
+            <img alt="Product image" class="w-12 h-12" height="50" src="${user.avata
+        }" width="50" />
           </td>
           <td class="border border-gray-300 px-4 py-2">
             <div class="button-group flex flex-col space-y-2">
-              <button class="bg-blue-500 text-white px-2 py-1 rounded btnedit" data-id="${
-                user._id
-              }">Cập nhật</button>
-              <button class="bg-red-500 text-white px-2 py-1 rounded btndelete" data-id="${
-                user._id
-              }">Xóa</button>
-              <button class="bg-yellow-500 text-white px-2 py-1 rounded btndetail" data-id="${
-                user._id
-              }">Chi tiết</button>
+              <button class="bg-blue-500 text-white px-2 py-1 rounded btnedit" data-id="${user._id
+        }">Cập nhật</button>
+              <button class="bg-red-500 text-white px-2 py-1 rounded btndelete" data-id="${user._id
+        }">Xóa</button>
+              <button class="bg-yellow-500 text-white px-2 py-1 rounded btndetail" data-id="${user._id
+        }">Chi tiết</button>
             </div>
           </td>
         </tr>`;
@@ -158,7 +149,6 @@ function searchUser(query, users) {
 }
 /////
 function setupEventListeners(roles) {
-  ///
   document.querySelectorAll(".btndelete").forEach((btn) => {
     btn.addEventListener("click", async () => {
       console.log("delete");
@@ -200,12 +190,14 @@ function setupEventListeners(roles) {
         .then(async (data) => {
           // console.log(data, "kkkk");
           const roles = await getAllUsersWithRoles(data.result._id);
+          const rolesList = await getRoles();
           content.innerHTML = createUserDetailHTML(
             data.result,
             true,
             false,
             "Chi tiết người dùng",
-            roles || []
+            roles || [],
+            rolesList || []
           );
           const passwordInput = document.getElementById("password");
           const eyeIcon = document.querySelector(".fas.fa-eye");
@@ -316,9 +308,8 @@ function createUserDetailHTML(
   rolesList
 ) {
   const saveButtonHTML = showSaveButton
-    ? `<button class="bg-green-500 text-white px-4 py-2 rounded save" onclick="${
-        _id ? `saveEditUser('${_id}')` : "saveAddUser()"
-      }">Lưu</button>`
+    ? `<button class="bg-green-500 text-white px-4 py-2 rounded save" onclick="${_id ? `saveEditUser('${_id}')` : "saveAddUser()"
+    }">Lưu</button>`
     : "";
   const readonlyAttr = isReadonly ? "readonly" : "";
   // Hàm kiểm tra xem vai trò có trong danh sách vai trò của người dùng không
@@ -327,14 +318,12 @@ function createUserDetailHTML(
     return Array.isArray(roles) && roles.some((role) => role._id === roleId);
   }
 
-  console.log(rolesList, "rolesList");
   const roleCheckboxes = rolesList
     .map(
       (role) => `
      <label>
-       <input type="checkbox" name="option" value="${role._id}" ${
-        isRoleChecked(role._id) ? "checked" : ""
-      }>
+       <input type="checkbox" name="option" value="${role._id}" ${isRoleChecked(role._id) ? "checked" : ""
+        }>
        ${role.name}
      </label><br>
    `
@@ -392,7 +381,7 @@ function createUserDetailHTML(
         </div>
       </div>
     </div>
-  `;
+  `
 }
 
 // console.log(datagetListUser, "dataget");
@@ -402,63 +391,57 @@ async function saveEditUser(_id) {
 
   // Thu thập dữ liệu từ các trường input
 
-  const name= document.getElementById("name").value
-  const email=document.getElementById("email").value
-  const location= document.getElementById("address").value
-  const phone= document.getElementById("phone").value
-  const  user_name= document.getElementById("username").value
-    const  password=document.getElementById("password").value
-    const  avatar=document.getElementById("avatar-link").value
+  const name = document.getElementById("name").value;
+  const email = document.getElementById("email").value;
+  const location = document.getElementById("address").value;
+  const phone = document.getElementById("phone").value;
+  const user_name = document.getElementById("username").value;
+  const password = document.getElementById("password").value;
+  const avatar = document.getElementById("avatar-link").value;
 
-  const updatedUser = {
-    name,
-    email,
-    location,
-    phone_number: phone,
-    user_name,
-    password,
-    avata: avatar,
-  };
+
   // Lấy các vai trò đã chọn từ checkbox
+  const checkboxes = document.querySelectorAll('input[name="option"]:checked');
+  const selectedValues = Array.from(checkboxes).map((cb) => cb.value);
   const selectedRoles = Array.from(
     document.querySelectorAll('input[name="option"]:checked')
   ).map((checkbox) => checkbox.value);
-
-  // Lấy các vai trò hiện tại của người dùng từ server
-  const currentRoles = await getAllUsersWithRoles(_id); // Lấy các vai trò hiện tại của người dùng từ server
-
-  // Kiểm tra xem currentRoles có phải là mảng không
+  const currentRoles = await getAllUsersWithRoles(_id);
   if (!Array.isArray(currentRoles)) {
     console.error("currentRoles không phải là một mảng:", currentRoles);
-    return; // Dừng việc xử lý nếu dữ liệu không hợp lệ
+    return;
   }
-
-  if (currentRoles.length === 0) {
-    for (const roleId of selectedRoles) {
-      await addRolesUser(_id, roleId); // Gọi hàm thêm vai trò
-    }
+  if (selectedValues.length === 0) {
+    alert("Hãy chọn ít nhất một vai trò.");
+    return
   } else {
-    // Nếu người dùng có vai trò, thực hiện thêm và xóa vai trò
-    // Thêm vai trò mới nếu vai trò checkbox chưa có trong currentRoles
-    for (const roleId of selectedRoles) {
-      const isRoleAlreadyAssigned = currentRoles.some(
-        (role) => role._id === roleId
-      );
-      if (!isRoleAlreadyAssigned) {
+    if (currentRoles.length === 0) {
+      for (const roleId of selectedRoles) {
         await addRolesUser(_id, roleId); // Gọi hàm thêm vai trò
       }
-    }
+    } else {
+      // Nếu người dùng có vai trò, thực hiện thêm và xóa vai trò
+      // Thêm vai trò mới nếu vai trò checkbox chưa có trong currentRoles
+      for (const roleId of selectedRoles) {
+        const isRoleAlreadyAssigned = currentRoles.some(
+          (role) => role._id === roleId
+        );
+        if (!isRoleAlreadyAssigned) {
+          await addRolesUser(_id, roleId); // Gọi hàm thêm vai trò
+        }
+      }
 
-    // Xóa vai trò nếu vai trò checkbox không còn được chọn
-    for (const role of currentRoles) {
-      if (!selectedRoles.includes(role._id)) {
-        await removeRolesUser(_id, role._id); // Gọi hàm xóa vai trò
+      // Xóa vai trò nếu vai trò checkbox không còn được chọn
+      for (const role of currentRoles) {
+        if (!selectedRoles.includes(role._id)) {
+          await removeRolesUser(_id, role._id); // Gọi hàm xóa vai trò
+        }
       }
     }
   }
 
   // Cập nhật thông tin người dùng
-  updatedUser.roles = selectedRoles; // Thêm danh sách vai trò vào đối tượng người dùng
+  // Thêm danh sách vai trò vào đối tượng người dùng
   // Validate các trường nhập liệu
   if (!name) {
     alert("Tên không được để trống.");
@@ -498,13 +481,19 @@ async function saveEditUser(_id) {
   }
 
   // Lấy các checkbox được chọn (validate ít nhất 1 vai trò)
-  const checkboxes = document.querySelectorAll('input[name="option"]:checked');
-  const selectedValues = Array.from(checkboxes).map((cb) => cb.value);
-  if (selectedValues.length === 0) {
-    alert("Hãy chọn ít nhất một vai trò.");
-    return;
-  }
 
+
+
+  const updatedUser = {
+    name,
+    email,
+    location,
+    phone_number: phone,
+    user_name,
+    password,
+    avata: avatar,
+  };
+  updatedUser.roles = selectedRoles;
   fetch(`${url}/updateuser/${_id}`, {
     method: "PUT",
     headers,
