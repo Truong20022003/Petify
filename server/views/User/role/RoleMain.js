@@ -23,7 +23,7 @@ const renderTable = (data) => {
   content.innerHTML = /*html*/ `
     <div class="flex mb-4">
       <button class="bg-yellow-500 text-white px-4 py-2 rounded mr-2 btnadd">Thêm mới</button>
-      <input class="border border-gray-300 rounded px-4 py-2 flex-grow" placeholder="Tìm kiếm" type="text" />
+      <input    id="searchInput" class="border border-gray-300 rounded px-4 py-2 flex-grow" placeholder="Tìm kiếm" type="text" />
       <button class="bg-yellow-500 text-white px-4 py-2 rounded ml-2">Tìm kiếm</button>
     </div>
     <table class="content w-full border-collapse">
@@ -36,37 +36,75 @@ const renderTable = (data) => {
           <th class="border border-gray-300 px-4 py-2">Hành động</th>
         </tr>
       </thead>
-      <tbody>
-        ${data
-          .map(
-            (item, index) => /*html*/ `
-              <tr id="row-${item._id}">
-                <td class="border border-gray-300 px-4 py-2">${index + 1}</td>
-                <td class="border border-gray-300 px-4 py-2">${item._id}</td>
-                <td class="border border-gray-300 px-4 py-2">${item.name}</td>
-                <td class="border border-gray-300 px-4 py-2">${
-                  item.description
-                }</td>
-                <td class="border border-gray-300 px-4 py-2">
-                  <div class="button-group flex flex-col space-y-2">
-                    <button class="bg-blue-500 text-white px-2 py-1 rounded btnedit" data-id="${
-                      item._id
-                    }">Cập nhật</button>
-                    <button class="bg-red-500 text-white px-2 py-1 rounded btndelete" data-id="${
-                      item._id
-                    }">Xóa</button>
-                    <button class="bg-yellow-500 text-white px-2 py-1 rounded btndetail" data-id="${
-                      item._id
-                    }">Chi tiết</button>
-                  </div>
-                </td>
-              </tr>`
-          )
-          .join("")}
+      <tbody id="roleList">
+        
       </tbody>
     </table>`;
+  document
+    .getElementById("searchInput")
+    .addEventListener("input", async (e) => {
+      const query = e.target.value; 
+      const filteredUsers = searchUser(query, data); 
+      renderList(filteredUsers)
+    });
+  renderList(data)
 };
+const renderList = (data) => {
+  const tableBody = document.getElementById("roleList");
+  tableBody.innerHTML = "";
+  console.log(data, "dataaaa")
+  if (data.length === 0) {
+    // Nếu không có người dùng nào trong kết quả tìm kiếm
+    const noDataRow = /*html*/ `
+      <tr>
+        <td colspan="8" class="border border-gray-300 px-4 py-2 text-center text-red-500">
+          Không có dữ liệu
+        </td>
+      </tr>`;
+    tableBody.innerHTML = noDataRow; 
+  } else {
+    data.forEach(
+      (item, index) => {
+        const row = /*html*/ `
+        <tr id="row-${item._id}">
+          <td class="border border-gray-300 px-4 py-2">${index + 1}</td>
+          <td class="border border-gray-300 px-4 py-2">${item._id}</td>
+          <td class="border border-gray-300 px-4 py-2">${item.name}</td>
+          <td class="border border-gray-300 px-4 py-2">${item.description
+          }</td>
+          <td class="border border-gray-300 px-4 py-2">
+            <div class="button-group flex flex-col space-y-2">
+              <button class="bg-blue-500 text-white px-2 py-1 rounded btnedit" data-id="${item._id
+          }">Cập nhật</button>
+              <button class="bg-red-500 text-white px-2 py-1 rounded btndelete" data-id="${item._id
+          }">Xóa</button>
+              <button class="bg-yellow-500 text-white px-2 py-1 rounded btndetail" data-id="${item._id
+          }">Chi tiết</button>
+            </div>
+          </td>
+        </tr>`
+        tableBody.innerHTML += row;
+      })
+  }
 
+}
+
+////
+// Hàm tìm kiếm người dùng
+function searchUser(query, data) {
+  function removeVietnameseTones(str) {
+    return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  }
+  const queryNormalized = removeVietnameseTones(query.toLowerCase());
+
+  // Lọc danh sách người dùng
+  const filteredUsers = data.filter((role) => {
+    const userNameNormalized = removeVietnameseTones(role.name.toLowerCase());
+    return userNameNormalized.includes(queryNormalized);
+  });
+
+  return filteredUsers;
+}
 const addEventListeners = () => {
   document
     .querySelectorAll(".btndelete")
@@ -132,9 +170,8 @@ const renderDetailForm = (
   const { _id = "", name = "", description = "" } = user;
   const readonlyAttr = isReadonly ? "readonly" : "";
   const saveButtonHTML = showSaveButton
-    ? `<button class="bg-green-500 text-white px-4 py-2 rounded save" onclick="${
-        _id ? `saveEditUserRole('${_id}')` : "saveAddUserRole()"
-      }">Lưu</button>`
+    ? `<button class="bg-green-500 text-white px-4 py-2 rounded save" onclick="${_id ? `saveEditUserRole('${_id}')` : "saveAddUserRole()"
+    }">Lưu</button>`
     : "";
 
   content.innerHTML = /*html*/ `
@@ -151,11 +188,21 @@ const renderDetailForm = (
 };
 
 const saveEditUserRole = async (_id) => {
+  const namevalues=document.getElementById("name").value
+  const descriptionvalues=document.getElementById("description").value
   const updatedRole = {
-    name: document.getElementById("name").value,
-    description: document.getElementById("description").value,
+    name: namevalues,
+    description:descriptionvalues,
   };
   console.log(updatedRole, "updatedRole");
+  if(namevalues==""){
+    alert("Tên loại người dùng hông được để trống")
+    return
+  }
+  if(descriptionvalues==""){
+    alert("Mô tả loại người dùng hông được để trống")
+    return
+  }
   try {
     const response = await fetch(`${url}/updaterole/${_id}`, {
       method: "PUT",
@@ -183,7 +230,15 @@ const saveAddUserRole = async () => {
     description: description,
   };
   console.log(newRole, "newRole");
-  console.log("Name:", name, "Description:", description); // Kiểm tra xem giá trị có đúng không
+  console.log("Name:", name, "Description:", description); 
+  if(name==""){
+    alert("Tên loại người dùng hông được để trống")
+    return
+  }
+  if(description==""){
+    alert("Mô tả loại người dùng hông được để trống")
+    return
+  }
   try {
     const response = await fetch(`${url}/addrole`, {
       method: "POST",
@@ -191,9 +246,10 @@ const saveAddUserRole = async () => {
       body: JSON.stringify(newRole),
     });
     const data = await response.json();
+    
     if (data.status === "Add successfully") {
       alert("Thêm role thành công!");
-      getListUser(); // Làm mới danh sách vai trò sau khi thêm thành công
+      getListUser(); 
     } else {
       alert("Thêm thất bại. Vui lòng thử lại.");
     }
