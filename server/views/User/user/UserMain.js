@@ -22,7 +22,7 @@ const getListUser = async () => {
 
     // Hiển thị bảng với dữ liệu người dùng và vai trò
     content.innerHTML = /*html*/ `<div class="flex mb-4">
-            <button class="bg-yellow-500 text-white px-4 py-2 rounded mr-2 btnadd">
+            <button class="bg-[#396060] text-white px-4 py-2 rounded mr-2 btnadd">
               Thêm mới
             </button>
             <input
@@ -31,13 +31,13 @@ const getListUser = async () => {
               placeholder="Tìm kiếm"
               type="text"
             />
-            <button class="bg-yellow-500 text-white px-4 py-2 rounded ml-2">
+            <button class="bg-[#396060] text-white px-4 py-2 rounded ml-2">
               Tìm kiếm
             </button>
           </div>
           <table class="content w-full border-collapse">
             <thead>
-              <tr class="bg-yellow-500 text-white">
+              <tr class="bg-[#396060] text-white">
                 <th class="border border-gray-300 px-4 py-2">STT</th>
                 <th class="border border-gray-300 px-4 py-2">Tên người dùng</th>
                 <th class="border border-gray-300 px-4 py-2" style="width: 300px;">Loại người dùng</th>
@@ -93,34 +93,43 @@ function renderUserList(users, roles) {
           <td class="border border-gray-300 px-4 py-2">${index + 1}</td>
           <td class="border border-gray-300 px-4 py-2">${user.name}</td>
           <td class="border border-gray-300 px-4 py-2">
-            ${Array.isArray(roles[index]) && roles[index].length > 0
-          ? roles[index]
-            .map((role, index) => {
-              return `<span>${index + 1
-                }_</span><span class="role-item px-2 py-1 rounded mr-2 mt-2 mb-2">${role.name
-                }</span><br>`;
-            })
-            .join("")
-          : "Không có vai trò"
-        }
+            ${
+              Array.isArray(roles[index]) && roles[index].length > 0
+                ? roles[index]
+                    .map((role, index) => {
+                      return `<span>${
+                        index + 1
+                      }_</span><span class="role-item px-2 py-1 rounded mr-2 mt-2 mb-2">${
+                        role.name
+                      }</span><br>`;
+                    })
+                    .join("")
+                : "Không có vai trò"
+            }
           </td>
           <td class="border border-gray-300 px-4 py-2">${user.email}</td>
-          <td class="border border-gray-300 px-4 py-2">${user.location || ""
-        }</td>
-          <td class="border border-gray-300 px-4 py-2">${user.phone_number || ""
-        }</td>
+          <td class="border border-gray-300 px-4 py-2">${
+            user.location || ""
+          }</td>
+          <td class="border border-gray-300 px-4 py-2">${
+            user.phone_number || ""
+          }</td>
           <td class="border border-gray-300 px-4 py-2">
-            <img alt="Product image" class="w-12 h-12" height="50" src="${user.avata
-        }" width="50" />
+            <img alt="Product image" class="w-12 h-12" height="50" src="${
+              user.avata
+            }" width="50" />
           </td>
           <td class="border border-gray-300 px-4 py-2">
             <div class="button-group flex flex-col space-y-2">
-              <button class="bg-blue-500 text-white px-2 py-1 rounded btnedit" data-id="${user._id
-        }">Cập nhật</button>
-              <button class="bg-red-500 text-white px-2 py-1 rounded btndelete" data-id="${user._id
-        }">Xóa</button>
-              <button class="bg-yellow-500 text-white px-2 py-1 rounded btndetail" data-id="${user._id
-        }">Chi tiết</button>
+              <button class="bg-blue-500 text-white px-2 py-1 rounded btnedit" data-id="${
+                user._id
+              }">Cập nhật</button>
+              <button class="bg-red-500 text-white px-2 py-1 rounded btndelete" data-id="${
+                user._id
+              }">Xóa</button>
+              <button class="bg-[#008080] text-white px-2 py-1 rounded btndetail" data-id="${
+                user._id
+              }">Chi tiết</button>
             </div>
           </td>
         </tr>`;

@@ -25,13 +25,13 @@ const renderTable = async (data) => {
   // console.log(namesuser, "namesuser");
   content.innerHTML = /*html*/ `
     <div class="flex mb-4">
-      <button class="bg-yellow-500 text-white px-4 py-2 rounded mr-2 btnadd">Thêm mới</button>
+      <button class="bg-[#396060] text-white px-4 py-2 rounded mr-2 btnadd">Thêm mới</button>
       <input class="border border-gray-300 rounded px-4 py-2 flex-grow" placeholder="Tìm kiếm" type="text" />
-      <button class="bg-yellow-500 text-white px-4 py-2 rounded ml-2">Tìm kiếm</button>
+      <button class="bg-[#396060] text-white px-4 py-2 rounded ml-2">Tìm kiếm</button>
     </div>
     <table class="content w-full border-collapse">
       <thead>
-        <tr class="bg-yellow-500 text-white">
+        <tr class="bg-[#396060] text-white">
           <th class="border border-gray-300 px-4 py-2">STT</th>
           <th class="border border-gray-300 px-4 py-2">Tên nguòi dùng</th> <!-- user_id -->
           <th class="border border-gray-300 px-4 py-2">Tổng tiền</th><!-- total -->
@@ -68,7 +68,7 @@ const renderTable = async (data) => {
                     <!-- <button class="bg-red-500 text-white px-2 py-1 rounded btndelete" data-id="${
                       item._id
                     }">Xóa</button> -->
-                    <button class="bg-yellow-500 text-white px-2 py-1 rounded btndetail" data-id="${
+                    <button class="bg-[#008080] text-white px-2 py-1 rounded btndetail" data-id="${
                       item._id
                     }">Chi tiết</button>
                   </div>
@@ -292,7 +292,7 @@ const renderDetailForm = async (
       <h3 class="text-lg font-semibold mt-4">Chi tiết sản phẩm</h3>
       <table class="w-full mt-4">
           <thead>
-              <tr class="bg-yellow-500 text-white">
+              <tr class="bg-[#396060] text-white">
                   <th class="border border-gray-300 px-4 py-2">Ảnh sản phẩm</th>
                   <th class="border border-gray-300 px-4 py-2">Sản phẩm</th>
                   <th class="border border-gray-300 px-4 py-2">Số lượng</th>
