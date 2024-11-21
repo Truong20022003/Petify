@@ -9,6 +9,8 @@ import com.example.petify.data.server.CreateInteface
 import com.example.petify.data.server.enitities.CategoryWithProductsModel
 import com.example.petify.data.server.enitities.ProductCategoryModel
 import com.example.petify.data.server.repository.ProductCategoryRepository
+import com.example.petify.data.server.service.OrderService
+import com.example.petify.data.server.service.ProductCategoryService
 import kotlinx.coroutines.launch
 
 class ProductCategoryViewModel : BaseViewModel() {
@@ -33,7 +35,8 @@ class ProductCategoryViewModel : BaseViewModel() {
     fun getProductsGroupedByCategory() {
         viewModelScope.launch {
             try {
-                val apiService = CreateInteface.createProductCategory()
+
+                val apiService : ProductCategoryService = CreateInteface.createService()
                 val productCategoryRepository = ProductCategoryRepository(apiService)
                 val result = productCategoryRepository.getProductsGroupedByCategory()
                 _responseProductCategoryList.value = result
@@ -48,7 +51,7 @@ class ProductCategoryViewModel : BaseViewModel() {
     fun getProductCategories() {
         viewModelScope.launch {
             try {
-                val apiService = CreateInteface.createProductCategory()
+                val apiService : ProductCategoryService = CreateInteface.createService()
                 val productCategoryRepository = ProductCategoryRepository(apiService)
                 val result = productCategoryRepository.getListProductCategory()
                 _productCategoryList.value = result
@@ -62,7 +65,7 @@ class ProductCategoryViewModel : BaseViewModel() {
     fun addProductCategory(productCategory: ProductCategoryModel) {
         viewModelScope.launch {
             try {
-                val apiService = CreateInteface.createProductCategory()
+                val apiService : ProductCategoryService = CreateInteface.createService()
                 val productCategoryRepository = ProductCategoryRepository(apiService)
                 val result = productCategoryRepository.addProductCategory(productCategory)
                 _productCategory.value = result
@@ -77,7 +80,7 @@ class ProductCategoryViewModel : BaseViewModel() {
     fun getProductCategoryById(id: String) {
         viewModelScope.launch {
             try {
-                val apiService = CreateInteface.createProductCategory()
+                val apiService : ProductCategoryService = CreateInteface.createService()
                 val productCategoryRepository = ProductCategoryRepository(apiService)
                 val result = productCategoryRepository.getProductCategoryById(id)
                 _productCategory.value = result
@@ -91,7 +94,7 @@ class ProductCategoryViewModel : BaseViewModel() {
     fun updateProductCategory(id: String, productCategory: ProductCategoryModel) {
         viewModelScope.launch {
             try {
-                val apiService = CreateInteface.createProductCategory()
+                val apiService : ProductCategoryService = CreateInteface.createService()
                 val productCategoryRepository = ProductCategoryRepository(apiService)
                 val result = productCategoryRepository.updateProductCategory(id, productCategory)
                 _productCategory.value = result
@@ -106,7 +109,7 @@ class ProductCategoryViewModel : BaseViewModel() {
     fun deleteProductCategory(id: String) {
         viewModelScope.launch {
             try {
-                val apiService = CreateInteface.createProductCategory()
+                val apiService : ProductCategoryService = CreateInteface.createService()
                 val productCategoryRepository = ProductCategoryRepository(apiService)
                 val isDeleted = productCategoryRepository.deleteProductCategory(id)
                 _isProductCategoryDeleted.value = isDeleted

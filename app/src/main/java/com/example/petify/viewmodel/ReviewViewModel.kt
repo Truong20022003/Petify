@@ -8,6 +8,8 @@ import com.example.petify.BaseViewModel
 import com.example.petify.data.server.CreateInteface
 import com.example.petify.data.server.enitities.ReviewModel
 import com.example.petify.data.server.repository.ReviewRepository
+import com.example.petify.data.server.service.ReviewProductService
+import com.example.petify.data.server.service.ReviewService
 import kotlinx.coroutines.launch
 
 class ReviewViewModel : BaseViewModel() {
@@ -32,7 +34,7 @@ class ReviewViewModel : BaseViewModel() {
     fun getListReview() {
         viewModelScope.launch {
             try {
-                val apiService = CreateInteface.createReview()
+                val apiService: ReviewService = CreateInteface.createService()
                 val reviewRepository = ReviewRepository(apiService)
                 _reviewList.value = reviewRepository.getListReview()
             } catch (e: Exception) {
@@ -45,7 +47,7 @@ class ReviewViewModel : BaseViewModel() {
     fun addReview(review: ReviewModel) {
         viewModelScope.launch {
             try {
-                val apiService = CreateInteface.createReview()
+                val apiService: ReviewService = CreateInteface.createService()
                 val reviewRepository = ReviewRepository(apiService)
                 _isReviewAdded.value = reviewRepository.addReview(review) != null
             } catch (e: Exception) {
@@ -58,7 +60,7 @@ class ReviewViewModel : BaseViewModel() {
     fun getReviewById(id: String) {
         viewModelScope.launch {
             try {
-                val apiService = CreateInteface.createReview()
+                val apiService: ReviewService = CreateInteface.createService()
                 val reviewRepository = ReviewRepository(apiService)
                 _review.value = reviewRepository.getReviewById(id)
             } catch (e: Exception) {
@@ -71,7 +73,7 @@ class ReviewViewModel : BaseViewModel() {
     fun updateReview(id: String, review: ReviewModel) {
         viewModelScope.launch {
             try {
-                val apiService = CreateInteface.createReview()
+                val apiService: ReviewService = CreateInteface.createService()
                 val reviewRepository = ReviewRepository(apiService)
                 _isReviewUpdated.value = reviewRepository.updateReview(id, review) != null
             } catch (e: Exception) {
@@ -84,7 +86,7 @@ class ReviewViewModel : BaseViewModel() {
     fun deleteReview(id: String) {
         viewModelScope.launch {
             try {
-                val apiService = CreateInteface.createReview()
+                val apiService: ReviewService = CreateInteface.createService()
                 val reviewRepository = ReviewRepository(apiService)
                 _isReviewDeleted.value = reviewRepository.deleteReview(id)
             } catch (e: Exception) {

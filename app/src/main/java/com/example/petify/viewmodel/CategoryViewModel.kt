@@ -8,6 +8,7 @@ import com.example.petify.BaseViewModel
 import com.example.petify.data.server.CreateInteface
 import com.example.petify.data.server.enitities.CategoryModel
 import com.example.petify.data.server.repository.CategoryRepository
+import com.example.petify.data.server.service.CategoryService
 import kotlinx.coroutines.launch
 
 class CategoryViewModel : BaseViewModel() {
@@ -33,7 +34,7 @@ class CategoryViewModel : BaseViewModel() {
     fun getListCategory() {
         viewModelScope.launch {
             try {
-                val apiService = CreateInteface.createCategory()
+                val apiService : CategoryService  = CreateInteface.createService()
                 val categoryRepository = CategoryRepository(apiService)
                 _categoryList.value = categoryRepository.getListCategory()
             } catch (e: Exception) {
@@ -46,7 +47,7 @@ class CategoryViewModel : BaseViewModel() {
     fun addCategory(category: CategoryModel) {
         viewModelScope.launch {
             try {
-                val apiService = CreateInteface.createCategory()
+                val apiService : CategoryService  = CreateInteface.createService()
                 val categoryRepository = CategoryRepository(apiService)
                 _isCategoryAdded.value = categoryRepository.addCategory(category) != null
             } catch (e: Exception) {
@@ -59,7 +60,7 @@ class CategoryViewModel : BaseViewModel() {
     fun getCategoryById(id: String) {
         viewModelScope.launch {
             try {
-                val apiService = CreateInteface.createCategory()
+                val apiService : CategoryService  = CreateInteface.createService()
                 val categoryRepository = CategoryRepository(apiService)
                 _category.value = categoryRepository.getCategoryById(id)
             } catch (e: Exception) {
@@ -72,7 +73,7 @@ class CategoryViewModel : BaseViewModel() {
     fun updateCategory(id: String, category: CategoryModel) {
         viewModelScope.launch {
             try {
-                val apiService = CreateInteface.createCategory()
+                val apiService : CategoryService  = CreateInteface.createService()
                 val categoryRepository = CategoryRepository(apiService)
                 _isCategoryUpdated.value = categoryRepository.updateCategory(id, category) != null
             } catch (e: Exception) {
@@ -85,7 +86,7 @@ class CategoryViewModel : BaseViewModel() {
     fun deleteCategory(id: String) {
         viewModelScope.launch {
             try {
-                val apiService = CreateInteface.createCategory()
+                val apiService : CategoryService  = CreateInteface.createService()
                 val categoryRepository = CategoryRepository(apiService)
                 _isCategoryDeleted.value = categoryRepository.deleteCategory(id)
             } catch (e: Exception) {

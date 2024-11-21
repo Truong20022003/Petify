@@ -2,7 +2,7 @@
   "project_info": {
     "project_number": "625574624349",
     "project_id": "petify-e841c",
-    "storage_bucket": "petify-e841c.appspot.com"
+    "storage_bucket": "petify-e841c.firebasestorage.app"
   },
   "client": [
     {
@@ -12,7 +12,20 @@
           "package_name": "com.example.petify"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "625574624349-ao97abcmvqp988c3dj8tbrejhitl2258.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.petify",
+            "certificate_hash": "7e010ba6c26f6d49080c6a8103f9785a2d513988"
+          }
+        },
+        {
+          "client_id": "625574624349-a9gghguck7351srd92uame9tb68mq3po.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyDmmUX5zBRG0aHP3_BUsQ-lXfFUDl5cJHI"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "625574624349-a9gghguck7351srd92uame9tb68mq3po.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
