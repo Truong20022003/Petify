@@ -1,5 +1,6 @@
 package com.example.petify.data.server
 
+import com.example.petify.ultils.Constans
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -10,9 +11,6 @@ import java.util.concurrent.TimeUnit
 class NetworkModule<T>(
     private val url: String
 ) {
-    companion object{
-        private const val TIME_OUT = 30L
-    }
     fun create(className: Class<T>): T{
         val client = createClient()
         return Retrofit.Builder()
@@ -36,8 +34,8 @@ class NetworkModule<T>(
         return OkHttpClient.Builder()
             .addInterceptor(headerInterceptor)
             .addInterceptor(logger)
-            .readTimeout(TIME_OUT, TimeUnit.SECONDS)
-            .connectTimeout(TIME_OUT, TimeUnit.SECONDS)
+            .readTimeout(Constans.TIME_OUT, TimeUnit.SECONDS)
+            .connectTimeout(Constans.TIME_OUT, TimeUnit.SECONDS)
             .build()
     }
 

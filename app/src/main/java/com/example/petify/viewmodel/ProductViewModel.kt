@@ -8,6 +8,8 @@ import com.example.petify.BaseViewModel
 import com.example.petify.data.server.CreateInteface
 import com.example.petify.data.server.enitities.ProductModel
 import com.example.petify.data.server.repository.ProductRepository
+import com.example.petify.data.server.service.ProductCategoryService
+import com.example.petify.data.server.service.ProductService
 import kotlinx.coroutines.launch
 
 class ProductViewModel : BaseViewModel() {
@@ -32,7 +34,7 @@ class ProductViewModel : BaseViewModel() {
     fun getListProduct() {
         viewModelScope.launch {
             try {
-                val apiService = CreateInteface.createProduct()
+                val apiService: ProductService = CreateInteface.createService()
                 val productRepository = ProductRepository(apiService)
                 _productList.value = productRepository.getListProduct()
             } catch (e: Exception) {
@@ -45,7 +47,7 @@ class ProductViewModel : BaseViewModel() {
     fun addProduct(product: ProductModel) {
         viewModelScope.launch {
             try {
-                val apiService = CreateInteface.createProduct()
+                val apiService: ProductService = CreateInteface.createService()
                 val productRepository = ProductRepository(apiService)
                 _isProductAdded.value = productRepository.addProduct(product) != null
             } catch (e: Exception) {
@@ -58,7 +60,7 @@ class ProductViewModel : BaseViewModel() {
     fun getProductById(id: String) {
         viewModelScope.launch {
             try {
-                val apiService = CreateInteface.createProduct()
+                val apiService: ProductService = CreateInteface.createService()
                 val productRepository = ProductRepository(apiService)
                 _product.value = productRepository.getProductById(id)
             } catch (e: Exception) {
@@ -71,7 +73,7 @@ class ProductViewModel : BaseViewModel() {
     fun updateProduct(id: String, product: ProductModel) {
         viewModelScope.launch {
             try {
-                val apiService = CreateInteface.createProduct()
+                val apiService: ProductService = CreateInteface.createService()
                 val productRepository = ProductRepository(apiService)
                 _isProductUpdated.value = productRepository.updateProduct(id, product) != null
             } catch (e: Exception) {
@@ -84,7 +86,7 @@ class ProductViewModel : BaseViewModel() {
     fun deleteProduct(id: String) {
         viewModelScope.launch {
             try {
-                val apiService = CreateInteface.createProduct()
+                val apiService: ProductService = CreateInteface.createService()
                 val productRepository = ProductRepository(apiService)
                 _isProductDeleted.value = productRepository.deleteProduct(id)
             } catch (e: Exception) {
