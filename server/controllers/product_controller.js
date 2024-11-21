@@ -12,35 +12,45 @@ const getListproduct = async (req, res, next) => {
 };
 
 const addproduct = async (req, res) => {
-  console.log("Files received in addproduct:", req.files); 
+    console.log("Files received in addproduct:", req.files);
 
-  if (!req.files || req.files.length === 0) {
-      return res.status(400).json({ success: false, message: 'No files uploaded' });
-  }
+    if (!req.files || req.files.length === 0) {
+        return res.status(400).json({ success: false, message: 'No files uploaded' });
+    }
 
-  try {
-      const imageUrls = [];
+    try {
+        const imageUrls = [];
 
-      for (const file of req.files) {
-          const filePath = file.path;
-          const result = await uploadToCloudinary(filePath);
-          imageUrls.push(result.secure_url); 
+        // Upload từng file lên Cloudinary
+        for (const file of req.files) {
+            const filePath = file.path;
+            try {
+                const result = await uploadToCloudinary(filePath);
+                imageUrls.push(result.secure_url); // Lưu URL ảnh đã upload thành công
+            } catch (error) {
+                console.error('Error uploading a file to Cloudinary:', error);
+                // Trả về lỗi nếu bất kỳ file nào upload không thành công
+                return res.status(500).json({ success: false, message: 'Error uploading to Cloudinary', error });
+            } finally {
+                // Xóa file tạm trên server sau khi upload
+                fs.unlinkSync(filePath);
+            }
+        }
 
-          fs.unlinkSync(filePath);
-      }
+        // Tạo mới sản phẩm chỉ khi tất cả ảnh đã được upload thành công
+        const newProduct = {
+            ...req.body,
+            image: imageUrls
+        };
 
-      const newProduct = {
-          ...req.body,
-          image: imageUrls
-      };
+        await productModel.create(newProduct);
 
-      await productModel.create(newProduct);
-
-      res.json({ success: true, product: newProduct });
-  } catch (error) {
-      console.error('Error uploading files:', error);
-      res.status(500).json({ success: false, message: 'Error uploading files', error });
-  }
+        // Trả về kết quả thành công nếu mọi thứ đã hoàn tất
+        res.json({ success: true, product: newProduct });
+    } catch (error) {
+        console.error('Error in addproduct:', error);
+        res.status(500).json({ success: false, message: 'Error adding product', error });
+    }
 };
 
 

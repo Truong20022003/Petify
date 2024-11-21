@@ -8,6 +8,7 @@ import com.example.petify.BaseViewModel
 import com.example.petify.data.server.CreateInteface
 import com.example.petify.data.server.enitities.CarrierModel
 import com.example.petify.data.server.repository.CarrierRepository
+import com.example.petify.data.server.service.CarrierService
 import kotlinx.coroutines.launch
 
 class CarrierViewModel : BaseViewModel() {
@@ -33,7 +34,7 @@ class CarrierViewModel : BaseViewModel() {
         viewModelScope.launch {
             try {
 
-                val apiService = CreateInteface.createCarrier()
+                val apiService : CarrierService = CreateInteface.createService()
                 val carrierRepository = CarrierRepository(apiService)
                 _carrierList.value = carrierRepository.getListCarrier()
             } catch (e: Exception) {
@@ -46,7 +47,7 @@ class CarrierViewModel : BaseViewModel() {
     fun addCarrier(carrier: CarrierModel) {
         viewModelScope.launch {
             try {
-                val apiService = CreateInteface.createCarrier()
+                val apiService : CarrierService = CreateInteface.createService()
                 val carrierRepository = CarrierRepository(apiService)
                 _isCarrierAdded.value = carrierRepository.addCarrier(carrier) != null
             } catch (e: Exception) {
@@ -59,7 +60,7 @@ class CarrierViewModel : BaseViewModel() {
     fun getCarrierById(id: String) {
         viewModelScope.launch {
             try {
-                val apiService = CreateInteface.createCarrier()
+                val apiService : CarrierService = CreateInteface.createService()
                 val carrierRepository = CarrierRepository(apiService)
                 _carrier.value = carrierRepository.getCarrierById(id)
             } catch (e: Exception) {
@@ -72,7 +73,7 @@ class CarrierViewModel : BaseViewModel() {
     fun updateCarrier(id: String, carrier: CarrierModel) {
         viewModelScope.launch {
             try {
-                val apiService = CreateInteface.createCarrier()
+                val apiService : CarrierService = CreateInteface.createService()
                 val carrierRepository = CarrierRepository(apiService)
                 _isCarrierUpdated.value = carrierRepository.updateCarrier(id, carrier) != null
             } catch (e: Exception) {
@@ -85,7 +86,7 @@ class CarrierViewModel : BaseViewModel() {
     fun deleteCarrier(id: String) {
         viewModelScope.launch {
             try {
-                val apiService = CreateInteface.createCarrier()
+                val apiService : CarrierService = CreateInteface.createService()
                 val carrierRepository = CarrierRepository(apiService)
                 _isCarrierDeleted.value = carrierRepository.deleteCarrier(id)
             } catch (e: Exception) {

@@ -48,18 +48,21 @@ class UserRepository(private val api: UserService) {
         }
     }
 
-    suspend fun loginUser(email: String, password: String): UserModel? =
+    suspend fun loginUser(emailOrPhone: String, password: String): Pair<UserModel?, String?>? =
         withContext(Dispatchers.IO) {
-            val responsePost = LoginRequest(email, password)
+            val responsePost = LoginRequest(emailOrPhone, password)
             val response = api.login(responsePost)
             if (response.isSuccessful) {
                 Log.d("UserRepository", "loginUser Success: ${response.body()}")
-                response.body()
+                val user = response.body()
+                val token = response.headers()["Authorization"] // Lấy token từ header (hoặc body)
+                Pair(user, token)
             } else {
                 Log.e("UserRepository", "loginUser Error: ${response.errorBody()}")
                 null
             }
         }
+
 
     suspend fun resetPassword(email: String): Boolean = withContext(Dispatchers.IO) {
         val response = api.resetPassword(email)

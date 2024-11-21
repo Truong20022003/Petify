@@ -8,6 +8,8 @@ import com.example.petify.BaseViewModel
 import com.example.petify.data.server.CreateInteface
 import com.example.petify.data.server.enitities.OrderModel
 import com.example.petify.data.server.repository.OrderRepository
+import com.example.petify.data.server.service.InvoiceService
+import com.example.petify.data.server.service.OrderService
 import kotlinx.coroutines.launch
 
 class OrderViewModel : BaseViewModel() {
@@ -29,7 +31,8 @@ class OrderViewModel : BaseViewModel() {
     fun getOrders() {
         viewModelScope.launch {
             try {
-                val apiService = CreateInteface.createOrder()
+
+                val apiService : OrderService = CreateInteface.createService()
                 val orderRepository = OrderRepository(apiService)
                 val result = orderRepository.getListOrder()
                 _orderList.value = result
@@ -43,7 +46,8 @@ class OrderViewModel : BaseViewModel() {
     fun addOrder(order: OrderModel) {
         viewModelScope.launch {
             try {
-                val apiService = CreateInteface.createOrder()
+
+                val apiService : OrderService = CreateInteface.createService()
                 val orderRepository = OrderRepository(apiService)
                 val result = orderRepository.addOrder(order)
                 _order.value = result
@@ -58,7 +62,7 @@ class OrderViewModel : BaseViewModel() {
     fun getOrderById(id: String) {
         viewModelScope.launch {
             try {
-                val apiService = CreateInteface.createOrder()
+                val apiService : OrderService = CreateInteface.createService()
                 val orderRepository = OrderRepository(apiService)
                 val result = orderRepository.getOrderById(id)
                 _order.value = result
@@ -72,7 +76,7 @@ class OrderViewModel : BaseViewModel() {
     fun updateOrder(id: String, order: OrderModel) {
         viewModelScope.launch {
             try {
-                val apiService = CreateInteface.createOrder()
+                val apiService : OrderService = CreateInteface.createService()
                 val orderRepository = OrderRepository(apiService)
                 val result = orderRepository.updateOrder(id, order)
                 _order.value = result
@@ -87,7 +91,7 @@ class OrderViewModel : BaseViewModel() {
     fun deleteOrder(id: String) {
         viewModelScope.launch {
             try {
-                val apiService = CreateInteface.createOrder()
+                val apiService : OrderService = CreateInteface.createService()
                 val orderRepository = OrderRepository(apiService)
                 val isDeleted = orderRepository.deleteOrder(id)
                 _isOrderDeleted.value = isDeleted

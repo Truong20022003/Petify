@@ -225,32 +225,23 @@ const getListProduct = () => {
               }
             }
             try {
-              const controller = new AbortController();
-              const timeoutId = setTimeout(() => controller.abort(), 120000); // Timeout 2 phút
-
-              const response = await fetch(`${url}/addproduct`, {
-                method: "POST",
-                headers: {
+              const response = await fetch(
+                `http://localhost:3000/product/addproduct`,
+                {
+                  method: "POST",
                   Authorization: "trinh_nhung",
-                },
-                body: formData,
-                signal: controller.signal,
-              });
-
-              clearTimeout(timeoutId); // Xóa timeout khi có phản hồi thành công
-
-              if (!response.ok) {
-                throw new Error(`Lỗi HTTP: ${response.status}`);
-              }
-
-              const result = await response.json();
-              console.log(result);
-            } catch (error) {
-              clearTimeout(timeoutId);
-              console.error("Lỗi:", error.message || error);
-              alert(
-                `Có lỗi xảy ra khi thêm sản phẩm: ${error.message || error}`
+                  body: formData,
+                }
               );
+              const data = await response.json();
+              alert(
+                data.status
+                  ? "Thêm role thành công!"
+                  : "Thêm thất bại. Vui lòng thử lại."
+              );
+            } catch (error) {
+              console.error("Lỗi khi thêm role:", error);
+              alert("Đã xảy ra lỗi. Vui lòng thử lại.");
             }
           });
         ///

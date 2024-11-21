@@ -8,6 +8,8 @@ import com.example.petify.BaseViewModel
 import com.example.petify.data.server.CreateInteface
 import com.example.petify.data.server.enitities.ReviewProductModel
 import com.example.petify.data.server.repository.ReviewProductRepository
+import com.example.petify.data.server.service.ProductService
+import com.example.petify.data.server.service.ReviewProductService
 import kotlinx.coroutines.launch
 
 class ReviewProductViewModel : BaseViewModel() {
@@ -32,7 +34,7 @@ class ReviewProductViewModel : BaseViewModel() {
     fun getListReviewProduct() {
         viewModelScope.launch {
             try {
-                val apiService = CreateInteface.createReviewProduct()
+                val apiService: ReviewProductService = CreateInteface.createService()
                 val reviewProductRepository = ReviewProductRepository(apiService)
                 _reviewProductList.value = reviewProductRepository.getListReviewProduct()
             } catch (e: Exception) {
@@ -45,7 +47,7 @@ class ReviewProductViewModel : BaseViewModel() {
     fun addReviewProduct(reviewProduct: ReviewProductModel) {
         viewModelScope.launch {
             try {
-                val apiService = CreateInteface.createReviewProduct()
+                val apiService: ReviewProductService = CreateInteface.createService()
                 val reviewProductRepository = ReviewProductRepository(apiService)
                 _isReviewProductAdded.value =
                     reviewProductRepository.addReviewProduct(reviewProduct) != null
@@ -59,7 +61,7 @@ class ReviewProductViewModel : BaseViewModel() {
     fun getReviewProductById(id: String) {
         viewModelScope.launch {
             try {
-                val apiService = CreateInteface.createReviewProduct()
+                val apiService: ReviewProductService = CreateInteface.createService()
                 val reviewProductRepository = ReviewProductRepository(apiService)
                 _reviewProduct.value = reviewProductRepository.getReviewProductById(id)
             } catch (e: Exception) {
@@ -72,7 +74,7 @@ class ReviewProductViewModel : BaseViewModel() {
     fun updateReviewProduct(id: String, reviewProduct: ReviewProductModel) {
         viewModelScope.launch {
             try {
-                val apiService = CreateInteface.createReviewProduct()
+                val apiService: ReviewProductService = CreateInteface.createService()
                 val reviewProductRepository = ReviewProductRepository(apiService)
                 _isReviewProductUpdated.value =
                     reviewProductRepository.updateReviewProduct(id, reviewProduct) != null
@@ -86,7 +88,7 @@ class ReviewProductViewModel : BaseViewModel() {
     fun deleteReviewProduct(id: String) {
         viewModelScope.launch {
             try {
-                val apiService = CreateInteface.createReviewProduct()
+                val apiService: ReviewProductService = CreateInteface.createService()
                 val reviewProductRepository = ReviewProductRepository(apiService)
                 _isReviewProductDeleted.value = reviewProductRepository.deleteReviewProduct(id)
             } catch (e: Exception) {

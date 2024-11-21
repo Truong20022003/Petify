@@ -8,6 +8,8 @@ import com.example.petify.BaseViewModel
 import com.example.petify.data.server.CreateInteface
 import com.example.petify.data.server.enitities.UserRoleModel
 import com.example.petify.data.server.repository.UserRoleRepository
+import com.example.petify.data.server.service.SupplierService
+import com.example.petify.data.server.service.UserRoleService
 import kotlinx.coroutines.launch
 
 class UserRoleViewModel : BaseViewModel() {
@@ -32,7 +34,7 @@ class UserRoleViewModel : BaseViewModel() {
     fun getListUserRole() {
         viewModelScope.launch {
             try {
-                val apiService = CreateInteface.createUserRole()
+                val apiService: UserRoleService = CreateInteface.createService()
                 val userRoleRepository = UserRoleRepository(apiService)
                 _userRoleList.value = userRoleRepository.getListUserRole()
             } catch (e: Exception) {
@@ -45,7 +47,7 @@ class UserRoleViewModel : BaseViewModel() {
     fun addUserRole(userRole: UserRoleModel) {
         viewModelScope.launch {
             try {
-                val apiService = CreateInteface.createUserRole()
+                val apiService: UserRoleService = CreateInteface.createService()
                 val userRoleRepository = UserRoleRepository(apiService)
                 _isUserRoleAdded.value = userRoleRepository.addUserRole(userRole) != null
             } catch (e: Exception) {
@@ -58,7 +60,7 @@ class UserRoleViewModel : BaseViewModel() {
     fun getUserRoleById(id: String) {
         viewModelScope.launch {
             try {
-                val apiService = CreateInteface.createUserRole()
+                val apiService: UserRoleService = CreateInteface.createService()
                 val userRoleRepository = UserRoleRepository(apiService)
                 _userRole.value = userRoleRepository.getUserRoleById(id)
             } catch (e: Exception) {
@@ -71,7 +73,7 @@ class UserRoleViewModel : BaseViewModel() {
     fun updateUserRole(id: String, userRole: UserRoleModel) {
         viewModelScope.launch {
             try {
-                val apiService = CreateInteface.createUserRole()
+                val apiService: UserRoleService = CreateInteface.createService()
                 val userRoleRepository = UserRoleRepository(apiService)
                 _isUserRoleUpdated.value = userRoleRepository.updateUserRole(id, userRole) != null
             } catch (e: Exception) {
@@ -84,7 +86,7 @@ class UserRoleViewModel : BaseViewModel() {
     fun deleteUserRole(id: String) {
         viewModelScope.launch {
             try {
-                val apiService = CreateInteface.createUserRole()
+                val apiService: UserRoleService = CreateInteface.createService()
                 val userRoleRepository = UserRoleRepository(apiService)
                 _isUserRoleDeleted.value = userRoleRepository.deleteUserRole(id)
             } catch (e: Exception) {

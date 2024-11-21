@@ -1,21 +1,38 @@
 package com.example.petify.ui.forgotpassword
 
-import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import com.example.petify.R
 
-class OtpSendActivity : AppCompatActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContentView(R.layout.activity_otp_send)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
+import android.content.Intent
+import android.widget.Toast
+import com.example.petify.BaseActivity
+import com.example.petify.BaseViewModel
+import com.example.petify.databinding.ActivityOtpSendBinding
+
+class OtpSendActivity  : BaseActivity<ActivityOtpSendBinding, BaseViewModel>() {
+    private var sentOtp: Int = 0
+
+    override fun createBinding() = ActivityOtpSendBinding.inflate(layoutInflater)
+
+    override fun setViewModel() = BaseViewModel()
+
+    override fun initView() {
+        super.initView()
+
+        // Lấy OTP được gửi từ ForgotPasswordActivity
+        sentOtp = intent.getIntExtra("otp", 0)
+
+        binding.btnContinue.setOnClickListener {
+            val enteredOtp = binding.etOtpEmail.text.toString().toIntOrNull()
+            if (enteredOtp == sentOtp) {
+                navigateToResetPasswordScreen()
+            } else {
+                Toast.makeText(this, "Invalid OTP", Toast.LENGTH_SHORT).show()
+            }
         }
+    }
+
+    private fun navigateToResetPasswordScreen() {
+        val intent = Intent(this, NewPasswordActivity::class.java)
+        intent.putExtra("email", intent.getStringExtra("email"))
+        startActivity(intent)
     }
 }
