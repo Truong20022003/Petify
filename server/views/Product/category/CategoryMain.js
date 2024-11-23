@@ -1,188 +1,296 @@
 const content = document.querySelector(".shadow");
-let url = "http://localhost:3000/category";
-let tbody = document.querySelector("tbody");
-
-const getList = () => {
-  fetch(`${url}/getListCategory`,{
-    method: "GET",
-    headers: {
-      "Authorization": "trinh_nhung",
-       "Content-Type": "application/json"
-  }
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      console.log(data);
-      content.innerHTML =
-        /*html*/ ` <div class="flex mb-4">
-            <button class="bg-[#396060] text-white px-4 py-2 rounded mr-2 btnadd">
-              Thêm mới
-            </button>
-            <input
-              class="border border-gray-300 rounded px-4 py-2 flex-grow"
-              placeholder="Tìm kiếm"
-              type="text"
-            />
-            <button class="bg-[#396060] text-white px-4 py-2 rounded ml-2">
-              TÌm kiếm
-            </button>
-          </div>
-          <table class="content w-full border-collapse">
-            <thead>
-              <tr class="bg-[#396060] text-white">
-                <th class="border border-gray-300 px-4 py-2">STT</th>
-                <th class="border border-gray-300 px-4 py-2">Mã loại sản phẩm</th>
-                <th class="border border-gray-300 px-4 py-2">Tên</th>
-                <th class="border border-gray-300 px-4 py-2">Ảnh</th>
-                <th class="border border-gray-300 px-4 py-2">Hành động</th>
-              </tr>
-            </thead>` +
-        data
-          .map(
-            (item, index) => /*html*/ `<tr id="row-${item._id}">
-                <td class="border border-gray-300 px-4 py-2">${index + 1}</td>
-                <td class="border border-gray-300 px-4 py-2">${item._id}</td>
-                <td class="border border-gray-300 px-4 py-2">${item.name}</td>
-                <td class="border border-gray-300 px-4 py-2">
-                   <img
-                    alt="Product image"
-                    class="w-12 h-12"
-                    height="50"
-                    src="${item.image}"
-                    width="100"
-                  />
-                </td>
-                 <td class="border border-gray-300 px-4 py-2">
-                  <div class="button-group flex flex-col space-y-2">
-                    <button class="bg-blue-500 text-white px-2 py-1 rounded btnedit" data-id="${
-                      item._id
-                    }">Cập nhật</button>
-                    <button class="bg-red-500 text-white px-2 py-1 rounded btndelete" data-id="${
-                      item._id
-                    }">Xóa</button>
-                    <button class="bg-[#008080] text-white px-2 py-1 rounded btndetail" data-id="${
-                      item._id
-                    }">
-                      Chi tiết
-                    </button>
-                  </div>
-                </td>
-              </tr>`
-          )
-          .join("");
-      /////xoa
-      document.querySelectorAll(".btndelete").forEach((btn) => {
-        btn.addEventListener("click", () => {
-          console.log("delete");
-          id = btn.dataset.id;
-          console.log(id);
-          if (confirm("ban co chac muon xoa khong")) {
-            fetch(`${url}/deleteproduct/${id}`, { method: "DELETE" ,
-              headers: {
-                "Authorization": "trinh_nhung",
-                 "Content-Type": "application/json"
-            }
-            })
-              .then((rep) => rep.json())
-              .then(() => {
-                restoreRow();
-                alert("xoa thanh cong");
-              })
-              .catch((err) => console.log(err));
-          }
-        });
-      });
-      /////chi tiet
-      document.querySelectorAll(".btndetail").forEach((btn) => {
-        btn.addEventListener("click", () => {
-          console.log("detail");
-          id = btn.dataset.id;
-          console.log(id);
-          fetch(`${url}/getcategoryById/${id}`,{
-            method: "GET",
-            headers: {
-              "Authorization": "trinh_nhung",
-               "Content-Type": "application/json"
-          }
-          })
-            .then((response) => response.json())
-            .then((data) => {
-              console.log(data, "kkkk");
-              content.innerHTML = createProductDetailHTML(
-                data.result,
-                true,
-                false,
-                "Chi tiết Sản phẩm"
-              );
-              document.querySelector(".back")?.addEventListener("click", () => {
-                restoreRow();
-              });
-            })
-            .catch((err) => console.log(err));
-        });
-      });
-      /////
-    });
+const url = "http://localhost:3000";
+const headers = {
+  Authorization: "trinh_nhung",
+  "Content-Type": "application/json",
 };
 
-///bang
-function createProductDetailHTML(
-  product = {}, // Accept an empty object for adding
+const getList = async () => {
+  try {
+    const response = await fetch(`${url}/category/getListCategory`, {
+      method: "GET",
+      headers,
+    });
+    const data = await response.json();
+    renderTable(data);
+    addEventListeners();
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+const renderTable = (data) => {
+  content.innerHTML = /*html*/ `
+    <div class="flex mb-4">
+      <button class="bg-[#396060] text-white px-4 py-2 rounded mr-2 btnadd">Thêm mới</button>
+      <input    id="searchInput" class="border border-gray-300 rounded px-4 py-2 flex-grow" placeholder="Tìm kiếm" type="text" />
+      <button class="bg-[#396060] text-white px-4 py-2 rounded ml-2">Tìm kiếm</button>
+    </div>
+    <table class="content w-full border-collapse">
+      <thead>
+        <tr class="bg-[#396060] text-white">
+          <th class="border border-gray-300 px-4 py-2">STT</th>
+          <th class="border border-gray-300 px-4 py-2">Tên loại sản phẩm</th>
+          <th class="border border-gray-300 px-4 py-2">Hình ảnh</th>
+
+          <th class="border border-gray-300 px-4 py-2">Hành động</th>
+        </tr>
+      </thead>
+      <tbody id="dataList">
+        
+      </tbody>
+    </table>`;
+  document
+    .getElementById("searchInput")
+    .addEventListener("input", async (e) => {
+      const query = e.target.value;
+      const filteredUsers = searchUser(query, data);
+      renderList(filteredUsers)
+    });
+  renderList(data)
+};
+const renderList = (data) => {
+  const tableBody = document.getElementById("dataList");
+  tableBody.innerHTML = "";
+  console.log(data, "dataaaa")
+  if (data.length === 0) {
+    // Nếu không có người dùng nào trong kết quả tìm kiếm
+    const noDataRow = /*html*/ `
+      <tr>
+        <td colspan="8" class="border border-gray-300 px-4 py-2 text-center text-red-500">
+          Không có dữ liệu
+        </td>
+      </tr>`;
+    tableBody.innerHTML = noDataRow;
+  } else {
+    data.forEach(
+      (item, index) => {
+        const row = /*html*/ `
+        <tr id="row-${item._id}">
+          <td class="border border-gray-300 px-4 py-2">${index + 1}</td>
+          <td class="border border-gray-300 px-4 py-2">${item.name}</td>
+          <td class="border border-gray-300 px-4 py-2"> 
+            <div class=" h-[220px]  flex justify-center items-center ">
+                  <img
+                    alt="Product image"
+                    class="w-full h-full object-contain"
+                    src="${item.image}"
+                  />
+                </div></td>
+          <td class="border border-gray-300 px-4 py-2">
+            <div class="button-group flex flex-col space-y-2">
+              <button class="bg-blue-500 text-white px-2 py-1 rounded btnedit" data-id="${item._id
+          }">Cập nhật</button>
+              <button class="bg-red-500 text-white px-2 py-1 rounded btndelete" data-id="${item._id
+          }">Xóa</button>
+              <!-- <button class="bg-[#008080] text-white px-2 py-1 rounded btndetail" data-id="${item._id
+          }">Chi tiết</button> -->
+            </div>
+          </td>
+        </tr>`;
+        tableBody.innerHTML += row;
+      })
+  }
+
+}
+
+////
+// Hàm tìm kiếm người dùng
+function searchUser(query, data) {
+  function removeVietnameseTones(str) {
+    return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  }
+  const queryNormalized = removeVietnameseTones(query.toLowerCase());
+
+  // Lọc danh sách người dùng
+  const filteredUsers = data.filter((role) => {
+    const userNameNormalized = removeVietnameseTones(role.name.toLowerCase());
+    return userNameNormalized.includes(queryNormalized);
+  });
+
+  return filteredUsers;
+}
+const addEventListeners = () => {
+  document
+    .querySelectorAll(".btndelete")
+    .forEach((btn) =>
+      btn.addEventListener("click", () => handleDelete(btn.dataset.id))
+    );
+  // document
+  //   .querySelectorAll(".btndetail")
+  //   .forEach((btn) =>
+  //     btn.addEventListener("click", () => handleDetail(btn.dataset.id))
+  //   );
+  document
+    .querySelectorAll(".btnedit")
+    .forEach((btn) =>
+      btn.addEventListener("click", () => handleEdit(btn.dataset.id))
+    );
+  document
+    .querySelector(".btnadd")
+    ?.addEventListener("click", () =>
+      renderDetailForm({}, false, true, "Thêm loại sản phẩm")
+    );
+};
+
+const handleDelete = async (id) => {
+  if (!confirm("Bạn có chắc muốn xóa không?")) return;
+  try {
+    const checkcategotry=await CheckCategoryByID(id)
+    if(checkcategotry.length>0){
+      alert("Loại sản phẩm đang được dùng trong sản phẩm, không thể xóa")
+      return
+    }
+    await fetch(`${url}/category/deletecategory/${id}`, { method: "DELETE", headers });
+    alert("Xóa thành công!");
+    getList();
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+// const handleDetail = async (id) => {
+//   try {
+//     const response = await fetch(`${url}/category/getcategoryById/${id}`, { headers });
+//     const data = await response.json();
+//     console.log(data, "getRoleById");
+//     renderDetailForm(data.result, true, false, "Chi tiết loại sản phẩm");
+//   } catch (err) {
+//     console.log(err);
+//   }
+// };
+
+const handleEdit = async (id) => {
+  try {
+    const response = await fetch(`${url}/category/getcategoryById/${id}`, { headers });
+    const data = await response.json();
+    console.log(data, "getRoleById----edit");
+    renderDetailForm(data.result, false, true, "Cập nhật người dùng");
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+const renderDetailForm = (
+  data = {},
   isReadonly = false,
   showSaveButton = false,
   title = ""
-) {
-  const {
-    image = [],
-    _id = "",
-    name = "",
-    supplier_id = "",
-    price = "",
-    date = "",
-    expiry_Date = "",
-    quantity = "",
-    status = "",
-    description = "",
-    sale = "",
-  } = product;
-
+) => {
+  const { _id = "", name = "", image = "" } = data;
   const readonlyAttr = isReadonly ? "readonly" : "";
-
-  // Condition to show the Save button
   const saveButtonHTML = showSaveButton
-    ? `<button class="bg-green-500 text-white px-4 py-2 rounded save" onclick="${
-        _id ? `saveEditUser('${_id}')` : "saveAddUser()"
-      }">Lưu</button>`
+    ? `<button class="bg-green-500 text-white px-4 py-2 rounded save m-e10" onclick="${_id ? `saveEdit('${_id}')` : "saveAdd()"
+    }">Lưu</button>`
     : "";
 
-  return /*html*/`
+  content.innerHTML = /*html*/ `
     <h2 class="text-xl font-bold mb-4">${title}</h2>
     <div class="flex">
-      <div class="w-1/4 flex justify-center items-center">
-        <img alt="User avatar" class="w-32 h-32 rounded-full" src="${image}" />
+      <div class="w-1/4"><label class="block text-sm font-medium text-gray-700" >Tên loại sản phẩm</label>
+        <input class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" id="name" type="text" value="${name}" ${readonlyAttr} />
       </div>
-      <div class="w-3/4">
-        <div class="grid grid-cols-2 gap-4">
-          <div>
-            <label class="block text-sm font-medium text-gray-700" for="id">ID</label>
-            <input class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" id="id" type="text" value="${_id}" readonly />
-          </div>
-        </div>
-        <div class="mt-4">
-          <label class="block text-sm font-medium text-gray-700" for="avatar-link">Link avatar</label>
-          <input class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" id="avatar-link" type="text" value="${image}" ${readonlyAttr} />
-        </div>
-        <div class="mt-4">
-         ${saveButtonHTML}
-          <button class="bg-blue-500 text-white px-4 py-2 rounded back" onclick="restoreRow()">Quay lại</button>
-        </div>
+      <div class="w-3/4"><label class="block text-sm font-medium text-gray-700" >Link ảnh sản phẩm</label>
+        <textarea class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" id="image" type="text" ${readonlyAttr}>${image} </textarea>
       </div>
     </div>
-  `;
-}
-////back
-function restoreRow() {
+    <div class="mt-4">${saveButtonHTML}<button class="bg-blue-500 text-white px-4 py-2 rounded back" onclick="getList()">Quay lại</button></div>`;
+};
+
+const saveEdit = async (_id) => {
+  const namevalues = document.getElementById("name").value
+  const image = document.getElementById("image").value
+  const update = {
+    name: namevalues,
+    image: image,
+  };
+ 
+  if (!namevalues ) {
+    alert("Tên loại người dùng không được để trống")
+    return
+  }
+  if (!image ) {
+    alert("Link ảnh không được để trống")
+    return
+  }
+  try {
+    const response = await fetch(`${url}/category/updatecategory/${_id}`, {
+      method: "PUT",
+      headers,
+      body: JSON.stringify(update),
+    });
+    const data = await response.json();
+    alert(
+      data.status
+        ? "Cập nhật loại sản phẩm thành công!"
+        : "Cập nhật thất bại. Vui lòng thử lại."
+    );
     getList();
+  } catch (error) {
+    console.error("Lỗi khi cập nhật role:", error);
+    alert("Đã xảy ra lỗi. Vui lòng thử lại.");
+  }
+};
+
+const saveAdd = async () => {
+  const namevalues = document.getElementById("name").value
+  const image = document.getElementById("image").value
+  const newdata = {
+    name: namevalues,
+    image: image,
+  };
+ 
+  if (!namevalues ) {
+    alert("Tên loại người dùng không được để trống")
+    return
+  }
+  if (!image ) {
+    alert("Link ảnh không được để trống")
+    return
+  }
+  try {
+    const response = await fetch(`${url}/category/addcategory`, {
+      method: "POST",
+      headers,
+      body: JSON.stringify(newdata),
+    });
+    const data = await response.json();
+
+    alert(
+      data.status
+        ? "Thêm loại sản phẩm thành công!"
+        : "Thêm thất bại. Vui lòng thử lại."
+    );
+    getList();
+  } catch (error) {
+    console.error("Lỗi khi thêm role:", error);
+    alert("Đã xảy ra lỗi. Vui lòng thử lại.");
+  }
+};
+async function CheckCategoryByID(id) {
+  // console.log(id, "user");
+  try {
+    const response = await fetch(
+      `${url}/productCategory/get-ProductCategory-By-CategoryId/${id}`,
+      {
+        method: "GET",
+        headers,
+      }
+    );
+
+    const data = await response.json();
+    console.log(data.result, "categories");
+      return data.result;
+    // if (userRole) {
+    //   // console.log(userRole.roles, "Tên người dùng");
+    //   return userRole.roles;
+    // } else {
+    //   console.log("User không tồn tại");
+    //   return [];
+    // }
+  } catch (err) {
+    console.log(err);
+    return [];
+  }
 }
-/////
 getList();

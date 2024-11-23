@@ -31,7 +31,7 @@ const renderTable = async (data) => {
                   index + 1
                 }</td>
                 <td class="border border-gray-300 px-4 py-2"> 
-                <div class=" h-[220px] p-2 flex justify-center items-center border ">
+                <div class=" h-[220px] p-2 flex justify-center items-center ">
                   <img
                     alt="Product image"
                     class="w-full h-full object-contain"

@@ -10,4 +10,7 @@ router.get("/getproduct_categoryById/:id",product_categoryController.getproduct_
 router.get("/get-Product-Category-By-Product-Id/:id",product_categoryController.getProductCategoryByProductId)
 router.get("/get-ProductCategory-By-CategoryId/:id",product_categoryController.getProductCategoryByCategoryId)
 router.get("/getProductsGroupedByCategory",product_categoryController.getProductsGroupedByCategory)
+router.get("/getCategoriesByProduct",product_categoryController.getCategoriesByProduct)
+router.get("/getCategoriesByProductId/:id",product_categoryController.getCategoriesByProductId)
+
 module.exports = router;

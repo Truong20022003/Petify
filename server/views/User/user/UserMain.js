@@ -641,7 +641,7 @@ async function getAllUsersWithRoles(id) {
     );
 
     const data = await response.json();
-    // console.log(data.result, "InvoiceDetail");
+    console.log(data.result, "getAllUsersWithRoles");
     const userRole = data.result.find((userRole) => userRole.user._id === id);
     if (userRole) {
       // console.log(userRole.roles, "Tên người dùng");
@@ -695,7 +695,7 @@ async function getRoles() {
   }
 }
 ///
-async function removeRolesUser(userId, roleId) {
+async function removeRolesUser(userId, roleId) {stat
   try {
     const response = await fetch(
       `http://localhost:3000/userRole/user_roles/${userId}/remove`,
