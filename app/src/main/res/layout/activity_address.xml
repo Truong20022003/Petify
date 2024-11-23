@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:padding="16dp">
+        <ImageView
+            android:id="@+id/iv_back"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_left"
+            android:contentDescription="Back" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Địa chỉ của bạn"
+            android:textSize="24sp"
+            android:gravity="center"
+            android:textColor="@color/black"
+            android:fontFamily="@font/bevietnampro_bold" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvAddAddress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:drawableStart="@drawable/ic_add"
+        android:drawableEnd="@drawable/ic_next"
+        android:drawablePadding="10dp"
+        android:layout_marginHorizontal="10dp"
+        android:hint="Thêm địa chỉ"
+        android:padding="12dp"
+        android:textSize="20sp" />
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rcv_address"
+        android:layout_width="match_parent"
+        android:paddingHorizontal="10dp"
+        android:layout_height="wrap_content"
+        tools:listitem="@layout/item_add_address"/>
+
+
+
+</LinearLayout>
