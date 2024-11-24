@@ -10,7 +10,7 @@ import com.example.petify.R
 import com.example.petify.databinding.ActivityLoginBinding
 import com.example.petify.ui.forgotpassword.ForgotPasswordActivity
 import com.example.petify.ui.signup.SignupActivity
-import com.example.petify.view.tap
+import com.example.petify.base.view.tap
 import com.example.petify.viewmodel.UserViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount

@@ -119,15 +119,18 @@ exports.loginUser = async (req, res, next) => {
             // Tìm người dùng bằng số điện thoại
             user = await userModel.findOne({ phone_number: login });
         }
-
+        if (!login || !password) {
+            return res.status(400).json({ status: "Login failed", error: "Missing login or password" });
+        }
+        
         // Nếu không tìm thấy người dùng
         if (!user) {
-            return res.status(404).json({ status: "Login failed", message: "User not found" });
+            return res.status(404).json({ status: "Login failed", error: "User not found" });
         }
 
         // Kiểm tra mật khẩu
         if (user.password !== password) {
-            return res.status(401).json({ status: "Login failed", message: "Invalid password" });
+            return res.status(401).json({ status: "Login failed", error: "Invalid password" });
         }
 
         // Tạo token xác thực

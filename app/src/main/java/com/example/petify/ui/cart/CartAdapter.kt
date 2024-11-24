@@ -6,24 +6,28 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.petify.R
+import com.example.petify.data.database.enitities.CartItem
 import com.example.petify.databinding.ItemCartBinding
 import com.example.petify.model.ProductModel
 
 class CartAdapter(
-    private val productList: List<ProductModel>,
+    private var productList: List<CartItem>,
     private val onTotalPriceUpdated: (Int) -> Unit
 ) : RecyclerView.Adapter<CartAdapter.CartViewHolder>() {
 
-    private val selectedItems = mutableSetOf<ProductModel>() // Track selected items
+    private val selectedItems = mutableSetOf<CartItem>() // Track selected items
     private val selectedProducts = HashMap<String, Boolean>()
 
-
+    fun updateItems(newItems: List<CartItem>) {
+        productList = newItems
+        notifyDataSetChanged() // Or use DiffUtil for better performance
+        calculateTotalPrice()  // Recalculate the total price after updating the list
+    }
     inner class CartViewHolder(val binding: ItemCartBinding) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(product: ProductModel) {
+        fun bind(product: CartItem) {
             binding.apply {
                 val imageUrl = product.image[0]
-                // Load image using Glide
                 if (imageUrl.isNotEmpty()) {
                     Glide.with(binding.root.context)
                         .load(imageUrl)
@@ -31,24 +35,21 @@ class CartAdapter(
                 } else {
                     ivSp.setImageResource(R.drawable.img_item_sp1)
                 }
-                // Bind product data to views
                 ivNameSp.text = product.name
                 ivTypeSp.text = "${product.date}"
                 ivPriceSp.text = "${product.price} VND"
-                tvQuantity.text = product.quantity.toString() // Assuming there's a quantity field in ProductModel
-
-                // Set click listeners for addition and subtraction buttons
+                tvQuantity.text = product.quantity.toString()
                 ivAddition.setOnClickListener {
-                    product.quantity++ // Increment quantity
-                    tvQuantity.text = product.quantity.toString() // Update UI
-                    notifyItemChanged(position) // Notify adapter about the change
+                    product.quantity++
+                    tvQuantity.text = product.quantity.toString()
+                    notifyItemChanged(position)
                 }
 
                 ivSubtraction.setOnClickListener {
-                    if (product.quantity > 0) { // Prevent negative quantity
-                        product.quantity-- // Decrement quantity
-                        tvQuantity.text = product.quantity.toString() // Update UI
-                        notifyItemChanged(position) // Notify adapter about the change
+                    if (product.quantity > 0) {
+                        product.quantity--
+                        tvQuantity.text = product.quantity.toString()
+                        notifyItemChanged(position)
                     }
                 }
                 // Check the selected state from the HashMap
@@ -82,18 +83,16 @@ class CartAdapter(
     }
 
     private fun calculateTotalPrice() {
-        // Calculate total price for selected items
         val totalPrice = selectedItems.sumOf { it.price * it.quantity }
-        onTotalPriceUpdated(totalPrice) // Send total price back to fragment
+        onTotalPriceUpdated(totalPrice)
     }
 
-    // Function to select or deselect all products
     fun setAllSelected(isSelected: Boolean) {
         productList.forEach { product ->
             selectedProducts[product.id] = isSelected
         }
-        notifyDataSetChanged() // Refresh all items in the adapter
-        calculateTotalPrice() // Update total price
+        notifyDataSetChanged()
+        calculateTotalPrice()
         updateTotalPrice()
     }
 
@@ -101,10 +100,10 @@ class CartAdapter(
         var totalPrice = 0
         for (product in productList) {
             if (selectedProducts[product.id] == true) {
-                totalPrice += product.price * product.quantity // Assuming quantity is in the model
+                totalPrice += product.price * product.quantity
             }
         }
-        onTotalPriceUpdated(totalPrice) // Call the lambda to update the total price
+        onTotalPriceUpdated(totalPrice)
     }
 
 }

@@ -12,7 +12,8 @@ import com.example.petify.databinding.ItemProductBinding
 class ProductAdapter(
     private val productList: List<ProductModel>,
     private val itemClickListener: (ProductModel) -> Unit,
-    private val onFavoriteChanged: (ProductModel, Boolean) -> Unit
+    private val onFavoriteChanged: (ProductModel, Boolean) -> Unit,
+    private val onAddToCart: (ProductModel, Boolean) -> Unit,
 ) : RecyclerView.Adapter<ProductAdapter.ProductViewHolder>() {
 
     private val favoriteProducts = mutableSetOf<ProductModel>()
@@ -64,7 +65,9 @@ class ProductAdapter(
                 onFavoriteChanged(product, !isFavorite) // Notify favorite status change
             }
 
-
+            ivCart.setOnClickListener {
+                onAddToCart(product, true)
+            }
             holder.itemView.setOnClickListener {
                 itemClickListener(product)
             }
