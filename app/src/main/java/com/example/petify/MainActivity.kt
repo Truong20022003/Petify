@@ -2,7 +2,7 @@ package com.example.petify
 
 import androidx.viewpager2.widget.ViewPager2
 import com.example.petify.databinding.ActivityMainBinding
-import com.example.petify.view.tap
+import com.example.petify.base.view.tap
 
 class MainActivity : BaseActivity<ActivityMainBinding, BaseViewModel>() {
     override fun createBinding() = ActivityMainBinding.inflate(layoutInflater)
