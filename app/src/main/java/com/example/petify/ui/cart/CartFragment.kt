@@ -2,13 +2,11 @@ package com.example.petify.ui.cart
 
 import android.util.Log
 import android.view.View
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.petify.BaseFragment
 import com.example.petify.R
 import com.example.petify.data.database.AppDatabase
 import com.example.petify.databinding.FragmentCartBinding
-import com.example.petify.model.ProductModel
 import com.example.petify.viewmodel.CartViewModel
 
 class CartFragment : BaseFragment<FragmentCartBinding>() {
