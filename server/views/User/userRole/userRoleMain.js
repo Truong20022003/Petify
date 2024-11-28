@@ -6,6 +6,7 @@ let table = document.querySelector("table");
 
 const getList = async () => {
   try {
+    const loadingDialog = dialogLoading("Đang tải danh sách dữ liệu...");
     const response = await fetch(`${url}/getListUserRole`, {
       method: "GET",
       headers: {
@@ -82,6 +83,7 @@ const getList = async () => {
 
     // Đặt các sự kiện cho các nút
     setButtonEvents();
+    loadingDialog.close();
   } catch (error) {
     console.log("Error fetching user roles:", error);
   }

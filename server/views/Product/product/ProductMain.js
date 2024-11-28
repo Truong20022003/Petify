@@ -1,361 +1,606 @@
 const content = document.querySelector(".shadow");
-let url = "http://localhost:3000/product";
-let tbody = document.querySelector("tbody");
-
-const getListProduct = () => {
-  fetch(`${url}/getListProduct`, {
-    method: "GET",
-    headers: {
-      Authorization: "trinh_nhung",
-      "Content-Type": "application/json",
-    },
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      console.log(data);
-      content.innerHTML =
-        /*html*/ ` <div class="flex mb-4">
-            <button class="bg-[#396060] text-white px-4 py-2 rounded mr-2 btnadd">
-              Thêm mới
-            </button>
-            <input
-              class="border border-gray-300 rounded px-4 py-2 flex-grow"
-              placeholder="Tìm kiếm"
-              type="text"
-            />
-            <button class="bg-[#396060] text-white px-4 py-2 rounded ml-2">
-              TÌm kiếm
-            </button>
-          </div>
-          <table class="content w-full border-collapse">
-            <thead>
-              <tr class="bg-[#396060] text-white">
-                <th class="border border-gray-300 px-4 py-2">STT</th>
-                <th class="border border-gray-300 px-4 py-2">Mã sản phẩm</th>
-                <th class="border border-gray-300 px-4 py-2">Tên</th>
-                <th class="border border-gray-300 px-4 py-2">Loại sản phẩm</th>
-                <th class="border border-gray-300 px-4 py-2">Giá</th>
-                <th class="border border-gray-300 px-4 py-2">Trạng thái</th>
-                <th class="border border-gray-300 px-4 py-2">Hạn sử dụng</th>
-                <th class="border border-gray-300 px-4 py-2">Ảnh</th>
-                <th class="border border-gray-300 px-4 py-2">Hành động</th>
-              </tr>
-            </thead>` +
-        data
-          .map(
-            (item, index) => /*html*/ `<tr id="row-${item._id}">
-                <td class="border border-gray-300 px-4 py-2">${index + 1}</td>
-                <td class="border border-gray-300 px-4 py-2">${item._id}</td>
-                <td class="border border-gray-300 px-4 py-2">${item.name}</td>
-                <td class="border border-gray-300 px-4 py-2">loaij san pham</td>
-                <td class="border border-gray-300 px-4 py-2">${item.price}</td>
-                <td class="border border-gray-300 px-4 py-2">${item.status}</td>
-                <td class="border border-gray-300 px-4 py-2">${item.date}</td>
-                <td class="border border-gray-300 px-4 py-2">
-                   <img
-                    alt="Product image"
-                    class="w-12 h-12"
-                    height="50"
-                    src="${item.image[0]}"
-                    width="100"
-                  />
-                </td>
-                 <td class="border border-gray-300 px-4 py-2">
-                  <div class="button-group flex flex-col space-y-2">
-                    <button class="bg-blue-500 text-white px-2 py-1 rounded btnedit" data-id="${
-                      item._id
-                    }">Cập nhật</button>
-                    <button class="bg-red-500 text-white px-2 py-1 rounded btndelete" data-id="${
-                      item._id
-                    }">Xóa</button>
-                    <button class="bg-[#008080] text-white px-2 py-1 rounded btndetail" data-id="${
-                      item._id
-                    }">
-                      Chi tiết
-                    </button>
-                  </div>
-                </td>
-              </tr>`
-          )
-          .join("");
-      /////xoa
-      addEventListeners();
-    });
-};
-///
-const addEventListeners = () => {
-  document.querySelectorAll(".btndelete").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      console.log("delete");
-      id = btn.dataset.id;
-      console.log(id);
-      if (confirm("ban co chac muon xoa khong")) {
-        fetch(`${url}/deleteproduct/${id}`, {
-          method: "DELETE",
-          headers: {
-            Authorization: "trinh_nhung",
-            "Content-Type": "application/json",
-          },
-        })
-          .then((rep) => rep.json())
-          .then(() => {
-            restoreRow();
-            alert("xoa thanh cong");
-          })
-          .catch((err) => console.log(err));
-      }
-    });
-  });
-  /////chi tiet
-  document.querySelectorAll(".btndetail").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      console.log("detail");
-      id = btn.dataset.id;
-      console.log(id);
-      fetch(`${url}/getproductById/${id}`, {
-        method: "GET",
-        headers: {
-          Authorization: "trinh_nhung",
-          "Content-Type": "application/json",
-        },
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          console.log(data, "kkkk");
-          content.innerHTML = createProductDetailHTML(
-            data.result,
-            true,
-            false,
-            "Chi tiết Sản phẩm"
-          );
-          document.querySelector(".back")?.addEventListener("click", () => {
-            restoreRow();
-          });
-        })
-        .catch((err) => console.log(err));
-    });
-  });
-  ///cap nhat
-  document.querySelectorAll(".btnedit").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      console.log("edit");
-      const id = btn.dataset.id;
-      fetch(`${url}/getproductById/${id}`, {
-        method: "GET",
-        headers: {
-          Authorization: "trinh_nhung",
-          "Content-Type": "application/json",
-        },
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          console.log(data, "kkkk");
-          content.innerHTML = createProductDetailHTML(
-            data.result,
-            false,
-            true,
-            "Cập san pham"
-          );
-          ////
-
-          ///
-          handleImageUpload(data.result.image);
-          ///
-          document.querySelector(".back")?.addEventListener("click", () => {
-            restoreRow();
-          });
-        })
-        .catch((err) => console.log(err));
-    });
-  });
-  /////
-  ///add
-  document.querySelector(".btnadd")?.addEventListener("click", () => {
-    console.log("add");
-    const selectedFiles = [];
-
-    content.innerHTML = createProductDetailHTML(
-      {},
-      false,
-      true,
-      "Thêm người san pham"
-    );
-    ////
-    handleImageUploadAdd(selectedFiles);
-    ///
-    document
-      .getElementById("upload-btn")
-      .addEventListener("click", async function () {
-        if (selectedFiles.length === 0) {
-          alert("Vui lòng chọn ít nhất một ảnh!");
-          return;
-        }
-
-        // Dữ liệu ảo từ form (bạn có thể thay thế bằng các giá trị thực tế từ input)
-        const name = "doando";
-        const supplier_id = "671da9ba08f0a23211562a9d";
-        const price = 2424;
-        const date = "ewewe";
-        const expiry_Date = "sfsfs";
-        const quantity = 34343;
-        const status = "sfsfs";
-        const description = "dfsf";
-        const sale = 3434;
-
-        // Tạo đối tượng FormData
-        const formData = new FormData();
-        // Thêm dữ liệu ảo vào FormData
-        formData.append("name", name);
-        formData.append("supplier_id", supplier_id);
-        formData.append("price", price);
-        formData.append("date", date);
-        formData.append("expiry_Date", expiry_Date);
-        formData.append("quantity", quantity);
-        formData.append("status", status);
-        formData.append("description", description);
-        formData.append("sale", sale);
-
-        // Thêm tất cả ảnh vào FormData (bao gồm tất cả file trong selectedFiles)
-        selectedFiles.forEach((file) => {
-          formData.append("image", file); // "image" có thể thay đổi thành "images" nếu server yêu cầu
-        });
-
-        for (var pair of formData.entries()) {
-          if (pair[0] === "image") {
-            console.log(`${pair[0]}: ${pair[1].name}, ${pair[1].size} bytes`); // Log chi tiết về ảnh
-          } else {
-            console.log(pair[0] + ": " + pair[1]);
-          }
-        }
-        const data = await addProduct(formData);
-        console.log("Upload result:", data); // Kiểm tra kết quả từ server
-
-        if (data.success) {
-          alert("Thêm sản phẩm thành công");
-        } else {
-          alert("Thêm sản phẩm thất bại");
-        }
-      });
-    ///
-    document.querySelector(".back")?.addEventListener("click", () => {
-      restoreRow();
-    });
-  });
+const url = "http://localhost:3000";
+const headers = {
+  Authorization: "trinh_nhung"
 };
 
-async function addProduct(formData) {
+const getList = async () => {
   try {
-    const response = await fetch(`${url}/addproduct`, {
-      method: 'POST',
-      headers: {
-        'Authorization': 'trinh_nhung',
-      },
-      body: formData,
+    const loadingDialog = dialogLoading("Đang tải danh sách sản phẩm...");
+    const response = await fetch(`${url}/product/getListProduct`, {
+      method: "GET",
+      headers,
     });
-
-    // Kiểm tra nếu phản hồi OK
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    // Đọc dữ liệu JSON từ phản hồi
     const data = await response.json();
-    console.log("Data from server:", data);
 
-    return data;
+    const categories = await Promise.all(
+      data.map((item) => getProductsGroupedByCategory(item._id))
+    );
+    renderTable(data, categories);
+    addEventListeners(categories);
+    loadingDialog.close();
   } catch (err) {
-    console.error("Error in addProduct:", err);
-    return { success: false, message: err.message };
+    console.log(err);
+  }
+};
+
+const renderTable = (data, categories) => {
+
+  content.innerHTML = /*html*/ `
+    <div class="flex mb-4">
+      <button class="bg-[#396060] text-white px-4 py-2 rounded mr-2 btnadd">Thêm mới</button>
+      <input id="searchInput" class="border border-gray-300 rounded px-4 py-2 flex-grow" placeholder="Tìm kiếm theo tên sản phẩm" type="text" />
+      <div class="ml-4 flex items-center space-x-2">
+        <label for="priceRange" class="text-gray-600">Giá sản phẩm:</label>
+        <input id="priceRange" type="range" min="0" max="10000" step="100" value="10000" class="w-[200px]">
+        <span id="priceValue" class="text-gray-600"></span>
+      </div>
+    </div>
+    <table class="content w-full border-collapse">
+      <thead>
+        <tr class="bg-[#396060] text-white">
+          <th class="border border-gray-300 px-4 py-2">STT</th>
+          <th class="border border-gray-300 px-4 py-2">Ảnh sản phẩm</th>
+          <th class="border border-gray-300 px-4 py-2">Tên sản phẩm</th>
+          <th class="border border-gray-300 px-4 py-2">Loại sản phẩm</th>
+          <th class="border border-gray-300 px-4 py-2">Trạng thái</th>
+          <th class="border border-gray-300 px-4 py-2">Giá</th>
+          <th class="border border-gray-300 px-4 py-2">Hành động</th>
+        </tr>
+      </thead>
+      <tbody id="dataList"></tbody>
+    </table>`;
+
+  document
+    .getElementById("searchInput")
+    .addEventListener("input", async (e) => {
+      const query = e.target.value;
+      const filteredUsers = searchUser(query, data);
+      document.getElementById("priceRange").addEventListener("input", (e) => {
+        const maxPrice = parseInt(e.target.value, 10);
+        document.getElementById("priceValue").textContent = `${maxPrice} đ`;
+        const filteredProducts = filterProductsByPrice(maxPrice, filteredUsers);
+        renderList(filteredProducts, categories);
+      });
+      renderList(filteredUsers, categories)
+    });
+  document.getElementById("priceRange").addEventListener("input", (e) => {
+    const maxPrice = parseInt(e.target.value, 10);
+    document.getElementById("priceValue").textContent = `${maxPrice} đ`;
+    const filteredProducts = filterProductsByPrice(maxPrice, data);
+    renderList(filteredProducts, categories);
+  });
+
+  renderList(data, categories)
+};
+
+const renderList = (data, categories) => {
+  const tableBody = document.getElementById("dataList");
+  tableBody.innerHTML = "";
+  // console.log(data, "dataaaa")
+  if (data.length === 0) {
+    // Nếu không có người dùng nào trong kết quả tìm kiếm
+    const noDataRow = /*html*/ `
+      <tr>
+        <td colspan="8" class="border border-gray-300 px-4 py-2 text-center text-red-500">
+          Không có dữ liệu
+        </td>
+      </tr>`;
+    tableBody.innerHTML = noDataRow;
+  } else {
+    data.forEach(
+      (item, index) => {
+        const row = /*html*/ `
+        <tr id="row-${item._id}">
+          <th class="border border-gray-300 px-4 py-2 text-xl w-[20]">${index + 1}</th>
+          <td class="border border-gray-300 py-2 w-[180px]"> 
+          <div class=" h-[220px]  flex justify-center items-center ">
+                  <img
+                    alt="Product image"
+                    class="w-full h-full object-contain"
+                    src="${item.image[0]}"
+                  />
+                </div>
+          <td class="border border-gray-300 px-4 py-2 ">${item.name}</td>
+          <td class="border border-gray-300 px-4 py-2 w-[200px]">
+          ${Array.isArray(categories[index]) && categories[index].length > 0
+            ? categories[index]
+              .map((categories, index) => {
+                return /*html*/`<span>${index + 1
+                  }_</span><span class="role-item px-2 py-1 rounded mr-2 mt-2 mb-2">${categories.category_name
+                  }</span><br>`;
+              })
+              .join("")
+            : "Không thuộc loại sản phẩm nào"
+          }
+          </td>
+          <td class="border border-gray-300 px-4 py-2 ">${item.status}</td>
+          <td class="border border-gray-300 px-4 py-2 ">${item.price}</td>
+          <td class="border border-gray-300 px-4 py-2 w-[200]">
+            <div class="button-group flex flex-col space-y-2">
+              <button class="bg-blue-500 text-white px-2 py-1 rounded btnedit" data-id="${item._id
+          }">Cập nhật</button>
+              <button class="bg-red-500 text-white px-2 py-1 rounded btndelete" data-id="${item._id
+          }">Xóa</button>
+              <button class="bg-[#008080] text-white px-2 py-1 rounded btndetail" data-id="${item._id
+          }">Chi tiết</button>
+            </div>
+          </td>
+        </tr>`;
+        tableBody.innerHTML += row;
+      })
   }
 }
 
-///bang
-function createProductDetailHTML(
-  product = {}, // Accept an empty object for adding
-  isReadonly = false,
-  showSaveButton = false,
-  title = ""
-) {
-  const {
-    image = [], // Danh sách hình ảnh
-    _id = "",
-    name = "",
-    supplier_id = "",
-    price = "",
-    date = "",
-    expiry_Date = "",
-    quantity = "",
-    status = "",
-    description = "",
-    sale = "",
-  } = product;
-  console.log(_id);
-  const readonlyAttr = isReadonly ? "readonly" : "";
+function filterProductsByPrice(maxPrice, data) {
+  return data.filter((product) => product.price <= maxPrice);
+}
 
-  const saveButtonHTML = showSaveButton
-    ? `<button id="upload-btn" class="bg-green-500 text-white px-4 py-2 rounded save" onclick="saveEditProduct('${_id}')">Lưu</button>
-`
-    : "";
+// Hàm tìm kiếm người dùng
+function searchUser(query, data) {
+  function removeVietnameseTones(str) {
+    return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  }
+  const queryNormalized = removeVietnameseTones(query.toLowerCase());
 
-  return /*html*/ `
-   <style>
-      .remove-btn {
-          position: absolute;
-          top: 4px;
-          right: 4px;
-          cursor: pointer;
-          background-color: red;
-          color: white;
-          border: none;
-          border-radius: 50%;
-          width: 24px;
-          height: 24px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
+  // Lọc danh sách người dùng
+  const filteredUsers = data.filter((data) => {
+    const dataNameNormalized = removeVietnameseTones(data.name.toLowerCase());
+    return dataNameNormalized.includes(queryNormalized);
+  });
+
+  return filteredUsers;
+}
+const addEventListeners = (categories) => {
+  document
+    .querySelectorAll(".btndelete")
+    .forEach((btn) =>
+      btn.addEventListener("click", () => handleDelete(btn.dataset.id))
+    );
+  document
+    .querySelectorAll(".btndetail")
+    .forEach((btn) =>
+      btn.addEventListener("click", () => handleDetail(btn.dataset.id))
+    );
+  document
+    .querySelectorAll(".btnedit")
+    .forEach((btn) =>
+      btn.addEventListener("click", () => handleEdit(btn.dataset.id))
+    );
+  document
+    .querySelector(".btnadd")
+    ?.addEventListener("click", async () => {
+      const selectedFiles = [];
+      const suppliers = await getListSupplier();
+      const categorylist = await getListCategory();
+      renderForm({}, false, true, "Thêm sản phẩm", suppliers, categories || [], categorylist)
+      handleImageUpload(selectedFiles);
+    });
+};
+
+const handleDelete = async (id) => {
+  dialogDelete("Xóa sản phẩm", "Bạn có chắc chắn muốn xóa sản phẩm này?", async () => {
+    try {
+      await fetch(`${url}/product/deleteproduct/${id}`, { method: "DELETE", headers });
+      getList();
+    } catch (err) {
+      dialogError("Xóa thất bại", "")
+      console.log(err);
+    }
+  })
+
+};
+
+const handleDetail = async (id) => {
+  try {
+    const response = await fetch(`${url}/product/getproductById/${id}`, { headers });
+    const data = await response.json();
+    // console.log(data, "getRoleById");
+    renderDetailHtml(data.result);
+    console.log(selectedSupplierId, "id nha phan phoi")
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+const handleEdit = async (id) => {
+  try {
+    const response = await fetch(`${url}/product/getproductById/${id}`, { headers });
+    const data = await response.json();
+    const suppliers = await getListSupplier();
+    const category = await getCategoriesByProductId(id);
+    const categorylist = await getListCategory();
+    // console.log(data, "getRoleById----edit");
+    renderForm(data.result, false, true, "Cập nhật sản phẩm", suppliers, category || [], categorylist);
+    handleImageUpload(data.result.image);
+    // console.log(getAllDisplayedImages(),"link ảnh")
+  } catch (err) {
+    console.log(err);
+  }
+}
+function convertDateFormat(dateString) {
+  // Kiểm tra nếu dateString rỗng hoặc undefined
+  if (!dateString) {
+    const today = new Date();
+    return today.toISOString().split('T')[0]; // Trả về ngày hiện tại với định dạng yyyy-mm-dd
+  }
+
+  const [day, month, year] = dateString.split("/");
+  return `${year}-${month}-${day}`; // yyyy-mm-dd
+}
+function convertDateFormatUpData(dateString) {
+  if (!dateString) {
+    const today = new Date();
+    return `${today.getDate().toString().padStart(2, '0')}/${(today.getMonth() + 1).toString().padStart(2, '0')}/${today.getFullYear()}`;
+  }
+
+  // Chuyển đổi ngày từ yyyy-mm-dd sang dd/mm/yyyy
+  const [year, month, day] = dateString.split("-");
+  return `${day}/${month}/${year}`;  // Trả về định dạng dd/mm/yyyy
+}
+const saveEdit = async (_id, event) => {
+  event.preventDefault();
+
+  // Lấy dữ liệu từ form
+  const getValue = (id) => document.getElementById(id)?.value || "";
+  const name = getValue("name");
+  const description = getValue("description");
+  const price = getValue("price");
+  const start_date = getValue("start-date");
+  const end_date = getValue("end-date");
+  const quantity = getValue("quantity");
+  const sale = getValue("sale");
+  const status = getValue("status");
+  const supplierSelect = document.getElementById("supplier");
+  const selectedSupplierId = supplierSelect?.value || "";
+  const selectedValues = Array.from(
+    document.querySelectorAll('input[name="option"]:checked')
+  ).map((cb) => cb.value);
+  console.log(selectedValues, "selectedValues")
+  const images = getAllDisplayedImages();
+
+  // Kiểm tra dữ liệu đầu vào
+  const validateInput = () => {
+    if (!name) return "Tên sản phẩm là bắt buộc.";
+    if (!description) return "Mô tả sản phẩm là bắt buộc.";
+    if (!price || isNaN(price)) return "Giá sản phẩm phải là một số hợp lệ.";
+    if (!quantity || isNaN(quantity)) return "Số lượng phải là một số hợp lệ.";
+    if (!sale || isNaN(sale)) return "Giảm giá phải là một số hợp lệ.";
+    if (!status) return "Trạng thái là bắt buộc.";
+    if (!start_date || !end_date) return "Ngày bắt đầu và ngày hết hạn là bắt buộc.";
+    if (images.length === 0) return "Hãy thêm ít nhất 1 ảnh.";
+    if (selectedValues.length === 0) return "Hãy chọn ít nhất một Loại sản phẩm.";
+    if (!selectedSupplierId) return "Bạn phải chọn nhà phân phối.";
+    return null;
+  };
+
+  const errorMessage = validateInput();
+  if (errorMessage) {
+    dialogError(errorMessage);
+    return;
+  }
+  const currentProduct = await getCategoriesByProductId(_id);
+  console.log(currentProduct, "currentProduct")
+  // Thêm loại sản phẩm mới
+  if (currentProduct.length === 0) {
+    for (const categoryId of selectedValues) {
+      await addCategoryProduct(_id, categoryId); // Gọi hàm thêm vai trò
+    }
+  } else {
+    for (const categoryId of selectedValues) {
+      const isCategoryAlreadyAssigned = currentProduct.some(
+        (category) => category.category_id === categoryId
+      );
+      console.log(isCategoryAlreadyAssigned, "isCategoryAlreadyAssigned")
+      if (!isCategoryAlreadyAssigned) {
+        await addCategoryProduct(_id, categoryId);
       }
-    </style>
-    <h2 class="text-xl font-bold mb-4">${title}</h2>
-    <div class="flex">
-      <div class="w-3/4">
-        <div class="grid grid-cols-2 gap-4">
-          <div>
-            <label class="block text-sm font-medium text-gray-700" for="id">ID</label>
-            <input class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" id="id" type="text" value="${_id}" ${readonlyAttr} />
-          </div>
-        </div>
-        <div class="container mx-auto">
-          <h1 class="text-2xl font-bold mb-4">Chọn ảnh từ desktop</h1>
-          <input type="file" id="file-input" multiple accept="image/*" class="mb-4" />
-          <div id="image-container" class="flex flex-wrap gap-4 overflow-y-scroll h-64 w-[500px] border border-gray-300 p-2">
-            ${image
-              .map(
-                (imgSrc) => /*html*/ `
-              <div class="relative w-32 h-32 m-2 inline-block">
-                <img alt="Product Image" class="w-full h-full object-cover rounded-md" src="${imgSrc}" />
-                <button class="remove-btn">X</button>
-              </div>
-            `
-              )
-              .join("")}
-          </div>
-        <div class="mt-4">
-         ${saveButtonHTML}
-          <button class="bg-blue-500 text-white px-4 py-2 rounded back" onclick="restoreRow()">Quay lại</button>
-        </div>
-      </div>
-    </div>
-  `;
+    }
+
+    // Xóa loại sản phẩm không còn được chọn
+    for (const category of currentProduct) {
+      if (!selectedValues.includes(category.category_id)) {
+        await removeCategoryProduct(_id, category.category_id);
+      }
+    }
+  }
+  // Chuẩn bị dữ liệu
+  const formData = new FormData();
+  images.forEach((file) => formData.append("image", file));
+  formData.append("name", name);
+  formData.append("price", price);
+  formData.append("date", convertDateFormatUpData(start_date));
+  formData.append("expiry_Date", convertDateFormatUpData(end_date));
+  formData.append("quantity", quantity);
+  formData.append("status", status);
+  formData.append("description", description);
+  formData.append("sale", sale);
+  formData.append("supplier_id", selectedSupplierId);
+
+  // In ra dữ liệu để kiểm tra
+  for (let [key, value] of formData.entries()) {
+    console.log(key, value);
+  }
+
+  // Xác nhận cập nhật
+  dialogInfo(
+    "Bạn có muốn cập nhật không?",
+    async () => {
+      const loadingDialog = dialogLoading("Dữ liệu đang được đẩy lên, vui lòng đợi...");
+      try {
+
+        const response = await fetch(
+          `http://localhost:3000/product/updateproduct/${_id}`,
+          {
+            method: "PUT",
+            headers,
+            body: formData,
+          }
+        );
+
+        if (response.ok) {
+          const result = await response.json();
+          Swal.close();
+          dialogSuccess("Sửa sản phẩm và loại sản phẩm thành công!").then(() => {
+            getList(); // Chỉ gọi sau khi thông báo xong
+          });;
+
+        } else {
+          Swal.close();
+          dialogError("Thêm sản phẩm thất bại");
+        }
+
+      } catch (error) {
+        console.error("Đã xảy ra lỗi:", error);
+        dialogError("Đã xảy ra lỗi");
+      }
+    },
+    () => {
+      getList();
+    }
+  );
+};
+
+
+const saveAdd = async (event) => {
+  event.preventDefault();
+
+  // Lấy giá trị từ form
+  const getValue = (id) => document.getElementById(id)?.value || "";
+  const name = getValue("name");
+  const description = getValue("description");
+  const price = getValue("price");
+  const start_date = getValue("start-date");
+  const end_date = getValue("end-date");
+  const quantity = getValue("quantity");
+  const sale = getValue("sale");
+  const status = getValue("status");
+  const supplierSelect = document.getElementById("supplier");
+  const selectedSupplierId = supplierSelect?.value || "";
+  const selectedValues = Array.from(
+    document.querySelectorAll('input[name="option"]:checked')
+  ).map((cb) => cb.value);
+
+  const images = getAllDisplayedImages();
+
+  // Kiểm tra dữ liệu
+  const validateInput = () => {
+    if (!name) return "Tên sản phẩm là bắt buộc.";
+    if (!description) return "Mô tả sản phẩm là bắt buộc.";
+    if (!price || isNaN(price)) return "Giá sản phẩm phải là một số hợp lệ.";
+    if (!quantity || isNaN(quantity)) return "Số lượng phải là một số hợp lệ.";
+    if (!sale || isNaN(sale)) return "Giảm giá phải là một số hợp lệ.";
+    if (!status) return "Trạng thái là bắt buộc.";
+    if (!start_date || !end_date) return "Ngày bắt đầu và ngày hết hạn là bắt buộc.";
+    if (images.length === 0) return "Hãy thêm ít nhất 1 ảnh.";
+    if (selectedValues.length === 0) return "Hãy chọn ít nhất một Loại sản phẩm.";
+    if (!selectedSupplierId) return "Bạn phải chọn nhà phân phối.";
+    return null;
+  };
+
+  const errorMessage = validateInput();
+  if (errorMessage) {
+    dialogError(errorMessage);
+    return;
+  }
+
+  // Chuẩn bị dữ liệu form
+  const formData = new FormData();
+  images.forEach((file) => formData.append("image", file));
+  formData.append("name", name);
+  formData.append("price", price);
+  formData.append("date", convertDateFormatUpData(start_date));
+  formData.append("expiry_Date", convertDateFormatUpData(end_date));
+  formData.append("quantity", quantity);
+  formData.append("status", status);
+  formData.append("description", description);
+  formData.append("sale", sale);
+  formData.append("supplier_id", selectedSupplierId);
+
+  // Hiển thị dữ liệu để kiểm tra
+  for (let [key, value] of formData.entries()) {
+    console.log(key, value);
+  }
+
+  // Thực hiện thêm sản phẩm
+  const addProduct = async () => {
+    const loadingDialog = dialogLoading("Dữ liệu đang được đẩy lên, vui lòng đợi...");
+    try {
+      const response = await fetch("http://localhost:3000/product/addproduct", {
+        method: "POST",
+        headers,
+        body: formData,
+      });
+
+      if (!response.ok) {
+        dialogError("Thêm sản phẩm thất bại");
+        return;
+      }
+
+      const result = await response.json();
+      const productId = result.product.id;
+
+      // Thêm loại sản phẩm
+      const productCategoryPromises = selectedValues.map((categoryId) => {
+        const productCategoryData = {
+          product_id: productId,
+          category_id: categoryId,
+        };
+        return fetch("http://localhost:3000/productCategory/addproduct_category", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "trinh_nhung",
+          },
+          body: JSON.stringify(productCategoryData),
+        });
+      });
+
+      const productCategoryResponses = await Promise.all(productCategoryPromises);
+      const allCategoryAssigned = productCategoryResponses.every((res) => res.ok);
+
+      if (allCategoryAssigned) {
+        Swal.close(); // Đóng loading trước
+        dialogSuccess("Thêm sản phẩm và loại sản phẩm thành công!").then(() => {
+          getList(); // Chỉ gọi sau khi thông báo xong
+        });;
+
+      } else {
+        Swal.close(); // Đóng loading trước
+        dialogError("Thêm loại sản phẩm thất bại!");
+      }
+
+    } catch (error) {
+      console.error("Đã xảy ra lỗi:", error);
+      Swal.close(); // Đóng loading trước
+      dialogError("Đã xảy ra lỗi khi thêm sản phẩm!");
+    }
+  };
+
+  dialogInfo("Bạn có muốn lưu không?", addProduct, () => getList());
+};
+
+
+const getListSupplier = async () => {
+  try {
+    const response = await fetch(`${url}/supplier/getListSupplier`, {
+      method: "GET",
+      headers,
+    });
+    const data = await response.json(); // Dữ liệu trả về từ API
+    return data // Gọi hàm render options
+  } catch (err) {
+    console.log(err);
+    return []
+  }
+};
+
+const getListCategory = async () => {
+  try {
+    const response = await fetch(`${url}/category/getListCategory`, {
+      method: "GET",
+      headers,
+    });
+    const data = await response.json(); // Dữ liệu trả về từ API
+    return data// Gọi hàm render options
+  } catch (err) {
+    console.log(err);
+    return []
+  }
+};
+async function getCategoriesByProductId(id) {
+  // console.log(id, "user");
+  try {
+    const response = await fetch(
+      `${url}/productCategory/getCategoriesByProductId/${id}`,
+      {
+        method: "GET",
+        headers,
+      }
+    );
+
+    const data = await response.json();
+    // console.log(data.result.categories, "categories");
+    return data.result.categories;
+
+  } catch (err) {
+    console.log(err);
+    return "";
+  }
 }
-///
-//luu edit
+const getProductsGroupedByCategory = async (id) => {
+  try {
+    const response = await fetch(
+      `${url}/productCategory/getCategoriesByProduct`,
+      {
+        method: "GET",
+        headers,
+      }
+    );
 
-////back
-function restoreRow() {
-  getListProduct();
+    const data = await response.json();
+    // console.log(data.result, "doandododo");
+    const category = data.result.find((pr) => pr._id === id)
+    if (category) {
+      // console.log(category.categories, "loai san pham");
+      return category.categories;
+    } else {
+      // console.log("User không tồn tại");
+      return [];
+    }
+
+  } catch (err) {
+    console.log(err);
+    return "";
+  }
 }
-/////
 
-//////
+async function removeCategoryProduct(productId, catedoryId) {
+  console.log(productId, "productId")
+  console.log(catedoryId, "catedoryId")
+  try {
+    const response = await fetch(
+      `http://localhost:3000/productCategory/product_category/${productId}/remove`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "trinh_nhung"
+        },
+        body: JSON.stringify({ category_id: catedoryId }), // Gửi roleId trong body để xóa vai trò
+      }
+    );
+    const data = await response.json();
+    console.log(data, "productCategory");
+    return data;
+  } catch (err) {
+    console.error("Error removing role:", err);
+    return null;
+  }
+}
 
-getListProduct();
+async function addCategoryProduct(productId, catedoryId) {
+  console.log(productId, "productId---aaa")
+  console.log(catedoryId, "catedoryId0---aaa")
+  try {
+    const response = await fetch(
+      `http://localhost:3000/productCategory/product_category/${productId}/add`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: "trinh_nhung",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ category_id: catedoryId }), // Gửi roleId trong body để thêm vai trò
+      }
+    );
+    const data = await response.json();
+    console.log(data, "addproductCategory");
+    return data;
+  } catch (err) {
+    console.error("Error adding role:", err);
+    return null;
+  }
+}
+
+getList();

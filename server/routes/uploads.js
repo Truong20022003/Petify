@@ -3,7 +3,7 @@ const multer = require('multer');
 const cloudinary = require('cloudinary').v2;
 const fs = require('fs');
 const app = express();
-
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
 // Cấu hình Cloudinary
 cloudinary.config({ 
     cloud_name: 'dhb4wdmjw', 
@@ -11,13 +11,12 @@ cloudinary.config({
     api_secret: '0B_z30zbBO3NAs3-jVvEB_Z-dg0' 
 });
 
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, 'public/uploads');
-    },
-    filename: (req, file, cb) => {
-        cb(null, file.fieldname + '-' + Date.now() + '-' + file.originalname);
-    },
+const storage = new CloudinaryStorage({
+    cloudinary: cloudinary,
+    params: {
+        folder: 'Petify_Images', // Thư mục lưu trữ trên Cloudinary
+        allowed_formats: ['jpg', 'jpeg', 'png'], // Các định dạng ảnh cho phép
+    }
 });
 
 const upload = multer({ storage: storage });

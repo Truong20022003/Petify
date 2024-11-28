@@ -149,14 +149,13 @@ document
             console.log(roleAdmin, "roleAdmin");
 
             console.log(`${user.name}, ${user.avata}`);
-            alert("Đăng nhập thành công");
-            // Chuyển hướng nếu cần
-            window.location.href = "/views/Home/HomeScreen.html";
+            // alert("Đăng nhập thành công");
+            dialogSuccessLogin("Đăng nhập thành công","/views/Home/HomeScreen.html" )
           } else {
-            alert("Bạn không có quyền truy cập");
+            dialogWarning("Xin lỗi!","Bạn không có quyền truy cập")
           }
         } else {
-          alert("Bạn nhập sai tài khoản hoặc mật khẩu");
+          dialogError("Xin lỗi!","Bạn nhập sai tài khoản hoặc mật khẩu")
         }
       } catch (error) {
         console.error("Lỗi khi đăng nhập:", error); // Xử lý lỗi nếu có

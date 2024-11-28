@@ -6,6 +6,8 @@
       rel="stylesheet"
     />
     <title>Petify</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="/views/exten/dialog.js"></script>
     <style>
       body {
         background-image: url("/views/img/n.jpg");
@@ -98,24 +100,17 @@
             <div id="submenuItems" class="submenu pl-12">
               <a
                 class="block py-2 px-6 text-gray-700 hover:bg-gray-200"
-                href="/views/Product/ProductScreen.html"
+                href="/views/Product/product/ProductScreen.html"
                 onclick="activateSubmenu(this)"
               >
                 Quản lý sản phẩm
               </a>
               <a
                 class="block py-2 px-6 text-gray-700 hover:bg-gray-200"
-                href="/views/Product/product/ProductScreen.html"
-                onclick="activateSubmenu(this)"
-              >
-                Quản lý loại sản phẩm
-              </a>
-              <a
-                class="block py-2 px-6 text-gray-700 hover:bg-gray-200"
                 href="/views/Product/category/CategoryScreen.html"
                 onclick="activateSubmenu(this)"
               >
-                Quản lý hóa đơn
+                Quản lý loại sản phẩm
               </a>
             </div>
           </div>

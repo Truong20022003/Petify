@@ -5,7 +5,8 @@ const headers = {
   "Content-Type": "application/json",
 };
 
-const getListUser = async () => {
+const getList = async () => {
+  const loadingDialog = dialogLoading("Đang tải...");
   try {
     const response = await fetch(`${url}/getListOrder`, {
       method: "GET",
@@ -13,6 +14,7 @@ const getListUser = async () => {
     });
     const data = await response.json();
     renderTable(data);
+    loadingDialog.close();
   } catch (err) {
     console.log(err);
   }
@@ -40,35 +42,30 @@ const renderTable = async (data) => {
       </thead>
       <tbody>
         ${data
-          .map(
-            (item, index) => /*html*/ `
+      .map(
+        (item, index) => /*html*/ `
               <tr id="row-${item._id}">
                 <td class="border border-gray-300 px-4 py-2">${index + 1}</td>
-                <td class="border border-gray-300 px-4 py-2">${
-                  namesuser[index] === ""
-                    ? "User không tồn tại"
-                    : namesuser[index]
-                }</td>
-                <td class="border border-gray-300 px-4 py-2">${
-                  item.total_price
-                }</td>
+                <td class="border border-gray-300 px-4 py-2">${namesuser[index] === ""
+            ? "User không tồn tại"
+            : namesuser[index]
+          }</td>
+                <td class="border border-gray-300 px-4 py-2">${item.total_price
+          }</td>
                 <td class="border border-gray-300 px-4 py-2">${item.status}</td>
                 <td class="border border-gray-300 px-4 py-2">
                   <div class="button-group flex flex-col space-y-2">
-                    <button class="bg-blue-500 text-white px-2 py-1 rounded btnedit" data-id="${
-                      item._id
-                    }">Cập nhật</button>
-                    <button class="bg-red-500 text-white px-2 py-1 rounded btndelete" data-id="${
-                      item._id
-                    }">Xóa</button>
-                    <button class="bg-[#008080] text-white px-2 py-1 rounded btndetail" data-id="${
-                      item._id
-                    }">Chi tiết</button>
+                    <button class="bg-blue-500 text-white px-2 py-1 rounded btnedit" data-id="${item._id
+          }">Cập nhật</button>
+                    <button class="bg-red-500 text-white px-2 py-1 rounded btndelete" data-id="${item._id
+          }">Xóa</button>
+                    <button class="bg-[#008080] text-white px-2 py-1 rounded btndetail" data-id="${item._id
+          }">Chi tiết</button>
                   </div>
                 </td>
               </tr>`
-          )
-          .join("")}
+      )
+      .join("")}
       </tbody>
     </table>`;
   addEventListeners();
@@ -98,19 +95,26 @@ const addEventListeners = () => {
 };
 
 const handleDelete = async (id) => {
-  if (!confirm("Bạn có chắc muốn xóa không?")) return;
-  try {
-    await fetch(`${url}/deleteorder/${id}`, { method: "DELETE", headers });
-    alert("Xóa thành công!");
-    getListUser();
-  } catch (err) {
-    console.log(err);
+  const check = true
+  if (check) {
+    dialogWarning('Hiện tại bạn chưa thể xóa!')
+    return
   }
+  dialogDelete("Xóa loại đơn hàng", "Bạn có chắc chắn muốn xóa đơn hàng này?", async () => {
+    try {
+      await fetch(`${url}/deleteorder/${id}`, { method: "DELETE", headers });
+      getList();
+    } catch (err) {
+      dialogError("Xóa thất bại", "")
+      console.log(err);
+    }
+  })
 };
 
 const handleDetail = async (id) => {
+
   try {
-    const response = await fetch(`${url}/getorderById/${id}`,{ headers});
+    const response = await fetch(`${url}/getorderById/${id}`, { headers });
     const data = await response.json();
     renderDetailForm(data.result, true, false, "Chi tiết người dùng");
   } catch (err) {
@@ -120,7 +124,7 @@ const handleDetail = async (id) => {
 
 const handleEdit = async (id) => {
   try {
-    const response = await fetch(`${url}/getorderById/${id}`,{ headers});
+    const response = await fetch(`${url}/getorderById/${id}`, { headers });
     const data = await response.json();
     renderDetailForm(data.result, false, true, "Cập nhật người dùng");
   } catch (err) {
@@ -143,17 +147,24 @@ const renderDetailForm = async (
   } = oder;
   const readonlyAttr = isReadonly ? "readonly" : "";
   const saveButtonHTML = showSaveButton
-    ? `<button class="bg-green-500 text-white px-4 py-2 rounded save" onclick="${
-        _id ? `saveEditUser('${_id}')` : "saveAddUser()"
-      }">Lưu</button>`
+    ? `<button class="bg-green-500 text-white px-4 py-2 rounded save" onclick="${_id ? `saveEdit('${_id}')` : "saveAdd()"
+    }">Lưu</button>`
     : "";
-    const userName = await checkUserByID(user_id);
+  const userName = await checkUserByID(user_id);
+      const categoryCheckboxes = categorylist
+      .map((item, index) => /*html*/ `
+      <label class="category-item">
+      <input type="checkbox" name="option" value="${item._id}" ${isCategoryChecked(item._id) ? "checked" : ""}>
+      ${item.name}
+    </label>
+    `)
+      .join("");
   content.innerHTML = /*html*/ `
     <h2 class="text-xl font-bold mb-4">${title}</h2>
     <div class="grid grid-cols-2 gap-4">
       <div class="">
         <label class="block text-sm font-medium text-gray-700" for="name">Tên người dùng </label>
-        <input class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" id="userName" type="text" value="${userName}" ${readonlyAttr} />
+        <input class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" id="user_id" type="text" value="${userName}" ${readonlyAttr} />
       </div>
       <div class=""><label class="block text-sm font-medium text-gray-700" for="description">Ngày tạo hóa đơn</label>
         <input class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" id="oder_date" type="text" value="${oder_date}" ${readonlyAttr} />
@@ -167,52 +178,83 @@ const renderDetailForm = async (
         <input class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" id="status" type="text" value="${status}" ${readonlyAttr} />
       </div>
     </div>
-    <div class="mt-4">${saveButtonHTML}<button class="bg-blue-500 text-white px-4 py-2 rounded back" onclick="getListUser()">Quay lại</button></div>`;
+    <div class="mt-4">${saveButtonHTML}<button class="bg-blue-500 text-white px-4 py-2 rounded back" onclick="getList()">Quay lại</button></div>`;
 };
 
-const saveEditUser = async (_id) => {
-  const updatedRole = {
-    name: document.getElementById("name").value,
-    description: document.getElementById("description").value,
+const saveEdit = async (_id) => {
+  const total_price = document.getElementById("total_price").value
+  const oder_date = document.getElementById("oder_date").value
+  const status = document.getElementById("status").value
+  const update= {
+    total_price: total_price,
+    status: status,
   };
+  if (!total_price && Number(total_price)) {
+    dialogError("Tổng hóa đơn không được để trống và tổng hóa đơn phải là số!")
+    return
+  }
+  if (!oder_date) {
+    dialogError("Ngày tạo hóa đơn không được để trống!")
+    return
+  }
+  const loadingDialog = dialogLoading("Đang tải lên...");
   try {
     const response = await fetch(`${url}/updateorder/${_id}`, {
       method: "PUT",
       headers,
-      body: JSON.stringify(updatedRole),
+      body: JSON.stringify(update),
     });
     const data = await response.json();
-    alert(
-      data.status
-        ? "Cập nhật role thành công!"
-        : "Cập nhật thất bại. Vui lòng thử lại."
-    );
-    getListUser();
+    if(data.status){
+      dialogSuccess("Cập nhật role thành công!").then(() => {
+        getList(); // Chỉ gọi sau khi thông báo xong
+      });  
+    }else{
+      dialogError("Cập nhật role thất bại!")
+    }
+    loadingDialog.close();
   } catch (error) {
     console.error("Lỗi khi cập nhật role:", error);
     alert("Đã xảy ra lỗi. Vui lòng thử lại.");
   }
 };
 
-const saveAddUser = async () => {
-  const newRole = {
-    name: document.getElementById("name").value,
-    description: document.getElementById("description").value,
+const saveAdd = async () => {
+  const total_price = document.getElementById("total_price").value
+  const oder_date = document.getElementById("oder_date").value
+  const status = document.getElementById("status").value
+  const newdata = {
+    total_price: Number(total_price),
+    status: status,
+    oder_date: oder_date, 
   };
+  if (!total_price || isNaN(Number(total_price))) {
+    dialogError("Tổng hóa đơn không được để trống và tổng hóa đơn phải là số!");
+    return;
+  }  
+  if (!oder_date) {
+    dialogError("Ngày tạo hóa đơn không được để trống!")
+    return
+  }
+  const loadingDialog = dialogLoading("Đang tải lên...");
   try {
     const response = await fetch(`${url}/addorder`, {
       method: "POST",
       headers,
-      body: newRole,
+      body: newdata,
     });
     const data = await response.json();
-    alert(
-      data.status ? "Thêm role thành công!" : "Thêm thất bại. Vui lòng thử lại."
-    );
-    getListUser();
+    if(data.status){
+      dialogSuccess("Thêm role thành công!").then(() => {
+        getList(); // Chỉ gọi sau khi thông báo xong
+      });  
+    }else{
+      dialogError("Thêm role thất bại!")
+    }
+    loadingDialog.close();
   } catch (error) {
     console.error("Lỗi khi thêm role:", error);
-    alert("Đã xảy ra lỗi. Vui lòng thử lại.");
+    // alert("Đã xảy ra lỗi. Vui lòng thử lại.");
   }
 };
 async function checkUserByID(id) {
@@ -238,4 +280,24 @@ async function checkUserByID(id) {
     return ""; // Trả về chuỗi rỗng nếu có lỗi
   }
 }
-getListUser();
+
+async function checkUser() {
+  //   console.log(id, "checkuser");
+  try {
+    const response = await fetch(
+      `http://localhost:3000/user/getListUser`,
+      {
+        method: "GET",
+        headers,
+      }
+    );
+
+    const data = await response.json();
+
+    return data; 
+  } catch (err) {
+    console.log(err);
+    return ""; 
+  }
+}
+getList();
