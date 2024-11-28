@@ -9,5 +9,5 @@ class CartRepository(private val cartDao: CartDao) {
     suspend fun updateQuantity(productId: String, quantity: Int) =
         cartDao.updateQuantity(productId, quantity)
 
-    suspend fun getAllCartItems() = cartDao.getAllCartItems()
+     fun getAllCartItems() = cartDao.getAllCartItems()
 }

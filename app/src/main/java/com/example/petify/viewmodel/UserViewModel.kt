@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.petify.BaseViewModel
 import com.example.petify.data.server.CreateInteface
+import com.example.petify.data.server.enitities.LoginResponse
 import com.example.petify.data.server.enitities.UserModel
 import com.example.petify.data.server.repository.UserRepository
 import com.example.petify.data.server.service.UserRoleService
@@ -24,6 +25,9 @@ class UserViewModel : BaseViewModel() {
 
     private val _loginSuccess = MutableLiveData<Boolean>()
     val loginSuccess: LiveData<Boolean> get() = _loginSuccess
+
+    private val _loginResponse = MutableLiveData<LoginResponse?>()
+    val loginResponse: LiveData<LoginResponse?> get() = _loginResponse
 
     private val _isPasswordReset = MutableLiveData<Boolean>()
     val isPasswordReset: LiveData<Boolean> get() = _isPasswordReset
@@ -78,15 +82,11 @@ class UserViewModel : BaseViewModel() {
                 val userRepository = UserRepository(apiService)
                 val result = userRepository.loginUser(login, password)
                 if (result != null) {
-                    val (user, token) = result
-                    if (user != null && token != null) {
-                        _user.value = user
-                        saveToken(token,context) // Lưu token
-                        _loginSuccess.value = true
-                    } else {
-                        _loginSuccess.value = false
-                        _errorMessage.value = "Invalid login response"
-                    }
+                    val (loginResponse, token) = result
+                    _loginResponse.value = loginResponse
+                    token?.let { saveToken(it, context) }
+                    _loginSuccess.value = true
+
                 } else {
                     _loginSuccess.value = false
                     _errorMessage.value = "Login failed"
@@ -105,7 +105,6 @@ class UserViewModel : BaseViewModel() {
     }
 
     private fun saveToken(token: String, context: Context) {
-        // Lưu token bằng SharedPreferences hoặc EncryptedSharedPreferences
         val sharedPreferences = context.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
         sharedPreferences.edit().putString("auth_token", token).apply()
     }

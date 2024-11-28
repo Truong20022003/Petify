@@ -1,10 +1,13 @@
 package com.example.petify.data.server.repository
 
 import android.util.Log
+import com.example.petify.data.server.enitities.ErrorResponse
 import com.example.petify.data.server.enitities.LoginRequest
+import com.example.petify.data.server.enitities.LoginResponse
 import com.example.petify.data.server.enitities.RegisterUser
 import com.example.petify.data.server.enitities.UserModel
 import com.example.petify.data.server.service.UserService
+import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -48,7 +51,23 @@ class UserRepository(private val api: UserService) {
         }
     }
 
-    suspend fun loginUser(emailOrPhone: String, password: String): Pair<UserModel?, String?>? =
+//    suspend fun loginUser(emailOrPhone: String, password: String): Pair<UserModel?, String?>? =
+//        withContext(Dispatchers.IO) {
+//            val responsePost = LoginRequest(emailOrPhone, password)
+//            val response = api.login(responsePost)
+//            if (response.isSuccessful) {
+//                Log.d("UserRepository", "loginUser Success: ${response.body().toString()}")
+//                val user = response.body()
+//                val token = response.headers()["Authorization"] // Lấy token từ header (hoặc body)
+//                Pair(user, token)
+//            } else {
+//                val errorBody = response.errorBody()?.string() // Đọc nội dung lỗi
+//                Log.e("UserRepository", "loginUser Error: $errorBody")
+//                null
+//            }
+//        }
+
+    suspend fun loginUser(emailOrPhone: String, password: String): Pair<LoginResponse?, String?>? =
         withContext(Dispatchers.IO) {
             val responsePost = LoginRequest(emailOrPhone, password)
             val response = api.login(responsePost)
@@ -58,11 +77,24 @@ class UserRepository(private val api: UserService) {
                 val token = response.headers()["Authorization"] // Lấy token từ header (hoặc body)
                 Pair(user, token)
             } else {
-                Log.e("UserRepository", "loginUser Error: ${response.errorBody()}")
+                // Lấy nội dung lỗi từ `errorBody`
+                val errorBody = response.errorBody()?.string()
+                val loginError = errorBody?.let {
+                    try {
+                        Gson().fromJson(it, ErrorResponse::class.java)
+                    } catch (e: Exception) {
+                        Log.e("UserRepository", "Error parsing errorBody", e)
+                        null
+                    }
+                }
+                // Ghi log chi tiết lỗi
+                Log.e(
+                    "UserRepository",
+                    "loginUser Error: ${loginError?.status}, ${loginError?.error}"
+                )
                 null
             }
         }
-
 
     suspend fun resetPassword(email: String): Boolean = withContext(Dispatchers.IO) {
         val response = api.resetPassword(email)

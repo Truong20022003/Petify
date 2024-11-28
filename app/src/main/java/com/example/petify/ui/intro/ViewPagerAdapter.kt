@@ -1,18 +1,16 @@
 package com.example.petify.ui.intro
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 
 import androidx.recyclerview.widget.RecyclerView
 import com.example.petify.databinding.ItemIntroBinding
-import com.example.petify.model.IntroModel
 
 class ViewPagerAdapter(val list: MutableList<IntroModel>) :
     RecyclerView.Adapter<ViewPagerAdapter.ViewHoler>() {
 
     inner class ViewHoler(val binding: ItemIntroBinding):RecyclerView.ViewHolder(binding.root){
-        fun bind(data:IntroModel){
+        fun bind(data: IntroModel){
             try {
                 binding.ivIntro.setImageResource(data.image)
                 binding.tvTitle.setText(data.title)
