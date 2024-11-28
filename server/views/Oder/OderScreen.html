@@ -6,6 +6,8 @@
       rel="stylesheet"
     />
     <title>Petify</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="/views/exten/dialog.js"></script>
     <style>
       body {
         background-image: url("/views/img/n.jpg");
@@ -32,7 +34,10 @@
   <body class="bg-gray-800">
     <div class="flex h-screen">
       <!-- Sidebar -->
-      <div class="w-[300px] bg-white shadow-md p-6" style="border-radius: 10px; flex-shrink: 0;">
+      <div
+        class="w-[300px] bg-white shadow-md p-6"
+        style="border-radius: 10px; flex-shrink: 0"
+      >
         <div class="flex items-center justify-center py-6">
           <img
             alt="Logo"
@@ -54,7 +59,7 @@
           <!--  -->
           <div id="manageMenu">
             <a
-              class="flex items-center py-2 px-6 cursor-pointer  "
+              class="flex items-center py-2 px-6 cursor-pointer"
               onclick="toggleUserSubmenu()"
             >
               <i class="fas fa-user"> </i>
@@ -63,7 +68,7 @@
             </a>
             <div id="userSubmenuItems" class="submenu pl-12">
               <a
-                class="block py-2 px-6 text-gray-700 hover:bg-gray-200 block py-2 px-6 text-gray-700 hover:bg-gray-200  "
+                class="block py-2 px-6 text-gray-700 hover:bg-gray-200 block py-2 px-6 text-gray-700 hover:bg-gray-200"
                 href="/views/User/user/UserScreen.html"
                 onclick="activateSubmenu(this)"
               >
@@ -162,11 +167,11 @@
           </a>
         </nav>
         <button
-            onclick="logout()"
-            class="bg-red-500 text-white text-lg font-semibold py-2 px-6 mb-4 mx-4 rounded hover:bg-red-600"
-          >
-            Đăng xuất
-          </button>
+          onclick="logout()"
+          class="bg-red-500 text-white text-lg font-semibold py-2 px-6 mb-4 mx-4 rounded hover:bg-red-600"
+        >
+          Đăng xuất
+        </button>
       </div>
       <!-- Main Content -->
       <div

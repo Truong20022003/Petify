@@ -1,4 +1,4 @@
-const {productModel} = require("../models/product_model")
+const { productModel } = require("../models/product_model")
 
 const fs = require('fs');
 const { uploadToCloudinary } = require('../routes/uploads');
@@ -12,69 +12,111 @@ const getListproduct = async (req, res, next) => {
 };
 
 const addproduct = async (req, res) => {
-  console.log("Files received in addproduct:", req.files); 
+    console.log("Files received in addproduct:", req.files);
 
-  if (!req.files || req.files.length === 0) {
-      return res.status(400).json({ success: false, message: 'No files uploaded' });
-  }
+    if (!req.files || req.files.length === 0) {
+        return res.status(400).json({ success: false, message: 'No files uploaded' });
+    }
 
-  try {
-      const imageUrls = [];
+    try {
+        const uploadedImages = req.files.map(file => file.path); // Lấy URL ảnh từ Cloudinary
 
-      for (const file of req.files) {
-          const filePath = file.path;
-          const result = await uploadToCloudinary(filePath);
-          imageUrls.push(result.secure_url); 
+        console.log('Saving product to database...');
+        const newProduct = {
+            ...req.body,
+            image: uploadedImages
+        };
 
-          fs.unlinkSync(filePath);
-      }
+        // Lưu sản phẩm vào cơ sở dữ liệu
+        const product = await productModel.create(newProduct);
 
-      const newProduct = {
-          ...req.body,
-          image: imageUrls
-      };
+        // Trả về sản phẩm cùng với id (lấy _id của Mongoose)
+        const responseProduct = {
+            id: product._id, // Thêm trường id vào kết quả
+            ...product.toObject(), // Lấy tất cả thông tin sản phẩm
+        };
 
-      await productModel.create(newProduct);
-
-      res.json({ success: true, product: newProduct });
-  } catch (error) {
-      console.error('Error uploading files:', error);
-      res.status(500).json({ success: false, message: 'Error uploading files', error });
-  }
+        console.log('Sending response...');
+        return res.status(200).json({ success: true, product: responseProduct });
+    } catch (error) {
+        console.error('Error uploading files:', error);
+        res.status(500).json({ success: false, message: 'Error uploading files', error });
+    }
 };
 
 
 const updateproduct = async (req, res) => {
-  if (!req.files || req.files.length === 0) {
-      return res.status(400).json({ success: false, message: 'No files uploaded' });
-  }
+    console.log("Files received in updateproduct:", req.files);
 
-  try {
-      const imageUrls = [];
+    if (!req.files || req.files.length === 0) {
+        return res.status(400).json({ success: false, message: 'No files uploaded' });
+    }
 
-      for (const file of req.files) {
-          const filePath = file.path;
-          const result = await uploadToCloudinary(filePath);
-          imageUrls.push(result.secure_url); 
+    try {
+        const uploadedImages = req.files.map(file => file.path); // Lấy URL ảnh từ file upload
 
-          fs.unlinkSync(filePath);
-      }
+        console.log('Updating product in database...');
+        const updatedProduct = {
+            ...req.body,
+            image: uploadedImages
+        };
 
-      const updatedProduct = {
-          ...req.body,
-          image: imageUrls 
-      };
+        // Cập nhật sản phẩm trong cơ sở dữ liệu
+        const product = await productModel.findByIdAndUpdate(
+            req.params.id,
+            updatedProduct,
+            { new: true }
+        );
 
-      const product = await productModel.findByIdAndUpdate(req.params.id, updatedProduct, { new: true });
+        if (!product) {
+            return res.status(404).json({ success: false, message: 'Product not found' });
+        }
 
-      res.json({ success: true, product });
-  } catch (error) {
-      console.error('Error uploading files:', error);
-      res.status(500).json({ success: false, message: 'Error uploading files', error });
-  }
+        // Tạo response giống addproduct
+        const responseProduct = {
+            id: product._id, // Thêm trường id vào kết quả
+            ...product.toObject(), // Lấy tất cả thông tin sản phẩm
+        };
+
+        console.log('Sending response...');
+        return res.status(200).json({ success: true, product: responseProduct });
+    } catch (error) {
+        console.error('Error updating product:', error);
+        res.status(500).json({ success: false, message: 'Error updating product', error });
+    }
 };
 
- const deleteproduct = async (req, res, next) => {
+// const updateproduct = async (req, res) => {
+//     if (!req.files || req.files.length === 0) {
+//         return res.status(400).json({ success: false, message: 'No files uploaded' });
+//     }
+
+//     try {
+//         const imageUrls = [];
+
+//         for (const file of req.files) {
+//             const filePath = file.path;
+//             const result = await uploadToCloudinary(filePath);
+//             imageUrls.push(result.secure_url);
+
+//             fs.unlinkSync(filePath);
+//         }
+
+//         const updatedProduct = {
+//             ...req.body,
+//             image: imageUrls
+//         };
+
+//         const product = await productModel.findByIdAndUpdate(req.params.id, updatedProduct, { new: true });
+
+//         res.json({ success: true, product });
+//     } catch (error) {
+//         console.error('Error uploading files:', error);
+//         res.status(500).json({ success: false, message: 'Error uploading files', error });
+//     }
+// };
+
+const deleteproduct = async (req, res, next) => {
     try {
         let id = req.params.id;
         let result = await productModel.findByIdAndDelete(id);
@@ -84,7 +126,7 @@ const updateproduct = async (req, res) => {
     }
 };
 
- const getproduct = async (req, res, next) => {
+const getproduct = async (req, res, next) => {
     try {
         let id = req.params.id;
         let result = await productModel.findById(id);
@@ -104,9 +146,9 @@ const getproductById = async (req, res, next) => {
     }
 };
 module.exports = {
-  addproduct,
-  updateproduct,
-  getListproduct, 
-  deleteproduct,
-  getproductById,
+    addproduct,
+    updateproduct,
+    getListproduct,
+    deleteproduct,
+    getproductById,
 };

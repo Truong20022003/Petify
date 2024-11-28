@@ -6,16 +6,19 @@ const headers = {
 
 const getList = async () => {
   try {
+    const loadingDialog = dialogLoading("Đang tải danh sách sản phẩm...");
     const response = await fetch(`${url}/product/getListProduct`, {
       method: "GET",
       headers,
     });
     const data = await response.json();
+
     const categories = await Promise.all(
       data.map((item) => getProductsGroupedByCategory(item._id))
     );
     renderTable(data, categories);
     addEventListeners(categories);
+    loadingDialog.close();
   } catch (err) {
     console.log(err);
   }
@@ -103,7 +106,7 @@ const renderList = (data, categories) => {
           ${Array.isArray(categories[index]) && categories[index].length > 0
             ? categories[index]
               .map((categories, index) => {
-                return `<span>${index + 1
+                return /*html*/`<span>${index + 1
                   }_</span><span class="role-item px-2 py-1 rounded mr-2 mt-2 mb-2">${categories.category_name
                   }</span><br>`;
               })
@@ -127,13 +130,12 @@ const renderList = (data, categories) => {
         tableBody.innerHTML += row;
       })
   }
-
 }
-///
+
 function filterProductsByPrice(maxPrice, data) {
   return data.filter((product) => product.price <= maxPrice);
 }
-////
+
 // Hàm tìm kiếm người dùng
 function searchUser(query, data) {
   function removeVietnameseTones(str) {
@@ -177,14 +179,16 @@ const addEventListeners = (categories) => {
 };
 
 const handleDelete = async (id) => {
-  if (!confirm("Bạn có chắc muốn xóa không?")) return;
-  try {
-    await fetch(`${url}/product/deleteproduct/${id}`, { method: "DELETE", headers });
-    alert("Xóa thành công!");
-    getList();
-  } catch (err) {
-    console.log(err);
-  }
+  dialogDelete("Xóa sản phẩm", "Bạn có chắc chắn muốn xóa sản phẩm này?", async () => {
+    try {
+      await fetch(`${url}/product/deleteproduct/${id}`, { method: "DELETE", headers });
+      getList();
+    } catch (err) {
+      dialogError("Xóa thất bại", "")
+      console.log(err);
+    }
+  })
+
 };
 
 const handleDetail = async (id) => {
@@ -193,6 +197,7 @@ const handleDetail = async (id) => {
     const data = await response.json();
     // console.log(data, "getRoleById");
     renderDetailHtml(data.result);
+    console.log(selectedSupplierId, "id nha phan phoi")
   } catch (err) {
     console.log(err);
   }
@@ -212,313 +217,7 @@ const handleEdit = async (id) => {
   } catch (err) {
     console.log(err);
   }
-};
-const renderDetailHtml = (dataproduct) => {
-  content.innerHTML = `    
-   <h2 class="text-xl font-bold mb-4 items-center">Chi tiết sản phẩm</h2>
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 m-5">
-  <!-- cuc1 -->
-  <div class="space-y-4">
-    <div class="flex items-center mb-2 m-5">
-    <span class="text-2xl font-semibold">Tên sản phẩm: ${dataproduct.name}</span>
-    </div>
-    <div class="flex flex-wrap gap-2 px-2 ">
-    ${dataproduct.image
-      .map(
-        (img) => /*html*/ `
-        <div
-            class="w-[100px] h-[100px] flex-shrink-0 border border-gray-300 rounded-lg overflow-hidden hover:shadow-md hover:border-gray-400 transition"
-        >
-            <img
-            alt="Product image"
-            class="w-full h-full object-cover"
-            src="${img}"
-            />
-        </div>
-        `
-      )
-      .join("")}
-    </div>
-    <div class="space-y-4 m-5">
-        <div class="mb-2">
-        <strong class="text-lg">Giá sản phẩm:</strong>
-        <span class="text-gray-600">${dataproduct.price}</span>
-        </div>
-        <div class="mb-2">
-        <strong class="text-lg">Ngày nhập:</strong>
-        <span class="text-gray-600">${dataproduct.date}</span>
-        </div>
-        <div class="mb-2">
-        <strong class="text-lg">Trạng thái:</strong>
-        <span class="text-gray-600">${dataproduct.status}</span>
-        </div>
-        <div class="mb-2">
-        <strong class="text-lg">Ngày hết hạn:</strong>
-        <span class="text-gray-600">${dataproduct.expiry_Date}</span>
-        </div>
-        <div class="mb-2">
-        <strong class="text-lg">Số lượng sản phẩm:</strong>
-        <span class="text-gray-600">${dataproduct.quantity}</span>
-        </div>
-    </div>
-  </div>
-
-<!-- cuc2 -->
-<div class="">
-  <strong class="text-lg">Mô tả:</strong>
-  <p class="text-gray-700">
-    ${dataproduct.description.replace(/\n/g, "<br />")}
-  </p>
-</div>
-</div>
-  </div>
-<button class="bg-blue-500 text-white px-4 py-2 rounded back" onclick="getList()">Quay lại</button>
-  `
 }
-/////
-const renderForm = (
-  {
-    _id = "",
-    image = [],
-    supplier_id = "",
-    price = "",
-    date = "",
-    expiry_Date = "",
-    quantity = "",
-    status = "",
-    name = "",
-    description = "",
-    sale = "",
-  },
-  isReadonly = false,
-  showSaveButton = false,
-  title,
-  suppliers,
-  category,
-  categorylist
-) => {
-  const saveButtonHTML = showSaveButton
-    ? `<button class="bg-green-500 text-white px-4 py-2 rounded save" onclick="${_id ? `saveEdit('${_id}')` : "saveAdd()"
-    }">Lưu</button>`
-    : "";
-  const readonlyAttr = isReadonly ? "readonly" : "";
-  // console.log(category, "category")
-  function isCategoryChecked(categoryid) {
-    return Array.isArray(category) && category.some(item => item.category_id === categoryid);
-  }
-
-
-  const categoryCheckboxes = categorylist
-    .map((item, index) => /*html*/ `
-    <label class="category-item">
-    <input type="checkbox" name="option" value="${item._id}" ${isCategoryChecked(item._id) ? "checked" : ""}>
-    ${item.name}
-  </label>
-  `)
-    .join("");
-
-
-  content.innerHTML =/*html*/ `
-   <style>
-      .remove-btn {
-          position: absolute;
-          top: 4px;
-          right: 4px;
-          cursor: pointer;
-          background-color: red;
-          color: white;
-          border: none;
-          border-radius: 50%;
-          width: 24px;
-          height: 24px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-      }
-        .grid-container {
-        display: grid;                /* Kích hoạt chế độ Grid */
-        grid-template-columns: repeat(2, 1fr); /* Chia 2 cột */
-        gap: 16px;                    /* Khoảng cách giữa các mục */
-        width: 100%;                  /* Đảm bảo toàn bộ chiều rộng khung */
-        padding: 8px;                 /* Thêm padding bên trong nếu cần */
-      }
-
-      .category-item {
-        display: flex;
-        align-items: center;          /* Canh giữa checkbox và text */
-        gap: 8px;                     /* Khoảng cách giữa checkbox và text */
-        font-size: 14px;              /* Kích thước chữ */
-      }
-    </style>
-    <h2 class="text-xl font-bold mb-4">${title}</h2>
-    <form> 
-          <div class="container mx-auto flex justify-between gap-4">
-        <!-- Phần chọn ảnh -->
-        <div class="w-1/2">
-          <input type="file" id="file-input" multiple accept="image/*" class="mb-4" />
-          <div id="image-container" class="flex flex-wrap gap-4 overflow-y-scroll h-64 w-full border border-gray-300 p-2">
-            ${image
-      .map(
-        (imgSrc) => /*html*/ `
-                <div class="relative w-32 h-32 m-2 inline-block">
-                  <img alt="Product Image" class="w-full h-full object-cover rounded-md" src="${imgSrc}" />
-                  <button class="remove-btn">X</button>
-                </div>
-              `
-      )
-      .join("")}
-          </div>
-        </div>
-        <!-- Phần loại sản phẩm -->
-        <div class="w-1/2">
-          <h1 class="block text-sm font-medium text-gray-700">
-            Loại sản phẩm
-          </h1>
-          <div id="category-container" class="grid-container">
-             ${categoryCheckboxes}
-            </div>
-        </div>
-      </div>
-
-    <div class="grid grid-cols-2 gap-6 mb-6">
-          <div>
-            <label class="block text-sm font-medium text-gray-700" for="product-code">
-              Tên sản phẩm
-            </label>
-            <textarea
-              class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              id="name"
-              rows="9"
-              >${name}</textarea>
-          </div>
-          <div>
-          <label class="block text-sm font-medium text-gray-700" for="description">
-            Mô tả
-          </label>
-          <textarea
-            class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            id="description"
-            placeholder="Mô tả của bạn ....."
-            rows="9"
-          >${description}</textarea>
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700" for="product-price">
-              Giá sản phẩm
-            </label>
-            <input
-              class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              id="price"
-              type="number"
-              min="0"
-              value="${price}"
-            />
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700"  >
-              Nhà phân phối
-            </label>
-            <select
-              class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              id="supplier"
-            >
-              <option>Chọn nhà phân phối</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700" for="start-date">
-              Ngày bắt đầu
-            </label>
-            <input
-              class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              id="start-date"
-              type="date"
-              value="${convertDateFormat(date)}"
-            />
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700" for="end-date">
-              Ngày kết thúc
-            </label>
-            <input
-              class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              id="end-date"
-              type="date"
-              value="${convertDateFormat(expiry_Date)}"
-            />
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700" for="product-name">
-              Trạng thái
-            </label>
-            <input
-              class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              id="status"
-              placeholder="Tên sản phẩm"
-              value="${status}"
-              type="text"
-            />
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700"  >
-              Số lượng
-            </label>
-            <input
-              class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              id="quantity"
-              type="text"
-              value="${quantity}"
-            />
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700"  >
-              Giảm giá
-            </label>
-            <input
-              class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              id="sale"
-              type="text"
-              value="${sale}"
-            />
-          </div>
-          
-        </div>
-        <div class="mb-6">
-         
-        </div>
-      <div class="mt-4">
-         ${saveButtonHTML}
-          <button class="bg-blue-500 text-white px-4 py-2 rounded back" onclick="getList()">Quay lại</button>
-        </div>
-    </form>
-  `
-
-  const supplierSelect = document.getElementById("supplier");
-
-  // Điền các option vào `select`
-  suppliers.forEach(supplier => {
-    const option = document.createElement("option");
-    option.value = supplier._id; // Gán `value` là ID nhà phân phối
-    option.textContent = supplier.name; // Hiển thị tên nhà phân phối
-    supplierSelect.appendChild(option);
-  });
-
-  // Nếu có supplier_id, thiết lập giá trị mặc định
-  if (supplier_id) {
-    supplierSelect.value = supplier_id;
-  }
-
-  supplierSelect.addEventListener("change", (event) => {
-    const selectedOption = event.target.options[event.target.selectedIndex];
-    const id = selectedOption.value;
-    const name = selectedOption.textContent;
-
-    console.log("ID Nhà phân phối:", id);
-    console.log("Tên Nhà phân phối:", name);
-  });
-
-}
-///
 function convertDateFormat(dateString) {
   // Kiểm tra nếu dateString rỗng hoặc undefined
   if (!dateString) {
@@ -529,119 +228,258 @@ function convertDateFormat(dateString) {
   const [day, month, year] = dateString.split("/");
   return `${year}-${month}-${day}`; // yyyy-mm-dd
 }
+function convertDateFormatUpData(dateString) {
+  if (!dateString) {
+    const today = new Date();
+    return `${today.getDate().toString().padStart(2, '0')}/${(today.getMonth() + 1).toString().padStart(2, '0')}/${today.getFullYear()}`;
+  }
 
-const saveEdit = async (_id) => {
-  const namevalues = document.getElementById("name").value
-  const descriptionvalues = document.getElementById("description").value
-  const updatedRole = {
-    name: namevalues,
-    description: descriptionvalues,
+  // Chuyển đổi ngày từ yyyy-mm-dd sang dd/mm/yyyy
+  const [year, month, day] = dateString.split("-");
+  return `${day}/${month}/${year}`;  // Trả về định dạng dd/mm/yyyy
+}
+const saveEdit = async (_id, event) => {
+  event.preventDefault();
+
+  // Lấy dữ liệu từ form
+  const getValue = (id) => document.getElementById(id)?.value || "";
+  const name = getValue("name");
+  const description = getValue("description");
+  const price = getValue("price");
+  const start_date = getValue("start-date");
+  const end_date = getValue("end-date");
+  const quantity = getValue("quantity");
+  const sale = getValue("sale");
+  const status = getValue("status");
+  const supplierSelect = document.getElementById("supplier");
+  const selectedSupplierId = supplierSelect?.value || "";
+  const selectedValues = Array.from(
+    document.querySelectorAll('input[name="option"]:checked')
+  ).map((cb) => cb.value);
+  console.log(selectedValues, "selectedValues")
+  const images = getAllDisplayedImages();
+
+  // Kiểm tra dữ liệu đầu vào
+  const validateInput = () => {
+    if (!name) return "Tên sản phẩm là bắt buộc.";
+    if (!description) return "Mô tả sản phẩm là bắt buộc.";
+    if (!price || isNaN(price)) return "Giá sản phẩm phải là một số hợp lệ.";
+    if (!quantity || isNaN(quantity)) return "Số lượng phải là một số hợp lệ.";
+    if (!sale || isNaN(sale)) return "Giảm giá phải là một số hợp lệ.";
+    if (!status) return "Trạng thái là bắt buộc.";
+    if (!start_date || !end_date) return "Ngày bắt đầu và ngày hết hạn là bắt buộc.";
+    if (images.length === 0) return "Hãy thêm ít nhất 1 ảnh.";
+    if (selectedValues.length === 0) return "Hãy chọn ít nhất một Loại sản phẩm.";
+    if (!selectedSupplierId) return "Bạn phải chọn nhà phân phối.";
+    return null;
   };
-  console.log(updatedRole, "updatedRole");
-  if (namevalues == "") {
-    alert("Tên loại người dùng hông được để trống")
-    return
-  }
-  if (descriptionvalues == "") {
-    alert("Mô tả loại người dùng hông được để trống")
-    return
-  }
-  try {
-    const response = await fetch(`${url}/updaterole/${_id}`, {
-      method: "PUT",
-      headers,
-      body: JSON.stringify(updatedRole),
-    });
-    const data = await response.json();
-    alert(
-      data.status
-        ? "Cập nhật role thành công!"
-        : "Cập nhật thất bại. Vui lòng thử lại."
-    );
-    getList();
-  } catch (error) {
-    console.error("Lỗi khi cập nhật role:", error);
-    alert("Đã xảy ra lỗi. Vui lòng thử lại.");
-  }
-};
 
-const saveAdd = async () => {
-  // const name = document.getElementById("name").value;
-  // const description = document.getElementById("description").value;
-  // const price = document.getElementById("price").value;
-  // const start_date = document.getElementById("start-date").value;
-  // const end_date = document.getElementById("end-date").value;
-  // const quantity = document.getElementById("quantity").value;
-  // const sale = document.getElementById("sale").value;
-  // const status = document.getElementById("status").value;
-
-
-  // const datanew = {
-  //   name: name,
-  //   description: description,
-  //   price: price,
-  //   date:start_date,
-  //   expiry_Date:end_date,
-  //   quantity:quantity,
-  //   status:status
-  // };
-  if (getAllDisplayedImages().length === 0) {
-    alert("Hãy thêm ít nhất 1 ảnh");
-    return
+  const errorMessage = validateInput();
+  if (errorMessage) {
+    dialogError(errorMessage);
+    return;
   }
-  const name = "doando";
-  const supplier_id = "671da9ea08f0a23211562aa1";
-  const price = 2424;
-  const date = "10/12/2024";
-  const expiry_Date = "21/11/2024";
-  const quantity = 34343;
-  const status = "con hang";
-  const description = "dfsf";
-  const sale = 3434;
+  const currentProduct = await getCategoriesByProductId(_id);
+  console.log(currentProduct, "currentProduct")
+  // Thêm loại sản phẩm mới
+  if (currentProduct.length === 0) {
+    for (const categoryId of selectedValues) {
+      await addCategoryProduct(_id, categoryId); // Gọi hàm thêm vai trò
+    }
+  } else {
+    for (const categoryId of selectedValues) {
+      const isCategoryAlreadyAssigned = currentProduct.some(
+        (category) => category.category_id === categoryId
+      );
+      console.log(isCategoryAlreadyAssigned, "isCategoryAlreadyAssigned")
+      if (!isCategoryAlreadyAssigned) {
+        await addCategoryProduct(_id, categoryId);
+      }
+    }
+
+    // Xóa loại sản phẩm không còn được chọn
+    for (const category of currentProduct) {
+      if (!selectedValues.includes(category.category_id)) {
+        await removeCategoryProduct(_id, category.category_id);
+      }
+    }
+  }
+  // Chuẩn bị dữ liệu
   const formData = new FormData();
+  images.forEach((file) => formData.append("image", file));
   formData.append("name", name);
-  formData.append("supplier_id", supplier_id);
   formData.append("price", price);
-  formData.append("date", date);
-  formData.append("expiry_Date", expiry_Date);
+  formData.append("date", convertDateFormatUpData(start_date));
+  formData.append("expiry_Date", convertDateFormatUpData(end_date));
   formData.append("quantity", quantity);
   formData.append("status", status);
   formData.append("description", description);
   formData.append("sale", sale);
+  formData.append("supplier_id", selectedSupplierId);
 
-  getAllDisplayedImages().forEach((file) => {
-    formData.append("image", file);
-    console.log(file)
-  });
+  // In ra dữ liệu để kiểm tra
+  for (let [key, value] of formData.entries()) {
+    console.log(key, value);
+  }
 
-  // if (!name) {
-  //   alert("Tên loại người dùng hông được để trống")
-  //   return
-  // }
-  // if (description == "") {
-  //   alert("Mô tả loại người dùng hông được để trống")
-  //   return
-  // }
-  try {
-    const response = await fetch(
-      `http://localhost:3000/product/addproduct`,
-      {
+  // Xác nhận cập nhật
+  dialogInfo(
+    "Bạn có muốn cập nhật không?",
+    async () => {
+      const loadingDialog = dialogLoading("Dữ liệu đang được đẩy lên, vui lòng đợi...");
+      try {
+
+        const response = await fetch(
+          `http://localhost:3000/product/updateproduct/${_id}`,
+          {
+            method: "PUT",
+            headers,
+            body: formData,
+          }
+        );
+
+        if (response.ok) {
+          const result = await response.json();
+          Swal.close();
+          dialogSuccess("Sửa sản phẩm và loại sản phẩm thành công!").then(() => {
+            getList(); // Chỉ gọi sau khi thông báo xong
+          });;
+
+        } else {
+          Swal.close();
+          dialogError("Thêm sản phẩm thất bại");
+        }
+
+      } catch (error) {
+        console.error("Đã xảy ra lỗi:", error);
+        dialogError("Đã xảy ra lỗi");
+      }
+    },
+    () => {
+      getList();
+    }
+  );
+};
+
+
+const saveAdd = async (event) => {
+  event.preventDefault();
+
+  // Lấy giá trị từ form
+  const getValue = (id) => document.getElementById(id)?.value || "";
+  const name = getValue("name");
+  const description = getValue("description");
+  const price = getValue("price");
+  const start_date = getValue("start-date");
+  const end_date = getValue("end-date");
+  const quantity = getValue("quantity");
+  const sale = getValue("sale");
+  const status = getValue("status");
+  const supplierSelect = document.getElementById("supplier");
+  const selectedSupplierId = supplierSelect?.value || "";
+  const selectedValues = Array.from(
+    document.querySelectorAll('input[name="option"]:checked')
+  ).map((cb) => cb.value);
+
+  const images = getAllDisplayedImages();
+
+  // Kiểm tra dữ liệu
+  const validateInput = () => {
+    if (!name) return "Tên sản phẩm là bắt buộc.";
+    if (!description) return "Mô tả sản phẩm là bắt buộc.";
+    if (!price || isNaN(price)) return "Giá sản phẩm phải là một số hợp lệ.";
+    if (!quantity || isNaN(quantity)) return "Số lượng phải là một số hợp lệ.";
+    if (!sale || isNaN(sale)) return "Giảm giá phải là một số hợp lệ.";
+    if (!status) return "Trạng thái là bắt buộc.";
+    if (!start_date || !end_date) return "Ngày bắt đầu và ngày hết hạn là bắt buộc.";
+    if (images.length === 0) return "Hãy thêm ít nhất 1 ảnh.";
+    if (selectedValues.length === 0) return "Hãy chọn ít nhất một Loại sản phẩm.";
+    if (!selectedSupplierId) return "Bạn phải chọn nhà phân phối.";
+    return null;
+  };
+
+  const errorMessage = validateInput();
+  if (errorMessage) {
+    dialogError(errorMessage);
+    return;
+  }
+
+  // Chuẩn bị dữ liệu form
+  const formData = new FormData();
+  images.forEach((file) => formData.append("image", file));
+  formData.append("name", name);
+  formData.append("price", price);
+  formData.append("date", convertDateFormatUpData(start_date));
+  formData.append("expiry_Date", convertDateFormatUpData(end_date));
+  formData.append("quantity", quantity);
+  formData.append("status", status);
+  formData.append("description", description);
+  formData.append("sale", sale);
+  formData.append("supplier_id", selectedSupplierId);
+
+  // Hiển thị dữ liệu để kiểm tra
+  for (let [key, value] of formData.entries()) {
+    console.log(key, value);
+  }
+
+  // Thực hiện thêm sản phẩm
+  const addProduct = async () => {
+    const loadingDialog = dialogLoading("Dữ liệu đang được đẩy lên, vui lòng đợi...");
+    try {
+      const response = await fetch("http://localhost:3000/product/addproduct", {
         method: "POST",
         headers,
         body: formData,
+      });
+
+      if (!response.ok) {
+        dialogError("Thêm sản phẩm thất bại");
+        return;
       }
-    );
-    const data = await response.json();
-    alert(
-      data.status
-        ? "Thêm role thành công!"
-        : "Thêm thất bại. Vui lòng thử lại."
-    );
-  } catch (error) {
-    console.error("Lỗi khi thêm role:", error);
-    alert("Đã xảy ra lỗi. Vui lòng thử lại.");
-  }
-}
+
+      const result = await response.json();
+      const productId = result.product.id;
+
+      // Thêm loại sản phẩm
+      const productCategoryPromises = selectedValues.map((categoryId) => {
+        const productCategoryData = {
+          product_id: productId,
+          category_id: categoryId,
+        };
+        return fetch("http://localhost:3000/productCategory/addproduct_category", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "trinh_nhung",
+          },
+          body: JSON.stringify(productCategoryData),
+        });
+      });
+
+      const productCategoryResponses = await Promise.all(productCategoryPromises);
+      const allCategoryAssigned = productCategoryResponses.every((res) => res.ok);
+
+      if (allCategoryAssigned) {
+        Swal.close(); // Đóng loading trước
+        dialogSuccess("Thêm sản phẩm và loại sản phẩm thành công!").then(() => {
+          getList(); // Chỉ gọi sau khi thông báo xong
+        });;
+
+      } else {
+        Swal.close(); // Đóng loading trước
+        dialogError("Thêm loại sản phẩm thất bại!");
+      }
+
+    } catch (error) {
+      console.error("Đã xảy ra lỗi:", error);
+      Swal.close(); // Đóng loading trước
+      dialogError("Đã xảy ra lỗi khi thêm sản phẩm!");
+    }
+  };
+
+  dialogInfo("Bạn có muốn lưu không?", addProduct, () => getList());
+};
+
 
 const getListSupplier = async () => {
   try {
@@ -716,4 +554,53 @@ const getProductsGroupedByCategory = async (id) => {
     return "";
   }
 }
+
+async function removeCategoryProduct(productId, catedoryId) {
+  console.log(productId, "productId")
+  console.log(catedoryId, "catedoryId")
+  try {
+    const response = await fetch(
+      `http://localhost:3000/productCategory/product_category/${productId}/remove`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "trinh_nhung"
+        },
+        body: JSON.stringify({ category_id: catedoryId }), // Gửi roleId trong body để xóa vai trò
+      }
+    );
+    const data = await response.json();
+    console.log(data, "productCategory");
+    return data;
+  } catch (err) {
+    console.error("Error removing role:", err);
+    return null;
+  }
+}
+
+async function addCategoryProduct(productId, catedoryId) {
+  console.log(productId, "productId---aaa")
+  console.log(catedoryId, "catedoryId0---aaa")
+  try {
+    const response = await fetch(
+      `http://localhost:3000/productCategory/product_category/${productId}/add`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: "trinh_nhung",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ category_id: catedoryId }), // Gửi roleId trong body để thêm vai trò
+      }
+    );
+    const data = await response.json();
+    console.log(data, "addproductCategory");
+    return data;
+  } catch (err) {
+    console.error("Error adding role:", err);
+    return null;
+  }
+}
+
 getList();

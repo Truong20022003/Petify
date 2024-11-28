@@ -6,6 +6,7 @@ const headers = {
 };
 
 const getList = async () => {
+  const loadingDialog = dialogLoading("Đang tải ...");
   try {
     const response = await fetch(`${url}/category/getListCategory`, {
       method: "GET",
@@ -14,6 +15,7 @@ const getList = async () => {
     const data = await response.json();
     renderTable(data);
     addEventListeners();
+    loadingDialog.close();
   } catch (err) {
     console.log(err);
   }
@@ -133,20 +135,21 @@ const addEventListeners = () => {
     );
 };
 
-const handleDelete = async (id) => {
-  if (!confirm("Bạn có chắc muốn xóa không?")) return;
-  try {
-    const checkcategotry=await CheckCategoryByID(id)
-    if(checkcategotry.length>0){
-      alert("Loại sản phẩm đang được dùng trong sản phẩm, không thể xóa")
-      return
-    }
-    await fetch(`${url}/category/deletecategory/${id}`, { method: "DELETE", headers });
-    alert("Xóa thành công!");
-    getList();
-  } catch (err) {
-    console.log(err);
+const handleDelete = async (id) => { 
+  const checkcategotry=await CheckCategoryByID(id)
+  if(checkcategotry.length>0){
+    dialogWarning("Loại sản phẩm đang được dùng trong sản phẩm, không thể xóa")
+    return
   }
+ dialogDelete("Xóa loại sản phẩm", "Bạn có chắc chắn muốn xóa sản phẩm này?", async () => {
+    try {
+      await fetch(`${url}/category/deletecategory/${id}`, { method: "DELETE", headers });
+      getList();
+    } catch (err) {
+      dialogError("Xóa thất bại", "")
+      console.log(err);
+    }
+  })
 };
 
 // const handleDetail = async (id) => {
@@ -206,30 +209,41 @@ const saveEdit = async (_id) => {
   };
  
   if (!namevalues ) {
-    alert("Tên loại người dùng không được để trống")
+    dialogError("Tên loại người dùng không được để trống")
     return
   }
   if (!image ) {
-    alert("Link ảnh không được để trống")
+    dialogError("Link ảnh không được để trống")
     return
   }
-  try {
-    const response = await fetch(`${url}/category/updatecategory/${_id}`, {
-      method: "PUT",
-      headers,
-      body: JSON.stringify(update),
-    });
-    const data = await response.json();
-    alert(
-      data.status
-        ? "Cập nhật loại sản phẩm thành công!"
-        : "Cập nhật thất bại. Vui lòng thử lại."
-    );
-    getList();
-  } catch (error) {
-    console.error("Lỗi khi cập nhật role:", error);
-    alert("Đã xảy ra lỗi. Vui lòng thử lại.");
-  }
+  dialogInfo("Bạn có muốn lưu các thay đổi không?"
+    , async () => {
+      const loadingDialog = dialogLoading("Đang tải lên...");
+      try {
+        const response = await fetch(`${url}/category/updatecategory/${_id}`, {
+          method: "PUT",
+          headers,
+          body: JSON.stringify(update),
+        });
+        const data = await response.json();
+        if (data.status) {
+          dialogSuccess("Cập nhật thành công!").then(() => {
+             getList();  // Chỉ gọi sau khi thông báo xong
+          });  
+         
+        } else {
+          dialogError("Cập nhật thất bại!")
+        }
+        loadingDialog.close();
+      } catch (error) {
+        console.error("Lỗi khi cập nhật role:", error);
+        dialogError("Đã xảy ra lỗi. Vui lòng thử lại.");
+      }
+    },
+    () => {
+      getList();
+    })
+ 
 };
 
 const saveAdd = async () => {
@@ -241,31 +255,40 @@ const saveAdd = async () => {
   };
  
   if (!namevalues ) {
-    alert("Tên loại người dùng không được để trống")
+    dialogError("Tên loại người dùng không được để trống")
     return
   }
   if (!image ) {
-    alert("Link ảnh không được để trống")
+    dialogError("Link ảnh không được để trống")
     return
   }
-  try {
-    const response = await fetch(`${url}/category/addcategory`, {
-      method: "POST",
-      headers,
-      body: JSON.stringify(newdata),
-    });
-    const data = await response.json();
-
-    alert(
-      data.status
-        ? "Thêm loại sản phẩm thành công!"
-        : "Thêm thất bại. Vui lòng thử lại."
-    );
-    getList();
-  } catch (error) {
-    console.error("Lỗi khi thêm role:", error);
-    alert("Đã xảy ra lỗi. Vui lòng thử lại.");
-  }
+  dialogInfo("Bạn có muốn lưu không?"
+    , async () => {
+      const loadingDialog = dialogLoading("Đang tải lên...");
+      try {
+        const response = await fetch(`${url}/category/addcategory`, {
+          method: "POST",
+          headers,
+          body: JSON.stringify(newdata),
+        });
+        const data = await response.json();
+        if (data.status) {
+          dialogSuccess("Thêm thành công!").then(() => {
+           getList();   // Chỉ gọi sau khi thông báo xong
+          });  
+          
+        } else {
+          dialogError("Thêm thất bại!")
+        }
+        loadingDialog.close();
+      } catch (error) {
+        console.error("Lỗi khi thêm role:", error);
+        dialogError("Đã xảy ra lỗi. Vui lòng thử lại.");
+      }
+    },
+    () => {
+      getList();
+    })
 };
 async function CheckCategoryByID(id) {
   // console.log(id, "user");

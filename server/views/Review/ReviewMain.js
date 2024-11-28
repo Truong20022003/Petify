@@ -7,12 +7,14 @@ const headers = {
 
 const getList = async () => {
   try {
+    const loadingDialog = dialogLoading("Đang tải danh sách sản phẩm...");
     const response = await fetch(`${url}/product/getListProduct`, {
       method: "GET",
       headers,
     });
     const data = await response.json();
     renderTable(data);
+    loadingDialog.close();
   } catch (err) {
     console.log(err);
   }
@@ -24,12 +26,11 @@ const renderTable = async (data) => {
           ${HtmlTableTitle()}
       <tbody>
         ${data
-          .map(
-            (item, index) => /*html*/ `
+      .map(
+        (item, index) => /*html*/ `
               <tr id="row-${item._id}">
-                <td class="w-[20px] border border-gray-300 px-4 py-2">${
-                  index + 1
-                }</td>
+                <td class="w-[20px] border border-gray-300 px-4 py-2">${index + 1
+          }</td>
                 <td class="border border-gray-300 px-4 py-2"> 
                 <div class=" h-[220px] p-2 flex justify-center items-center ">
                   <img
@@ -45,14 +46,13 @@ const renderTable = async (data) => {
                 <td class="border border-gray-300 px-4 py-2">${item.status}</td>
                 <td class="border border-gray-300 px-4 py-2">
                   <div class="button-group flex flex-col space-y-2">
-                    <button class="bg-[#008080] text-white px-2 py-1 rounded btndetail" data-id="${
-                      item._id
-                    }">Chi tiết</button>
+                    <button class="bg-[#008080] text-white px-2 py-1 rounded btndetail" data-id="${item._id
+          }">Chi tiết</button>
                   </div>
                 </td>
               </tr>`
-          )
-          .join("")}
+      )
+      .join("")}
       </tbody>
     </table>`;
   addEventListeners();
@@ -66,28 +66,19 @@ const addEventListeners = () => {
     );
 };
 
-const handleDelete = async (id) => {
-  if (!confirm("Bạn có chắc muốn xóa không?")) return;
-  try {
-    await fetch(`${url}/review/deletereview/${id}`, {
-      method: "DELETE",
-      headers,
-    });
-    alert("Xóa thành công!");
-    getList();
-  } catch (err) {
-    console.log(err);
-  }
-};
+
 
 const handleDetail = async (id) => {
+  console.log(id, "id") 
+  const loadingDialog = dialogLoading("Đang tải lên...");
   try {
     const response = await fetch(`${url}/product/getproductById/${id}`, {
       headers,
     });
     const data = await response.json();
+   
     const ReviewsForProduct = await getReviewsForProduct(id);
-    console.log(ReviewsForProduct, "heheheh");
+    // console.log(ReviewsForProduct, "heheheh");
     renderDetailForm(
       data.result,
       true,
@@ -95,6 +86,7 @@ const handleDetail = async (id) => {
       "Chi tiết người dùng",
       ReviewsForProduct
     );
+    loadingDialog.close();
   } catch (err) {
     console.log(err);
   }
@@ -120,9 +112,8 @@ const renderDetailForm = async (
 ) => {
   const readonlyAttr = isReadonly ? "readonly" : "";
   const saveButtonHTML = showSaveButton
-    ? `<button class="bg-green-500 text-white px-4 py-2 rounded save" onclick="${
-        _id ? `saveEditUser('${_id}')` : "saveAddUser()"
-      }">Lưu</button>`
+    ? `<button class="bg-green-500 text-white px-4 py-2 rounded save" onclick="${_id ? `saveEditUser('${_id}')` : "saveAddUser()"
+    }">Lưu</button>`
     : "";
 
   content.innerHTML = /*html*/ `
@@ -143,14 +134,13 @@ const renderDetailForm = async (
           <!-- cuc1 -->
           <div class="space-y-4">
             <div class="flex items-center mb-2 m-5">
-            <span class="text-2xl font-semibold">Tên sản phẩm: ${
-              dataproduct.name
-            }</span>
+            <span class="text-2xl font-semibold">Tên sản phẩm: ${dataproduct.name
+    }</span>
             </div>
             <div class="flex flex-wrap gap-2 px-2 ">
             ${dataproduct.image
-              .map(
-                (img) => /*html*/ `
+      .map(
+        (img) => /*html*/ `
                 <div
                     class="w-[100px] h-[100px] flex-shrink-0 border border-gray-300 rounded-lg overflow-hidden hover:shadow-md hover:border-gray-400 transition"
                 >
@@ -161,8 +151,8 @@ const renderDetailForm = async (
                     />
                 </div>
                 `
-              )
-              .join("")}
+      )
+      .join("")}
             </div>
             <div class="space-y-4 m-5">
                 <div class="mb-2">
@@ -199,7 +189,7 @@ const renderDetailForm = async (
           </div>
               <h3 class="text-xl font-semibold mb-10">Chi tiết đánh giá</h3>
                     <tbody>
-                    <div id="reviews-container m-5">
+                    <div id="reviews-container">
                         ${ReviewsForProduct}
                         </div>
                     </tbody>
@@ -249,18 +239,31 @@ const getReviewsForProduct = async (productId, filterRating = "") => {
         </div>
       `
     }
-
+    console.log(productReviews, "productReviews")
     const reviewproduct = await Promise.all(
-      productReviews.map(async (item) => {
+      productReviews.map(async (item,index) => {
         const datauser = await checkUserByID(item.user_id);
         const formattedDate = formatDate(item.createdAt || item.updatedAt);
-
+        console.log(item._id)
         return /*html*/ `
-          <div class="border p-4 mb-4 rounded-lg shadow-md hover:shadow-lg">
+                <div class="border p-4 mb-4 rounded-lg shadow-md hover:shadow-lg relative">
+            <!-- Dấu ba chấm -->
+            <div class="absolute top-2 right-2">
+              <button class="text-gray-500 hover:text-gray-700" onclick="toggleMenu(event)">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 6h.01M12 12h.01M12 18h.01" />
+                </svg>
+              </button>
+              <!-- Menu thả xuống -->
+              <div class="hidden absolute right-0 mt-2 w-24 bg-white border border-gray-200 rounded-md shadow-lg z-10" id="menu">
+                <button class="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100" onclick="handleEdit()">Sửa</button>
+                <button class="block w-full text-left px-4 py-2 text-red-600 hover:bg-red-100" onclick="handleDelete('${item._id}')">Xóa</button>
+              </div>
+            </div>
+
+            <!-- Nội dung chính -->
             <div class="flex items-center mb-2">
-              <img class="w-12 h-12 rounded-full mr-2" src="${
-                datauser.image
-              }" />
+              <img class="w-12 h-12 rounded-full mr-2" src="${datauser.image}" />
               <span class="text-lg font-semibold">${datauser.name}</span>
             </div>
             <div class="mb-2">${renderRatingStars(item.rating)}</div>
@@ -268,7 +271,8 @@ const getReviewsForProduct = async (productId, filterRating = "") => {
             <div class="text-gray-500 text-sm mt-2">
               <span>Đánh giá vào: ${formattedDate}</span>
             </div>
-          </div>`;
+          </div>
+`;
       })
     );
     return reviewproduct.join("");
@@ -277,6 +281,44 @@ const getReviewsForProduct = async (productId, filterRating = "") => {
     return [];
   }
 };
+const handleDelete = async (id) => {
+  console.log(id,"eeeeee")
+  dialogDelete("Xóa đánh giá", "Bạn có chắc chắn muốn xóa đánh giá này?", async () => {
+    try {
+      await fetch(`${url}/review/deletereview/${id}`, {
+        method: "DELETE",
+        headers,
+      });
+    } catch (err) {
+      dialogError("Xóa thất bại", "")
+      console.log(err);
+    }
+  })
+
+};
+function toggleMenu(event) {
+  event.stopPropagation();
+  const menu = event.target.closest(".relative").querySelector("#menu");
+  const isHidden = menu.classList.contains("hidden");
+  document.querySelectorAll(".relative #menu").forEach((menu) => {
+    menu.classList.add("hidden");
+  });
+  if (isHidden) {
+    menu.classList.remove("hidden");
+  } else {
+    menu.classList.add("hidden");
+  }
+}
+
+// Sự kiện để đóng menu nếu click ngoài
+document.addEventListener("click", (e) => {
+  if (!e.target.closest(".relative")) {
+    // Ẩn tất cả các menu khi click bên ngoài
+    document.querySelectorAll(".relative #menu").forEach((menu) => {
+      menu.classList.add("hidden");
+    });
+  }
+});
 
 ////
 function renderRatingStars(rating) {

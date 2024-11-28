@@ -7,6 +7,7 @@ const headers = {
 
 const getListUser = async () => {
   try {
+    const loadingDialog = dialogLoading("Đang tải danh sách dữ liệu...");
     const response = await fetch(`${url}/getListRole`, {
       method: "GET",
       headers,
@@ -14,6 +15,7 @@ const getListUser = async () => {
     const data = await response.json();
     renderTable(data);
     addEventListeners();
+    loadingDialog.close();
   } catch (err) {
     console.log(err);
   }
@@ -43,8 +45,8 @@ const renderTable = (data) => {
   document
     .getElementById("searchInput")
     .addEventListener("input", async (e) => {
-      const query = e.target.value; 
-      const filteredUsers = searchUser(query, data); 
+      const query = e.target.value;
+      const filteredUsers = searchUser(query, data);
       renderList(filteredUsers)
     });
   renderList(data)
@@ -61,7 +63,7 @@ const renderList = (data) => {
           Không có dữ liệu
         </td>
       </tr>`;
-    tableBody.innerHTML = noDataRow; 
+    tableBody.innerHTML = noDataRow;
   } else {
     data.forEach(
       (item, index) => {
@@ -73,15 +75,12 @@ const renderList = (data) => {
           <td class="border border-gray-300 px-4 py-2">${item.description}</td>
           <td class="border border-gray-300 px-4 py-2">
             <div class="button-group flex flex-col space-y-2">
-              <button class="bg-blue-500 text-white px-2 py-1 rounded btnedit" data-id="${
-                item._id
-              }">Cập nhật</button>
-              <button class="bg-red-500 text-white px-2 py-1 rounded btndelete" data-id="${
-                item._id
-              }">Xóa</button>
-              <button class="bg-[#008080] text-white px-2 py-1 rounded btndetail" data-id="${
-                item._id
-              }">Chi tiết</button>
+              <button class="bg-blue-500 text-white px-2 py-1 rounded btnedit" data-id="${item._id
+          }">Cập nhật</button>
+              <button class="bg-red-500 text-white px-2 py-1 rounded btndelete" data-id="${item._id
+          }">Xóa</button>
+              <button class="bg-[#008080] text-white px-2 py-1 rounded btndetail" data-id="${item._id
+          }">Chi tiết</button>
             </div>
           </td>
         </tr>`;
@@ -131,14 +130,16 @@ const addEventListeners = () => {
 };
 
 const handleDelete = async (id) => {
-  if (!confirm("Bạn có chắc muốn xóa không?")) return;
-  try {
-    await fetch(`${url}/deleterole/${id}`, { method: "DELETE", headers });
-    alert("Xóa thành công!");
-    getListUser();
-  } catch (err) {
-    console.log(err);
-  }
+  dialogDelete("Xóa loại người dùng", "Bạn có chắc chắn muốn xóa loại người dùng này?", async () => {
+    try {
+      await fetch(`${url}/deleterole/${id}`, { method: "DELETE", headers });
+      getListUser();
+    } catch (err) {
+      dialogError("Xóa thất bại", "")
+      console.log(err);
+    }
+  })
+
 };
 
 const handleDetail = async (id) => {
@@ -172,17 +173,17 @@ const renderDetailForm = (
   const { _id = "", name = "", description = "" } = user;
   const readonlyAttr = isReadonly ? "readonly" : "";
   const saveButtonHTML = showSaveButton
-    ? `<button class="bg-green-500 text-white px-4 py-2 rounded save" onclick="${_id ? `saveEditUserRole('${_id}')` : "saveAddUserRole()"
+    ? `<button class="bg-green-500 text-white px-4 py-2 rounded save m-5" onclick="${_id ? `saveEditUserRole('${_id}')` : "saveAddUserRole()"
     }">Lưu</button>`
     : "";
 
   content.innerHTML = /*html*/ `
     <h2 class="text-xl font-bold mb-4">${title}</h2>
     <div class="flex">
-      <div class="w-1/4"><label class="block text-sm font-medium text-gray-700" for="name">Tên Role</label>
+      <div class="w-1/4 m-5"><label class="block text-sm font-medium text-gray-700" for="name">Tên Role</label>
         <input class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" id="name" type="text" value="${name}" ${readonlyAttr} />
       </div>
-      <div class="w-3/4"><label class="block text-sm font-medium text-gray-700" for="description">Mô tả</label>
+      <div class="w-3/4 m-5"><label class="block text-sm font-medium text-gray-700" for="description">Mô tả</label>
         <input class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" id="description" type="text" value="${description}" ${readonlyAttr} />
       </div>
     </div>
@@ -190,38 +191,50 @@ const renderDetailForm = (
 };
 
 const saveEditUserRole = async (_id) => {
-  const namevalues=document.getElementById("name").value
-  const descriptionvalues=document.getElementById("description").value
+  const namevalues = document.getElementById("name").value
+  const descriptionvalues = document.getElementById("description").value
   const updatedRole = {
     name: namevalues,
-    description:descriptionvalues,
+    description: descriptionvalues,
   };
   console.log(updatedRole, "updatedRole");
-  if(namevalues==""){
-    alert("Tên loại người dùng hông được để trống")
+  if (!namevalues) {
+    dialogError("Tên loại người dùng không được để trống!")
     return
   }
-  if(descriptionvalues==""){
-    alert("Mô tả loại người dùng hông được để trống")
+  if (!descriptionvalues) {
+    dialogError("Mô tả loại người dùng không được để trống!")
     return
   }
-  try {
-    const response = await fetch(`${url}/updaterole/${_id}`, {
-      method: "PUT",
-      headers,
-      body: JSON.stringify(updatedRole),
-    });
-    const data = await response.json();
-    alert(
-      data.status
-        ? "Cập nhật role thành công!"
-        : "Cập nhật thất bại. Vui lòng thử lại."
-    );
-    getListUser();
-  } catch (error) {
-    console.error("Lỗi khi cập nhật role:", error);
-    alert("Đã xảy ra lỗi. Vui lòng thử lại.");
-  }
+  dialogInfo("Bạn có muốn lưu các thay đổi không?"
+    , async () => {
+      const loadingDialog = dialogLoading("Đang tải danh sách sản phẩm...");
+
+      try {
+        const response = await fetch(`${url}/updaterole/${_id}`, {
+          method: "PUT",
+          headers,
+          body: JSON.stringify(updatedRole),
+        });
+        const data = await response.json();
+        if (data.status) {
+          dialogSuccess("Cập nhật thành công!").then(() => {
+          getListUser();   // Chỉ gọi sau khi thông báo xong
+          });  
+          
+        } else {
+          dialogError("Cập nhật thất bại!")
+        }
+        loadingDialog.close();
+      } catch (error) {
+        console.error("Lỗi khi cập nhật role:", error);
+        dialogError("Đã xảy ra lỗi. Vui lòng thử lại.");
+      }
+    },
+    () => {
+      getListUser();
+    })
+
 };
 
 const saveAddUserRole = async () => {
@@ -232,34 +245,39 @@ const saveAddUserRole = async () => {
     description: description,
   };
   console.log(newRole, "newRole");
-  console.log("Name:", name, "Description:", description); 
-  if(name==""){
-    alert("Tên loại người dùng hông được để trống")
+  console.log("Name:", name, "Description:", description);
+  if (name == "") {
+    dialogError("Tên loại người dùng không được để trống!")
     return
   }
-  if(description==""){
-    alert("Mô tả loại người dùng hông được để trống")
+  if (description == "") {
+    dialogError("Mô tả loại người dùng hông được để trống")
     return
   }
-  try {
-    const response = await fetch(`${url}/addrole`, {
-      method: "POST",
-      headers,
-      body: JSON.stringify(newRole),
-    });
-    const data = await response.json();
-    
-    if (data.status === "Add successfully") {
-      alert("Thêm role thành công!");
-      getListUser(); 
-    } else {
-      alert("Thêm thất bại. Vui lòng thử lại.");
-    }
-    getListUser();
-  } catch (error) {
-    console.error("Lỗi khi thêm role:", error);
-    alert("Đã xảy ra lỗi. Vui lòng thử lại.");
-  }
+  dialogInfo("Bạn có muốn lưu không?"
+    , async () => {
+      try {
+        const response = await fetch(`${url}/addrole`, {
+          method: "POST",
+          headers,
+          body: JSON.stringify(newRole),
+        });
+        const data = await response.json();
+        if (data.status) {
+          dialogSuccess("Thêm thành công!")
+          getListUser();
+        } else {
+          dialogError("Thêm thất bại!")
+        }
+      } catch (error) {
+        console.error("Lỗi khi thêm role:", error);
+        dialogError("Đã xảy ra lỗi. Vui lòng thử lại.");
+      }
+    },
+    () => {
+      getListUser();
+    })
+
 };
 
 getListUser();

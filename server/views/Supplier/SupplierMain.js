@@ -69,21 +69,17 @@ const renderList = (data) => {
       const row = /*html*/ `
         <tr id="row-${item._id}">
           <td class="border border-gray-300 px-4 py-2 w-[50]">${index + 1}</td>
-          <td class="border border-gray-300 px-4 py-2 text-center align-middle">${
-            item.name
-          }</td>
+          <td class="border border-gray-300 px-4 py-2 text-center align-middle">${item.name
+        }</td>
           <td class="border border-gray-300 px-4 py-2 text-center align-middle">${dateformat}</td>
           <td class="border border-gray-300 px-4 py-2 w-[200]">
             <div class="button-group flex flex-col space-y-2">
-              <button class="bg-blue-500 text-white px-2 py-1 rounded btnedit" data-id="${
-                item._id
-              }">Cập nhật</button>
-              <button class="bg-red-500 text-white px-2 py-1 rounded btndelete" data-id="${
-                item._id
-              }">Xóa</button>
-              <button class="bg-[#008080] text-white px-2 py-1 rounded btndetail" data-id="${
-                item._id
-              }">Chi tiết</button>
+              <button class="bg-blue-500 text-white px-2 py-1 rounded btnedit" data-id="${item._id
+        }">Cập nhật</button>
+              <button class="bg-red-500 text-white px-2 py-1 rounded btndelete" data-id="${item._id
+        }">Xóa</button>
+              <button class="bg-[#008080] text-white px-2 py-1 rounded btndetail" data-id="${item._id
+        }">Chi tiết</button>
             </div>
           </td>
         </tr>`;
@@ -132,23 +128,24 @@ const addEventListeners = () => {
 };
 
 const handleDelete = async (id) => {
-  if (!confirm("Bạn có chắc muốn xóa không?")) return;
-  try {
-    const checksupplier = await checkProduct(id);
-    console.log(checksupplier, "checksupplier");
-    const hasSupplier = checksupplier.some((item) => item.supplier_id === id);
-    if (hasSupplier) {
-      alert(
-        "Bạn không thể xóa nhà cung cấp này vì họ vẫn đang có sản phẩm được bán."
-      );
-      return;
-    }
-    await fetch(`${url}/supplier/deletesupplier/${id}`, { method: "DELETE", headers });
-    alert("Xóa thành công!");
-    getList();
-  } catch (err) {
-    console.log(err);
+  const checksupplier = await checkProduct(id);
+  console.log(checksupplier, "checksupplier");
+  const hasSupplier = checksupplier.some((item) => item.supplier_id === id);
+  if (hasSupplier) {
+    dialogWarning(
+      "Bạn không thể xóa nhà cung cấp này vì họ vẫn đang có sản phẩm được bán."
+    );
+    return;
   }
+  dialogDelete("Xóa nhà phân phối", "Bạn có chắc chắn muốn xóa nhà phân phối này?", async () => {
+    try {
+      await fetch(`${url}/supplier/deletesupplier/${id}`, { method: "DELETE", headers });
+      getList();
+    } catch (err) {
+      dialogError("Xóa thất bại", "")
+      console.log(err);
+    }
+  })
 };
 
 const handleDetail = async (id) => {
@@ -197,16 +194,15 @@ const renderDetailForm = (
   const { _id = "", name = "", description = "", phone_number = "" } = supp;
   const readonlyAttr = isReadonly ? "readonly" : "";
   const saveButtonHTML = showSaveButton
-    ? `<button class="bg-green-500 text-white px-4 py-2 rounded save m-5" onclick="${
-        _id ? `saveEdit('${_id}')` : "saveAdd()"
-      }">Lưu</button>`
+    ? `<button class="bg-green-500 text-white px-4 py-2 rounded save m-5" onclick="${_id ? `saveEdit('${_id}')` : "saveAdd()"
+    }">Lưu</button>`
     : "";
   const htmlproduct = showSaveButton
     ? ""
     : `<h3 class="text-3xl font-semibold m-10">Các sản phẩm hiện đang mở được bán</h3>  ${ProductHtml}`;
 
   content.innerHTML = /*html*/ `
-        <h2 class="text-xl font-bold mb-4">${title}</h2>
+        <h2 class="text-xl font-bold">${title}</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <!-- Cột 1: Tên nhà cung cấp và số điện thoại -->
         <div class="flex flex-col space-y-4">
@@ -248,14 +244,13 @@ const productsOnSale = (data) => {
           <!-- cuc1 -->
           <div class="space-y-4">
             <div class="flex items-center mb-2 m-5">
-            <span class="text-2xl font-semibold">Tên sản phẩm: ${
-              item.name
-            }</span>
+            <span class="text-2xl font-semibold">Tên sản phẩm: ${item.name
+      }</span>
             </div>
             <div class="flex flex-wrap gap-2 px-2 ">
             ${item.image
-              .map(
-                (img) => /*html*/ `
+        .map(
+          (img) => /*html*/ `
                 <div
                     class="w-[100px] h-[100px] flex-shrink-0 border border-gray-300 rounded-lg overflow-hidden hover:shadow-md hover:border-gray-400 transition"
                 >
@@ -266,8 +261,8 @@ const productsOnSale = (data) => {
                     />
                 </div>
                 `
-              )
-              .join("")}
+        )
+        .join("")}
             </div>
             <div class="space-y-4 m-5">
                 <div class="mb-2">
@@ -311,15 +306,15 @@ const saveEdit = async (_id) => {
   const phone_number = document.getElementById("phone_number").value;
   const description = document.getElementById("description").value;
   if (!name) {
-    alert("Tên loại người dùng hông được để trống");
+    dialogError("Tên loại người dùng hông được để trống");
     return;
   }
   if (!description) {
-    alert("Mô tả loại người dùng hông được để trống");
+    dialogError("Mô tả loại người dùng hông được để trống");
     return;
   }
   if (!phone_number || !/^\d{10,15}$/.test(phone_number)) {
-    alert("Số điện thoại phải là số từ 10 đến 15 chữ số.");
+    dialogError("Số điện thoại phải là số từ 10 đến 15 chữ số.");
     return;
   }
   const updatedRole = {
@@ -327,23 +322,34 @@ const saveEdit = async (_id) => {
     phone_number: phone_number,
     description: description,
   };
-  try {
-    const response = await fetch(`${url}/supplier/updatesupplier/${_id}`, {
-      method: "PUT",
-      headers,
-      body: JSON.stringify(updatedRole),
-    });
-    const data = await response.json();
-    alert(
-      data.status
-        ? "Cập nhật nhà cung cấp thành công!"
-        : "Cập nhật nhà cung cấp. Vui lòng thử lại."
-    );
-    getList();
-  } catch (error) {
-    console.error("Lỗi khi cập nhật role:", error);
-    alert("Đã xảy ra lỗi. Vui lòng thử lại.");
-  }
+  dialogInfo("Bạn có muốn lưu các thay đổi không?"
+    , async () => {
+      const loadingDialog = dialogLoading("Đang tải lên...");
+
+      try {
+        const response = await fetch(`${url}/supplier/updatesupplier/${_id}`, {
+          method: "PUT",
+          headers,
+          body: JSON.stringify(updatedRole),
+        });
+        const data = await response.json();
+        if (data.status) {
+          dialogSuccess("Cập nhật thành công!").then(() => {
+            getList();  // Chỉ gọi sau khi thông báo xong
+          });  
+         
+        } else {
+          dialogError("Cập nhật thất bại!")
+        }
+        loadingDialog.close();
+      } catch (error) {
+        console.error("Lỗi khi cập nhật role:", error);
+        dialogError("Đã xảy ra lỗi. Vui lòng thử lại.");
+      }
+    },
+    () => {
+      getList();
+    })
 };
 
 const saveAdd = async () => {
@@ -352,15 +358,15 @@ const saveAdd = async () => {
   const phone_number = document.getElementById("phone_number").value;
 
   if (!name) {
-    alert("Tên loại người dùng hông được để trống");
+    dialogError("Tên loại người dùng hông được để trống");
     return;
   }
   if (!description) {
-    alert("Mô tả loại người dùng hông được để trống");
+    dialogError("Mô tả loại người dùng hông được để trống");
     return;
   }
   if (!phone_number || !/^\d{10,15}$/.test(phone_number)) {
-    alert("Số điện thoại phải là số từ 10 đến 15 chữ số.");
+    dialogError("Số điện thoại phải là số từ 10 đến 15 chữ số.");
     return;
   }
   const newdata = {
@@ -368,25 +374,34 @@ const saveAdd = async () => {
     description: description,
     phone_number: phone_number,
   };
-  try {
-    const response = await fetch(`${url}/supplier/addsupplier`, {
-      method: "POST",
-      headers,
-      body: JSON.stringify(newdata),
-    });
-    const data = await response.json();
+  dialogInfo("Bạn có muốn lưu không?"
+    , async () => {
+      const loadingDialog = dialogLoading("Đang tải lên...");
 
-    if (data.status === "Add successfully") {
-      alert("Thêm thành công!");
+      try {
+        const response = await fetch(`${url}/supplier/addsupplier`, {
+          method: "POST",
+          headers,
+          body: JSON.stringify(newdata),
+        });
+        const data = await response.json();
+        if (data.status === "Add successfully") {
+          dialogSuccess("Thêm thành công!").then(() => {
+           getList();  // Chỉ gọi sau khi thông báo xong
+          });  
+          
+        } else {
+          dialogError("Thêm thất bại!")
+        }
+        loadingDialog.close();
+      } catch (error) {
+        console.error("Lỗi khi thêm role:", error);
+        dialogError("Đã xảy ra lỗi. Vui lòng thử lại.");
+      }
+    },
+    () => {
       getList();
-    } else {
-      alert("Thêm thất bại. Vui lòng thử lại.");
-    }
-    getList();
-  } catch (error) {
-    console.error("Lỗi khi thêm role:", error);
-    alert("Đã xảy ra lỗi. Vui lòng thử lại.");
-  }
+    })
 };
 async function checkProduct(supplier_id) {
   console.log(supplier_id, "some");

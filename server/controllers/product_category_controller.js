@@ -12,14 +12,15 @@ exports.getListproduct_category = async (req, res, next) => {
 };
 exports.addproduct_category = async (req, res, next) => {
     try {
+        console.log("Request body:", req.body);
         let obj = new product_categoryModel({
             product_id: req.body.product_id,
             category_id: req.body.category_id
         })
         let result = await obj.save();
-        res.json({ status: "Add successfully", result: result });
+        res.status(200).json({ status: "Add successfully", result: result });
     } catch (error) {
-        res.json({ status: "Add failed" })
+        res.status(500).json({ status: "Add failed" })
     }
 }
 
@@ -193,71 +194,112 @@ exports.getCategoriesByProduct = async (req, res, next) => {
     }
 };
 
-// exports.getCategoriesByProductId = async (req, res, next) => {
-//     try {
-//         const productId = req.params.id;
-//         console.log(productId)
-//         if (!mongoose.Types.ObjectId.isValid(productId)) {
-//             return res.json({ status: "Invalid product ID", result: {} });
-//         }
+exports.getCategoriesByProductId = async (req, res, next) => {
+    try {
+        const productId = req.params.id;
+        console.log(productId)
+        if (!mongoose.Types.ObjectId.isValid(productId)) {
+            return res.json({ status: "Invalid product ID", result: {} });
+        }
 
-//         let result = await product_categoryModel.aggregate([
-//             {
-//                 $addFields: {
-//                     product_id: { $toObjectId: "$product_id" },
-//                     category_id: { $toObjectId: "$category_id" }
-//                 }
-//             },
-//             {
-//                 $match: {
-//                     product_id: { $eq: new mongoose.Types.ObjectId(productId) }
-//                 }
-//             },
-//             {
-//                 $lookup: {
-//                     from: "product",
-//                     localField: "product_id",
-//                     foreignField: "_id",
-//                     as: "product"
-//                 }
-//             },
-//             {
-//                 $lookup: {
-//                     from: "category",
-//                     localField: "category_id",
-//                     foreignField: "_id",
-//                     as: "category"
-//                 }
-//             },
-//             {
-//                 $unwind: "$category"
-//             },
-//             {
-//                 $group: {
-//                     _id: "$product_id",
-//                     product: { $first: "$product" },
-//                     categories: {
-//                         $push: {
-//                             category_id: "$category_id",
-//                             category_name: "$category.name"
-//                         }
-//                     }
-//                 }
-//             },
-//             {
-//                 $project: {
-//                     _id: 0
-//                 }
-//             }
-//         ]);
+        let result = await product_categoryModel.aggregate([
+            {
+                $addFields: {
+                    product_id: { $toObjectId: "$product_id" },
+                    category_id: { $toObjectId: "$category_id" }
+                }
+            },
+            {
+                $match: {
+                    product_id: { $eq: new mongoose.Types.ObjectId(productId) }
+                }
+            },
+            {
+                $lookup: {
+                    from: "product",
+                    localField: "product_id",
+                    foreignField: "_id",
+                    as: "product"
+                }
+            },
+            {
+                $lookup: {
+                    from: "category",
+                    localField: "category_id",
+                    foreignField: "_id",
+                    as: "category"
+                }
+            },
+            {
+                $unwind: "$category"
+            },
+            {
+                $group: {
+                    _id: "$product_id",
+                    product: { $first: "$product" },
+                    categories: {
+                        $push: {
+                            category_id: "$category_id",
+                            category_name: "$category.name"
+                        }
+                    }
+                }
+            },
+            {
+                $project: {
+                    _id: 0
+                }
+            }
+        ]);
 
-//         if (!result || result.length === 0) {
-//             return res.json({ status: "No data found for this product", result: [] });
-//         }
+        if (!result || result.length === 0) {
+            return res.json({ status: "No data found for this product", result: [] });
+        }
 
-//         res.json({ status: "Successfully", result: result[0] });
-//     } catch (error) {
-//         console.error("Error retrieving categories:", error); // Log lỗi chi tiết
-//         res.json({ status: "Failed to retrieve categories for product", result: error.message });
-//     }
-// };
+        res.json({ status: "Successfully", result: result[0] });
+    } catch (error) {
+        console.error("Error retrieving categories:", error); // Log lỗi chi tiết
+        res.json({ status: "Failed to retrieve categories for product", result: error.message });
+    }
+};
+
+exports.removeCategoryFromProduct = async (req, res, next) => {
+    try {
+        const productId = req.params.product_id;
+        const categoryId = req.body.category_id;
+
+        const result = await product_categoryModel.findOneAndDelete({ product_id: productId, category_id: categoryId });
+        if (result) {
+            res.status(200).json({ status: "Category removed from Product successfully", result: result });
+        } else {
+            res.status(404).json({ status: "Category not found for the specified Product" });
+        }
+    } catch (error) {
+        res.status(500).json({ status: "Failed to remove Category from Product", error: error.message });
+    }
+};
+
+exports.addCategoryToProduct = async (req, res, next) => {
+    try {
+        const productId = req.params.product_id;
+        const categoryId = req.body.category_id;
+        console.log(productId, "productId")
+        console.log(categoryId, "categoryId")
+
+        const existingRole = await product_categoryModel.findOne({ product_id: productId, category_id: categoryId });
+        if (existingRole) {
+            return res.status(409).json({ status: "Category already assigned to Product" });
+        }
+
+        const newProductCategory = new product_categoryModel({
+            product_id: productId,
+            category_id: categoryId
+        });
+
+        const result = await newProductCategory.save();
+        console.log(result)
+        res.status(201).json({ status: "Category added to Product successfully", result: result });
+    } catch (error) {
+        res.status(500).json({ status: "Failed to add Category to Product", error: error.message });
+    }
+};
