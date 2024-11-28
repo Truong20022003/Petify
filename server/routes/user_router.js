@@ -1,10 +1,11 @@
 var express = require("express");
 var router = express.Router();
+const { upload } = require("../routes/uploads");
 const userController = require("../controllers/user_controller");
 router.get("/getListUser", userController.getListuser);
 
-router.post("/adduser",userController.adduser)
-router.put("/updateuser/:id",userController.updateuser)
+router.post("/adduser", upload.single("avatar"), userController.adduser);
+router.put("/updateuser/:id", upload.single("avatar"), userController.updateuser);
 router.delete("/deleteuser/:id",userController.deleteuser)
 router.get("/getuserById/:id",userController.getuserById)
 router.post('/register', userController.registerUser);

@@ -1,8 +1,5 @@
 const mongoose = require("mongoose")
-mongoose.connect("mongodb+srv://team10diem:team10diem@cluster0.gb3fb.mongodb.net/petify",{
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-}).then(() => {
+mongoose.connect("mongodb+srv://team10diem:team10diem@cluster0.gb3fb.mongodb.net/petify").then(() => {
     console.log("server connect successfully")
 
 }).catch((error) => {

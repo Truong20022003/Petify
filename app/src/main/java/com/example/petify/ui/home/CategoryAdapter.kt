@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.petify.data.server.enitities.CategoryModel
 import com.example.petify.databinding.ItemRvCategoryBinding
-import com.example.petify.view.tap
+import com.example.petify.base.view.tap
 
 class CategoryAdapter(
     private val categoryModels: List<CategoryModel>,

@@ -1,14 +1,20 @@
 package com.example.petify.viewmodel
 
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.petify.BaseViewModel
 import com.example.petify.data.server.CreateInteface
+import com.example.petify.data.server.enitities.LoginResponse
 import com.example.petify.data.server.enitities.UserModel
 import com.example.petify.data.server.repository.UserRepository
+import com.example.petify.data.server.service.UserRoleService
+import com.example.petify.data.server.service.UserService
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
+import java.io.IOException
 
 class UserViewModel : BaseViewModel() {
     private val _userList = MutableLiveData<List<UserModel>?>()
@@ -19,6 +25,9 @@ class UserViewModel : BaseViewModel() {
 
     private val _loginSuccess = MutableLiveData<Boolean>()
     val loginSuccess: LiveData<Boolean> get() = _loginSuccess
+
+    private val _loginResponse = MutableLiveData<LoginResponse?>()
+    val loginResponse: LiveData<LoginResponse?> get() = _loginResponse
 
     private val _isPasswordReset = MutableLiveData<Boolean>()
     val isPasswordReset: LiveData<Boolean> get() = _isPasswordReset
@@ -42,7 +51,7 @@ class UserViewModel : BaseViewModel() {
         viewModelScope.launch {
             try {
 
-                val apiService = CreateInteface.createUser()
+                val apiService: UserService = CreateInteface.createService()
                 val userRepository = UserRepository(apiService)
                 _userList.value = userRepository.getListUser()
             } catch (e: Exception) {
@@ -56,7 +65,7 @@ class UserViewModel : BaseViewModel() {
         viewModelScope.launch {
             try {
 
-                val apiService = CreateInteface.createUser()
+                val apiService: UserService = CreateInteface.createService()
                 val userRepository = UserRepository(apiService)
                 _isUserAdded.value = userRepository.addUser(user) != null
             } catch (e: Exception) {
@@ -66,30 +75,46 @@ class UserViewModel : BaseViewModel() {
         }
     }
 
-    fun loginUser(email: String, password: String) {
+    fun loginUser(login: String, password: String, context: Context) {
         viewModelScope.launch {
             try {
-                val apiService = CreateInteface.createUser()
+                val apiService: UserService = CreateInteface.createService()
                 val userRepository = UserRepository(apiService)
-                val result = userRepository.loginUser(email, password)
+                val result = userRepository.loginUser(login, password)
                 if (result != null) {
-                    _user.value = result
+                    val (loginResponse, token) = result
+                    _loginResponse.value = loginResponse
+                    token?.let { saveToken(it, context) }
                     _loginSuccess.value = true
+
                 } else {
                     _loginSuccess.value = false
+                    _errorMessage.value = "Login failed"
                 }
-            } catch (e: Exception) {
+            } catch (e: IOException) {
+                _errorMessage.value = "Network error. Please check your connection."
                 _loginSuccess.value = false
-                _errorMessage.value = "Error logging in user: ${e.message}"
+            } catch (e: HttpException) {
+                _errorMessage.value = "Server error: ${e.response()?.errorBody()?.string()}"
+                _loginSuccess.value = false
+            } catch (e: Exception) {
+                _errorMessage.value = "Unexpected error: ${e.message}"
+                _loginSuccess.value = false
             }
         }
     }
+
+    private fun saveToken(token: String, context: Context) {
+        val sharedPreferences = context.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
+        sharedPreferences.edit().putString("auth_token", token).apply()
+    }
+
 
 
     fun registerUser(name: String, email: String, password: String) {
         viewModelScope.launch {
             try {
-                val apiService = CreateInteface.createUser()
+                val apiService: UserService = CreateInteface.createService()
                 val userRepository = UserRepository(apiService)
                 val registeredUser = userRepository.registerUser(name, email, password)
                 _user.value = registeredUser
@@ -106,7 +131,7 @@ class UserViewModel : BaseViewModel() {
     fun resetPassword(email: String) {
         viewModelScope.launch {
             try {
-                val apiService = CreateInteface.createUser()
+                val apiService: UserService = CreateInteface.createService()
                 val userRepository = UserRepository(apiService)
                 _isPasswordReset.value = userRepository.resetPassword(email)
             } catch (e: Exception) {
@@ -120,7 +145,7 @@ class UserViewModel : BaseViewModel() {
     fun getUserById(id: String) {
         viewModelScope.launch {
             try {
-                val apiService = CreateInteface.createUser()
+                val apiService: UserService = CreateInteface.createService()
                 val userRepository = UserRepository(apiService)
                 _user.value = userRepository.getUserById(id)
             } catch (e: Exception) {
@@ -133,7 +158,7 @@ class UserViewModel : BaseViewModel() {
     fun updateUser(id: String, user: UserModel) {
         viewModelScope.launch {
             try {
-                val apiService = CreateInteface.createUser()
+                val apiService: UserService = CreateInteface.createService()
                 val userRepository = UserRepository(apiService)
                 _isUserUpdated.value = userRepository.updateUser(id, user) != null
             } catch (e: Exception) {
@@ -146,7 +171,7 @@ class UserViewModel : BaseViewModel() {
     fun deleteUser(id: String) {
         viewModelScope.launch {
             try {
-                val apiService = CreateInteface.createUser()
+                val apiService: UserService = CreateInteface.createService()
                 val userRepository = UserRepository(apiService)
                 _isUserDeleted.value = userRepository.deleteUser(id)
             } catch (e: Exception) {

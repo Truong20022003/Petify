@@ -1,5 +1,6 @@
 package com.example.petify.data.database.dao
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -12,7 +13,7 @@ interface CartDao {
     suspend fun addToCart(item: CartItem)
 
     @Query("SELECT * FROM cart_items")
-    suspend fun getAllCartItems(): List<CartItem>
+     fun getAllCartItems(): LiveData<List<CartItem>>
 
     @Query("DELETE FROM cart_items WHERE id = :productId")
     suspend fun removeFromCart(productId: String)

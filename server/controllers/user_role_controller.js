@@ -78,8 +78,6 @@ exports.getUsersByRoleId = async (req, res, next) => {
         res.json({ status: "Not found", result: error });
     }
 };
-
-
 exports.getAllUsersWithRoles = async (req, res, next) => {
     try {
         const usersWithRoles = await user_roleModel.find({})
@@ -104,8 +102,6 @@ exports.getAllUsersWithRoles = async (req, res, next) => {
         res.json({ status: "Failed to get users with roles", result: error });
     }
 };
-
-
 exports.removeRoleFromUser = async (req, res, next) => {
     try {
         const userId = req.params.user_id;
@@ -122,7 +118,6 @@ exports.removeRoleFromUser = async (req, res, next) => {
         res.json({ status: "Failed to remove role", result: error });
     }
 };
-
 exports.addRoleToUser = async (req, res, next) => {
     try {
         const userId = req.params.user_id;

@@ -1,4 +1,4 @@
-package com.example.petify.model
+package com.example.petify.ui.intro
 
 class IntroModel (
     val image: Int,

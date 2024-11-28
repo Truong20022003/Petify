@@ -86,35 +86,7 @@ const updateproduct = async (req, res) => {
     }
 };
 
-// const updateproduct = async (req, res) => {
-//     if (!req.files || req.files.length === 0) {
-//         return res.status(400).json({ success: false, message: 'No files uploaded' });
-//     }
 
-//     try {
-//         const imageUrls = [];
-
-//         for (const file of req.files) {
-//             const filePath = file.path;
-//             const result = await uploadToCloudinary(filePath);
-//             imageUrls.push(result.secure_url);
-
-//             fs.unlinkSync(filePath);
-//         }
-
-//         const updatedProduct = {
-//             ...req.body,
-//             image: imageUrls
-//         };
-
-//         const product = await productModel.findByIdAndUpdate(req.params.id, updatedProduct, { new: true });
-
-//         res.json({ success: true, product });
-//     } catch (error) {
-//         console.error('Error uploading files:', error);
-//         res.status(500).json({ success: false, message: 'Error uploading files', error });
-//     }
-// };
 
 const deleteproduct = async (req, res, next) => {
     try {

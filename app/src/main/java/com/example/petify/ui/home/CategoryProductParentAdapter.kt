@@ -12,7 +12,8 @@ class CategoryProductParentAdapter(
 
     private val categoryModels: List<CategoryWithProductsModel>,
     private val itemClickListener: (ProductModel) -> Unit,
-    private val onFavoriteChanged: (ProductModel, Boolean) -> Unit
+    private val onFavoriteChanged: (ProductModel, Boolean) -> Unit,
+    private val onAddToCart: (ProductModel, Boolean) -> Unit
 ) : RecyclerView.Adapter<CategoryProductParentAdapter.ProductViewHolder>() {
 
     class ProductViewHolder(val binding: ItemRcvCategoryBinding) :
@@ -34,7 +35,8 @@ class CategoryProductParentAdapter(
             val productAdapter = ProductAdapter(
                 categoryModel.products ?: emptyList(),
                 itemClickListener,
-                onFavoriteChanged
+                onFavoriteChanged,
+                onAddToCart
             )
             rcvItemProduct.adapter = productAdapter
 

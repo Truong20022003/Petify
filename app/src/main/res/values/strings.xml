@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Petify</string>
-
+<string name="default_web_client_id">625574624349-a9gghguck7351srd92uame9tb68mq3po.apps.googleusercontent.com</string>
     <string name="this_is_item_sample">This is item sample!</string>
 
     <string name="title_intro_1">Khám Phá Ngay Hôm Nay!</string>
@@ -38,6 +38,11 @@
     <string name="tv_dat_lai_mat_khau">Chọn chi tiết liên hệ nào chúng tôi sẽ sử dụng để đặt lại mật khẩu của bạn</string>
     <string name="tiep_tuc">Tiếp tục</string>
     <string name="xac_nhan">Xác nhận</string>
+
+    <string name="nhanh"><u>đ</u>20.000</string>
+    <string name="tong_so_tien_1_san_pham"><u>đ</u>120.000</string>
+    <string name="tong_tien_hang"><u>đ</u>100.000</string>
+    <string name="phi_van_chuyen"><u>đ</u>20.000</string>
 
     <string name="tv_chinh_sach_bao_mat">Chính Sách Bảo Mật Của Petify</string>
     <string name="tv_pricacy1">Chúng tôi, đội ngũ phát triển ứng dụng Petify, cam kết bảo vệ quyền riêng tư của bạn. Chính sách bảo mật này giải thích cách chúng tôi thu thập, sử dụng, chia sẻ và bảo vệ thông tin cá nhân của bạn khi sử dụng ứng dụng Petify.</string>
@@ -326,4 +331,7 @@
     <string name="question49_card60">This card symbolizes introspection, solitude, and inner guidance. To overcome depression, consider spending time in reflection.</string>
     <string name="question52_card60">The Hermit emphasizes the importance of solitude and self-reflection. To reduce stress, this card advises you to spend time alone.</string>
     <string name="question54_card60">The Hermit suggests adding solitude or quiet time to your routine. A period of introspection can help you reconnect with yourself.</string>
+
+    <string name="danh_gia_san_pham"> Đánh giá sản phẩm này<font color="#FF0000">*</font></string>
+
 </resources>

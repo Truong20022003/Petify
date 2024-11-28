@@ -8,6 +8,8 @@ import com.example.petify.BaseViewModel
 import com.example.petify.data.server.CreateInteface
 import com.example.petify.data.server.enitities.SupplierModel
 import com.example.petify.data.server.repository.SupplierRepository
+import com.example.petify.data.server.service.RoleService
+import com.example.petify.data.server.service.SupplierService
 import kotlinx.coroutines.launch
 
 class SupplierViewModel : BaseViewModel() {
@@ -32,7 +34,7 @@ class SupplierViewModel : BaseViewModel() {
     fun getListSupplier() {
         viewModelScope.launch {
             try {
-                val apiService = CreateInteface.createSupplier()
+                val apiService: SupplierService = CreateInteface.createService()
                 val supplierRepository = SupplierRepository(apiService)
                 _supplierList.value = supplierRepository.getListSupplier()
             } catch (e: Exception) {
@@ -45,7 +47,7 @@ class SupplierViewModel : BaseViewModel() {
     fun addSupplier(supplier: SupplierModel) {
         viewModelScope.launch {
             try {
-                val apiService = CreateInteface.createSupplier()
+                val apiService: SupplierService = CreateInteface.createService()
                 val supplierRepository = SupplierRepository(apiService)
                 _isSupplierAdded.value = supplierRepository.addSupplier(supplier) != null
             } catch (e: Exception) {
@@ -58,7 +60,7 @@ class SupplierViewModel : BaseViewModel() {
     fun getSupplierById(id: String) {
         viewModelScope.launch {
             try {
-                val apiService = CreateInteface.createSupplier()
+                val apiService: SupplierService = CreateInteface.createService()
                 val supplierRepository = SupplierRepository(apiService)
                 _supplier.value = supplierRepository.getSupplierById(id)
             } catch (e: Exception) {
@@ -71,7 +73,7 @@ class SupplierViewModel : BaseViewModel() {
     fun updateSupplier(id: String, supplier: SupplierModel) {
         viewModelScope.launch {
             try {
-                val apiService = CreateInteface.createSupplier()
+                val apiService: SupplierService = CreateInteface.createService()
                 val supplierRepository = SupplierRepository(apiService)
                 _isSupplierUpdated.value = supplierRepository.updateSupplier(id, supplier) != null
             } catch (e: Exception) {
@@ -84,7 +86,7 @@ class SupplierViewModel : BaseViewModel() {
     fun deleteSupplier(id: String) {
         viewModelScope.launch {
             try {
-                val apiService = CreateInteface.createSupplier()
+                val apiService: SupplierService = CreateInteface.createService()
                 val supplierRepository = SupplierRepository(apiService)
                 _isSupplierDeleted.value = supplierRepository.deleteSupplier(id)
             } catch (e: Exception) {

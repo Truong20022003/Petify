@@ -1,4 +1,4 @@
-package com.example.petify.view
+package com.example.petify.base.view
 
 import android.os.SystemClock
 import android.view.View

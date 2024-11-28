@@ -7,9 +7,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.example.petify.BaseActivity
 import com.example.petify.BaseViewModel
 import com.example.petify.R
-import com.example.petify.ui.signup.SignupActivity
 import com.example.petify.databinding.ActivityIntroBinding
-import com.example.petify.model.IntroModel
 import com.example.petify.ui.login.LoginActivity
 
 class IntroActivity : BaseActivity<ActivityIntroBinding, BaseViewModel> () {
