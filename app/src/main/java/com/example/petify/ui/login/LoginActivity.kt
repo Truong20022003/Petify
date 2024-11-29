@@ -11,6 +11,8 @@ import com.example.petify.databinding.ActivityLoginBinding
 import com.example.petify.ui.forgotpassword.ForgotPasswordActivity
 import com.example.petify.ui.signup.SignupActivity
 import com.example.petify.base.view.tap
+import com.example.petify.data.server.enitities.UserModel
+import com.example.petify.ultils.SharePreUtils
 import com.example.petify.viewmodel.UserViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -61,14 +63,14 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, UserViewModel>() {
             val intent = Intent(this, SignupActivity::class.java)
             startActivity(intent)
         }
-binding.tvForgotPassword.tap {
-    val intent = Intent(this, ForgotPasswordActivity::class.java)
-    startActivity(intent)
-}
+        binding.tvForgotPassword.tap {
+            val intent = Intent(this, ForgotPasswordActivity::class.java)
+            startActivity(intent)
+        }
         binding.btnLogin.setOnClickListener {
             val email = binding.etEmail.text.toString()
             val password = binding.etPassword.text.toString()
-            viewModel.loginUser(email, password,this@LoginActivity)
+            viewModel.loginUser(email, password, this@LoginActivity)
         }
 
         observeViewModel()
@@ -90,7 +92,17 @@ binding.tvForgotPassword.tap {
                 viewModel.clearErrorMessage()
             }
         }
+        viewModel.loginResponse.observe(this) { response ->
+            response?.let {
+                Log.d("TAG1111", "Login Response: ${it}")
+                val userModel = it.user
+                SharePreUtils.setUserModel(this@LoginActivity, userModel)
+                // Xử lý `loginResponse` tại đây
+//                Toast.makeText(this, "Welcome ${it.username}!", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
+
     private val googleSignInLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
@@ -125,13 +137,13 @@ binding.tvForgotPassword.tap {
 
     private fun sendUserDataToServer(name: String?, email: String?) {
         // Gửi thông tin người dùng lên server qua API
-      if (name.isNullOrBlank() && email.isNullOrBlank()){
+        if (name.isNullOrBlank() && email.isNullOrBlank()) {
 
-      }else{
-          viewModel.loginUser(name!!, email!!,this@LoginActivity)
-          Toast.makeText(this, "Welcome $name!", Toast.LENGTH_SHORT).show()
-          startActivity(Intent(this, MainActivity::class.java))
-      }
+        } else {
+            viewModel.loginUser(name!!, email!!, this@LoginActivity)
+            Toast.makeText(this, "Welcome $name!", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this, MainActivity::class.java))
+        }
 
     }
 

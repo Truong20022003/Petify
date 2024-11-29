@@ -180,6 +180,21 @@ class UserViewModel : BaseViewModel() {
             }
         }
     }
+    fun updateUserAddress(id: String, address: String) {
+        viewModelScope.launch {
+            try {
+                val apiService: UserService = CreateInteface.createService()
+                val userRepository = UserRepository(apiService)
+                val updatedUser = userRepository.updateUserAddress(id, address)
+                _isUserUpdated.value = updatedUser != null
+                _user.value = updatedUser // Cập nhật thông tin người dùng nếu thành công
+            } catch (e: Exception) {
+                Log.e("UserViewModel", "Error updating user address", e)
+                _errorMessage.value = "Error updating user address: ${e.message}"
+                _isUserUpdated.value = false
+            }
+        }
+    }
 
     fun clearErrorMessage() {
         _errorMessage.value = null

@@ -295,3 +295,29 @@ exports.enableUser = async (req, res, next) => {
         res.json({ status: "Failed to enable user", error: error.message });
     }
 };
+
+exports.updateUserAddress = async (req, res, next) => {
+    try {
+        const { id } = req.params; // Lấy ID của user từ URL
+        const { location } = req.body; // Lấy địa chỉ từ request body
+
+        if (!location) {
+            return res.status(400).json({ status: "Update failed", error: "Location is required" });
+        }
+
+        // Tìm và cập nhật location của user
+        const result = await userModel.findByIdAndUpdate(
+            id,
+            { location },
+            { new: true } // Trả về bản ghi sau khi cập nhật
+        );
+
+        if (!result) {
+            return res.status(404).json({ status: "Update failed", error: "User not found" });
+        }
+
+        res.json({ status: "Address updated successfully", result });
+    } catch (error) {
+        res.status(500).json({ status: "Update failed", error: error.message });
+    }
+};

@@ -8,6 +8,7 @@ import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
@@ -39,4 +40,11 @@ interface UserService {
 
     @POST("user/reset-password")
     suspend fun resetPassword(@Body email: String): Response<Unit>
+
+    @PATCH("user/update-address/{id}")
+    suspend fun updateUserAddress(
+        @Path("id") id: String,
+        @Body location: Map<String, String>
+    ): Response<UserModel>
+
 }

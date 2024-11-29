@@ -141,4 +141,16 @@ class UserRepository(private val api: UserService) {
             false
         }
     }
+    suspend fun updateUserAddress(id: String, address: String): UserModel? = withContext(Dispatchers.IO) {
+        val requestBody = mapOf("location" to address)
+        val response = api.updateUserAddress(id, requestBody)
+        if (response.isSuccessful) {
+            Log.d("UserRepository", "updateUserAddress Success: ${response.body()}")
+            response.body()
+        } else {
+            Log.e("UserRepository", "updateUserAddress Error: ${response.errorBody()?.string()}")
+            null
+        }
+    }
+
 }
