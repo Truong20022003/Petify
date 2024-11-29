@@ -17,4 +17,8 @@ class AddressRepository(private val service: AdressService) {
         val requestBody = WardRequest(districtId = districtId)
         return service.getListWard(requestBody)
     }
+
+    suspend fun calculateShippingFee(request: ShippingFeeRequest): Response<ShippingFeeResponse> {
+        return service.calculateShippingFee(request)
+    }
 }

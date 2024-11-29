@@ -14,4 +14,8 @@ interface AdressService {
 
     @POST("ward")
     suspend fun getListWard(@Body request: WardRequest): Response<WardResponse>
+
+    @POST("v2/shipping-order/fee")
+    suspend fun calculateShippingFee(@Body request: ShippingFeeRequest): Response<ShippingFeeResponse>
+
 }

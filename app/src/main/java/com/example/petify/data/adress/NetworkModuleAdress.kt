@@ -26,7 +26,7 @@ private val url: String
 
         val headerInterceptor = Interceptor { chain ->
             val request = chain.request().newBuilder()
-                .addHeader("Token", "31f9eced-ace1-11ef-9834-7e8875c3faf5")
+                .addHeader(Constans.API_NAME_ADDRESS, Constans.API_KEY_ADDRESS)
                 .build()
             chain.proceed(request)
         }

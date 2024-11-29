@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.petify.BaseFragment
 import com.example.petify.R
 import com.example.petify.base.view.tap
+import com.example.petify.data.adress.AddressViewmodel
 import com.example.petify.data.database.AppDatabase
 import com.example.petify.data.server.enitities.InvoiceDetailModel
 import com.example.petify.data.server.enitities.OrderModel
@@ -25,6 +26,8 @@ import java.time.format.DateTimeFormatter
 class CartFragment : BaseFragment<FragmentCartBinding>() {
 
     private lateinit var cartViewModel: CartViewModel
+    private lateinit var addressViewModel: AddressViewmodel
+
     private lateinit var cartAdapter: CartAdapter
     private var isAllSelected = false
     private lateinit var orderViewModel: OrderViewModel
@@ -34,6 +37,7 @@ class CartFragment : BaseFragment<FragmentCartBinding>() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun initView() {
         super.initView()
+        addressViewModel = ViewModelProvider(requireActivity())[AddressViewmodel::class.java]
         val cartDao = AppDatabase.getDatabase(requireActivity()).cartDao()
         cartViewModel = CartViewModel(cartDao)
         cartViewModel.fetchCartItems()

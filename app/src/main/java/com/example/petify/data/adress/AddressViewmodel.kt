@@ -18,6 +18,12 @@ class AddressViewmodel : BaseViewModel() {
     private val _wards = MutableLiveData<WardResponse>()
     val wards: LiveData<WardResponse> get() = _wards
 
+    private val _shippingFee = MutableLiveData<Int>()
+    val shippingFee: LiveData<Int> get() = _shippingFee
+
+    private val _error = MutableLiveData<String>()
+    val error: LiveData<String> get() = _error
+
     private val _errorMessage = MutableLiveData<String?>()
     val errorMessage: LiveData<String?> get() = _errorMessage
 
@@ -64,5 +70,30 @@ class AddressViewmodel : BaseViewModel() {
         _errorMessage.value = null
     }
 
+
+    fun calculateShippingFee(fromDistrictId: Int, toDistrictId: Int, toWardCode: String, weight: Int) {
+        val request = ShippingFeeRequest(
+            from_district_id = fromDistrictId,
+            service_id = 53320,
+            to_district_id = toDistrictId,
+            to_ward_code = toWardCode,
+            weight = weight
+        )
+
+        viewModelScope.launch {
+            try {
+                val apiService: AdressService = CreateInteface.createServiceAdress() // Tạo service
+                val addressRepository = AddressRepository(apiService)
+                val response = addressRepository.calculateShippingFee(request)
+                if (response.isSuccessful) {
+                    _shippingFee.postValue(response.body()?.data?.total)
+                } else {
+                    _error.postValue("Lỗi API: ${response.message()}")
+                }
+            } catch (e: Exception) {
+                _error.postValue("Lỗi mạng: ${e.message}")
+            }
+        }
+    }
 
 }
