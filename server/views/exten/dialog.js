@@ -57,6 +57,24 @@ const dialogDelete = (title, text, onConfirm) => {
         }
     });
 };
+const dialogDeleteProduct = (title, text, onConfirm, onError) => {
+    Swal.fire({
+        title: title || "Bạn có chắc chứ?",
+        text: text || "Bạn sẽ không thể khôi phục lại!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Tôi đồng ý",
+    }).then((result) => {
+        if (result.isConfirmed) {
+            if (onConfirm && typeof onConfirm === "function") {
+                onConfirm(); // Gọi callback để thực hiện hành động xóa
+            }
+        }
+    });
+};
+
 const dialogSuccess = (title) => {
     return  Swal.fire({
         title: title,

@@ -179,10 +179,19 @@ const addEventListeners = (categories) => {
 };
 
 const handleDelete = async (id) => {
-  dialogDelete("Xóa sản phẩm", "Bạn có chắc chắn muốn xóa sản phẩm này?", async () => {
+
+  dialogDeleteProduct("Xóa sản phẩm", "Bạn có chắc chắn muốn xóa sản phẩm này?", async () => {
     try {
-      await fetch(`${url}/product/deleteproduct/${id}`, { method: "DELETE", headers });
-      getList();
+      const response = await fetch(`${url}/product/deleteproduct/${id}`, { method: "DELETE", headers });
+      console.log(response)
+      const data = await response.json()
+      if (response.status == 400) {
+        dialogError(data.message)
+      } else {
+        dialogSuccess("Xóa sản phẩm thành công")
+        getList();
+      }
+      // getList();
     } catch (err) {
       dialogError("Xóa thất bại", "")
       console.log(err);
@@ -211,6 +220,7 @@ const handleEdit = async (id) => {
     const category = await getCategoriesByProductId(id);
     const categorylist = await getListCategory();
     // console.log(data, "getRoleById----edit");
+
     renderForm(data.result, false, true, "Cập nhật sản phẩm", suppliers, category || [], categorylist);
     handleImageUpload(data.result.image);
     // console.log(getAllDisplayedImages(),"link ảnh")
@@ -238,9 +248,9 @@ function convertDateFormatUpData(dateString) {
   const [year, month, day] = dateString.split("-");
   return `${day}/${month}/${year}`;  // Trả về định dạng dd/mm/yyyy
 }
-const saveEdit = async (_id, event) => {
+const saveEdit = async (_id, event, image_id) => {
   event.preventDefault();
-
+  console.log(image_id, "image_id")
   // Lấy dữ liệu từ form
   const getValue = (id) => document.getElementById(id)?.value || "";
   const name = getValue("name");
@@ -258,7 +268,7 @@ const saveEdit = async (_id, event) => {
   ).map((cb) => cb.value);
   console.log(selectedValues, "selectedValues")
   const images = getAllDisplayedImages();
-
+  console.log(images, "image")
   // Kiểm tra dữ liệu đầu vào
   const validateInput = () => {
     if (!name) return "Tên sản phẩm là bắt buộc.";
@@ -281,32 +291,24 @@ const saveEdit = async (_id, event) => {
   }
   const currentProduct = await getCategoriesByProductId(_id);
   console.log(currentProduct, "currentProduct")
-  // Thêm loại sản phẩm mới
-  if (currentProduct.length === 0) {
-    for (const categoryId of selectedValues) {
-      await addCategoryProduct(_id, categoryId); // Gọi hàm thêm vai trò
-    }
-  } else {
-    for (const categoryId of selectedValues) {
-      const isCategoryAlreadyAssigned = currentProduct.some(
-        (category) => category.category_id === categoryId
-      );
-      console.log(isCategoryAlreadyAssigned, "isCategoryAlreadyAssigned")
-      if (!isCategoryAlreadyAssigned) {
-        await addCategoryProduct(_id, categoryId);
-      }
-    }
-
-    // Xóa loại sản phẩm không còn được chọn
-    for (const category of currentProduct) {
-      if (!selectedValues.includes(category.category_id)) {
-        await removeCategoryProduct(_id, category.category_id);
-      }
-    }
-  }
-  // Chuẩn bị dữ liệu
   const formData = new FormData();
-  images.forEach((file) => formData.append("image", file));
+  const imageUrls = images
+    .filter((img) => !img.file) // Chỉ lấy URL của ảnh cũ
+    .map((img) => img.url);
+  formData.append("images", JSON.stringify(imageUrls));
+
+  images.forEach((img) => {
+    if (img.file) {
+      if (img.file instanceof File) {
+        formData.append("image", img.file);
+      } else {
+        console.log("img.file is not a valid File object:", img.file);
+      }
+    }
+  });
+
+
+
   formData.append("name", name);
   formData.append("price", price);
   formData.append("date", convertDateFormatUpData(start_date));
@@ -340,14 +342,39 @@ const saveEdit = async (_id, event) => {
 
         if (response.ok) {
           const result = await response.json();
-          Swal.close();
+          if (result.status == 200) {
+            Swal.close();
+            if (currentProduct.length === 0) {
+              for (const categoryId of selectedValues) {
+                await addCategoryProduct(_id, categoryId); // Gọi hàm thêm vai trò
+              }
+            } else {
+              for (const categoryId of selectedValues) {
+                const isCategoryAlreadyAssigned = currentProduct.some(
+                  (category) => category.category_id === categoryId
+                );
+                console.log(isCategoryAlreadyAssigned, "isCategoryAlreadyAssigned")
+                if (!isCategoryAlreadyAssigned) {
+                  await addCategoryProduct(_id, categoryId);
+                }
+              }
+
+              // Xóa loại sản phẩm không còn được chọn
+              for (const category of currentProduct) {
+                if (!selectedValues.includes(category.category_id)) {
+                  await removeCategoryProduct(_id, category.category_id);
+                }
+              }
+            }
+          }
           dialogSuccess("Sửa sản phẩm và loại sản phẩm thành công!").then(() => {
             getList(); // Chỉ gọi sau khi thông báo xong
           });;
 
+
         } else {
           Swal.close();
-          dialogError("Thêm sản phẩm thất bại");
+          dialogError("Sửa sản phẩm thất bại");
         }
 
       } catch (error) {
@@ -406,7 +433,7 @@ const saveAdd = async (event) => {
 
   // Chuẩn bị dữ liệu form
   const formData = new FormData();
-  images.forEach((file) => formData.append("image", file));
+  images.forEach((file) => formData.append("image", file.file));
   formData.append("name", name);
   formData.append("price", price);
   formData.append("date", convertDateFormatUpData(start_date));

@@ -1,3 +1,4 @@
+let currentImages = [];
 const renderForm = (
   {
     _id = "",
@@ -11,6 +12,7 @@ const renderForm = (
     name = "",
     description = "",
     sale = "",
+    image_id = []
   },
   isReadonly = false,
   showSaveButton = false,
@@ -21,9 +23,9 @@ const renderForm = (
 ) => {
   let selectedSupplierId = '';
   const saveButtonHTML = showSaveButton
-  ? `<button class="bg-green-500 text-white px-4 py-2 rounded save" onclick="${_id ? `saveEdit('${_id}', event)` : "saveAdd(event)"
-  }">Lưu</button>`
-  : "";
+    ? `<button class="bg-green-500 text-white px-4 py-2 rounded save" onclick="${_id ? `saveEdit('${_id}', event,'${image_id}')` : "saveAdd(event)"
+    }">Lưu</button>`
+    : "";
 
   const readonlyAttr = isReadonly ? "readonly" : "";
   // console.log(category, "category")
@@ -31,7 +33,19 @@ const renderForm = (
     return Array.isArray(category) && category.some(item => item.category_id === categoryid);
   }
 
+  currentImages = image.map(imgSrc => ({ file: null, url: imgSrc }));
 
+  // Render ảnh từ `currentImages`
+  const imageHTML = currentImages
+    .map(
+      (img) => /*html*/ `
+      <div class="relative w-32 h-32 m-2 inline-block" data-src="${img.url}">
+        <img alt="Product Image" class="w-full h-full object-cover rounded-md" src="${img.url}" />
+        <button class="remove-btn" onclick="removeImage('${img.url}')">X</button>
+      </div>
+    `
+    )
+    .join("");
   const categoryCheckboxes = categorylist
     .map((item, index) => /*html*/ `
       <label class="category-item">
@@ -79,18 +93,9 @@ const renderForm = (
             <div class="container mx-auto flex justify-between gap-4">
           <!-- Phần chọn ảnh -->
           <div class="w-1/2">
-            <input type="file" id="file-input" multiple accept="image/*" class="mb-4" />
+            <input type="file" id="file-input" multiple accept="image/*" accept=".jpg,.jpeg,.png"class="mb-4" />
             <div id="image-container" class="flex flex-wrap gap-4 overflow-y-scroll h-64 w-full border border-gray-300 p-2">
-              ${image
-      .map(
-        (imgSrc) => /*html*/ `
-                  <div class="relative w-32 h-32 m-2 inline-block">
-                    <img alt="Product Image" class="w-full h-full object-cover rounded-md" src="${imgSrc}" />
-                    <button class="remove-btn">X</button>
-                  </div>
-                `
-      )
-      .join("")}
+            ${imageHTML}
             </div>
           </div>
           <!-- Phần loại sản phẩm -->
@@ -216,6 +221,8 @@ const renderForm = (
           </div>
       </form>
     `
+
+
 
   const supplierSelect = document.getElementById("supplier");
 

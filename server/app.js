@@ -29,17 +29,18 @@ function checkHeader(req, res, next) {
   const authorizationHeader = req.header("Authorization");
 
   if (!authorizationHeader || authorizationHeader !== "trinh_nhung") {
-      // Nếu thiếu header hoặc header không đúng, trả về lỗi
-      return res.status(403).json({ message: "Forbidden: Missing or incorrect Authorization header" });
+    // Nếu thiếu header hoặc header không đúng, trả về lỗi
+    return res.status(403).json({ message: "Forbidden: Missing or incorrect Authorization header" });
   }
 
   next(); // Tiếp tục nếu header hợp lệ
 }
 
 app.use(cors({
-  origin: '*', 
+  origin: '*',
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true,
 }));
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
@@ -54,21 +55,21 @@ app.use(express.static(path.join(__dirname, "public")));
 
 app.use('/', indexRouter);
 app.use('/users', checkHeader, usersRouter);
-app.use("/carrier", checkHeader,carrierRouter)
-app.use("/category", checkHeader,categoryRouter)
-app.use("/invoiceDetail", checkHeader,invoice_detailRouter)
-app.use("/invoice", checkHeader,invoiceRouter)
-app.use("/notification", checkHeader,notificationRouter)
-app.use("/notificationUser", checkHeader,notification_userRouter)
-app.use("/order", checkHeader,orderRouter)
-app.use("/productCategory", checkHeader,product_categoryRouter)
-app.use("/product", checkHeader,productRouter)
-app.use("/reviewProduct", checkHeader,review_productRouter)
-app.use("/review", checkHeader,reviewRouter)
-app.use("/role", checkHeader,roleRouter)
-app.use("/supplier", checkHeader,supplierRouter)
-app.use("/userRole", checkHeader,user_roleRouter)
-app.use("/user", checkHeader,userRouter)
+app.use("/carrier", checkHeader, carrierRouter)
+app.use("/category", checkHeader, categoryRouter)
+app.use("/invoiceDetail", checkHeader, invoice_detailRouter)
+app.use("/invoice", checkHeader, invoiceRouter)
+app.use("/notification", checkHeader, notificationRouter)
+app.use("/notificationUser", checkHeader, notification_userRouter)
+app.use("/order", checkHeader, orderRouter)
+app.use("/productCategory", checkHeader, product_categoryRouter)
+app.use("/product", checkHeader, productRouter)
+app.use("/reviewProduct", checkHeader, review_productRouter)
+app.use("/review", checkHeader, reviewRouter)
+app.use("/role", checkHeader, roleRouter)
+app.use("/supplier", checkHeader, supplierRouter)
+app.use("/userRole", checkHeader, user_roleRouter)
+app.use("/user", checkHeader, userRouter)
 var userRouter = require('./routes/user_router')
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
