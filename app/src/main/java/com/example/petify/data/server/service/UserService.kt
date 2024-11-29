@@ -1,7 +1,9 @@
 package com.example.petify.data.server.service
 
+import com.example.petify.data.server.enitities.ChangePasswordRequest
 import com.example.petify.data.server.enitities.LoginRequest
 import com.example.petify.data.server.enitities.LoginResponse
+import com.example.petify.data.server.enitities.RegisterResponse
 import com.example.petify.data.server.enitities.RegisterUser
 import com.example.petify.data.server.enitities.UserModel
 import retrofit2.Response
@@ -24,7 +26,7 @@ interface UserService {
     suspend fun login(@Body user : LoginRequest): Response<LoginResponse>
 
     @POST("user/register")
-    suspend fun register(@Body user : RegisterUser): Response<UserModel>
+    suspend fun register(@Body user : RegisterUser): Response<RegisterResponse>
 
     @GET("user/getuserById/{id}")
     suspend fun getUserById(@Path("id") id: String): Response<UserModel>
@@ -39,7 +41,7 @@ interface UserService {
     suspend fun deleteUser(@Path("id") id: String): Response<Unit>
 
     @POST("user/reset-password")
-    suspend fun resetPassword(@Body email: String): Response<Unit>
+    suspend fun changePassword(@Body requestBody: ChangePasswordRequest): Response<Unit>
 
     @PATCH("user/update-address/{id}")
     suspend fun updateUserAddress(

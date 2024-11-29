@@ -46,9 +46,6 @@ class PaymentActivity : BaseActivity<ActivityPaymentBinding, BaseViewModel>() {
             paymentAdapter.updateItems(it)
         }
         binding.btnOrder.setOnClickListener {
-//            for (item in selectedItems) {
-//                cartViewModel.removeFromCart(item.id)
-//            }
 
             
         }

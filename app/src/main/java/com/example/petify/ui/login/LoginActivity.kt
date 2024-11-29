@@ -136,12 +136,11 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, UserViewModel>() {
     }
 
     private fun sendUserDataToServer(name: String?, email: String?) {
-        // Gửi thông tin người dùng lên server qua API
         if (name.isNullOrBlank() && email.isNullOrBlank()) {
-
+            Toast.makeText(this, "Đã có lỗi xảy ra", Toast.LENGTH_SHORT).show()
         } else {
             viewModel.loginUser(name!!, email!!, this@LoginActivity)
-            Toast.makeText(this, "Welcome $name!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Chào mừng $name!", Toast.LENGTH_SHORT).show()
             startActivity(Intent(this, MainActivity::class.java))
         }
 

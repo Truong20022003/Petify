@@ -51,7 +51,7 @@
         android:layout_marginHorizontal="32dp"
         android:weightSum="4">
         <EditText
-            android:id="@+id/etOtpEmail"
+            android:id="@+id/etOtp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/bg_intro"
