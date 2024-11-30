@@ -1,8 +1,8 @@
-package com.example.petify.ui.zalopay.Helper;
+package com.example.petify.payment.zalopay.Helper;
 
 import android.annotation.SuppressLint;
 
-import com.example.petify.ui.zalopay.Helper.HMac.HMacUtil;
+import com.example.petify.payment.zalopay.Helper.HMac.HMacUtil;
 
 import org.jetbrains.annotations.NotNull;
 import java.security.InvalidKeyException;

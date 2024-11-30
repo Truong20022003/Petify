@@ -1,4 +1,4 @@
-package com.example.petify.ui.zalopay.Helper.HMac;
+package com.example.petify.payment.zalopay.Helper.HMac;
 
 import android.os.Build;
 

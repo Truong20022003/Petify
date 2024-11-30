@@ -1,4 +1,4 @@
-package com.example.petify.ui.zalopay.Constant;
+package com.example.petify.payment.zalopay.Constant;
 
 public class AppInfo {
     public static final int APP_ID = 553;

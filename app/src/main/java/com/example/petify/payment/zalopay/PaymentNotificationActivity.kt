@@ -1,4 +1,4 @@
-package com.example.petify.ui.zalopay
+package com.example.petify.payment.zalopay
 
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge

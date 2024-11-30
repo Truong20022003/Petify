@@ -1,11 +1,12 @@
-package com.example.petify.ui.zalopay
+package com.example.petify.payment.zalopay
 
 import android.content.Intent
 import android.widget.Toast
 import com.example.petify.BaseActivity
 import com.example.petify.BaseViewModel
+import com.example.petify.base.view.tap
 import com.example.petify.databinding.ActivityZalopayMainBinding
-import com.example.petify.view.tap
+
 
 class ZalopayMainActivity : BaseActivity<ActivityZalopayMainBinding, BaseViewModel>() {
 

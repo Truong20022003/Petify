@@ -1,7 +1,7 @@
-package com.example.petify.ui.zalopay.Api;
+package com.example.petify.payment.zalopay.Api;
 
-import com.example.petify.ui.zalopay.Constant.AppInfo;
-import com.example.petify.ui.zalopay.Helper.Helpers;
+import com.example.petify.payment.zalopay.Constant.AppInfo;
+import com.example.petify.payment.zalopay.Helper.Helpers;
 
 import org.json.JSONObject;
 
