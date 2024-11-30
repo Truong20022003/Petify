@@ -28,6 +28,7 @@ class PaymentActivity : BaseActivity<ActivityPaymentBinding, OrderViewModel>() {
     private lateinit var userViewModel: UserViewModel
     private lateinit var invoiceDetailViewModel: InvoiceDetailViewModel
     private var addressUser: String? = null
+    private lateinit var carrierAdapter: CarrierAdapter
     override fun createBinding(): ActivityPaymentBinding {
         return ActivityPaymentBinding.inflate(layoutInflater)
     }
@@ -57,6 +58,7 @@ class PaymentActivity : BaseActivity<ActivityPaymentBinding, OrderViewModel>() {
         Log.d("PaymentActivity", "Total Price: $totalPrice")
         Log.d("PaymentActivity", "Selected Items: $selectedItems")
         paymentAdapter = PaymentAdapter(emptyList())
+//        carrierAdapter = CarrierAdapter(emptyList(),object : CarrierAdapter.OnItemClickListener{})
         binding.rvPayment.apply {
             layoutManager = LinearLayoutManager(this@PaymentActivity)
             adapter = paymentAdapter
@@ -68,13 +70,22 @@ class PaymentActivity : BaseActivity<ActivityPaymentBinding, OrderViewModel>() {
             if (addressUser!!.isEmpty()) {
                 Toast.makeText(this, "Vui lòng cập nhật địa chỉ", Toast.LENGTH_SHORT).show()
             } else {
+                //   @field:SerializedName("payment_method") var paymentMethod: String = "",
+                //    @field:SerializedName("delivery_address") var deliveryAddress: String = "",
+                //    @field:SerializedName("shipping_fee") var shippingFee: Double = 0.0,
+                //    @field:SerializedName("supplier_id") var supplierId: String = "",
+                //    @field:SerializedName("carrier_id") var carrierId: String = "",
                 viewModel.addOrder(
                     OrderModel(
                         "",
                         userId,
                         addressUser!!,
                         totalPrice,
-                        "Đang chờ xác nhận"
+                        "Đang chờ xác nhận",
+                        "Thanh toán khi nhận hàng",
+                        addressUser!!,
+                        0.0,
+                        ""
                     )
                 )
                 selectedItems?.let {
