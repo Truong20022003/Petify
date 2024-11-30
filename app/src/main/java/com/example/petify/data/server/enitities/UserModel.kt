@@ -12,3 +12,8 @@ data class UserModel(
     @field:SerializedName("location") var location: String = "",
     @field:SerializedName("avata") var avata: String = ""
 )
+
+data class ChangePasswordRequest(
+    @field:SerializedName("phone_number") val phone_number: String,
+    @field:SerializedName("newPassword") val newPassword: String
+)

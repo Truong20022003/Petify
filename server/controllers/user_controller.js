@@ -138,25 +138,98 @@ exports.getuserById = async (req, res, next) => {
         res.json({ status: "Not found", result: error });
     }
 };
+// exports.registerUser = async (req, res, next) => {
+//     const { name, email, password } = req.body;
+
+//     try {
+//         const userRecord = await admin.auth().createUser({
+//             email: email,
+//             password: password,
+//         });
+
+//         let newUser = new userModel({
+//             name,
+//             email,
+//             password
+//         });
+
+//         const result = await newUser.save();
+//         res.json({ status: "Registration successful", result });
+//     } catch (error) {
+//         res.json({ status: "Registration failed", error: error.message });
+//     }
+// };
 exports.registerUser = async (req, res, next) => {
-    const { name, email, password } = req.body;
+    const { name, email, password, phone_number } = req.body;
 
     try {
+        // Kiểm tra email trên server
+        const emailExists = await userModel.findOne({ email });
+        if (emailExists) {
+            return res.status(400).json({
+                status: "Thất bại",
+                error: "Email này đã được đăng ký. Vui lòng sử dụng email khác.",
+            });
+        }
+
+        // Kiểm tra số điện thoại trên server
+        const phoneExists = await userModel.findOne({ phone_number });
+        if (phoneExists) {
+            return res.status(400).json({
+                status: "Thất bại",
+                error: "Số điện thoại này đã được đăng ký. Vui lòng sử dụng số khác.",
+            });
+        }
+
+        // Kiểm tra email trên Firebase
+        try {
+            await admin.auth().getUserByEmail(email);
+            return res.status(400).json({
+                status: "Thất bại",
+                error: "Email này đã tồn tại trên hệ thống Firebase.",
+            });
+        } catch (firebaseError) {
+            // Không tìm thấy trên Firebase là hợp lệ, tiếp tục
+        }
+
+        // Kiểm tra số điện thoại trên Firebase
+        try {
+            await admin.auth().getUserByPhoneNumber(phone_number);
+            return res.status(400).json({
+                status: "Thất bại",
+                message: "Số điện thoại này đã tồn tại trên hệ thống Firebase.",
+            });
+        } catch (firebaseError) {
+            // Không tìm thấy trên Firebase là hợp lệ, tiếp tục
+        }
+
+        // Tạo người dùng trên Firebase
         const userRecord = await admin.auth().createUser({
-            email: email,
-            password: password,
+            email,
+            password,
+            phoneNumber: phone_number,
         });
 
-        let newUser = new userModel({
+        // Lưu thông tin người dùng vào MongoDB
+        const newUser = new userModel({
             name,
             email,
-            password
+            password,
+            phone_number,
         });
 
         const result = await newUser.save();
-        res.json({ status: "Registration successful", result });
+
+        res.json({
+            status: "Thành công",
+            message: "Đăng ký người dùng thành công.",
+            result,
+        });
     } catch (error) {
-        res.json({ status: "Registration failed", error: error.message });
+        res.status(500).json({
+            status: "Thất bại",
+            error: error.message,
+        });
     }
 };
 
@@ -211,22 +284,55 @@ exports.resetPassword = async (req, res, next) => {
         res.json({ status: "Failed to send reset password email", error: error.message });
     }
 };
-// Thay đổi mật khẩu
 exports.changePassword = async (req, res, next) => {
-    const { email, newPassword } = req.body;
+    const { phone_number, newPassword } = req.body;
+
+    // Kiểm tra đầu vào
+    if (!phone_number || typeof phone_number !== 'string') {
+        return res.status(400).json({
+            status: "Failed",
+            message: "Invalid phone number",
+        });
+    }
+
+    if (!newPassword || newPassword.length < 6) {
+        return res.status(400).json({
+            status: "Failed",
+            message: "Password must be at least 6 characters long",
+        });
+    }
 
     try {
-        const userRecord = await admin.auth().getUserByEmail(email);
+        // Lấy thông tin người dùng từ số điện thoại
+        const userRecord = await admin.auth().getUserByPhoneNumber(phone_number);
 
+        // Cập nhật mật khẩu mới cho người dùng
         await admin.auth().updateUser(userRecord.uid, {
             password: newPassword,
         });
 
-        res.json({ status: "Password updated successfully" });
+        return res.json({ 
+            status: "Success", 
+            message: "Password updated successfully" 
+        });
     } catch (error) {
-        res.json({ status: "Failed to update password", error: error.message });
+        // Cải thiện xử lý lỗi
+        if (error.code === 'auth/user-not-found') {
+            return res.status(404).json({
+                status: "Failed",
+                message: "User not found",
+            });
+        }
+
+        // Xử lý các lỗi khác
+        console.error("Error updating password:", error);
+        return res.status(500).json({
+            status: "Failed",
+            message: "An unexpected error occurred. Please try again later.",
+        });
     }
 };
+
 // Xác thực tài khoản người dùng qua email
 exports.verifyEmail = async (req, res, next) => {
     const { email } = req.body;
@@ -283,5 +389,31 @@ exports.enableUser = async (req, res, next) => {
         res.json({ status: "User enabled successfully" });
     } catch (error) {
         res.json({ status: "Failed to enable user", error: error.message });
+    }
+};
+
+exports.updateUserAddress = async (req, res, next) => {
+    try {
+        const { id } = req.params; // Lấy ID của user từ URL
+        const { location } = req.body; // Lấy địa chỉ từ request body
+
+        if (!location) {
+            return res.status(400).json({ status: "Update failed", error: "Location is required" });
+        }
+
+        // Tìm và cập nhật location của user
+        const result = await userModel.findByIdAndUpdate(
+            id,
+            { location },
+            { new: true } // Trả về bản ghi sau khi cập nhật
+        );
+
+        if (!result) {
+            return res.status(404).json({ status: "Update failed", error: "User not found" });
+        }
+
+        res.json({ status: "Address updated successfully", result });
+    } catch (error) {
+        res.status(500).json({ status: "Update failed", error: error.message });
     }
 };

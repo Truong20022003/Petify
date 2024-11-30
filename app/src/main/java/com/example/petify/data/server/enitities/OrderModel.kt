@@ -8,4 +8,9 @@ data class OrderModel(
     @field:SerializedName("oder_date") var oderDate: String = "",
     @field:SerializedName("total_price") var totalPrice: Double = 0.0,
     @field:SerializedName("status") var status: String = "",
+    @field:SerializedName("payment_method") var paymentMethod: String = "",
+    @field:SerializedName("delivery_address") var deliveryAddress: String = "",
+    @field:SerializedName("shipping_fee") var shippingFee: Double = 0.0,
+    @field:SerializedName("supplier_id") var supplierId: String = "",
+    @field:SerializedName("carrier_id") var carrierId: String = "",
 )

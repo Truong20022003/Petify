@@ -43,9 +43,9 @@ class SignupActivity : BaseActivity<ActivitySignupBinding,UserViewModel>() {
             val email = binding.etEmail.text.toString().trim()
             val password = binding.etPassword.text.toString().trim()
             val confirmPassword = binding.etRePassword.text.toString().trim()
-
+            val phoneNumber = binding.etNumber.text.toString().trim()
             if (password == confirmPassword) {
-                viewModel.registerUser(name, email, password)
+                viewModel.registerUser(name, email, password,phoneNumber)
             } else {
                 Toast.makeText(this, "Passwords do not match!", Toast.LENGTH_SHORT).show()
             }

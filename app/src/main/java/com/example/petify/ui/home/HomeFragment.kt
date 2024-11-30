@@ -7,6 +7,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
+import com.bumptech.glide.Glide
 import com.example.petify.BaseFragment
 import com.example.petify.R
 import com.example.petify.databinding.FragmentHomeBinding
@@ -15,6 +16,7 @@ import com.example.petify.ui.profile.ProfileActivity
 import com.example.petify.base.view.tap
 import com.example.petify.data.database.AppDatabase
 import com.example.petify.data.database.enitities.CartItem
+import com.example.petify.ultils.SharePreUtils
 import com.example.petify.viewmodel.CartViewModel
 import com.example.petify.viewmodel.CartViewModelFactory
 import com.example.petify.viewmodel.CategoryViewModel
@@ -46,9 +48,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
 
     override fun initView() {
         super.initView()
+        val userModel = SharePreUtils.getUserModel(requireActivity())
+        Glide.with(requireActivity())
+            .load(userModel?.avata)
+            .into(viewBinding.ivUser)
         val cartDao = AppDatabase.getDatabase(requireContext()).cartDao()
 
-        // Sử dụng CartViewModelFactory để khởi tạo CartViewModel
         val factory = CartViewModelFactory(cartDao)
         cartViewModel = ViewModelProvider(this, factory)[CartViewModel::class.java]
         productViewModel = ViewModelProvider(requireActivity())[ProductViewModel::class.java]

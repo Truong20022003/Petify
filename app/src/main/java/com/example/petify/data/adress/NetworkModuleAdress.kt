@@ -1,4 +1,4 @@
-package com.example.petify.data.server
+package com.example.petify.data.adress
 
 import com.example.petify.ultils.Constans
 import okhttp3.Interceptor
@@ -8,7 +8,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
-class NetworkModule<T>(
+class NetworkModuleAdress<T>(
 private val url: String
 ) {
     fun create(className: Class<T>): T{
@@ -26,7 +26,7 @@ private val url: String
 
         val headerInterceptor = Interceptor { chain ->
             val request = chain.request().newBuilder()
-                .addHeader("Authorization", "trinh_nhung")
+                .addHeader(Constans.API_NAME_ADDRESS, Constans.API_KEY_ADDRESS)
                 .build()
             chain.proceed(request)
         }
