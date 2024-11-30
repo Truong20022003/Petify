@@ -22,13 +22,13 @@ const getListUser = async () => {
 const renderTable = (data) => {
   content.innerHTML = /*html*/ `
     <div class="flex mb-4">
-      <button class="bg-yellow-500 text-white px-4 py-2 rounded mr-2 btnadd">Thêm mới</button>
+      <button class="bg-[#396060] text-white px-4 py-2 rounded mr-2 btnadd">Thêm mới</button>
       <input class="border border-gray-300 rounded px-4 py-2 flex-grow" placeholder="Tìm kiếm" type="text" />
-      <button class="bg-yellow-500 text-white px-4 py-2 rounded ml-2">Tìm kiếm</button>
+      <button class="bg-[#396060] text-white px-4 py-2 rounded ml-2">Tìm kiếm</button>
     </div>
     <table class="content w-full border-collapse">
       <thead>
-        <tr class="bg-yellow-500 text-white">
+        <tr class="bg-[#396060] text-white">
           <th class="border border-gray-300 px-4 py-2">STT</th>
           <th class="border border-gray-300 px-4 py-2">order_date</th>
           <th class="border border-gray-300 px-4 py-2">total_price</th>
@@ -57,7 +57,7 @@ const renderTable = (data) => {
                     <button class="bg-red-500 text-white px-2 py-1 rounded btndelete" data-id="${
                       item._id
                     }">Xóa</button>
-                    <button class="bg-yellow-500 text-white px-2 py-1 rounded btndetail" data-id="${
+                    <button class="bg-[#008080] text-white px-2 py-1 rounded btndetail" data-id="${
                       item._id
                     }">Chi tiết</button>
                   </div>
@@ -195,5 +195,23 @@ const saveAddUser = async () => {
     alert("Đã xảy ra lỗi. Vui lòng thử lại.");
   }
 };
+async function getUserRoleID(id) {
+  // console.log(id, "user");
+  try {
+    const response = await fetch(
+      `http://localhost:3000/user/getuserById/${id}`,
+      {
+        method: "GET",
+        headers,
+      }
+    );
 
+    const data = await response.json();
+
+    return data.result.name;
+  } catch (err) {
+    console.log(err);
+    return "";
+  }
+}
 getListUser();

@@ -1,102 +1,96 @@
 package com.example.petify.ui.cart
 
+import android.content.Intent
+import android.os.Build
 import android.util.Log
+import android.view.View
+import android.widget.Toast
+import androidx.annotation.RequiresApi
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.petify.BaseFragment
 import com.example.petify.R
+import com.example.petify.base.view.tap
+import com.example.petify.data.adress.AddressViewmodel
+import com.example.petify.data.database.AppDatabase
+import com.example.petify.data.server.enitities.InvoiceDetailModel
+import com.example.petify.data.server.enitities.OrderModel
 import com.example.petify.databinding.FragmentCartBinding
-import com.example.petify.model.ProductModel
+import com.example.petify.ui.payment.PaymentActivity
+import com.example.petify.viewmodel.CartViewModel
+import com.example.petify.viewmodel.InvoiceDetailViewModel
+import com.example.petify.viewmodel.OrderViewModel
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 class CartFragment : BaseFragment<FragmentCartBinding>() {
 
+    private lateinit var cartViewModel: CartViewModel
+    private lateinit var addressViewModel: AddressViewmodel
+
     private lateinit var cartAdapter: CartAdapter
     private var isAllSelected = false
-
+    private lateinit var orderViewModel: OrderViewModel
+    private lateinit var invoiceDetailViewModel: InvoiceDetailViewModel
     override fun inflateViewBinding() = FragmentCartBinding.inflate(layoutInflater)
 
-    private val productList: List<ProductModel> = listOf(
-        ProductModel(
-            id = "1",
-            supplierId = "sup1",
-            price = 200000,
-            date = "2024-10-01",
-            expiryDate = "2025-10-01",
-            quantity = 100,
-            name = "Sản phẩm A",
-            image = listOf(
-                "https://kinpetshop.com/wp-content/uploads/thuc-an-hat-cho-meo-kit-cat-kitten-pregnant-cat-1-2kg.jpg",
-                "https://kinpetshop.com/wp-content/uploads/thuc-an-hat-cho-meo-kit-cat-kitten-pregnant-cat-1-2kg.jpg"
-            ),
-            status = "Còn hàng",
-            description = "Mô tả chi tiết cho sản phẩm A",
-            sale = 10 // Giảm giá 10%
-        ),
-        ProductModel(
-            id = "2",
-            supplierId = "sup2",
-            price = 150000,
-            date = "2024-10-05",
-            expiryDate = "2025-10-05",
-            quantity = 50,
-            name = "Sản phẩm B",
-            image = listOf(
-                "https://kinpetshop.com/wp-content/uploads/thuc-an-hat-cho-meo-kit-cat-kitten-pregnant-cat-1-2kg.jpg",
-                "https://kinpetshop.com/wp-content/uploads/thuc-an-hat-cho-meo-kit-cat-kitten-pregnant-cat-1-2kg.jpg"
-            ),
-            status = "Còn hàng",
-            description = "Mô tả chi tiết cho sản phẩm B",
-            sale = 5 // Giảm giá 5%
-        ),
-        ProductModel(
-            id = "3",
-            supplierId = "sup3",
-            price = 300000,
-            date = "2024-10-07",
-            expiryDate = "2025-10-07",
-            quantity = 0,
-            name = "Sản phẩm C",
-            image = listOf(
-                "https://kinpetshop.com/wp-content/uploads/thuc-an-hat-cho-meo-kit-cat-kitten-pregnant-cat-1-2kg.jpg",
-                "https://kinpetshop.com/wp-content/uploads/thuc-an-hat-cho-meo-kit-cat-kitten-pregnant-cat-1-2kg.jpg"
-            ),
-            status = "Hết hàng",
-            description = "Mô tả chi tiết cho sản phẩm C",
-            sale = 0 // Không có giảm giá
-        )
-    )
-
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun initView() {
         super.initView()
-
-        viewBinding.rcvCart.layoutManager = LinearLayoutManager(requireContext())
-        cartAdapter = CartAdapter(productList) { totalPrice ->
-            updateTotalPrice(totalPrice) // Update total price whenever it changes
+        addressViewModel = ViewModelProvider(requireActivity())[AddressViewmodel::class.java]
+        val cartDao = AppDatabase.getDatabase(requireActivity()).cartDao()
+        cartViewModel = CartViewModel(cartDao)
+        cartViewModel.fetchCartItems()
+        cartAdapter = CartAdapter(emptyList()) { totalPrice ->
+            updateTotalPrice(totalPrice)
         }
-        viewBinding.rcvCart.adapter = cartAdapter
 
-        // Initialize the total price display
-        updateTotalPrice(0)
+        cartViewModel.cartItems.observe(viewLifecycleOwner) {
+            if (it != null) {
+                cartAdapter.updateItems(it)
+                viewBinding.rcvCart.layoutManager = LinearLayoutManager(requireContext())
+                viewBinding.rcvCart.adapter = cartAdapter
 
-        // Set up the check all button click listener
+            } else {
+                viewBinding.tvEmptyItem.visibility = View.VISIBLE
+                cartAdapter.updateItems(emptyList())
+            }
+
+        }
+        updateTotalPrice(0.0)
         viewBinding.ivCheckAll.setOnClickListener {
             toggleSelectAll()
         }
+        orderViewModel = ViewModelProvider(requireActivity())[OrderViewModel::class.java]
+        invoiceDetailViewModel =
+            ViewModelProvider(requireActivity())[InvoiceDetailViewModel::class.java]
+
+        viewBinding.tvBuy.tap {
+
+            addToOrder()
+        }
     }
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun addToOrder(){
+        val selectedItems = cartAdapter.getSelectedItems()
+        val totalPrice = cartAdapter.getTotalPrice()
 
+        val intent = Intent(requireContext(), PaymentActivity::class.java)
+        intent.putExtra("totalPrice", totalPrice)
+        intent.putExtra("selectedItems", ArrayList(selectedItems))
+        startActivity(intent)
+    }
     private fun toggleSelectAll() {
-        isAllSelected = !isAllSelected // Toggle the selection state
-
-        // Update the icon based on selection state
+        isAllSelected = !isAllSelected
         viewBinding.ivCheckAll.setImageResource(
             if (isAllSelected) R.drawable.ic_check_cart_on else R.drawable.ic_check_cart_off
         )
-        // Update the adapter with the new selection state for all products
         cartAdapter.setAllSelected(isAllSelected)
     }
 
-    private fun updateTotalPrice(totalPrice: Int) {
-        viewBinding.tvMoney.text = "$totalPrice" // Assuming you have a TextView for displaying the total price
-
-        Log.d("TagCart","$totalPrice")
+    private fun updateTotalPrice(totalPrice: Double) {
+        viewBinding.tvMoney.text = "$totalPrice"
+        Log.d("TagCart", "$totalPrice")
     }
+
 }

@@ -50,41 +50,50 @@
         android:layout_marginTop="16dp"
         android:layout_marginHorizontal="32dp"
         android:weightSum="4">
-
-        <ImageView
-            android:id="@+id/iv_otp1"
-            android:layout_width="0dp"
+        <EditText
+            android:id="@+id/etOtp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_otp"
-            android:background="@drawable/bg_otp_email"
-            android:layout_weight="1" />
+            android:background="@drawable/bg_intro"
+            android:hint="Nhap OTP"
+            android:inputType="textEmailAddress"
+            android:padding="12dp"
+            android:textColorHint="@color/light_gray"
+            android:textSize="16sp" />
+<!--        <ImageView-->
+<!--            android:id="@+id/iv_otp1"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:src="@drawable/ic_otp"-->
+<!--            android:background="@drawable/bg_otp_email"-->
+<!--            android:layout_weight="1" />-->
 
-        <ImageView
-            android:id="@+id/iv_otp2"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_otp"
-            android:layout_weight="1"
-            android:background="@drawable/bg_otp_email"
-            android:layout_marginStart="8dp" />
+<!--        <ImageView-->
+<!--            android:id="@+id/iv_otp2"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:src="@drawable/ic_otp"-->
+<!--            android:layout_weight="1"-->
+<!--            android:background="@drawable/bg_otp_email"-->
+<!--            android:layout_marginStart="8dp" />-->
 
-        <ImageView
-            android:id="@+id/iv_otp3"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_otp"
-            android:layout_weight="1"
-            android:background="@drawable/bg_otp_email"
-            android:layout_marginStart="8dp" />
+<!--        <ImageView-->
+<!--            android:id="@+id/iv_otp3"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:src="@drawable/ic_otp"-->
+<!--            android:layout_weight="1"-->
+<!--            android:background="@drawable/bg_otp_email"-->
+<!--            android:layout_marginStart="8dp" />-->
 
-        <ImageView
-            android:id="@+id/iv_otp4"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_otp"
-            android:layout_weight="1"
-            android:background="@drawable/bg_otp_email"
-            android:layout_marginStart="8dp" />
+<!--        <ImageView-->
+<!--            android:id="@+id/iv_otp4"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:src="@drawable/ic_otp"-->
+<!--            android:layout_weight="1"-->
+<!--            android:background="@drawable/bg_otp_email"-->
+<!--            android:layout_marginStart="8dp" />-->
     </LinearLayout>
 
     <LinearLayout

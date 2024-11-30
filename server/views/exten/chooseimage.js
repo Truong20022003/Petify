@@ -1,113 +1,81 @@
+
+
+// Hàm lấy danh sách ảnh hiện tại
+function getAllDisplayedImages() {
+  console.log("Danh sách ảnh hiện tại:", currentImages);
+  return currentImages;
+}
+// Hàm xử lý upload ảnh
 function handleImageUpload(current) {
-  let currentImages = [...current];
-  let imageContainer = document.getElementById("image-container");
+  const maxImages = 10;
+  const imageContainer = document.getElementById("image-container");
 
-  // Hàm lấy tất cả các ảnh hiện đang hiển thị
-  function getAllDisplayedImages() {
-    return currentImages;
-  }
-
-  document.querySelectorAll(".remove-btn").forEach((btn) => {
-    btn.addEventListener("click", function () {
-      const imgWrapper = btn.parentElement;
-      const imgSrc = imgWrapper.getAttribute("data-src");
-
-      // Xóa ảnh khỏi DOM và mảng currentImages
-      imgWrapper.remove();
-      currentImages = currentImages.filter((src) => src !== imgSrc);
-      console.log("Danh sách ảnh sau khi xóa:", currentImages);
-    });
+  // Cập nhật currentImages từ danh sách ban đầu (nếu có)
+  current.forEach(imageUrl => {
+    // Kiểm tra ảnh đã có trong currentImages chưa
+    if (!currentImages.some(img => img.url === imageUrl)) {
+      currentImages.push({ file: null, url: imageUrl });
+    }
   });
 
-  document
-    .querySelector("#file-input")
-    .addEventListener("change", function (event) {
-      const files = event.target.files;
+  document.getElementById("file-input").addEventListener("change", function (event) {
+    const files = event.target.files;
 
-      for (const file of files) {
-        const imageUrl = URL.createObjectURL(file); // Tạo URL tạm thời cho ảnh mới
-        currentImages.push(imageUrl); // Thêm ảnh mới vào mảng
-        console.log("Danh sách ảnh hiện tại:", currentImages); // Ghi log mảng ảnh hiện tại
+    if (currentImages.length + files.length > maxImages) {
+      dialogWarning("Bạn chỉ có thể tải lên tối đa 10 ảnh!");
+      event.target.value = ""; // Reset input file
+      return;
+    }
 
-        // Tạo phần tử HTML để hiển thị ảnh mới
-        const imgWrapper = document.createElement("div");
-        imgWrapper.classList.add(
-          "relative",
-          "w-32",
-          "h-32",
-          "m-2",
-          "inline-block"
-        );
-        imgWrapper.setAttribute("data-src", imageUrl);
-
-        const img = document.createElement("img");
-        img.src = imageUrl;
-        img.classList.add("w-full", "h-full", "object-cover", "rounded-md");
-
-        const removeBtn = document.createElement("button");
-        removeBtn.innerHTML = "X";
-        removeBtn.classList.add("remove-btn");
-        removeBtn.onclick = function () {
-          imgWrapper.remove();
-          currentImages = currentImages.filter((src) => src !== imageUrl);
-          console.log("Danh sách ảnh sau khi xóa:", currentImages); // Ghi log mảng sau khi xóa
-        };
-
-        imgWrapper.appendChild(img);
-        imgWrapper.appendChild(removeBtn);
-        imageContainer.appendChild(imgWrapper);
+    Array.from(files).forEach(file => {
+      const validExtensions = ["image/jpeg", "image/jpg", "image/png"];
+      if (!validExtensions.includes(file.type)) {
+        dialogWarning("Vui lòng chỉ chọn ảnh có đuôi jpg, jpeg, png!");
+        return;
       }
-      event.target.value = "";
+      const imageUrl = URL.createObjectURL(file); // Tạo URL tạm cho ảnh
+
+      // Lưu ảnh vào mảng dưới dạng đối tượng
+      currentImages.push({ file, url: imageUrl });
+
+      // Render ảnh vào giao diện
+      const imgWrapper = document.createElement("div");
+      imgWrapper.classList.add("relative", "w-32", "h-32", "m-2", "inline-block");
+      imgWrapper.setAttribute("data-src", imageUrl); // Đánh dấu URL
+
+      const img = document.createElement("img");
+      img.src = imageUrl;
+      img.classList.add("w-full", "h-full", "object-cover", "rounded-md");
+
+      const removeBtn = document.createElement("button");
+      removeBtn.innerHTML = "X";
+      removeBtn.classList.add("remove-btn");
+
+      removeBtn.onclick = function () {
+        removeImage(imageUrl); // Gọi hàm xóa ảnh
+      };
+
+      imgWrapper.appendChild(img);
+      imgWrapper.appendChild(removeBtn);
+      imageContainer.appendChild(imgWrapper);
     });
 
-  // Đặt hàm getAllDisplayedImages vào window để có thể gọi từ nơi khác
-  window.getAllDisplayedImages = getAllDisplayedImages;
+    event.target.value = ""; // Reset lại input
+  });
 }
 
-////
-function handleImageUploadAdd(selectedFiles) {
-  document
-    .getElementById("file-input")
-    .addEventListener("change", function (event) {
-      const imageContainer = document.getElementById("image-container");
-      const files = event.target.files;
 
-      for (const file of files) {
-        const reader = new FileReader();
+// Hàm xóa ảnh khỏi DOM và mảng currentImages
+function removeImage(imageUrl) {
+  // Lọc bỏ ảnh có URL khớp với imageUrl
+  currentImages = currentImages.filter(item => item.url !== imageUrl);
 
-        reader.onload = function (e) {
-          const imgWrapper = document.createElement("div");
-          imgWrapper.classList.add("relative", "w-32", "h-32");
+  // Xóa ảnh khỏi giao diện
+  const imageWrapper = document.querySelector(`[data-src="${imageUrl}"]`);
+  if (imageWrapper) {
+    imageWrapper.remove();
+  }
 
-          const img = document.createElement("img");
-          img.src = e.target.result;
-          img.classList.add(
-            "w-full",
-            "h-full",
-            "object-cover",
-            "rounded",
-            "shadow-md"
-          );
-
-          const removeBtn = document.createElement("button");
-          removeBtn.innerHTML = "X";
-          removeBtn.classList.add("remove-btn");
-          removeBtn.onclick = function () {
-            // Xóa ảnh khỏi danh sách hiển thị và mảng selectedFiles
-            imageContainer.removeChild(imgWrapper);
-            const index = selectedFiles.indexOf(file);
-            if (index > -1) {
-              selectedFiles.splice(index, 1); // Xóa file khỏi mảng
-            }
-          };
-
-          imgWrapper.appendChild(img);
-          imgWrapper.appendChild(removeBtn);
-          imageContainer.appendChild(imgWrapper);
-          selectedFiles.push(file); // Lưu file vào danh sách
-        };
-
-        reader.readAsDataURL(file);
-      }
-    });
+  console.log("Danh sách ảnh sau khi xóa:", currentImages);
 }
+

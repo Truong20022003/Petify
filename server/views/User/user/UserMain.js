@@ -8,7 +8,9 @@ const headers = {
 let tbody = document.querySelector("tbody");
 let table = document.querySelector("table");
 const getListUser = async () => {
+
   try {
+    const loadingDialog = dialogLoading("Đang tải danh sách dữ liệu...");
     const response = await fetch(`${url}/getListUser`, {
       method: "GET",
       headers,
@@ -22,7 +24,7 @@ const getListUser = async () => {
 
     // Hiển thị bảng với dữ liệu người dùng và vai trò
     content.innerHTML = /*html*/ `<div class="flex mb-4">
-            <button class="bg-yellow-500 text-white px-4 py-2 rounded mr-2 btnadd">
+            <button class="bg-[#396060] text-white px-4 py-2 rounded mr-2 btnadd">
               Thêm mới
             </button>
             <input
@@ -31,13 +33,13 @@ const getListUser = async () => {
               placeholder="Tìm kiếm"
               type="text"
             />
-            <button class="bg-yellow-500 text-white px-4 py-2 rounded ml-2">
+            <button class="bg-[#396060] text-white px-4 py-2 rounded ml-2">
               Tìm kiếm
             </button>
           </div>
           <table class="content w-full border-collapse">
             <thead>
-              <tr class="bg-yellow-500 text-white">
+              <tr class="bg-[#396060] text-white">
                 <th class="border border-gray-300 px-4 py-2">STT</th>
                 <th class="border border-gray-300 px-4 py-2">Tên người dùng</th>
                 <th class="border border-gray-300 px-4 py-2" style="width: 300px;">Loại người dùng</th>
@@ -66,6 +68,7 @@ const getListUser = async () => {
 
     // Gọi hàm renderUserList để hiển thị tất cả người dùng khi load lần đầu
     renderUserList(data, roles);
+    loadingDialog.close();
   } catch (error) {
     console.log("Error fetching user data:", error);
   }
@@ -93,43 +96,34 @@ function renderUserList(users, roles) {
           <td class="border border-gray-300 px-4 py-2">${index + 1}</td>
           <td class="border border-gray-300 px-4 py-2">${user.name}</td>
           <td class="border border-gray-300 px-4 py-2">
-            ${
-              Array.isArray(roles[index]) && roles[index].length > 0
-                ? roles[index]
-                    .map((role, index) => {
-                      return `<span>${
-                        index + 1
-                      }_</span><span class="role-item px-2 py-1 rounded mr-2 mt-2 mb-2">${
-                        role.name
-                      }</span><br>`;
-                    })
-                    .join("")
-                : "Không có vai trò"
-            }
+            ${Array.isArray(roles[index]) && roles[index].length > 0
+          ? roles[index]
+            .map((role, index) => {
+              return `<span>${index + 1
+                }_</span><span class="role-item px-2 py-1 rounded mr-2 mt-2 mb-2">${role.name
+                }</span><br>`;
+            })
+            .join("")
+          : "Không có vai trò"
+        }
           </td>
           <td class="border border-gray-300 px-4 py-2">${user.email}</td>
-          <td class="border border-gray-300 px-4 py-2">${
-            user.location || ""
-          }</td>
-          <td class="border border-gray-300 px-4 py-2">${
-            user.phone_number || ""
-          }</td>
+          <td class="border border-gray-300 px-4 py-2">${user.location || ""
+        }</td>
+          <td class="border border-gray-300 px-4 py-2">${user.phone_number || ""
+        }</td>
           <td class="border border-gray-300 px-4 py-2">
-            <img alt="Product image" class="w-12 h-12" height="50" src="${
-              user.avata
-            }" width="50" />
+            <img alt="Product image" class="w-12 h-12" height="50" src="${user.avata
+        }" width="50" />
           </td>
           <td class="border border-gray-300 px-4 py-2">
             <div class="button-group flex flex-col space-y-2">
-              <button class="bg-blue-500 text-white px-2 py-1 rounded btnedit" data-id="${
-                user._id
-              }">Cập nhật</button>
-              <button class="bg-red-500 text-white px-2 py-1 rounded btndelete" data-id="${
-                user._id
-              }">Xóa</button>
-              <button class="bg-yellow-500 text-white px-2 py-1 rounded btndetail" data-id="${
-                user._id
-              }">Chi tiết</button>
+              <button class="bg-blue-500 text-white px-2 py-1 rounded btnedit" data-id="${user._id
+        }">Cập nhật</button>
+              <button class="bg-red-500 text-white px-2 py-1 rounded btndelete" data-id="${user._id
+        }">Xóa</button>
+              <button class="bg-[#008080] text-white px-2 py-1 rounded btndetail" data-id="${user._id
+        }">Chi tiết</button>
             </div>
           </td>
         </tr>`;
@@ -158,7 +152,7 @@ function searchUser(query, users) {
 }
 /////
 function setupEventListeners(roles) {
-  ///
+  ///xoa
   document.querySelectorAll(".btndelete").forEach((btn) => {
     btn.addEventListener("click", async () => {
       console.log("delete");
@@ -169,21 +163,19 @@ function setupEventListeners(roles) {
       const rolecheck = rolesList.find((role) => role.user_id === id);
       console.log(rolecheck, "rolecheck");
       if (rolecheck) {
-        alert("Người dùng đang có trong user role");
+        dialogError("Người dùng đang có 1 vai trò");
         return;
       }
-      if (confirm("ban co chac muon xoa khong")) {
-        fetch(`${url}/deleteuser/${id}`, {
-          method: "DELETE",
-          headers,
-        })
-          .then((rep) => rep.json())
-          .then(() => {
-            restoreRow();
-            alert("xoa thanh cong");
-          })
-          .catch((err) => console.log(err));
-      }
+      dialogDelete("Xóa loại người dùng", "Bạn có chắc chắn muốn xóa loại người dùng này?", async () => {
+        try {
+          await fetch(`${url}/deleteuser/${id}`, { method: "DELETE", headers });
+          restoreRow();
+        } catch (err) {
+          dialogError("Xóa thất bại", "")
+          console.log(err);
+        }
+      })
+
     });
   });
   /////chi tiet
@@ -200,12 +192,14 @@ function setupEventListeners(roles) {
         .then(async (data) => {
           // console.log(data, "kkkk");
           const roles = await getAllUsersWithRoles(data.result._id);
+          const rolesList = await getRoles();
           content.innerHTML = createUserDetailHTML(
             data.result,
             true,
             false,
             "Chi tiết người dùng",
-            roles || []
+            roles || [],
+            rolesList || []
           );
           const passwordInput = document.getElementById("password");
           const eyeIcon = document.querySelector(".fas.fa-eye");
@@ -316,9 +310,8 @@ function createUserDetailHTML(
   rolesList
 ) {
   const saveButtonHTML = showSaveButton
-    ? `<button class="bg-green-500 text-white px-4 py-2 rounded save" onclick="${
-        _id ? `saveEditUser('${_id}')` : "saveAddUser()"
-      }">Lưu</button>`
+    ? `<button class="bg-green-500 text-white px-4 py-2 rounded save" onclick="${_id ? `saveEditUser('${_id}')` : "saveAddUser()"
+    }">Lưu</button>`
     : "";
   const readonlyAttr = isReadonly ? "readonly" : "";
   // Hàm kiểm tra xem vai trò có trong danh sách vai trò của người dùng không
@@ -327,14 +320,12 @@ function createUserDetailHTML(
     return Array.isArray(roles) && roles.some((role) => role._id === roleId);
   }
 
-  console.log(rolesList, "rolesList");
   const roleCheckboxes = rolesList
     .map(
       (role) => `
      <label>
-       <input type="checkbox" name="option" value="${role._id}" ${
-        isRoleChecked(role._id) ? "checked" : ""
-      }>
+       <input type="checkbox" name="option" value="${role._id}" ${isRoleChecked(role._id) ? "checked" : ""
+        }>
        ${role.name}
      </label><br>
    `
@@ -392,7 +383,7 @@ function createUserDetailHTML(
         </div>
       </div>
     </div>
-  `;
+  `
 }
 
 // console.log(datagetListUser, "dataget");
@@ -402,14 +393,97 @@ async function saveEditUser(_id) {
 
   // Thu thập dữ liệu từ các trường input
 
-  const name= document.getElementById("name").value
-  const email=document.getElementById("email").value
-  const location= document.getElementById("address").value
-  const phone= document.getElementById("phone").value
-  const  user_name= document.getElementById("username").value
-    const  password=document.getElementById("password").value
-    const  avatar=document.getElementById("avatar-link").value
+  const name = document.getElementById("name").value;
+  const email = document.getElementById("email").value;
+  const location = document.getElementById("address").value;
+  const phone = document.getElementById("phone").value;
+  const user_name = document.getElementById("username").value;
+  const password = document.getElementById("password").value;
+  const avatar = document.getElementById("avatar-link").value;
 
+
+  // Lấy các vai trò đã chọn từ checkbox
+  const checkboxes = document.querySelectorAll('input[name="option"]:checked');
+  const selectedValues = Array.from(checkboxes).map((cb) => cb.value);
+  const selectedRoles = Array.from(
+    document.querySelectorAll('input[name="option"]:checked')
+  ).map((checkbox) => checkbox.value);
+  console.log(selectedRoles, "selectedRoles")
+  const currentRoles = await getAllUsersWithRoles(_id);
+  if (!Array.isArray(currentRoles)) {
+    console.error("currentRoles không phải là một mảng:", currentRoles);
+    return;
+  }
+  if (selectedValues.length === 0) {
+    dialogError("Hãy chọn ít nhất một vai trò.");
+    return
+  } else {
+    if (currentRoles.length === 0) {
+      for (const roleId of selectedRoles) {
+        await addRolesUser(_id, roleId); // Gọi hàm thêm vai trò
+      }
+    } else {
+      // Nếu người dùng có vai trò, thực hiện thêm và xóa vai trò
+      // Thêm vai trò mới nếu vai trò checkbox chưa có trong currentRoles
+      for (const roleId of selectedRoles) {
+        const isRoleAlreadyAssigned = currentRoles.some(
+          (role) => role._id === roleId
+        );
+        if (!isRoleAlreadyAssigned) {
+          await addRolesUser(_id, roleId); // Gọi hàm thêm vai trò
+        }
+      }
+
+      // Xóa vai trò nếu vai trò checkbox không còn được chọn
+      for (const role of currentRoles) {
+        if (!selectedRoles.includes(role._id)) {
+          await removeRolesUser(_id, role._id); // Gọi hàm xóa vai trò
+        }
+      }
+    }
+  }
+
+  // Cập nhật thông tin người dùng
+  // Thêm danh sách vai trò vào đối tượng người dùng
+  // Validate các trường nhập liệu
+  if (!name) {
+    dialogError("Tên không được để trống.");
+    return;
+  }
+
+  if (!email || !/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)) {
+    dialogError("Email không hợp lệ.");
+    return;
+  }
+
+  if (!location) {
+    dialogError("Địa chỉ không được để trống.");
+    return;
+  }
+
+  if (!phone || !/^\d{10,15}$/.test(phone)) {
+    dialogError("Số điện thoại phải là số từ 10 đến 15 chữ số.");
+    return;
+  }
+
+  if (!user_name) {
+    dialogError("Tên đăng nhập không được để trống.");
+    return;
+  }
+
+  if (!password || password.length < 6) {
+    dialogError("Mật khẩu phải có ít nhất 6 ký tự.");
+    return;
+  }
+
+  if (!avatar || !/^(http|https):\/\/[^ "]+$/.test(avatar)) {
+    dialogError(
+      "Link avatar không hợp lệ. Hãy chắc chắn rằng nó bắt đầu bằng http hoặc https."
+    );
+    return;
+  }
+
+  // Lấy các checkbox được chọn (validate ít nhất 1 vai trò)
   const updatedUser = {
     name,
     email,
@@ -419,110 +493,36 @@ async function saveEditUser(_id) {
     password,
     avata: avatar,
   };
-  // Lấy các vai trò đã chọn từ checkbox
-  const selectedRoles = Array.from(
-    document.querySelectorAll('input[name="option"]:checked')
-  ).map((checkbox) => checkbox.value);
+  updatedUser.roles = selectedRoles;
 
-  // Lấy các vai trò hiện tại của người dùng từ server
-  const currentRoles = await getAllUsersWithRoles(_id); // Lấy các vai trò hiện tại của người dùng từ server
+  dialogInfo("Bạn có muốn lưu các thay đổi không?"
+    , async () => {
+      const loadingDialog = dialogLoading("Đang tải danh sách sản phẩm...");
 
-  // Kiểm tra xem currentRoles có phải là mảng không
-  if (!Array.isArray(currentRoles)) {
-    console.error("currentRoles không phải là một mảng:", currentRoles);
-    return; // Dừng việc xử lý nếu dữ liệu không hợp lệ
-  }
-
-  if (currentRoles.length === 0) {
-    for (const roleId of selectedRoles) {
-      await addRolesUser(_id, roleId); // Gọi hàm thêm vai trò
-    }
-  } else {
-    // Nếu người dùng có vai trò, thực hiện thêm và xóa vai trò
-    // Thêm vai trò mới nếu vai trò checkbox chưa có trong currentRoles
-    for (const roleId of selectedRoles) {
-      const isRoleAlreadyAssigned = currentRoles.some(
-        (role) => role._id === roleId
-      );
-      if (!isRoleAlreadyAssigned) {
-        await addRolesUser(_id, roleId); // Gọi hàm thêm vai trò
+      try {
+        const response = await fetch(`${url}/updateuser/${_id}`, {
+          method: "PUT",
+          headers,
+          body: JSON.stringify(updatedUser),
+        });
+        const data = await response.json();
+        if (data.status) {
+          dialogSuccess("Cập nhật người dùng thành công!").then(() => {
+            restoreRow(); // Chỉ gọi sau khi thông báo xong
+          });  
+        } else {
+          dialogError("Cập nhật thất bại. Vui lòng thử lại.")
+        }
+        loadingDialog.close();
+      } catch (error) {
+        console.error("Lỗi khi cập nhật role:", error);
+        dialogError("Đã xảy ra lỗi. Vui lòng thử lại.");
       }
-    }
-
-    // Xóa vai trò nếu vai trò checkbox không còn được chọn
-    for (const role of currentRoles) {
-      if (!selectedRoles.includes(role._id)) {
-        await removeRolesUser(_id, role._id); // Gọi hàm xóa vai trò
-      }
-    }
-  }
-
-  // Cập nhật thông tin người dùng
-  updatedUser.roles = selectedRoles; // Thêm danh sách vai trò vào đối tượng người dùng
-  // Validate các trường nhập liệu
-  if (!name) {
-    alert("Tên không được để trống.");
-    return;
-  }
-
-  if (!email || !/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)) {
-    alert("Email không hợp lệ.");
-    return;
-  }
-
-  if (!location) {
-    alert("Địa chỉ không được để trống.");
-    return;
-  }
-
-  if (!phone || !/^\d{10,15}$/.test(phone)) {
-    alert("Số điện thoại phải là số từ 10 đến 15 chữ số.");
-    return;
-  }
-
-  if (!user_name) {
-    alert("Tên đăng nhập không được để trống.");
-    return;
-  }
-
-  if (!password || password.length < 6) {
-    alert("Mật khẩu phải có ít nhất 6 ký tự.");
-    return;
-  }
-
-  if (!avatar || !/^(http|https):\/\/[^ "]+$/.test(avatar)) {
-    alert(
-      "Link avatar không hợp lệ. Hãy chắc chắn rằng nó bắt đầu bằng http hoặc https."
-    );
-    return;
-  }
-
-  // Lấy các checkbox được chọn (validate ít nhất 1 vai trò)
-  const checkboxes = document.querySelectorAll('input[name="option"]:checked');
-  const selectedValues = Array.from(checkboxes).map((cb) => cb.value);
-  if (selectedValues.length === 0) {
-    alert("Hãy chọn ít nhất một vai trò.");
-    return;
-  }
-
-  fetch(`${url}/updateuser/${_id}`, {
-    method: "PUT",
-    headers,
-    body: JSON.stringify(updatedUser),
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      if (data.status) {
-        alert("Cập nhật người dùng thành công!");
-        restoreRow(); // Gọi lại hàm này để hiển thị bảng người dùng sau khi cập nhật
-      } else {
-        alert("Cập nhật thất bại. Vui lòng thử lại.");
-      }
+    },
+    () => {
+      restoreRow();
     })
-    .catch((error) => {
-      console.error("Lỗi khi cập nhật người dùng:", error);
-      alert("Đã xảy ra lỗi. Vui lòng thử lại.");
-    });
+
 }
 
 ///luu them moi
@@ -539,37 +539,37 @@ async function saveAddUser() {
 
   // Validate các trường nhập liệu
   if (!name) {
-    alert("Tên không được để trống.");
+    dialogError("Tên không được để trống.");
     return;
   }
 
   if (!email || !/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)) {
-    alert("Email không hợp lệ.");
+    dialogError("Email không hợp lệ.");
     return;
   }
 
   if (!location) {
-    alert("Địa chỉ không được để trống.");
+    dialogError("Địa chỉ không được để trống.");
     return;
   }
 
   if (!phone || !/^\d{10,15}$/.test(phone)) {
-    alert("Số điện thoại phải là số từ 10 đến 15 chữ số.");
+    dialogError("Số điện thoại phải là số từ 10 đến 15 chữ số.");
     return;
   }
 
   if (!user_name) {
-    alert("Tên đăng nhập không được để trống.");
+    dialogError("Tên đăng nhập không được để trống.");
     return;
   }
 
   if (!password || password.length < 6) {
-    alert("Mật khẩu phải có ít nhất 6 ký tự.");
+    dialogError("Mật khẩu phải có ít nhất 6 ký tự.");
     return;
   }
 
   if (!avatar || !/^(http|https):\/\/[^ "]+$/.test(avatar)) {
-    alert(
+    dialogError(
       "Link avatar không hợp lệ. Hãy chắc chắn rằng nó bắt đầu bằng http hoặc https."
     );
     return;
@@ -579,7 +579,7 @@ async function saveAddUser() {
   const checkboxes = document.querySelectorAll('input[name="option"]:checked');
   const selectedValues = Array.from(checkboxes).map((cb) => cb.value);
   if (selectedValues.length === 0) {
-    alert("Hãy chọn ít nhất một vai trò.");
+    dialogError("Hãy chọn ít nhất một vai trò.");
     return;
   }
 
@@ -594,42 +594,62 @@ async function saveAddUser() {
     avata: avatar,
   };
 
-  try {
-    // Gửi yêu cầu để tạo người dùng mới
-    const userResponse = await fetch(`${url}/adduser`, {
-      method: "POST",
-      headers,
-      body: JSON.stringify(newUser),
-    });
-
-    const userData = await userResponse.json();
-    if (userResponse.ok && userData.status && userData.result._id) {
-      const userId = userData.result._id;
-      // console.log("Thêm người dùng thành công! User ID:", userId);
-
-      // Gửi vai trò đã chọn lên server
-      const userRolePromises = selectedValues.map((roleId) => {
-        const userRoleData = {
-          user_id: userId,
-          role_id: roleId,
-        };
-        return fetch(`http://localhost:3000/userRole/adduser_role`, {
+  dialogInfo("Bạn có muốn lưu không?"
+    , async () => {
+    const loadingDialog = dialogLoading("Đang thao tác...");
+      try {
+        // Gửi yêu cầu để tạo người dùng mới
+        const userResponse = await fetch(`${url}/adduser`, {
           method: "POST",
           headers,
-          body: JSON.stringify(userRoleData),
+          body: JSON.stringify(newUser),
         });
-      });
 
-      await Promise.all(userRolePromises);
-      alert("Thêm người dùng và vai trò thành công!");
-      restoreRow();
-    } else {
-      alert("Thêm người dùng thất bại. Vui lòng thử lại.");
+        const userData = await userResponse.json();
+
+        // Kiểm tra phản hồi từ server và tạo người dùng thành công
+        if (userResponse.ok && userData.status && userData.result._id) {
+          const userId = userData.result._id;
+
+          // Gửi vai trò đã chọn lên server
+          const userRolePromises = selectedValues.map((roleId) => {
+            const userRoleData = {
+              user_id: userId,
+              role_id: roleId,
+            };
+            return fetch(`http://localhost:3000/userRole/adduser_role`, {
+              method: "POST",
+              headers,
+              body: JSON.stringify(userRoleData),
+            });
+          });
+
+          // Chờ tất cả các yêu cầu vai trò hoàn thành
+          const userRoleResponses = await Promise.all(userRolePromises);
+
+          // Kiểm tra xem tất cả các vai trò đã được gán thành công
+          const allRolesAssigned = userRoleResponses.every(response => response.ok);
+
+          if (allRolesAssigned) {
+            dialogSuccess("Thêm người dùng và vai trò thành công!").then(() => {
+              restoreRow(); // Chỉ gọi sau khi thông báo xong
+            });  
+          } else {
+            dialogError("Thêm vai trò thất bại!")
+          }
+        } else {
+          dialogError("Thêm người dùng thất bại!")
+        }
+        loadingDialog.close();
+      } catch (err) {
+        // Xử lý lỗi khi thêm người dùng hoặc vai trò
+        console.error("Lỗi khi thêm người dùng hoặc vai trò:", err);
+        dialogError("Đã xảy ra lỗi!")
+      }
     }
-  } catch (err) {
-    console.error("Lỗi khi thêm người dùng hoặc vai trò:", err);
-    alert("Đã xảy ra lỗi. Vui lòng thử lại.");
-  }
+    , () => {
+      restoreRow();
+    })
 }
 async function getAllUsersWithRoles(id) {
   // console.log(id, "user");
@@ -643,10 +663,10 @@ async function getAllUsersWithRoles(id) {
     );
 
     const data = await response.json();
-    // console.log(data.result, "InvoiceDetail");
+    console.log(data.result, "getAllUsersWithRoles");
     const userRole = data.result.find((userRole) => userRole.user._id === id);
     if (userRole) {
-      // console.log(userRole.roles, "Tên người dùng");
+      console.log(userRole.roles, "Tên người dùng");
       return userRole.roles;
     } else {
       console.log("User không tồn tại");

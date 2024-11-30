@@ -1,14 +1,21 @@
 package com.example.petify.viewmodel
 
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.petify.BaseViewModel
 import com.example.petify.data.server.CreateInteface
+import com.example.petify.data.server.enitities.LoginResponse
+import com.example.petify.data.server.enitities.RegisterResponse
 import com.example.petify.data.server.enitities.UserModel
 import com.example.petify.data.server.repository.UserRepository
+import com.example.petify.data.server.service.UserRoleService
+import com.example.petify.data.server.service.UserService
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
+import java.io.IOException
 
 class UserViewModel : BaseViewModel() {
     private val _userList = MutableLiveData<List<UserModel>?>()
@@ -17,8 +24,14 @@ class UserViewModel : BaseViewModel() {
     private val _user = MutableLiveData<UserModel?>()
     val user: LiveData<UserModel?> get() = _user
 
+    private val _userRegisterUser = MutableLiveData<RegisterResponse?>()
+    val userRegisterUser: LiveData<RegisterResponse?> get() = _userRegisterUser
+
     private val _loginSuccess = MutableLiveData<Boolean>()
     val loginSuccess: LiveData<Boolean> get() = _loginSuccess
+
+    private val _loginResponse = MutableLiveData<LoginResponse?>()
+    val loginResponse: LiveData<LoginResponse?> get() = _loginResponse
 
     private val _isPasswordReset = MutableLiveData<Boolean>()
     val isPasswordReset: LiveData<Boolean> get() = _isPasswordReset
@@ -35,6 +48,10 @@ class UserViewModel : BaseViewModel() {
     private val _isUserDeleted = MutableLiveData<Boolean>()
     val isUserDeleted: LiveData<Boolean> get() = _isUserDeleted
 
+
+    private val _isPasswordChanged = MutableLiveData<Boolean>()
+    val isPasswordChanged: LiveData<Boolean> get() = _isPasswordChanged
+
     private val _errorMessage = MutableLiveData<String?>()
     val errorMessage: LiveData<String?> get() = _errorMessage
 
@@ -42,7 +59,7 @@ class UserViewModel : BaseViewModel() {
         viewModelScope.launch {
             try {
 
-                val apiService = CreateInteface.createUser()
+                val apiService: UserService = CreateInteface.createService()
                 val userRepository = UserRepository(apiService)
                 _userList.value = userRepository.getListUser()
             } catch (e: Exception) {
@@ -56,7 +73,7 @@ class UserViewModel : BaseViewModel() {
         viewModelScope.launch {
             try {
 
-                val apiService = CreateInteface.createUser()
+                val apiService: UserService = CreateInteface.createService()
                 val userRepository = UserRepository(apiService)
                 _isUserAdded.value = userRepository.addUser(user) != null
             } catch (e: Exception) {
@@ -66,33 +83,49 @@ class UserViewModel : BaseViewModel() {
         }
     }
 
-    fun loginUser(email: String, password: String) {
+    fun loginUser(login: String, password: String, context: Context) {
         viewModelScope.launch {
             try {
-                val apiService = CreateInteface.createUser()
+                val apiService: UserService = CreateInteface.createService()
                 val userRepository = UserRepository(apiService)
-                val result = userRepository.loginUser(email, password)
+                val result = userRepository.loginUser(login, password)
                 if (result != null) {
-                    _user.value = result
+                    val (loginResponse, token) = result
+                    _loginResponse.value = loginResponse
+                    token?.let { saveToken(it, context) }
                     _loginSuccess.value = true
+
                 } else {
                     _loginSuccess.value = false
+                    _errorMessage.value = "Login failed"
                 }
-            } catch (e: Exception) {
+            } catch (e: IOException) {
+                _errorMessage.value = "Network error. Please check your connection."
                 _loginSuccess.value = false
-                _errorMessage.value = "Error logging in user: ${e.message}"
+            } catch (e: HttpException) {
+                _errorMessage.value = "Server error: ${e.response()?.errorBody()?.string()}"
+                _loginSuccess.value = false
+            } catch (e: Exception) {
+                _errorMessage.value = "Unexpected error: ${e.message}"
+                _loginSuccess.value = false
             }
         }
     }
 
+    private fun saveToken(token: String, context: Context) {
+        val sharedPreferences = context.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
+        sharedPreferences.edit().putString("auth_token", token).apply()
+    }
 
-    fun registerUser(name: String, email: String, password: String) {
+
+
+    fun registerUser(name: String, email: String, password: String, phoneNumber : String) {
         viewModelScope.launch {
             try {
-                val apiService = CreateInteface.createUser()
+                val apiService: UserService = CreateInteface.createService()
                 val userRepository = UserRepository(apiService)
-                val registeredUser = userRepository.registerUser(name, email, password)
-                _user.value = registeredUser
+                val registeredUser = userRepository.registerUser(name, email, password, phoneNumber)
+                _userRegisterUser.value = registeredUser
                 _registrationSuccess.value = registeredUser != null
             } catch (e: Exception) {
                 Log.e("UserViewModel", "Error registering user", e)
@@ -103,24 +136,30 @@ class UserViewModel : BaseViewModel() {
     }
 
 
-    fun resetPassword(email: String) {
+    fun changePassword(phoneNumber: String, newPassword: String) {
         viewModelScope.launch {
             try {
-                val apiService = CreateInteface.createUser()
+                val apiService: UserService = CreateInteface.createService()
                 val userRepository = UserRepository(apiService)
-                _isPasswordReset.value = userRepository.resetPassword(email)
+                val isSuccess = userRepository.changePassword(phoneNumber, newPassword)
+                if (isSuccess) {
+                    _isPasswordChanged.value = true
+                } else {
+                    _errorMessage.value = "Failed to change password"
+                }
             } catch (e: Exception) {
-                Log.e("UserViewModel", "Error resetting password", e)
-                _errorMessage.value = "Error resetting password: ${e.message}"
+                Log.e("UserViewModel", "Error changing password", e)
+                _errorMessage.value = "Error: ${e.message}"
             }
         }
     }
 
 
+
     fun getUserById(id: String) {
         viewModelScope.launch {
             try {
-                val apiService = CreateInteface.createUser()
+                val apiService: UserService = CreateInteface.createService()
                 val userRepository = UserRepository(apiService)
                 _user.value = userRepository.getUserById(id)
             } catch (e: Exception) {
@@ -133,7 +172,7 @@ class UserViewModel : BaseViewModel() {
     fun updateUser(id: String, user: UserModel) {
         viewModelScope.launch {
             try {
-                val apiService = CreateInteface.createUser()
+                val apiService: UserService = CreateInteface.createService()
                 val userRepository = UserRepository(apiService)
                 _isUserUpdated.value = userRepository.updateUser(id, user) != null
             } catch (e: Exception) {
@@ -146,12 +185,27 @@ class UserViewModel : BaseViewModel() {
     fun deleteUser(id: String) {
         viewModelScope.launch {
             try {
-                val apiService = CreateInteface.createUser()
+                val apiService: UserService = CreateInteface.createService()
                 val userRepository = UserRepository(apiService)
                 _isUserDeleted.value = userRepository.deleteUser(id)
             } catch (e: Exception) {
                 Log.e("UserViewModel", "Error deleting user", e)
                 _errorMessage.value = "Error deleting user: ${e.message}"
+            }
+        }
+    }
+    fun updateUserAddress(id: String, address: String) {
+        viewModelScope.launch {
+            try {
+                val apiService: UserService = CreateInteface.createService()
+                val userRepository = UserRepository(apiService)
+                val updatedUser = userRepository.updateUserAddress(id, address)
+                _isUserUpdated.value = updatedUser != null
+                _user.value = updatedUser // Cập nhật thông tin người dùng nếu thành công
+            } catch (e: Exception) {
+                Log.e("UserViewModel", "Error updating user address", e)
+                _errorMessage.value = "Error updating user address: ${e.message}"
+                _isUserUpdated.value = false
             }
         }
     }

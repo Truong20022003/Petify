@@ -125,7 +125,7 @@ document
 
         if (user) {
           // Lấy vai trò người dùng
-          const roles = await getAllUsersWithRoles(user._id); // Gọi hàm lấy vai trò
+          const roles = await getAllUsersWithRoles(user._id);
           console.log(roles, "checkuRole");
 
           // Kiểm tra vai trò người dùng
@@ -135,21 +135,27 @@ document
               role._id === "672f6ea15367fbd3bf9f69ff"
           );
           console.log(userRole, "userRole");
-
           if (userRole) {
-            // Lưu thông tin người dùng vào localStorage
             localStorage.setItem("loggedInUser", user.name);
             localStorage.setItem("loggedInUserAvatar", user.avata);
+            const roleAdmin = roles.some(
+              (role) => role._id === "672f2c435367fbd3bf9f6831"
+            );
+            if (roleAdmin) {
+              localStorage.setItem("loggedInUserRole", "admin");
+            } else {
+              localStorage.setItem("loggedInUserRole", "");
+            }
+            console.log(roleAdmin, "roleAdmin");
 
             console.log(`${user.name}, ${user.avata}`);
-
-            // Chuyển hướng nếu cần
-            window.location.href = "/views/Home/HomeScreen.html";
+            // alert("Đăng nhập thành công");
+            dialogSuccessLogin("Đăng nhập thành công","/views/Home/HomeScreen.html" )
           } else {
-            alert("Bạn không có quyền truy cập");
+            dialogWarning("Xin lỗi!","Bạn không có quyền truy cập")
           }
         } else {
-          alert("Bạn nhập sai tài khoản hoặc mật khẩu");
+          dialogError("Xin lỗi!","Bạn nhập sai tài khoản hoặc mật khẩu")
         }
       } catch (error) {
         console.error("Lỗi khi đăng nhập:", error); // Xử lý lỗi nếu có
@@ -157,6 +163,25 @@ document
     }
   });
 ///
+async function getUserRole() {
+  // console.log(id, "user");
+  try {
+    const response = await fetch(
+      `http://localhost:3000/userRole/getListUserRole`,
+      {
+        method: "GET",
+        headers,
+      }
+    );
+
+    const data = await response.json();
+    return data;
+  } catch (err) {
+    console.log(err);
+    return "";
+  }
+}
+////
 async function getAllUsersWithRoles(id) {
   // console.log(id, "user");
   try {

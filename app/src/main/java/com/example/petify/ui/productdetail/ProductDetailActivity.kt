@@ -5,7 +5,7 @@ import android.widget.Toast
 import com.example.petify.BaseActivity
 import com.example.petify.BaseViewModel
 import com.example.petify.databinding.ActivityProductDetailBinding
-import com.example.petify.model.ProductModel
+
 
 class ProductDetailActivity : BaseActivity<ActivityProductDetailBinding, BaseViewModel>() {
 

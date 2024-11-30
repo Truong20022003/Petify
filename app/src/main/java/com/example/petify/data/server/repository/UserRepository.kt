@@ -1,10 +1,17 @@
 package com.example.petify.data.server.repository
 
+import android.content.Context
 import android.util.Log
+import android.widget.Toast
+import com.example.petify.data.server.enitities.ChangePasswordRequest
+import com.example.petify.data.server.enitities.ErrorResponse
 import com.example.petify.data.server.enitities.LoginRequest
+import com.example.petify.data.server.enitities.LoginResponse
+import com.example.petify.data.server.enitities.RegisterResponse
 import com.example.petify.data.server.enitities.RegisterUser
 import com.example.petify.data.server.enitities.UserModel
 import com.example.petify.data.server.service.UserService
+import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -35,42 +42,88 @@ class UserRepository(private val api: UserService) {
     suspend fun registerUser(
         name: String,
         email: String,
-        password: String
-    ): UserModel? = withContext(Dispatchers.IO) {
-        val responsePost = RegisterUser(name,email, password)
-        val response = api.register(responsePost)
-        if (response.isSuccessful) {
-            Log.d("UserRepository", "registerUser Success: ${response.body()}")
-            response.body()
-        } else {
-            Log.e("UserRepository", "registerUser Error: ${response.errorBody()}")
+        password: String,
+        phoneNumber: String
+    ): RegisterResponse? = withContext(Dispatchers.IO) {
+        try {
+            val responsePost = RegisterUser(name, email, password, phoneNumber)
+            val response = api.register(responsePost)
+            if (response.isSuccessful) {
+                response.body()
+            } else {
+                val errorBody = response.errorBody()?.string() ?: "Unknown error"
+                Log.e("UserRepository", "API Error: $errorBody")
+                null
+            }
+        } catch (e: Exception) {
+            Log.e("UserRepository", "Exception during API call: ${e.message}")
             null
         }
     }
 
-    suspend fun loginUser(email: String, password: String): UserModel? =
+
+
+//    suspend fun loginUser(emailOrPhone: String, password: String): Pair<UserModel?, String?>? =
+//        withContext(Dispatchers.IO) {
+//            val responsePost = LoginRequest(emailOrPhone, password)
+//            val response = api.login(responsePost)
+//            if (response.isSuccessful) {
+//                Log.d("UserRepository", "loginUser Success: ${response.body().toString()}")
+//                val user = response.body()
+//                val token = response.headers()["Authorization"] // Lấy token từ header (hoặc body)
+//                Pair(user, token)
+//            } else {
+//                val errorBody = response.errorBody()?.string() // Đọc nội dung lỗi
+//                Log.e("UserRepository", "loginUser Error: $errorBody")
+//                null
+//            }
+//        }
+
+    suspend fun loginUser(emailOrPhone: String, password: String): Pair<LoginResponse?, String?>? =
         withContext(Dispatchers.IO) {
-            val responsePost = LoginRequest(email, password)
+            val responsePost = LoginRequest(emailOrPhone, password)
             val response = api.login(responsePost)
             if (response.isSuccessful) {
                 Log.d("UserRepository", "loginUser Success: ${response.body()}")
-                response.body()
+                val user = response.body()
+                val token = response.headers()["Authorization"] // Lấy token từ header (hoặc body)
+                Pair(user, token)
             } else {
-                Log.e("UserRepository", "loginUser Error: ${response.errorBody()}")
+                // Lấy nội dung lỗi từ `errorBody`
+                val errorBody = response.errorBody()?.string()
+                val loginError = errorBody?.let {
+                    try {
+                        Gson().fromJson(it, ErrorResponse::class.java)
+                    } catch (e: Exception) {
+                        Log.e("UserRepository", "Error parsing errorBody", e)
+                        null
+                    }
+                }
+                // Ghi log chi tiết lỗi
+                Log.e(
+                    "UserRepository",
+                    "loginUser Error: ${loginError?.status}, ${loginError?.error}"
+                )
                 null
             }
         }
 
-    suspend fun resetPassword(email: String): Boolean = withContext(Dispatchers.IO) {
-        val response = api.resetPassword(email)
-        if (response.isSuccessful) {
-            Log.d("UserRepository", "resetPassword Success: Password reset email sent")
-            true
-        } else {
-            Log.e("UserRepository", "resetPassword Error: ${response.errorBody()}")
+    suspend fun changePassword(phoneNumber: String, newPassword: String): Boolean = withContext(Dispatchers.IO) {
+        try {
+            val response = api.changePassword(ChangePasswordRequest(phoneNumber, newPassword))
+            if (response.isSuccessful) {
+                Log.d("UserRepository", "Password change successful")
+                true
+            } else {
+                Log.e("UserRepository", "Error changing password: ${response.errorBody()?.string()}")
+                false
+            }
+        } catch (e: Exception) {
+            Log.e("UserRepository", "Exception while changing password", e)
             false
         }
     }
+
 
     suspend fun getUserById(id: String): UserModel? = withContext(Dispatchers.IO) {
         val response = api.getUserById(id)
@@ -106,4 +159,16 @@ class UserRepository(private val api: UserService) {
             false
         }
     }
+    suspend fun updateUserAddress(id: String, address: String): UserModel? = withContext(Dispatchers.IO) {
+        val requestBody = mapOf("location" to address)
+        val response = api.updateUserAddress(id, requestBody)
+        if (response.isSuccessful) {
+            Log.d("UserRepository", "updateUserAddress Success: ${response.body()}")
+            response.body()
+        } else {
+            Log.e("UserRepository", "updateUserAddress Error: ${response.errorBody()?.string()}")
+            null
+        }
+    }
+
 }

@@ -8,6 +8,7 @@ import com.example.petify.BaseViewModel
 import com.example.petify.data.server.CreateInteface
 import com.example.petify.data.server.enitities.InvoiceModel
 import com.example.petify.data.server.repository.InvoiceRepository
+import com.example.petify.data.server.service.InvoiceService
 import kotlinx.coroutines.launch
 
 class InvoiceViewModel : BaseViewModel() {
@@ -29,7 +30,7 @@ class InvoiceViewModel : BaseViewModel() {
     fun getInvoices() {
         viewModelScope.launch {
             try {
-                val apiService = CreateInteface.createInvoice()
+                val apiService : InvoiceService = CreateInteface.createService()
                 val invoiceRepository = InvoiceRepository(apiService)
                 val result = invoiceRepository.getListInvoice()
                 _invoiceList.value = result
@@ -43,7 +44,7 @@ class InvoiceViewModel : BaseViewModel() {
     fun addInvoice(invoice: InvoiceModel) {
         viewModelScope.launch {
             try {
-                val apiService = CreateInteface.createInvoice()
+                val apiService : InvoiceService = CreateInteface.createService()
                 val invoiceRepository = InvoiceRepository(apiService)
                 val result = invoiceRepository.addInvoice(invoice)
                 _invoice.value = result
@@ -58,7 +59,7 @@ class InvoiceViewModel : BaseViewModel() {
     fun getInvoiceById(id: String) {
         viewModelScope.launch {
             try {
-                val apiService = CreateInteface.createInvoice()
+                val apiService : InvoiceService = CreateInteface.createService()
                 val invoiceRepository = InvoiceRepository(apiService)
                 val result = invoiceRepository.getInvoiceById(id)
                 _invoice.value = result
@@ -72,7 +73,7 @@ class InvoiceViewModel : BaseViewModel() {
     fun updateInvoice(id: String, invoice: InvoiceModel) {
         viewModelScope.launch {
             try {
-                val apiService = CreateInteface.createInvoice()
+                val apiService : InvoiceService = CreateInteface.createService()
                 val invoiceRepository = InvoiceRepository(apiService)
                 val result = invoiceRepository.updateInvoice(id, invoice)
                 _invoice.value = result
@@ -87,7 +88,7 @@ class InvoiceViewModel : BaseViewModel() {
     fun deleteInvoice(id: String) {
         viewModelScope.launch {
             try {
-                val apiService = CreateInteface.createInvoice()
+                val apiService : InvoiceService = CreateInteface.createService()
                 val invoiceRepository = InvoiceRepository(apiService)
                 val isDeleted = invoiceRepository.deleteInvoice(id)
                 _isInvoiceDeleted.value = isDeleted

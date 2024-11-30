@@ -8,6 +8,7 @@ import com.example.petify.BaseViewModel
 import com.example.petify.data.server.CreateInteface
 import com.example.petify.data.server.enitities.InvoiceDetailModel
 import com.example.petify.data.server.repository.InvoiceDetailRepository
+import com.example.petify.data.server.service.InvoiceDetailService
 import kotlinx.coroutines.launch
 
 class InvoiceDetailViewModel : BaseViewModel() {
@@ -30,7 +31,7 @@ class InvoiceDetailViewModel : BaseViewModel() {
     fun fetchInvoiceDetails() {
         viewModelScope.launch {
             try {
-                val apiService = CreateInteface.createInvoiceDetail()
+                val apiService : InvoiceDetailService = CreateInteface.createService()
                 val invoiceDetailRepository = InvoiceDetailRepository(apiService)
                 val result = invoiceDetailRepository.getListInvoiceDetail()
                 _invoiceDetailList.value = result
@@ -44,7 +45,7 @@ class InvoiceDetailViewModel : BaseViewModel() {
     fun addInvoiceDetail(invoiceDetail: InvoiceDetailModel) {
         viewModelScope.launch {
             try {
-                val apiService = CreateInteface.createInvoiceDetail()
+                val apiService : InvoiceDetailService = CreateInteface.createService()
                 val invoiceDetailRepository = InvoiceDetailRepository(apiService)
                 val result = invoiceDetailRepository.addInvoiceDetail(invoiceDetail)
                 _invoiceDetail.value = result
@@ -59,7 +60,7 @@ class InvoiceDetailViewModel : BaseViewModel() {
     fun fetchInvoiceDetailById(id: String) {
         viewModelScope.launch {
             try {
-                val apiService = CreateInteface.createInvoiceDetail()
+                val apiService : InvoiceDetailService = CreateInteface.createService()
                 val invoiceDetailRepository = InvoiceDetailRepository(apiService)
                 val result = invoiceDetailRepository.getInvoiceDetailById(id)
                 _invoiceDetail.value = result
@@ -73,7 +74,7 @@ class InvoiceDetailViewModel : BaseViewModel() {
     fun updateInvoiceDetail(id: String, invoiceDetail: InvoiceDetailModel) {
         viewModelScope.launch {
             try {
-                val apiService = CreateInteface.createInvoiceDetail()
+                val apiService : InvoiceDetailService = CreateInteface.createService()
                 val invoiceDetailRepository = InvoiceDetailRepository(apiService)
                 val result = invoiceDetailRepository.updateInvoiceDetail(id, invoiceDetail)
                 _invoiceDetail.value = result
@@ -88,7 +89,7 @@ class InvoiceDetailViewModel : BaseViewModel() {
     fun deleteInvoiceDetail(id: String) {
         viewModelScope.launch {
             try {
-                val apiService = CreateInteface.createInvoiceDetail()
+                val apiService : InvoiceDetailService = CreateInteface.createService()
                 val invoiceDetailRepository = InvoiceDetailRepository(apiService)
                 val isDeleted = invoiceDetailRepository.deleteInvoiceDetail(id)
                 _isInvoiceDetailDeleted.value = isDeleted

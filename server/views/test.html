@@ -1,157 +1,223 @@
 <!DOCTYPE html>
 <html lang="vi">
-<head>
+  <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Chọn ảnh</title>
+    <title>Thêm sản phẩm</title>
     <link
-        href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
-        rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
     />
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <style>
-        .remove-btn {
-            position: absolute;
-            top: 4px;
-            right: 4px;
-            cursor: pointer;
-            background-color: red;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+      .remove-btn {
+        position: absolute;
+        top: 4px;
+        right: 4px;
+        cursor: pointer;
+        background-color: red;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .spinner {
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #3498db;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        animation: spin 2s linear infinite;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
         }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
     </style>
-</head>
-<body>
-    <div class="container mx-auto">
-        <h1 class="text-2xl font-bold mb-4">Chọn ảnh từ desktop</h1>
+  </head>
+  <body>
+    <div class="container mx-auto mt-8 p-4">
+      <h1 class="text-2xl font-bold mb-4">Thêm sản phẩm</h1>
+
+      <!-- Form thông tin sản phẩm -->
+      <div class="mb-6">
+        <label for="name" class="block text-sm font-medium">Tên sản phẩm</label>
         <input
-            type="file"
-            id="file-input"
-            multiple
-            accept="image/*"
-            class="mb-4"
+          type="text"
+          id="name"
+          class="border border-gray-300 p-2 w-full rounded"
         />
-        <button id="upload-btn" class="bg-blue-500 text-white py-2 px-4 rounded">
-            Upload
-        </button>
+      </div>
+
+      <div class="mb-6">
+        <label for="price" class="block text-sm font-medium">Giá</label>
+        <input
+          type="number"
+          id="price"
+          class="border border-gray-300 p-2 w-full rounded"
+        />
+      </div>
+
+      <div class="mb-6">
+        <label for="date" class="block text-sm font-medium">Ngày nhập</label>
+        <input
+          type="date"
+          id="date"
+          class="border border-gray-300 p-2 w-full rounded"
+        />
+      </div>
+
+      <!-- Chọn ảnh -->
+      <div class="mb-6">
+        <label class="block text-sm font-medium mb-2">Chọn ảnh</label>
+        <input
+          type="file"
+          id="file-input"
+          multiple
+          accept="image/*"
+          class="border border-gray-300 p-2 w-full rounded"
+        />
         <div
-            id="image-container"
-            class="flex flex-wrap gap-4 overflow-y-scroll h-64 w-[500px] border border-gray-300 p-2"
+          id="image-container"
+          class="flex flex-wrap gap-4 mt-4 overflow-y-scroll h-64 w-full border border-gray-300 p-2"
+        ></div>
+      </div>
+
+      <!-- Nút upload -->
+      <div class="flex items-center gap-4">
+        <button
+          id="upload-btn"
+          class="bg-blue-500 text-white px-4 py-2 rounded"
         >
-            <!-- Các ảnh sẽ được hiển thị ở đây -->
+          Upload
+        </button>
+        <div id="loading" class="hidden">
+          <div class="spinner"></div>
         </div>
+      </div>
     </div>
 
     <script>
-        const selectedFiles = []; // Mảng lưu trữ các file ảnh đã chọn
+      const current = [];
+      const imageContainer = document.getElementById("image-container");
+      const loadingElement = document.getElementById("loading");
 
-        document.getElementById("file-input").addEventListener("change", function (event) {
-            const imageContainer = document.getElementById("image-container");
-            const files = event.target.files;
+      // Hàm lấy ảnh hiện tại
+      function getAllDisplayedImages() {
+        return current;
+      }
 
-            for (const file of files) {
-                const reader = new FileReader();
+      // Xử lý upload ảnh
+      document
+        .getElementById("upload-btn")
+        .addEventListener("click", async function (event) {
+          event.preventDefault();
 
-                reader.onload = function (e) {
-                    const imgWrapper = document.createElement("div");
-                    imgWrapper.classList.add("relative", "w-32", "h-32");
+          // Hiển thị loading
+          loadingElement.classList.remove("hidden");
+          const selectedFiles = getAllDisplayedImages();
+          // Tạo FormData
+          const name = "dau ma";
+          const supplier_id = "671da9ba08f0a23211562a9d";
+          const price = 2424;
+          const date = "21/11/2024";
+          const expiry_Date = "22/12/2024";
+          const quantity = 34343;
+          const status = "sfsfs";
+          const description = "dfsf";
+          const sale = 3434;
 
-                    const img = document.createElement("img");
-                    img.src = e.target.result;
-                    img.classList.add(
-                        "w-full",
-                        "h-full",
-                        "object-cover",
-                        "rounded",
-                        "shadow-md"
-                    );
+          // Tạo đối tượng FormData
+          const formData = new FormData();
+          formData.append("name", name);
+          formData.append("supplier_id", supplier_id);
+          formData.append("price", price);
+          formData.append("date", date);
+          formData.append("expiry_Date", expiry_Date);
+          formData.append("quantity", quantity);
+          formData.append("status", status);
+          formData.append("description", description);
+          formData.append("sale", sale);
 
-                    const removeBtn = document.createElement("button");
-                    removeBtn.innerHTML = "X";
-                    removeBtn.classList.add("remove-btn");
-                    removeBtn.onclick = function () {
-                        // Xóa ảnh khỏi danh sách hiển thị và mảng selectedFiles
-                        imageContainer.removeChild(imgWrapper);
-                        const index = selectedFiles.indexOf(file);
-                        if (index > -1) {
-                            selectedFiles.splice(index, 1); // Xóa file khỏi mảng
-                        }
-                    };
+          selectedFiles.forEach((file) => {
+            formData.append("image", file);
+          });
 
-                    imgWrapper.appendChild(img);
-                    imgWrapper.appendChild(removeBtn);
-                    imageContainer.appendChild(imgWrapper);
-                    selectedFiles.push(file); // Lưu file vào danh sách
-                };
-
-                reader.readAsDataURL(file);
+          // Gửi yêu cầu POST với formData
+          for (let [key, value] of formData.entries()) {
+    console.log(key, value);
+  }
+  
+          try {
+            const response = await fetch(
+              "http://localhost:3000/product/addproduct",
+              {
+                method: "POST",
+                headers: {
+                  Authorization: "trinh_nhung",
+                },
+                body: formData,
+              }
+            );
+            if (response.ok) {
+              const result = await response.json();
+              alert("duo roi dau ma")
+              console.log(result);
+            } else {
+              console.error("Có lỗi xảy ra khi gửi yêu cầu!");
             }
+          } catch (error) {
+            console.error("Đã xảy ra lỗi:", error);
+          }
         });
 
-        // Function to upload images to the server
-        document.getElementById("upload-btn").addEventListener("click", function () {
-            if (selectedFiles.length === 0) {
-                alert("Vui lòng chọn ít nhất một ảnh!");
-                return;
-            }
+      // Hiển thị ảnh sau khi chọn
+      document
+        .getElementById("file-input")
+        .addEventListener("change", function (event) {
+          const files = event.target.files;
 
-            // Dữ liệu ảo
-            const name = "doando";
-            const supplier_id = "nhummmmmm";
-            const price = 2424;
-            const date = "ewewe";
-            const expiry_Date = "sfsfs";
-            const quantity = 34343;
-            const status = "sfsfs";
-            const description = "dfsf";
-            const sale = 3434;
+          for (const file of files) {
+            const imageUrl = URL.createObjectURL(file);
+            current.push(file);
+            console.log("Danh sách ảnh hiện tại:", current);
+            const imgWrapper = document.createElement("div");
+            imgWrapper.classList.add(
+              "relative",
+              "w-32",
+              "h-32",
+              "m-2",
+              "inline-block"
+            );
 
-            // Tạo đối tượng FormData
-            const formData = new FormData();
+            const img = document.createElement("img");
+            img.src = imageUrl;
+            img.classList.add("w-full", "h-full", "object-cover", "rounded-md");
 
-            // Thêm dữ liệu ảo vào FormData
-            formData.append("name", name);
-            formData.append("supplier_id", supplier_id);
-            formData.append("price", price);
-            formData.append("date", date);
-            formData.append("expiry_Date", expiry_Date);
-            formData.append("quantity", quantity);
-            formData.append("status", status);
-            formData.append("description", description);
-            formData.append("sale", sale);
+            const removeBtn = document.createElement("button");
+            removeBtn.innerHTML = "X";
+            removeBtn.classList.add("remove-btn");
+            removeBtn.onclick = function () {
+              imgWrapper.remove();
+              current.splice(current.indexOf(file), 1);
+            };
 
-            // Thêm file ảnh vào FormData
-            for (const file of selectedFiles) {
-                formData.append("image", file); // Đổi từ "image" thành "images" nếu server yêu cầu
-            }
-
-            // Gửi dữ liệu và file lên server
-            fetch("http://localhost:3000/product/addproduct", {
-                method: "POST",
-                body: formData,
-            })
-                .then((response) => {
-                    if (!response.ok) {
-                        throw new Error(
-                            `Lỗi server: ${response.status} ${response.statusText}`
-                        );
-                    }
-                    return response.json(); // Kiểm tra xem phản hồi có phải là JSON không
-                })
-                .then((data) => {
-                    console.log("Upload thành công:", data);
-                    alert("Upload thành công!");
-                })
-                .catch((error) => {
-                    console.error("Đã xảy ra lỗi:", error);
-                    alert(`Đã xảy ra lỗi: ${error.message}`);
-                });
+            imgWrapper.appendChild(img);
+            imgWrapper.appendChild(removeBtn);
+            imageContainer.appendChild(imgWrapper);
+          }
+          event.target.value = "";
         });
     </script>
-</body>
+  </body>
 </html>

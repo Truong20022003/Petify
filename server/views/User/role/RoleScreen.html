@@ -1,14 +1,16 @@
 <html>
   <head>
-    <title>Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
       rel="stylesheet"
     />
+    <title>Petify</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="/views/exten/dialog.js"></script>
     <style>
       body {
-        background-image: url("https://images.unsplash.com/photo-1650440792328-4f3ac5237eb6?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D");
+        background-image: url("/views/img/n.jpg");
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
@@ -32,7 +34,7 @@
   <body class="bg-gray-800">
     <div class="flex h-screen">
       <!-- Sidebar -->
-      <div class="w-64 h-screen bg-white shadow-md" style="border-radius: 10px">
+      <div class="w-[300px] bg-white shadow-md p-6" style="border-radius: 10px; flex-shrink: 0;">
         <div class="flex items-center justify-center py-6">
           <img
             alt="Logo"
@@ -54,7 +56,7 @@
           <!-- quan ly nguoi dung -->
           <div id="manageMenu">
             <a
-              class="flex items-center py-2 px-6 cursor-pointer bg-yellow-500 text-white"
+              class="flex items-center py-2 px-6 cursor-pointer bg-[#6b9484] text-white"
               onclick="toggleUserSubmenu()"
             >
               <i class="fas fa-user"> </i>
@@ -92,30 +94,23 @@
               onclick="toggleSubmenu()"
             >
               <i class="fas fa-tasks"> </i>
-              <span class="ml-3"> Quản lý </span>
+              <span class="ml-3">Quản lý sản phẩm & loại sản phẩm</span>
               <i id="manageIcon" class="fas fa-chevron-down ml-auto"> </i>
             </a>
             <div id="submenuItems" class="submenu pl-12">
               <a
                 class="block py-2 px-6 text-gray-700 hover:bg-gray-200"
-                href="/views/Product/ProductScreen.html"
+                href="/views/Product/product/ProductScreen.html"
                 onclick="activateSubmenu(this)"
               >
                 Quản lý sản phẩm
               </a>
               <a
                 class="block py-2 px-6 text-gray-700 hover:bg-gray-200"
-                href="/views/Product/ProductScreen.html"
-                onclick="activateSubmenu(this)"
-              >
-                Quản lý loại sản phẩm
-              </a>
-              <a
-                class="block py-2 px-6 text-gray-700 hover:bg-gray-200"
                 href="/views/Product/category/CategoryScreen.html"
                 onclick="activateSubmenu(this)"
               >
-                Quản lý hóa đơn
+                Quản lý loại sản phẩm
               </a>
             </div>
           </div>
@@ -168,6 +163,12 @@
            <span class="ml-3"> Thống kê </span>
          </a>
         </nav>
+        <button
+            onclick="logout()"
+            class="bg-red-500 text-white text-lg font-semibold py-2 px-6 mb-4 mx-4 rounded hover:bg-red-600"
+          >
+            Đăng xuất
+          </button>
       </div>
       <!-- Main Content -->
       <div

@@ -8,22 +8,39 @@ const orderSchema = new db.mongoose.Schema(
       ref: "user"
     },
     oder_date: {
-        type: String,
-        require: true
+      type: String,
+      require: true
     },
     total_price: {
-        type: Number,
-        require: true
+      type: Number,
+      require: true
     },
     status: {
-        type: String,
-        require: true
+      type: String,
+      require: true
     },
+    payment_method: {
+      type: String,
+      require: true
+    },
+    delivery_address: {
+      type: String,
+      require: true
+    },
+    shipping_fee: {
+      type: String,
+      require: true
+    },
+    carrier_id: {
+      type: db.mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: "carrier"
+  }
   },
   {
     collection: "order",
-    timestamps: true, 
-    versionKey: false 
+    timestamps: true,
+    versionKey: false
   }
 );
 const orderModel = db.mongoose.model("order", orderSchema);

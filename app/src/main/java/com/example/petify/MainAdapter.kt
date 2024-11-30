@@ -6,7 +6,6 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.example.petify.ui.cart.CartFragment
 import com.example.petify.ui.favorites.FavoritesFragment
 import com.example.petify.ui.home.HomeFragment
-import com.example.petify.ui.love.LoveFragment
 
 class MainAdapter(fragmentActivity: FragmentActivity) : FragmentStateAdapter(fragmentActivity) {
 
@@ -15,7 +14,7 @@ class MainAdapter(fragmentActivity: FragmentActivity) : FragmentStateAdapter(fra
             0 -> HomeFragment()
             1 -> CartFragment()
             2 -> FavoritesFragment()
-            3 -> LoveFragment()
+            3 -> FavoritesFragment()
             else -> throw IllegalArgumentException("Invalid position")
         }
     }

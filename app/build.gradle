@@ -77,7 +77,12 @@ dependencies {
     implementation "androidx.room:room-rxjava3:2.6.1"
     kapt "androidx.room:room-compiler:2.6.1"
     implementation "androidx.room:room-ktx:2.6.1"
-
+    implementation 'com.google.gms:google-services:4.4.2'
+    implementation 'com.google.android.gms:play-services-auth:21.2.0'
+    implementation 'com.google.firebase:firebase-auth:23.1.0'
+    //zaloplay
+    implementation fileTree(dir: 'D:\\DATN\\Petify', include: ['*.aar', '*.jar'], exclude: [])
+    implementation("commons-codec:commons-codec:1.14")
 
     //zaloplay
     implementation fileTree(dir: 'D:\\Du_an_tot_ngiep\\Petify\\Demo', include: ['*.aar', '*.jar'], exclude: [])
