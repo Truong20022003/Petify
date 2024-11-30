@@ -6,9 +6,11 @@ import android.widget.LinearLayout
 import androidx.viewpager2.widget.ViewPager2
 import com.example.petify.BaseActivity
 import com.example.petify.BaseViewModel
+import com.example.petify.MainActivity
 import com.example.petify.R
 import com.example.petify.databinding.ActivityIntroBinding
 import com.example.petify.ui.login.LoginActivity
+import com.example.petify.payment.zalopay.ZalopayMainActivity
 
 class IntroActivity : BaseActivity<ActivityIntroBinding, BaseViewModel> () {
 
@@ -85,7 +87,7 @@ class IntroActivity : BaseActivity<ActivityIntroBinding, BaseViewModel> () {
 
 
     private fun startNextScreen() {
-        var intent = Intent(this, LoginActivity::class.java)
+        var intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
         finishAffinity()
     }
