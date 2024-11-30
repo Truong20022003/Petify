@@ -14,7 +14,10 @@ exports.addorder = async (req, res, next) => {
             user_id: req.body.user_id,
             oder_date: req.body.oder_date,
             total_price: req.body.total_price,
-            status: req.body.status
+            status: req.body.status,
+            payment_method: req.body.payment_method,
+            delivery_address: req.body.delivery_address,
+            shipping_fee: req.body.shipping_fee,
         })
         let result = await obj.save();
         res.json({ status: "Add successfully", result: result });
@@ -30,6 +33,9 @@ exports.updateorder = async (req, res, next) => {
         obj.user_id = req.body.user_id;
         obj.oder_date = req.body.oder_date;
         obj.total_price = req.body.total_price;
+        obj.payment_method = req.body.payment_method
+        obj.delivery_address = req.body.delivery_address
+        obj.shipping_fee = req.body.shipping_fee
         obj.status = req.body.status;
         let result = await orderModel.findByIdAndUpdate(id, obj, { new: true });
         res.json({ status: "Update successfully", result: result });
