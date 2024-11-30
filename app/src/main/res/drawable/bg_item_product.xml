@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Màu nền của khung -->
+    <solid android:color="#FFFFFF"/> <!-- Màu trắng, bạn có thể thay đổi -->
+
+    <!-- Bo góc -->
+    <corners android:radius="5dp"/>
+
+    <!-- Viền khung -->
+    <stroke android:color="#009688" android:width="1dp"/> <!-- Màu viền đen, có thể thay đổi -->
+
+    <!-- Tùy chọn: Độ đổ bóng -->
+    <padding android:left="8dp" android:top="8dp" android:right="8dp" android:bottom="8dp"/>
+</shape>
