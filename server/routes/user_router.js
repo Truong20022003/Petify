@@ -4,8 +4,8 @@ const { upload } = require("../routes/uploads");
 const userController = require("../controllers/user_controller");
 router.get("/getListUser", userController.getListuser);
 
-router.post("/adduser", upload.single("avatar"), userController.adduser);
-router.put("/updateuser/:id", upload.single("avatar"), userController.updateuser);
+router.post("/adduser", upload.single("avata"), userController.adduser);
+router.put("/updateuser/:id", upload.single("avata"), userController.updateuser);
 router.delete("/deleteuser/:id",userController.deleteuser)
 router.get("/getuserById/:id",userController.getuserById)
 router.post('/register', userController.registerUser);

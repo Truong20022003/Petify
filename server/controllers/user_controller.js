@@ -56,6 +56,9 @@ exports.getListuser = async (req, res, next) => {
 
 exports.adduser = async (req, res, next) => {
     const { email, password } = req.body;
+    if (!req.file || req.file.length === 0) {
+        return res.status(400).json({ success: false, message: 'No files uploaded' });
+    }
 
     try {
         const userRecord = await admin.auth().createUser({
@@ -63,14 +66,7 @@ exports.adduser = async (req, res, next) => {
             password: password,
         });
 
-        let avatarUrl = null;
-        if (req.file) {
-            // Upload ảnh avatar
-            const result = await uploadToCloudinary(req.file.path);
-            avatarUrl = result.secure_url;
-            fs.unlinkSync(req.file.path); // Xóa file tạm sau khi upload
-        }
-
+        let avatarUrl = req.file.path;
         const obj = new userModel({
             name: req.body.name,
             email: req.body.email,
@@ -92,14 +88,8 @@ exports.updateuser = async (req, res, next) => {
     try {
         const id = req.params.id;
 
-        let avatarUrl = null;
-        if (req.file) {
-            // Upload ảnh avatar mới nếu có
-            const result = await uploadToCloudinary(req.file.path);
-            avatarUrl = result.secure_url;
-            fs.unlinkSync(req.file.path); // Xóa file tạm sau khi upload
-        }
-
+        let avatarUrl = req.file.path;
+       
         const obj = {
             name: req.body.name,
             email: req.body.email,
@@ -110,7 +100,7 @@ exports.updateuser = async (req, res, next) => {
         };
 
         if (avatarUrl) {
-            obj.avata = avatarUrl; // Cập nhật avatar nếu có
+            obj.avata = avatarUrl; 
         }
 
         const result = await userModel.findByIdAndUpdate(id, obj, { new: true });

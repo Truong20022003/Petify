@@ -339,7 +339,7 @@ async function fetchTopProducts(month, year) {
                 custom: function({ seriesIndex, series, dataPointIndex, w }) {
                     // Set maximum width for the tooltip and make sure text wraps
                     const tooltip = w.globals.tooltip;
-                    tooltip.style.maxWidth = '700px'; // Limit width to 300px
+                    tooltip.style.maxWidth = '300px'; // Limit width to 300px
                     tooltip.style.whiteSpace = 'normal'; // Allow wrapping of text
                 }
             },
@@ -388,12 +388,6 @@ async function fetchTopProducts22(month, year) {
           { productName: "Sản phẩm 3", totalQuantity: 60, totalPrice: 60 },
           { productName: "Sản phẩm 4", totalQuantity: 60, totalPrice: 60 },
           { productName: "Sản phẩm 5", totalQuantity: 60, totalPrice: 60 },
-          { productName: "Sản phẩm 5", totalQuantity: 60, totalPrice: 60 },
-          { productName: "Sản phẩm 5", totalQuantity: 60, totalPrice: 60 },
-          { productName: "Sản phẩm 5", totalQuantity: 60, totalPrice: 60 },
-          { productName: "Sản phẩm 5", totalQuantity: 60, totalPrice: 60 },
-          { productName: "Sản phẩm 5", totalQuantity: 60, totalPrice: 60 },
-
         ];
       }
 
@@ -491,5 +485,5 @@ async function fetchTopProducts22(month, year) {
     } catch (error) {
       console.error("Lỗi khi lấy dữ liệu:", error);
     }
-  }
+}
 
