@@ -29,7 +29,11 @@ const productSchema = new db.mongoose.Schema(
     },
     image: {
         type: Array,
-        required: true
+        required: false
+    },
+    image_id:{
+        type: Array,
+        required: false
     },
     status: {
         type: String,
