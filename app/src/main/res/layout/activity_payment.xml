@@ -8,6 +8,15 @@
     android:orientation="vertical"
     tools:context=".ui.payment.PaymentActivity">
 
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+       android:layout_gravity="center"
+        />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -226,12 +235,11 @@
                     android:id="@+id/tvMoMo"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:drawableStart="@drawable/ic_momo"
                     android:drawableEnd="@drawable/ic_payment"
                     android:drawablePadding="15dp"
                     android:fontFamily="@font/bevietnampro_regular"
                     android:paddingVertical="10dp"
-                    android:text="Ví điện tử MoMo"
+                    android:text="Ví điện tử Zalopay"
                     android:textColor="@color/black"
                     android:textSize="18sp" />
 
@@ -239,7 +247,6 @@
                     android:id="@+id/tvCOD"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:drawableStart="@drawable/ic_cod"
                     android:drawableEnd="@drawable/ic_payment_selected"
                     android:drawablePadding="15dp"
                     android:fontFamily="@font/bevietnampro_regular"

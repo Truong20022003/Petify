@@ -125,6 +125,8 @@ class UserViewModel : BaseViewModel() {
                 val apiService: UserService = CreateInteface.createService()
                 val userRepository = UserRepository(apiService)
                 val registeredUser = userRepository.registerUser(name, email, password, phoneNumber)
+                Log.e("UserViewModel", "$registeredUser")
+
                 _userRegisterUser.value = registeredUser
                 _registrationSuccess.value = registeredUser != null
             } catch (e: Exception) {

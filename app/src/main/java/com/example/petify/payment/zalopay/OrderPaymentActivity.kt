@@ -21,6 +21,8 @@ import vn.zalopay.sdk.listeners.PayOrderListener
 
 class OrderPaymentActivity : BaseActivity<ActivityOrderPaymentBinding, BaseViewModel>() {
 
+
+
     override fun createBinding() = ActivityOrderPaymentBinding.inflate(layoutInflater)
 
     override fun setViewModel() = BaseViewModel()
@@ -43,6 +45,8 @@ class OrderPaymentActivity : BaseActivity<ActivityOrderPaymentBinding, BaseViewM
 
 
         binding.buttonThanhToan.tap {
+
+
             lifecycleScope.launch(Dispatchers.IO) {
                 try {
                     showLoading(true)
@@ -72,6 +76,7 @@ class OrderPaymentActivity : BaseActivity<ActivityOrderPaymentBinding, BaseViewM
                 }
             }
         }
+
     }
 
 

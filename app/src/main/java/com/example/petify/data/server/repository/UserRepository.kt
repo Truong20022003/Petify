@@ -48,8 +48,10 @@ class UserRepository(private val api: UserService) {
         try {
             val responsePost = RegisterUser(name, email, password, phoneNumber)
             val response = api.register(responsePost)
+            Log.d("TAG1234","registerUser Success $response")
             if (response.isSuccessful) {
                 response.body()
+
             } else {
                 val errorBody = response.errorBody()?.string() ?: "Unknown error"
                 Log.e("UserRepository", "API Error: $errorBody")

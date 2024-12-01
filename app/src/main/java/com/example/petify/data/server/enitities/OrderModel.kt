@@ -12,4 +12,5 @@ data class OrderModel(
     @field:SerializedName("delivery_address") var deliveryAddress: String = "",
     @field:SerializedName("shipping_fee") var shippingFee: Double = 0.0,
     @field:SerializedName("carrier_id") var carrierId: String = "",
+    @field:SerializedName("code") var code: String = ""
 )

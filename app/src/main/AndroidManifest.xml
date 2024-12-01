@@ -29,9 +29,7 @@
         <activity
             android:name=".ui.createpassword.CreatePasswordActivity"
             android:exported="false" />
-        <activity
-            android:name=".ui.payment.PaymentActivity"
-            android:exported="false" />
+
         <activity
             android:name=".ui.forgotpassword.NewPasswordActivity"
             android:exported="false" />
@@ -97,6 +95,21 @@
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:host="app" android:scheme="demozpdk" />
             </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".ui.payment.PaymentActivity"
+            android:exported="true"
+            android:label="Merchant Demo"
+            android:launchMode="singleTask">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:host="app" android:scheme="demozpdk" />
+            </intent-filter>
+
+
         </activity>
         <activity
             android:name=".ui.splash.SplashActivity"
