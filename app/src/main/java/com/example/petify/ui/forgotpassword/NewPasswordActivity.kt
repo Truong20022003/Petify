@@ -43,6 +43,7 @@ class NewPasswordActivity : BaseActivity<ActivityNewPasswordBinding, UserViewMod
 
             // Gọi API để đổi mật khẩu
             viewModel.changePassword(phoneNumber, newPassword)
+            finish()
         }
 
     }
