@@ -2,6 +2,7 @@ package com.example.petify.data.server.repository
 
 import android.util.Log
 import com.example.petify.data.server.enitities.UserRoleModel
+import com.example.petify.data.server.enitities.UserRoleRequest
 import com.example.petify.data.server.service.UserRoleService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -19,7 +20,7 @@ class UserRoleRepository(private val api: UserRoleService) {
         }
     }
 
-    suspend fun addUserRole(UserRole: UserRoleModel): UserRoleModel? = withContext(Dispatchers.IO) {
+    suspend fun addUserRole(UserRole: UserRoleRequest): UserRoleModel? = withContext(Dispatchers.IO) {
         val response = api.addUserRole(UserRole)
         if (response.isSuccessful) {
             Log.d("UserRoleRepository", "addUserRole Success: ${response.body()}")

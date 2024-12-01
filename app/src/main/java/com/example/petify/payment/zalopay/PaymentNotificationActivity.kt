@@ -21,8 +21,6 @@ class PaymentNotificationActivity :
     override fun initView() {
         super.initView()
 
-
-        val intent = intent
         binding.textViewNotify.text = intent.getStringExtra("result")
 
     }

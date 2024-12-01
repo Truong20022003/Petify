@@ -87,7 +87,7 @@ class IntroActivity : BaseActivity<ActivityIntroBinding, BaseViewModel> () {
 
 
     private fun startNextScreen() {
-        var intent = Intent(this, MainActivity::class.java)
+        var intent = Intent(this, LoginActivity::class.java)
         startActivity(intent)
         finishAffinity()
     }

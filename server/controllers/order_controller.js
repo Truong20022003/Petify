@@ -10,6 +10,11 @@ exports.getListorder = async (req, res, next) => {
 };
 exports.addorder = async (req, res, next) => {
     try {
+        const generateCode = () => {
+            const min = 112312;
+            const max = 999999;
+            return `#${Math.floor(Math.random() * (max - min + 1)) + min}`;
+        };
         let obj = new orderModel({
             user_id: req.body.user_id,
             oder_date: req.body.oder_date,
@@ -18,6 +23,7 @@ exports.addorder = async (req, res, next) => {
             payment_method: req.body.payment_method,
             delivery_address: req.body.delivery_address,
             shipping_fee: req.body.shipping_fee,
+            code: generateCode()
         })
         let result = await obj.save();
         res.json({ status: "Add successfully", result: result });

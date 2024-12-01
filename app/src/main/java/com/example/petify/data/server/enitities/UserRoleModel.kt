@@ -7,3 +7,7 @@ data class UserRoleModel(
     @field:SerializedName("user_id") var userId: String = "",
     @field:SerializedName("role_id") var roleId: String = ""
 )
+data class UserRoleRequest(
+    @field:SerializedName("user_id") var userId: String = "",
+    @field:SerializedName("role_id") var roleId: String = ""
+)

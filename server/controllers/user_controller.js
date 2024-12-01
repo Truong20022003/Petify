@@ -138,27 +138,7 @@ exports.getuserById = async (req, res, next) => {
         res.json({ status: "Not found", result: error });
     }
 };
-// exports.registerUser = async (req, res, next) => {
-//     const { name, email, password } = req.body;
 
-//     try {
-//         const userRecord = await admin.auth().createUser({
-//             email: email,
-//             password: password,
-//         });
-
-//         let newUser = new userModel({
-//             name,
-//             email,
-//             password
-//         });
-
-//         const result = await newUser.save();
-//         res.json({ status: "Registration successful", result });
-//     } catch (error) {
-//         res.json({ status: "Registration failed", error: error.message });
-//     }
-// };
 exports.registerUser = async (req, res, next) => {
     const { name, email, password, phone_number } = req.body;
 
@@ -223,7 +203,12 @@ exports.registerUser = async (req, res, next) => {
         res.json({
             status: "Thành công",
             message: "Đăng ký người dùng thành công.",
-            result,
+            result: {
+                id: result._id,
+                name: result.name,
+                email: result.email,
+                phone_number: result.phone_number,
+            },
         });
     } catch (error) {
         res.status(500).json({
