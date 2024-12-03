@@ -88,8 +88,8 @@ exports.updateuser = async (req, res, next) => {
     try {
         const id = req.params.id;
 
-        let avatarUrl = req.file.path;
-       
+        let avatarUrl = req.file ? req.file.path : null;
+
         const obj = {
             name: req.body.name,
             email: req.body.email,
@@ -100,13 +100,13 @@ exports.updateuser = async (req, res, next) => {
         };
 
         if (avatarUrl) {
-            obj.avata = avatarUrl; 
+            obj.avata = avatarUrl;
         }
-
+        console.log(obj, "obj")
         const result = await userModel.findByIdAndUpdate(id, obj, { new: true });
-        res.json({ status: "Update successfully", result });
+        res.status(200).json({ status: "Update successfully", result });
     } catch (error) {
-        res.json({ status: "Update failed", error: error.message });
+        res.status(500).json({ status: "Update failed", error: error.message });
     }
 };
 exports.deleteuser = async (req, res, next) => {
@@ -236,7 +236,7 @@ exports.loginUser = async (req, res, next) => {
         if (!login || !password) {
             return res.status(400).json({ status: "Login failed", error: "Missing login or password" });
         }
-        
+
         // Nếu không tìm thấy người dùng
         if (!user) {
             return res.status(404).json({ status: "Login failed", error: "User not found" });
@@ -263,7 +263,7 @@ exports.resetPassword = async (req, res, next) => {
     try {
         // Gửi email đặt lại mật khẩu thông qua Firebase Authentication
         const resetLink = await admin.auth().generatePasswordResetLink(email);
-        
+
         res.json({ status: "Reset password email sent successfully", resetLink });
     } catch (error) {
         res.json({ status: "Failed to send reset password email", error: error.message });
@@ -296,9 +296,9 @@ exports.changePassword = async (req, res, next) => {
             password: newPassword,
         });
 
-        return res.json({ 
-            status: "Success", 
-            message: "Password updated successfully" 
+        return res.json({
+            status: "Success",
+            message: "Password updated successfully"
         });
     } catch (error) {
         // Cải thiện xử lý lỗi

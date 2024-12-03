@@ -476,12 +476,12 @@ async function saveEditUser(_id) {
     return;
   }
 
-  if (!avatar || !/^(http|https):\/\/[^ "]+$/.test(avatar)) {
-    dialogError(
-      "Link avatar không hợp lệ. Hãy chắc chắn rằng nó bắt đầu bằng http hoặc https."
-    );
-    return;
-  }
+  // if (!avatar || !/^(http|https):\/\/[^ "]+$/.test(avatar)) {
+  //   dialogError(
+  //     "Link avatar không hợp lệ. Hãy chắc chắn rằng nó bắt đầu bằng http hoặc https."
+  //   );
+  //   return;
+  // }
 
   // Lấy các checkbox được chọn (validate ít nhất 1 vai trò)
   const updatedUser = {
@@ -509,7 +509,7 @@ async function saveEditUser(_id) {
         if (data.status) {
           dialogSuccess("Cập nhật người dùng thành công!").then(() => {
             restoreRow(); // Chỉ gọi sau khi thông báo xong
-          });  
+          });
         } else {
           dialogError("Cập nhật thất bại. Vui lòng thử lại.")
         }
@@ -568,12 +568,12 @@ async function saveAddUser() {
     return;
   }
 
-  if (!avatar || !/^(http|https):\/\/[^ "]+$/.test(avatar)) {
-    dialogError(
-      "Link avatar không hợp lệ. Hãy chắc chắn rằng nó bắt đầu bằng http hoặc https."
-    );
-    return;
-  }
+  // if (!avatar || !/^(http|https):\/\/[^ "]+$/.test(avatar)) {
+  //   dialogError(
+  //     "Link avatar không hợp lệ. Hãy chắc chắn rằng nó bắt đầu bằng http hoặc https."
+  //   );
+  //   return;
+  // }
 
   // Lấy các checkbox được chọn (validate ít nhất 1 vai trò)
   const checkboxes = document.querySelectorAll('input[name="option"]:checked');
@@ -596,7 +596,7 @@ async function saveAddUser() {
 
   dialogInfo("Bạn có muốn lưu không?"
     , async () => {
-    const loadingDialog = dialogLoading("Đang thao tác...");
+      const loadingDialog = dialogLoading("Đang thao tác...");
       try {
         // Gửi yêu cầu để tạo người dùng mới
         const userResponse = await fetch(`${url}/adduser`, {
@@ -633,7 +633,7 @@ async function saveAddUser() {
           if (allRolesAssigned) {
             dialogSuccess("Thêm người dùng và vai trò thành công!").then(() => {
               restoreRow(); // Chỉ gọi sau khi thông báo xong
-            });  
+            });
           } else {
             dialogError("Thêm vai trò thất bại!")
           }
