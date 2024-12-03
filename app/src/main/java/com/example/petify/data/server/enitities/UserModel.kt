@@ -10,9 +10,13 @@ data class UserModel(
     @field:SerializedName("password") var password: String = "",
     @field:SerializedName("user_name") var user_name: String = "",
     @field:SerializedName("location") var location: String = "",
-    @field:SerializedName("avata") var avata: String = ""
+    @field:SerializedName("avata") var avata: String = "",
 )
-
+data class UpdateResponse(
+    @field:SerializedName("status") val status: String,
+    @field:SerializedName("message") val message: String,
+    @field:SerializedName("result") val result: UserModel
+)
 data class ChangePasswordRequest(
     @field:SerializedName("phone_number") val phone_number: String,
     @field:SerializedName("newPassword") val newPassword: String

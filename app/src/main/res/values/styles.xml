@@ -4,4 +4,11 @@
         <item name="colorControlNormal">#5A5A5A</item>
         <item name="colorControlActivated">#F8F262</item>
     </style>
+    <style name="TopRoundedCorners">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopLeft">5dp</item>
+        <item name="cornerSizeTopRight">5dp</item>
+        <item name="cornerSizeBottomLeft">0dp</item>
+        <item name="cornerSizeBottomRight">0dp</item>
+    </style>
 </resources>

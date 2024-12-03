@@ -65,7 +65,7 @@ async function fetchData() {
     const month = currentMonth
 
     fetchDataAndRenderChart(year);
-    fetchTopProducts(month, year);
+    // fetchTopProducts(month, year);
     fetchTopProducts22(month, year)
 }
 // Gọi API và vẽ biểu đồ cột doanh thu hàng tháng
@@ -262,228 +262,230 @@ async function fetchDataAndRenderChart(year) {
 // Gọi API và vẽ biểu đồ tròn doanh thu theo sản phẩm
 let donutChart; // Khai báo biến donutChart ở phạm vi toàn cục
 
-async function fetchTopProducts(month, year) {
+// async function fetchTopProducts(month, year) {
+//     try {
+//         // Gửi yêu cầu API để lấy dữ liệu
+//         const formattedMonth = month.toString().padStart(2, "0"); // Định dạng "01", "02",...
+//         const response = await fetch(`http://localhost:3000/invoice/top-products?month=${formattedMonth}&year=${year}`, { headers });
+//         let data = await response.json();
+
+//         // Nếu không có dữ liệu từ API, sử dụng dữ liệu mẫu
+//         var checkData = true;
+//         if (!data || data.length === 0) {
+//             checkData = false;
+//             console.log('Dữ liệu rỗng, sử dụng dữ liệu ảo');
+//             data = [
+//                 { productName: "Sản phẩm 1", totalQuantity: 60, totalPrice: 60 },
+//                 { productName: "Sản phẩm 2", totalQuantity: 90, totalPrice: 60 },
+//                 { productName: "Sản phẩm 3", totalQuantity: 30, totalPrice: 60 },
+//                 { productName: "Sản phẩm 4", totalQuantity: 120, totalPrice: 60 },
+//                 { productName: "Sản phẩm 5", totalQuantity: 60, totalPrice: 60 }
+//             ];
+//         }
+
+//         // Tách dữ liệu từ API
+//         const productNames = data.map(item => item.productName);
+//         const quantities = data.map(item => item.totalQuantity);
+//         const revenues = data.map(item => item.totalPrice);
+
+//         // Tạo mảng tên sản phẩm giả cho phần chú thích
+//         const fakeProductNames = Array.from({ length: productNames.length }, (_, index) => `Sản phẩm ${index + 1}`);
+
+//         function formatCurrency(value) {
+//             return value.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+//         }
+
+//         // Nếu donutChart đã tồn tại, hủy bỏ biểu đồ cũ trước khi tạo mới
+//         if (donutChart) {
+//             donutChart.destroy();
+//         }
+
+//         // Biểu đồ Donut - Hiển thị tỷ lệ Số lượng
+//         const donutOptions = {
+//             chart: {
+//                 type: 'donut',
+//                 width: '100%', // Responsive width
+//             },
+//             series: quantities,
+//             labels: fakeProductNames, // Sử dụng tên giả cho phần chú thích
+//             title: {
+//                 text: `Top 5 Sản Phẩm Bán Chạy Nhất Tháng ${formattedMonth}/${year} - Doanh Thu và Số Lượng`,
+//                 align: 'center',
+//                 style: {
+//                     fontSize: '20px',
+//                     fontWeight: 'bold'
+//                 }
+//             },
+//             subtitle: {
+//                 text: checkData ? "" : "Không có dữ liệu", // Hiển thị thông báo nếu không có dữ liệu
+//                 align: 'center',
+//                 style: {
+//                     fontSize: '16px',
+//                     color: '#FF0000',  // Màu đỏ cho thông báo lỗi
+//                     fontWeight: 'bold'
+//                 }
+//             },
+//             tooltip: {
+//                 y: {
+//                     formatter: function (val, opts) {
+//                         const revenue = revenues[opts.seriesIndex]; // Tổng tiền bán ra
+//                         const productName = productNames[opts.seriesIndex]; // Lấy tên sản phẩm thật khi hover
+//                         return `Số lượng: ${val.toLocaleString()} <br><strong>${productName}</strong><br>Doanh thu: ${formatCurrency(revenue)}`;
+//                     }
+//                 },
+//                 style: {
+//                     fontSize: '14px', // Tooltip font size
+//                 },
+//                 custom: function ({ seriesIndex, series, dataPointIndex, w }) {
+//                     // Set maximum width for the tooltip and make sure text wraps
+//                     const tooltip = w.globals.tooltip;
+//                     tooltip.style.maxWidth = '300px'; // Limit width to 300px
+//                     tooltip.style.whiteSpace = 'normal'; // Allow wrapping of text
+//                 }
+//             },
+//             colors: ['#1E90FF', '#FF6347', '#32CD32', '#FFD700', '#6A5ACD'],
+//             responsive: [{
+//                 breakpoint: 768,
+//                 options: {
+//                     chart: {
+//                         width: '100%',
+//                     },
+//                     legend: {
+//                         position: 'bottom'
+//                     }
+//                 }
+//             }]
+//         };
+
+//         donutChart = new ApexCharts(document.querySelector("#donutChart"), donutOptions);
+//         donutChart.render();
+
+//     } catch (error) {
+//         console.error(error);
+//     }
+// }
+let donutChart2;
+async function fetchTopProducts22(month, year) {
     try {
-        // Gửi yêu cầu API để lấy dữ liệu
-        const formattedMonth = month.toString().padStart(2, "0"); // Định dạng "01", "02",...
-        const response = await fetch(`http://localhost:3000/invoice/top-products?month=${formattedMonth}&year=${year}`, { headers });
+        const formattedMonth = month.toString().padStart(2, "0");
+        const response = await fetch(
+            `http://localhost:3000/invoice/top-products?month=${formattedMonth}&year=${year}`,
+            {
+                headers: {
+                    Authorization: "trinh_nhung",
+                    "Content-Type": "application/json",
+                },
+            }
+        );
         let data = await response.json();
 
         // Nếu không có dữ liệu từ API, sử dụng dữ liệu mẫu
         var checkData = true;
         if (!data || data.length === 0) {
             checkData = false;
-            console.log('Dữ liệu rỗng, sử dụng dữ liệu ảo');
+            console.log("Dữ liệu rỗng, sử dụng dữ liệu ảo");
             data = [
                 { productName: "Sản phẩm 1", totalQuantity: 60, totalPrice: 60 },
-                { productName: "Sản phẩm 2", totalQuantity: 60, totalPrice: 60 },
-                { productName: "Sản phẩm 3", totalQuantity: 60, totalPrice: 60 },
-                { productName: "Sản phẩm 4", totalQuantity: 60, totalPrice: 60 },
+                { productName: "Sản phẩm 2", totalQuantity: 90, totalPrice: 60 },
+                { productName: "Sản phẩm 3", totalQuantity: 30, totalPrice: 60 },
+                { productName: "Sản phẩm 4", totalQuantity: 120, totalPrice: 60 },
                 { productName: "Sản phẩm 5", totalQuantity: 60, totalPrice: 60 }
             ];
         }
 
-        // Tách dữ liệu từ API
-        const productNames = data.map(item => item.productName);
-        const quantities = data.map(item => item.totalQuantity);
+        const productNames = data.map((item) => item.productName);
+        const quantities = data.map((item) => item.totalQuantity);
         const revenues = data.map(item => item.totalPrice);
+        // Lấy đối tượng chart
+        const chart = echarts.init(document.getElementById("chart"));
 
-        // Tạo mảng tên sản phẩm giả cho phần chú thích
-        const fakeProductNames = Array.from({ length: productNames.length }, (_, index) => `Sản phẩm ${index + 1}`);
-
-        function formatCurrency(value) {
-            return value.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
-        }
-
-        // Nếu donutChart đã tồn tại, hủy bỏ biểu đồ cũ trước khi tạo mới
-        if (donutChart) {
-            donutChart.destroy();
-        }
-
-        // Biểu đồ Donut - Hiển thị tỷ lệ Số lượng
-        const donutOptions = {
-            chart: {
-                type: 'donut',
-                width: '100%', // Responsive width
-            },
-            series: quantities,
-            labels: fakeProductNames, // Sử dụng tên giả cho phần chú thích
+        // Cấu hình biểu đồ Radius Mode với Toolbox
+        const option = {
             title: {
-                text: `Top 5 Sản Phẩm Bán Chạy Nhất Tháng ${formattedMonth}/${year} - Doanh Thu và Số Lượng`,
-                align: 'center',
-                style: {
-                    fontSize: '20px',
-                    fontWeight: 'bold'
-                }
+                text: `Top 5 Sản Phẩm Bán Chạy Nhất Tháng ${formattedMonth}/${year}`,
+                subtext: "Doanh Thu và Số Lượng",
+                left: "center",
+                textStyle: {
+                    fontSize: 20,
+                    fontWeight: "bold",
+                    color: "#2c3e50", // Màu chữ tiêu đề
+                },
+                subtextStyle: {
+                    color: "#e74c3c",
+                    fontSize: 16,
+                },
             },
-            subtitle: {
-                text: checkData ? "" : "Không có dữ liệu", // Hiển thị thông báo nếu không có dữ liệu
-                align: 'center',
-                style: {
-                    fontSize: '16px',
-                    color: '#FF0000',  // Màu đỏ cho thông báo lỗi
-                    fontWeight: 'bold'
-                }
+            toolbox: {
+                show: true,
+                feature: {
+                    mark: { show: true },
+                    dataView: { show: true, readOnly: false },
+                    restore: { show: true },
+                    saveAsImage: { show: true },
+                },
             },
             tooltip: {
-                y: {
-                    formatter: function (val, opts) {
-                        const revenue = revenues[opts.seriesIndex]; // Tổng tiền bán ra
-                        const productName = productNames[opts.seriesIndex]; // Lấy tên sản phẩm thật khi hover
-                        return `Số lượng: ${val.toLocaleString()} <br><strong>${productName}</strong><br>Doanh thu: ${formatCurrency(revenue)}`;
-                    }
+                trigger: "item",
+                formatter: function (params) {
+                    console.log(params, "params")
+                    return `${params.name}: Số lượng ${params.value.toLocaleString()} (${params.percent}%)`;
                 },
-                style: {
-                    fontSize: '14px', // Tooltip font size
+                backgroundColor: "rgba(0,0,0,0.7)",
+                borderColor: "#fff",
+                textStyle: {
+                    color: "#fff"
                 },
-                custom: function({ seriesIndex, series, dataPointIndex, w }) {
-                    // Set maximum width for the tooltip and make sure text wraps
-                    const tooltip = w.globals.tooltip;
-                    tooltip.style.maxWidth = '300px'; // Limit width to 300px
-                    tooltip.style.whiteSpace = 'normal'; // Allow wrapping of text
+            },
+            legend: {
+                left: "center",
+                top: "bottom",
+                data: productNames,
+                textStyle: {
+                    color: "#34495e",
+                    fontSize: 14
                 }
             },
-            colors: ['#1E90FF', '#FF6347', '#32CD32', '#FFD700', '#6A5ACD'],
-            responsive: [{
-                breakpoint: 768,
-                options: {
-                    chart: {
-                        width: '100%',
+            series: [
+                {
+                    name: "Top 5 Sản Phẩm Bán Chạy",
+                    type: "pie",
+                    radius: [20, 140], // Tạo hiệu ứng tròn và phần các sản phẩm thay đổi theo giá trị
+                    center: ["50%", "50%"], // Đặt vị trí trung tâm của biểu đồ
+                    roseType: "radius", // Tạo hiệu ứng hoa hồng (sản phẩm có tỷ lệ lớn sẽ lớn hơn)
+                    data: data.map((item) => ({
+                        value: item.totalQuantity,
+                        name: item.productName,
+                    })),
+                    itemStyle: {
+                        borderRadius: 5,
+                        borderColor: "#fff", // Viền trắng cho từng phần
+                        borderWidth: 1
                     },
-                    legend: {
-                        position: 'bottom'
-                    }
-                }
-            }]
+                    label: {
+                        show: true,
+                        formatter: '{b}: {c} ({d}%)', // Hiển thị tên sản phẩm, số lượng và phần trăm
+                        color: "#34495e", // Màu chữ
+                        fontSize: 14,
+                    },
+                    emphasis: {
+                        label: {
+                            show: true,
+                            color: "#fff",
+                            fontSize: 16,
+                            fontWeight: "bold",
+                        },
+                    },
+                    color: [
+                        "#FF6347", "#1E90FF", "#32CD32", "#FFD700", "#6A5ACD", "#FF4500", "#00BFFF", "#8A2BE2"
+                    ], // Màu sắc sinh động cho các phần của biểu đồ
+                },
+            ],
         };
 
-        donutChart = new ApexCharts(document.querySelector("#donutChart"), donutOptions);
-        donutChart.render();
-
+        // Set option cho biểu đồ
+        chart.setOption(option);
     } catch (error) {
-        console.error(error);
-    }
-}
-
-async function fetchTopProducts22(month, year) {
-    try {
-      const formattedMonth = month.toString().padStart(2, "0");
-      const response = await fetch(
-        `http://localhost:3000/invoice/top-products?month=${formattedMonth}&year=${year}`,
-        {
-          headers: {
-            Authorization: "trinh_nhung",
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      let data = await response.json();
-
-      // Nếu không có dữ liệu từ API, sử dụng dữ liệu mẫu
-      if (!data || data.length === 0) {
-        console.log("Dữ liệu rỗng, sử dụng dữ liệu ảo");
-        data = [
-          { productName: "Sản phẩm 1", totalQuantity: 60, totalPrice: 60 },
-          { productName: "Sản phẩm 2", totalQuantity: 60, totalPrice: 60 },
-          { productName: "Sản phẩm 3", totalQuantity: 60, totalPrice: 60 },
-          { productName: "Sản phẩm 4", totalQuantity: 60, totalPrice: 60 },
-          { productName: "Sản phẩm 5", totalQuantity: 60, totalPrice: 60 },
-        ];
-      }
-
-      const productNames = data.map((item) => item.productName);
-      const quantities = data.map((item) => item.totalQuantity);
-
-      // Lấy đối tượng chart
-      const chart = echarts.init(document.getElementById("chart"));
-
-      // Cấu hình biểu đồ Radius Mode với Toolbox
-      const option = {
-        title: {
-          text: `Top 5 Sản Phẩm Bán Chạy Nhất Tháng ${formattedMonth}/${year}`,
-          subtext: "Doanh Thu và Số Lượng",
-          left: "center",
-          textStyle: {
-            fontSize: 20,
-            fontWeight: "bold",
-            color: "#2c3e50", // Màu chữ tiêu đề
-          },
-          subtextStyle: {
-            color: "#e74c3c",
-            fontSize: 16,
-          },
-        },
-        toolbox: {
-          show: true,
-          feature: {
-            mark: { show: true },
-            dataView: { show: true, readOnly: false },
-            restore: { show: true },
-            saveAsImage: { show: true },
-          },
-        },
-        tooltip: {
-          trigger: "item",
-          formatter: function (params) {
-            console.log(params,"params")
-            return `${params.name}: Số lượng ${params.value.toLocaleString()} (${params.percent}%)`;
-          },
-          backgroundColor: "rgba(0,0,0,0.7)",  
-          borderColor: "#fff",  
-          textStyle: {
-            color: "#fff"
-          },
-        },
-        legend: {
-          left: "center",
-          top: "bottom",
-          data: productNames,
-          textStyle: {
-            color: "#34495e",
-            fontSize: 14
-          }
-        },
-        series: [
-          {
-            name: "Top 5 Sản Phẩm Bán Chạy",
-            type: "pie",
-            radius: [20, 140], // Tạo hiệu ứng tròn và phần các sản phẩm thay đổi theo giá trị
-            center: ["50%", "50%"], // Đặt vị trí trung tâm của biểu đồ
-            roseType: "radius", // Tạo hiệu ứng hoa hồng (sản phẩm có tỷ lệ lớn sẽ lớn hơn)
-            data: data.map((item) => ({
-              value: item.totalQuantity,
-              name: item.productName,
-            })),
-            itemStyle: {
-              borderRadius: 5,
-              borderColor: "#fff", // Viền trắng cho từng phần
-              borderWidth: 1
-            },
-            label: {
-              show: true,
-              formatter: '{b}: {c} ({d}%)', // Hiển thị tên sản phẩm, số lượng và phần trăm
-              color: "#34495e", // Màu chữ
-              fontSize: 14,
-            },
-            emphasis: {
-              label: {
-                show: true,
-                color: "#fff",
-                fontSize: 16,
-                fontWeight: "bold",
-              },
-            },
-            color: [
-              "#FF6347", "#1E90FF", "#32CD32", "#FFD700", "#6A5ACD", "#FF4500", "#00BFFF", "#8A2BE2"
-            ], // Màu sắc sinh động cho các phần của biểu đồ
-          },
-        ],
-      };
-
-      // Set option cho biểu đồ
-      chart.setOption(option);
-    } catch (error) {
-      console.error("Lỗi khi lấy dữ liệu:", error);
+        console.error("Lỗi khi lấy dữ liệu:", error);
     }
 }
 

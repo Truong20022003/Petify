@@ -10,13 +10,14 @@ import com.example.petify.data.server.enitities.ProductModel
 import com.example.petify.databinding.ItemProductBinding
 
 class ProductAdapter(
-    private val productList: List<ProductModel>,
+    private var productList: List<ProductModel>,
     private val itemClickListener: (ProductModel) -> Unit,
     private val onFavoriteChanged: (ProductModel, Boolean) -> Unit,
     private val onAddToCart: (ProductModel, Boolean) -> Unit,
 ) : RecyclerView.Adapter<ProductAdapter.ProductViewHolder>() {
 
     private val favoriteProducts = mutableSetOf<ProductModel>()
+
     class ProductViewHolder(val binding: ItemProductBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductViewHolder {
@@ -75,5 +76,10 @@ class ProductAdapter(
     }
 
     override fun getItemCount(): Int = productList.size
+    fun updateData(newProductList: List<ProductModel>) {
+        productList = newProductList
+        notifyDataSetChanged()
+    }
+
 }
 

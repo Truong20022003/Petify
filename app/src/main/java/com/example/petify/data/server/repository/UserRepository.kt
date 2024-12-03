@@ -14,6 +14,13 @@ import com.example.petify.data.server.service.UserService
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
+import java.io.File
 
 class UserRepository(private val api: UserService) {
     suspend fun getListUser(): List<UserModel>? = withContext(Dispatchers.IO) {
@@ -138,18 +145,36 @@ class UserRepository(private val api: UserService) {
         }
     }
 
-    suspend fun updateUser(id: String, User: UserModel): UserModel? = withContext(
-        Dispatchers.IO
-    ) {
-        val response = api.updateUser(id, User)
-        if (response.isSuccessful) {
-            Log.d("UserRepository", "updateUser Success: ${response.body()}")
-            response.body()
-        } else {
-            Log.e("UserRepository", "updateUser Error: ${response.errorBody()}")
-            null
+    suspend fun updateUser(id: String, user: UserModel, avataFile: File?): UserModel? = withContext(Dispatchers.IO) {
+        val name = user.name.toRequestBody("text/plain".toMediaTypeOrNull())
+        val email = user.email.toRequestBody("text/plain".toMediaTypeOrNull())
+        val phoneNumber = user.phoneNumber.toRequestBody("text/plain".toMediaTypeOrNull())
+        val password = user.password.toRequestBody("text/plain".toMediaTypeOrNull())
+        val userName = user.user_name.toRequestBody("text/plain".toMediaTypeOrNull())
+        val location = user.location.toRequestBody("text/plain".toMediaTypeOrNull())
+        val avataPart = avataFile?.let {
+            val requestBody = it.asRequestBody("image/jpeg".toMediaTypeOrNull())
+            MultipartBody.Part.createFormData("avata", it.name, requestBody)
+        }
+
+        try {
+            val response = api.updateUser(id, name, email, phoneNumber, password, userName, location, avataPart)
+
+            if (response.isSuccessful) {
+                val result = response.body()?.result
+                Log.d("UserRepository", "updateUser Success: $result")
+                return@withContext result
+            } else {
+                val errorMsg = response.errorBody()?.string() ?: "Unknown error"
+                Log.e("UserRepository", "updateUser Error: $errorMsg")
+                return@withContext null
+            }
+        } catch (e: Exception) {
+            Log.e("UserRepository", "Exception during updateUser", e)
+            return@withContext null // Handle exceptions gracefully
         }
     }
+
 
     suspend fun deleteUser(id: String): Boolean = withContext(Dispatchers.IO) {
         val response = api.deleteUser(id)

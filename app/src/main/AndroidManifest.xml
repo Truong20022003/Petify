@@ -121,6 +121,9 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".ui.search.SearchActivity"
+            android:exported="false" />
+        <activity
             android:name=".payment.zalopay.ZalopayMainActivity"
             android:exported="false" />
     </application>

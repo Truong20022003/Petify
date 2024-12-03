@@ -5,13 +5,25 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.petify.BaseActivity
+import com.example.petify.BaseViewModel
 import com.example.petify.R
+import com.example.petify.base.view.tap
+import com.example.petify.databinding.ActivityPrivacyPolicyBinding
 
-class PrivacyPolicyActivity : AppCompatActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContentView(R.layout.activity_privacy_policy)
+class PrivacyPolicyActivity : BaseActivity<ActivityPrivacyPolicyBinding,BaseViewModel>() {
+    override fun createBinding(): ActivityPrivacyPolicyBinding {
+        return ActivityPrivacyPolicyBinding.inflate(layoutInflater)
+    }
 
+    override fun setViewModel(): BaseViewModel {
+        return BaseViewModel()
+    }
+
+    override fun initView() {
+        super.initView()
+        binding.imgBack.tap {
+            finish()
+        }
     }
 }
