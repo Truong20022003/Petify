@@ -1,7 +1,10 @@
 package com.example.petify.data.server.enitities
 
+import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
+import kotlinx.parcelize.Parcelize
 
+@Parcelize
 data class ProductModel(
     @field:SerializedName("_id") var id: String = "",
     @field:SerializedName("supplier_id") var supplierId: String = "",
@@ -14,4 +17,4 @@ data class ProductModel(
     @field:SerializedName("status") var status: String = "",
     @field:SerializedName("description") var description: String = "",
     @field:SerializedName("sale") var sale: Int = 0,
-)
+) : Parcelable

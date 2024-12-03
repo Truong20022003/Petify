@@ -1,35 +1,71 @@
 package com.example.petify.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.petify.BaseViewModel
-import com.example.petify.data.database.enitities.FavoriteItem
-import com.example.petify.data.database.repository.FavoriteRepository
+import com.example.petify.data.server.CreateInteface
+import com.example.petify.data.server.enitities.FavoriteRequest
+import com.example.petify.data.server.enitities.FavoriteResponse
+import com.example.petify.data.server.repository.FavoriteRepository
+import com.example.petify.data.server.service.FavoriteService
 import kotlinx.coroutines.launch
 
-class FavoriteViewModel(private val favoriteRepository: FavoriteRepository) : BaseViewModel() {
+class FavoriteViewModel : BaseViewModel() {
 
-    private val _favoriteItems = MutableLiveData<List<FavoriteItem>?>()
-    val favoriteItems: LiveData<List<FavoriteItem>?> get() = _favoriteItems
+    private val _favoriteList = MutableLiveData<List<FavoriteResponse>?>()
+    val favoriteList: LiveData<List<FavoriteResponse>?> get() = _favoriteList
 
-    fun fetchFavoriteItems() {
+    private val _isFavoriteAdded = MutableLiveData<Boolean>()
+    val isFavoriteAdded: LiveData<Boolean> get() = _isFavoriteAdded
+
+    private val _errorMessage = MutableLiveData<String?>()
+    val errorMessage: LiveData<String?> get() = _errorMessage
+
+
+    fun getListFavorites() {
         viewModelScope.launch {
-            _favoriteItems.value = favoriteRepository.getAllFavorites()
+            try {
+                val apiService: FavoriteService = CreateInteface.createService()
+                val favoriteRepository = FavoriteRepository(apiService)
+                _favoriteList.value = favoriteRepository.getListFavorites()
+            } catch (e: Exception) {
+                Log.e("FavoriteViewModel", "Error fetching favorites list", e)
+                _errorMessage.value = "Error fetching favorites list: ${e.message}"
+            }
         }
     }
 
-    fun addFavorite(item: FavoriteItem) {
+    fun addFavorites(favoriteRequest: FavoriteRequest) {
         viewModelScope.launch {
-            favoriteRepository.addFavorite(item)
-            fetchFavoriteItems()
+            try {
+                val apiService: FavoriteService = CreateInteface.createService()
+                val favoriteRepository = FavoriteRepository(apiService)
+                _isFavoriteAdded.value = favoriteRepository.addFavorites(favoriteRequest) != null
+            } catch (e: Exception) {
+                Log.e("FavoriteViewModel", "Error adding favorite", e)
+                _errorMessage.value = "Error adding favorite: ${e.message}"
+            }
+        }
+    }
+    fun deleteFavorite(idProduct: String, idUser: String) {
+        viewModelScope.launch {
+            try {
+                val apiService: FavoriteService = CreateInteface.createService()
+                val favoriteRepository = FavoriteRepository(apiService)
+                val result = favoriteRepository.deleteFavorite(idProduct, idUser)
+                if (result) {
+                    Log.d("FavoriteViewModel", "deleteFavorite: Success")
+                } else {
+                    Log.e("FavoriteViewModel", "deleteFavorite: Failed")
+                }
+            } catch (e: Exception) {
+                Log.e("FavoriteViewModel", "deleteFavorite: Error occurred", e)
+            }
         }
     }
 
-    fun removeFavorite(item: FavoriteItem) {
-        viewModelScope.launch {
-            favoriteRepository.removeFavorite(item)
-            fetchFavoriteItems()
-        }
-    }
 }
+
+
