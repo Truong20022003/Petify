@@ -16,6 +16,8 @@ import com.example.petify.ui.profile.ProfileActivity
 import com.example.petify.base.view.tap
 import com.example.petify.data.database.AppDatabase
 import com.example.petify.data.database.enitities.CartItem
+import com.example.petify.ui.search.SearchActivity
+import com.example.petify.ui.setting.SettingActivity
 import com.example.petify.ultils.SharePreUtils
 import com.example.petify.viewmodel.CartViewModel
 import com.example.petify.viewmodel.CartViewModelFactory
@@ -132,9 +134,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
 
         }
         viewBinding.ivUser.tap {
-            val intent = Intent(requireContext(), ProfileActivity::class.java)
+            val intent = Intent(requireContext(), SettingActivity::class.java)
             startActivity(intent)
 
+        }
+        viewBinding.ivSearch.setOnClickListener{
+            val intent = Intent(requireContext(), SearchActivity::class.java)
+            startActivity(intent)
         }
         val slideshowAdapter = Home_SlideshowAdapter(images)
         viewBinding.viewPager.adapter = slideshowAdapter
@@ -179,6 +185,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        val userModel = SharePreUtils.getUserModel(requireActivity())
+        Glide.with(requireActivity())
+            .load(userModel?.avata)
+            .into(viewBinding.ivUser)
+    }
 
 }
 

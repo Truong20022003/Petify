@@ -1,7 +1,7 @@
 package com.example.petify.ultils
 
 object Constans {
-    const val DOMAIN = "http://192.168.1.189:3000/"
+    const val DOMAIN = "http://192.168.1.7:3000/"
     const val API_NAME = ""
     const val API_KEY = ""
 

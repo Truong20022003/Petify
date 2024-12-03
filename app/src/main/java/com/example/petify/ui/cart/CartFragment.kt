@@ -13,6 +13,7 @@ import com.example.petify.R
 import com.example.petify.base.view.tap
 import com.example.petify.data.adress.AddressViewmodel
 import com.example.petify.data.database.AppDatabase
+import com.example.petify.data.database.enitities.CartItem
 import com.example.petify.data.server.enitities.InvoiceDetailModel
 import com.example.petify.data.server.enitities.OrderModel
 import com.example.petify.databinding.FragmentCartBinding
@@ -41,22 +42,72 @@ class CartFragment : BaseFragment<FragmentCartBinding>() {
         val cartDao = AppDatabase.getDatabase(requireActivity()).cartDao()
         cartViewModel = CartViewModel(cartDao)
         cartViewModel.fetchCartItems()
-        cartAdapter = CartAdapter(emptyList()) { totalPrice ->
+//        cartAdapter = CartAdapter(emptyList()) { totalPrice ->
+//            updateTotalPrice(totalPrice)
+//        }
+        val sampleItems = listOf(
+            CartItem(
+                id = "1",
+                supplierId = "supplier1",
+                price = 10000.0,
+                date = "2024-12-01",
+                expiryDate = "2025-12-01",
+                quantity = 1,
+                name = "Sản phẩm 1",
+                image = listOf("https://via.placeholder.com/150"),
+                status = "Còn hàng",
+                description = "Mô tả sản phẩm 1",
+                sale = 10,
+                selected = false
+            ),
+            CartItem(
+                id = "2",
+                supplierId = "supplier2",
+                price = 20000.0,
+                date = "2024-12-02",
+                expiryDate = "2025-12-02",
+                quantity = 2,
+                name = "Sản phẩm 2",
+                image = listOf("https://via.placeholder.com/150"),
+                status = "Còn hàng",
+                description = "Mô tả sản phẩm 2",
+                sale = 20,
+                selected = false
+            ),
+            CartItem(
+                id = "3",
+                supplierId = "supplier3",
+                price = 30000.0,
+                date = "2024-12-03",
+                expiryDate = "2025-12-03",
+                quantity = 3,
+                name = "Sản phẩm 3",
+                image = listOf("https://via.placeholder.com/150"),
+                status = "Còn hàng",
+                description = "Mô tả sản phẩm 3",
+                sale = 30,
+                selected = false
+            )
+        )
+
+        cartAdapter = CartAdapter(sampleItems) { totalPrice ->
             updateTotalPrice(totalPrice)
         }
-
-        cartViewModel.cartItems.observe(viewLifecycleOwner) {
-            if (it != null) {
-                cartAdapter.updateItems(it)
-                viewBinding.rcvCart.layoutManager = LinearLayoutManager(requireContext())
-                viewBinding.rcvCart.adapter = cartAdapter
-
-            } else {
-                viewBinding.tvEmptyItem.visibility = View.VISIBLE
-                cartAdapter.updateItems(emptyList())
-            }
-
-        }
+        viewBinding.rcvCart.layoutManager = LinearLayoutManager(requireContext())
+        viewBinding.rcvCart.adapter = cartAdapter
+        Log.d("CartFragment", "Adapter Count: ${cartAdapter.itemCount}")
+//        cartViewModel.cartItems.observe(viewLifecycleOwner) {
+//            if (it != null) {
+//                cartAdapter.updateItems(it)
+//                viewBinding.rcvCart.layoutManager = LinearLayoutManager(requireContext())
+//                viewBinding.rcvCart.adapter = cartAdapter
+//
+//            } else {
+//                viewBinding.tvEmptyItem.visibility = View.VISIBLE
+//                cartAdapter.updateItems(emptyList())
+//            }
+//
+//        }
         updateTotalPrice(0.0)
         viewBinding.ivCheckAll.setOnClickListener {
             toggleSelectAll()
