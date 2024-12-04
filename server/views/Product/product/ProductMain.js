@@ -101,6 +101,7 @@ const renderList = (data, categories) => {
                     src="${item.image[0]}"
                   />
                 </div>
+                </td>
           <td class="border border-gray-300 px-4 py-2 ">${item.name}</td>
           <td class="border border-gray-300 px-4 py-2 w-[200px]">
           ${Array.isArray(categories[index]) && categories[index].length > 0

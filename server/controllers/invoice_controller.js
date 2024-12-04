@@ -1,6 +1,6 @@
-const { invoiceModel } = require("../models/invoice_Model")
-const {invoice_detailModel}=require("../models/invoice_detail_model")
-const {productModel}=require("../models/product_model")
+const { invoiceModel } = require("../models/invoice_model")
+const { invoice_detailModel } = require("../models/invoice_detail_model")
+const { productModel } = require("../models/product_model")
 
 exports.getListinvoice = async (req, res, next) => {
     try {
@@ -312,6 +312,112 @@ exports.TopProducts = async (req, res, next) => {
         res.status(500).json({ message: "Error fetching top products" });
     }
 }
+
+////Thống d tổng đơn hàng, doanh thu, và sản phẩm  và số lượng bán của nó trong ngày tháng năm cụ thể
+exports.statisticsByDate = async (req, res, next) => {
+    try {
+        // Lấy tham số ngày, tháng, năm từ request
+        const { year, month, day } = req.query;
+
+        if (!year || !month || !day) {
+            return res.status(400).json({
+                message: "Please provide year, month, and day."
+            });
+        }
+
+        // Xác định khoảng thời gian (bắt đầu và kết thúc trong ngày)
+        const startDate = new Date(year, month - 1, day, 0, 0, 0);
+        const endDate = new Date(year, month - 1, day, 23, 59, 59);
+
+        // Lấy danh sách sản phẩm được bán ra trong ngày tháng năm đó
+        const productStats = await invoice_detailModel.aggregate([
+            {
+                $lookup: {
+                    from: "invoice", // Liên kết với bảng `invoice`
+                    localField: "invoice_id", // Khóa liên kết từ bảng `invoice_detail`
+                    foreignField: "_id", // Khóa liên kết từ bảng `invoice`
+                    as: "invoice_info" // Tên trường chứa thông tin từ bảng `invoice`
+                }
+            },
+            {
+                $unwind: "$invoice_info" // Giải nén mảng `invoice_info` thành đối tượng
+            },
+            {
+                $match: {
+                    // Chỉ lấy các hóa đơn trong khoảng thời gian ngày, tháng, năm yêu cầu
+                    "invoice_info.date": {
+                        $gte: startDate.toISOString(),
+                        $lt: endDate.toISOString()
+                    }
+                }
+            },
+            {
+                $group: {
+                    _id: "$product_id", // Nhóm theo ID sản phẩm
+                    totalQuantity: { $sum: "$quantity" } // Tính tổng số lượng bán ra của sản phẩm
+                }
+            },
+            {
+                $lookup: {
+                    from: "product", // Liên kết với bảng `product`
+                    localField: "_id", // ID sản phẩm từ kết quả `group`
+                    foreignField: "_id", // ID sản phẩm trong bảng `product`
+                    as: "product_info" // Tên trường chứa thông tin sản phẩm
+                }
+            },
+            {
+                $unwind: "$product_info" // Giải nén thông tin sản phẩm
+            },
+            {
+                $addFields: {
+                    product_info: {
+                        $mergeObjects: [
+                            "$product_info", // Toàn bộ thông tin từ bảng `product`
+                            { totalQuantity: "$totalQuantity" } // Thêm tổng số lượng bán ra
+                        ]
+                    }
+                }
+            },
+            {
+                $replaceRoot: { newRoot: "$product_info" } // Thay thế root bằng toàn bộ thông tin sản phẩm
+            },
+            {
+                $sort: { totalQuantity: -1 } // Sắp xếp sản phẩm theo số lượng bán ra (giảm dần)
+            }
+        ]);
+
+        // Tính tổng số đơn hàng và tổng doanh thu
+        const summary = await invoiceModel.aggregate([
+            {
+                $match: {
+                    // Chỉ lấy hóa đơn trong khoảng thời gian ngày, tháng, năm yêu cầu
+                    date: { $gte: startDate.toISOString(), $lt: endDate.toISOString() }
+                }
+            },
+            {
+                $group: {
+                    _id: null, // Không nhóm theo trường nào
+                    totalOrders: { $sum: 1 }, // Đếm tổng số đơn hàng
+                    totalRevenue: { $sum: "$total" } // Tính tổng doanh thu
+                }
+            }
+        ]);
+
+        // Trả về kết quả
+        return res.status(200).json({
+            totalOrders: summary[0]?.totalOrders || 0,
+            totalRevenue: summary[0]?.totalRevenue || 0,
+            topProducts: productStats // Danh sách sản phẩm bán ra trong ngày
+        });
+    } catch (error) {
+        console.error("Error in statisticsByDate:", error);
+        return res.status(500).json({
+            message: "Internal server error.",
+            error: error.message
+        });
+    }
+};
+
 exports.getInvoiceByIdUser = async (req, res, next) => {
     try {
         const userId = req.params.user_id; // Lấy user_id từ tham số URL

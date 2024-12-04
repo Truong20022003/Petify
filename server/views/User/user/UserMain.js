@@ -99,7 +99,7 @@ function renderUserList(users, roles) {
             ${Array.isArray(roles[index]) && roles[index].length > 0
           ? roles[index]
             .map((role, index) => {
-              return `<span>${index + 1
+              return /*html*/`<span>${index + 1
                 }_</span><span class="role-item px-2 py-1 rounded mr-2 mt-2 mb-2">${role.name
                 }</span><br>`;
             })
@@ -120,8 +120,7 @@ function renderUserList(users, roles) {
             <div class="button-group flex flex-col space-y-2">
               <button class="bg-blue-500 text-white px-2 py-1 rounded btnedit" data-id="${user._id
         }">Cập nhật</button>
-              <button class="bg-red-500 text-white px-2 py-1 rounded btndelete" data-id="${user._id
-        }">Xóa</button>
+   <button class="bg-red-500 text-white px-2 py-1 rounded btndelete" data-id="${user._id}">Xóa</button>
               <button class="bg-[#008080] text-white px-2 py-1 rounded btndetail" data-id="${user._id
         }">Chi tiết</button>
             </div>
@@ -156,7 +155,7 @@ function setupEventListeners(roles) {
   document.querySelectorAll(".btndelete").forEach((btn) => {
     btn.addEventListener("click", async () => {
       console.log("delete");
-      id = btn.dataset.id;
+      const id = btn.dataset.id;
       console.log(id);
       const rolesList = await getUserRole();
       console.log(rolesList, "rolesList");
@@ -182,7 +181,7 @@ function setupEventListeners(roles) {
   document.querySelectorAll(".btndetail").forEach((btn) => {
     btn.addEventListener("click", () => {
       console.log("detail");
-      id = btn.dataset.id;
+      const id = btn.dataset.id;
       console.log(id);
       fetch(`${url}/getuserById/${id}`, {
         method: "GET",
@@ -191,10 +190,10 @@ function setupEventListeners(roles) {
         .then((response) => response.json())
         .then(async (data) => {
           // console.log(data, "kkkk");
-          const roles = await getAllUsersWithRoles(data.result._id);
+          const roles = await getAllUsersWithRoles(data._id);
           const rolesList = await getRoles();
-          content.innerHTML = createUserDetailHTML(
-            data.result,
+          createUserDetailHTML(
+            data,
             true,
             false,
             "Chi tiết người dùng",
@@ -217,24 +216,25 @@ function setupEventListeners(roles) {
   document.querySelectorAll(".btnedit").forEach((btn) => {
     btn.addEventListener("click", () => {
       console.log("edit");
-      id = btn.dataset.id;
+      const id = btn.dataset.id;
       fetch(`${url}/getuserById/${id}`, {
         headers,
       })
         .then((response) => response.json())
         .then(async (data) => {
           console.log(data, "kkkk");
-          const roles = await getAllUsersWithRoles(data.result._id);
+          const roles = await getAllUsersWithRoles(data._id);
           const rolesList = await getRoles();
           console.log(roles, "roles");
-          content.innerHTML = createUserDetailHTML(
-            data.result,
+          createUserDetailHTML(
+            data,
             false,
             true,
             "Cập nhật người dùng",
             roles || [],
             rolesList || []
           );
+          chosee()
           const passwordInput = document.getElementById("password");
           const eyeIcon = document.querySelector(".fas.fa-eye");
           eyeIcon.addEventListener("click", () => {
@@ -252,7 +252,7 @@ function setupEventListeners(roles) {
     console.log("add");
 
     const rolesList = await getRoles();
-    content.innerHTML = createUserDetailHTML(
+    createUserDetailHTML(
       {},
       false,
       true,
@@ -260,7 +260,7 @@ function setupEventListeners(roles) {
       roles || [],
       rolesList
     );
-
+    chosee()
     const passwordInput = document.getElementById("password");
     const eyeIcon = document.querySelector(".fas.fa-eye");
     eyeIcon.addEventListener("click", () => {
@@ -322,7 +322,7 @@ function createUserDetailHTML(
 
   const roleCheckboxes = rolesList
     .map(
-      (role) => `
+      (role) => /*html*/ `
      <label>
        <input type="checkbox" name="option" value="${role._id}" ${isRoleChecked(role._id) ? "checked" : ""
         }>
@@ -331,11 +331,11 @@ function createUserDetailHTML(
    `
     )
     .join("");
-  return /*html*/ `
+  content.innerHTML = /*html*/ `
     <h2 class="text-xl font-bold mb-4">${title}</h2>
     <div class="flex">
       <div class="w-1/4 flex justify-center items-center">
-        <img alt="User avatar" class="w-32 h-32 rounded-full" src="${avata}" />
+        <img  id="user-avatar" alt="User avatar" class="w-32 h-32 rounded-full" src="${avata}" />
       </div>
       <div class="w-3/4">
         <div class="grid grid-cols-2 gap-4">
@@ -374,8 +374,8 @@ function createUserDetailHTML(
           </div>
         </div>
         <div class="mt-4">
-          <label class="block text-sm font-medium text-gray-700" for="avatar-link">Link avatar</label>
-          <input class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" id="avatar-link" type="text" value="${avata}" ${readonlyAttr} />
+        <label class="block text-sm font-medium text-gray-700" for="avatar-upload">Upload Avatar</label>
+        <input class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" id="avatar-upload" type="file" accept="image/*" />
         </div>
         <div class="mt-4">
          ${saveButtonHTML}
@@ -384,8 +384,26 @@ function createUserDetailHTML(
       </div>
     </div>
   `
-}
+  document.getElementById('avatar-upload').addEventListener('change', function (event) {
+    const file = event.target.files[0];
+    if (file) {
+      // Hiển thị ảnh đã chọn
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        const imgElement = document.getElementById('user-avatar');
+        imgElement.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
 
+      // Lưu tệp đã chọn để sử dụng sau
+      this.selectedFile = file;
+    }
+  });
+}
+const chosee = () => {
+
+
+}
 // console.log(datagetListUser, "dataget");
 //luu edit
 async function saveEditUser(_id) {
@@ -399,8 +417,8 @@ async function saveEditUser(_id) {
   const phone = document.getElementById("phone").value;
   const user_name = document.getElementById("username").value;
   const password = document.getElementById("password").value;
-  const avatar = document.getElementById("avatar-link").value;
-
+  const fileInput = document.getElementById('avatar-upload');
+  const file = fileInput.selectedFile;
 
   // Lấy các vai trò đã chọn từ checkbox
   const checkboxes = document.querySelectorAll('input[name="option"]:checked');
@@ -476,24 +494,31 @@ async function saveEditUser(_id) {
     return;
   }
 
-  // if (!avatar || !/^(http|https):\/\/[^ "]+$/.test(avatar)) {
-  //   dialogError(
-  //     "Link avatar không hợp lệ. Hãy chắc chắn rằng nó bắt đầu bằng http hoặc https."
-  //   );
-  //   return;
-  // }
+
 
   // Lấy các checkbox được chọn (validate ít nhất 1 vai trò)
-  const updatedUser = {
-    name,
-    email,
-    location,
-    phone_number: phone,
-    user_name,
-    password,
-    avata: avatar,
-  };
-  updatedUser.roles = selectedRoles;
+  const formData = new FormData();
+  formData.append("name", name);
+  formData.append("email", email);
+  formData.append("location", location);
+  formData.append("phone_number", phone);
+  formData.append("user_name", user_name);
+  formData.append("password", password);
+  formData.append("avata", file);
+  formData.append("roles", selectedRoles);
+  for (let [key, value] of formData.entries()) {
+    console.log(key, value);
+  }
+  // const updatedUser = {
+  //   name,
+  //   email,
+  //   location,
+  //   phone_number: phone,
+  //   user_name,
+  //   password,
+  //   avata: avatar,
+  // };
+  // updatedUser.roles = selectedRoles;
 
   dialogInfo("Bạn có muốn lưu các thay đổi không?"
     , async () => {
@@ -502,8 +527,10 @@ async function saveEditUser(_id) {
       try {
         const response = await fetch(`${url}/updateuser/${_id}`, {
           method: "PUT",
-          headers,
-          body: JSON.stringify(updatedUser),
+          headers: {
+            Authorization: "trinh_nhung",
+          },
+          body: formData,
         });
         const data = await response.json();
         if (data.status) {
@@ -535,7 +562,8 @@ async function saveAddUser() {
   const phone = document.getElementById("phone").value.trim();
   const user_name = document.getElementById("username").value.trim();
   const password = document.getElementById("password").value.trim();
-  const avatar = document.getElementById("avatar-link").value.trim();
+  const fileInput = document.getElementById('avatar-upload');
+  const file = fileInput.selectedFile;
 
   // Validate các trường nhập liệu
   if (!name) {
@@ -582,17 +610,28 @@ async function saveAddUser() {
     dialogError("Hãy chọn ít nhất một vai trò.");
     return;
   }
+  const formData = new FormData();
+  formData.append("name", name);
+  formData.append("email", email);
+  formData.append("location", location);
+  formData.append("phone_number", phone);
+  formData.append("user_name", user_name);
+  formData.append("password", password);
+  formData.append("avata", file);
 
+  for (let [key, value] of formData.entries()) {
+    console.log(key, value);
+  }
   // Dữ liệu hợp lệ, tiếp tục tạo đối tượng newUser
-  const newUser = {
-    name,
-    email,
-    location,
-    phone_number: phone,
-    user_name,
-    password,
-    avata: avatar,
-  };
+  // const newUser = {
+  //   name,
+  //   email,
+  //   location,
+  //   phone_number: phone,
+  //   user_name,
+  //   password,
+  //   avata: avatar,
+  // };
 
   dialogInfo("Bạn có muốn lưu không?"
     , async () => {
@@ -601,8 +640,10 @@ async function saveAddUser() {
         // Gửi yêu cầu để tạo người dùng mới
         const userResponse = await fetch(`${url}/adduser`, {
           method: "POST",
-          headers,
-          body: JSON.stringify(newUser),
+          headers: {
+            Authorization: "trinh_nhung",
+          },
+          body: formData,
         });
 
         const userData = await userResponse.json();

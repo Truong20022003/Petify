@@ -26,6 +26,7 @@ var user_roleRouter = require('./routes/user_role_router');
 var cartRouter = require('./routes/cart_router');
 var favoritesRouter = require('./routes/favorites_router');
 var userRouter = require('./routes/user_router');
+
 var app = express();
 
 // Middleware kiểm tra header Authorization
@@ -77,6 +78,7 @@ app.use("/role", checkHeader, roleRouter)
 app.use("/supplier", checkHeader, supplierRouter)
 app.use("/userRole", checkHeader, user_roleRouter)
 app.use("/user", checkHeader, userRouter)
+
 var userRouter = require('./routes/user_router')
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

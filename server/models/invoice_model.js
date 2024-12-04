@@ -36,7 +36,7 @@ const invoiceSchema = new db.mongoose.Schema(
         },
         order_id: {
             type: db.mongoose.Schema.Types.ObjectId,
-            required: true,
+            required: false,
             ref: "order"
         },
         create_at: {
@@ -46,8 +46,8 @@ const invoiceSchema = new db.mongoose.Schema(
     },
     {
         collection: "invoice",
-        timestamps: true, 
-        versionKey: false 
+        timestamps: true,
+        versionKey: false
     }
 );
 const invoiceModel = db.mongoose.model("invoice", invoiceSchema);

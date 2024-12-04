@@ -3,8 +3,8 @@ const invoiceDetailSchema = new db.mongoose.Schema(
   {
 
     user_id: {
-        type: String,
-        required: true
+      type: String,
+      required: false
     },
     product_id: {
       type: db.mongoose.Schema.Types.ObjectId,
@@ -17,19 +17,19 @@ const invoiceDetailSchema = new db.mongoose.Schema(
       ref: "invoice"
     },
     quantity: {
-        type: Number,
-        require: true
+      type: Number,
+      require: true
     },
     total_price: {
-        type: Number,
-        require: true
+      type: Number,
+      require: true
     }
-    
+
   },
   {
     collection: "invoice_detail",
-    timestamps: true, 
-    versionKey: false 
+    timestamps: true,
+    versionKey: false
   }
 );
 const invoice_detailModel = db.mongoose.model("invoiceDetail", invoiceDetailSchema);
