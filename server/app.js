@@ -10,6 +10,8 @@ var usersRouter = require('./routes/users');
 var carrierRouter = require('./routes/carrier_router');
 var categoryRouter = require('./routes/category_router');
 var invoice_detailRouter = require('./routes/invoice_detail_router');
+var order_detailRouter = require('./routes/order_detail_router');
+
 var invoiceRouter = require('./routes/invoice_router');
 var notificationRouter = require('./routes/notification_router');
 var notification_userRouter = require('./routes/notification_user_router');
@@ -58,6 +60,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use('/', indexRouter);
 app.use('/users', checkHeader, usersRouter);
 app.use("/carrier", checkHeader, carrierRouter)
+app.use("/order_detail",checkHeader,order_detailRouter)
 app.use("/cart", checkHeader, cartRouter)
 app.use("/favorites", checkHeader, favoritesRouter)
 app.use("/category", checkHeader, categoryRouter)

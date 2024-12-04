@@ -26,7 +26,7 @@ exports.addorder = async (req, res, next) => {
             code: generateCode()
         });
         let result = await obj.save();
-        res.json({ status: "Add successfully", result: result });
+        res.json(result);
     } catch (error) {
         console.error("Error adding order:", error.message, error.stack);
         res.json({ status: "Add failed", error: error.message });

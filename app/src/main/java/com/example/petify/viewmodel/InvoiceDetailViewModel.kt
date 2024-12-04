@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.petify.BaseViewModel
 import com.example.petify.data.server.CreateInteface
 import com.example.petify.data.server.enitities.InvoiceDetailModel
+import com.example.petify.data.server.enitities.InvoiceDetailModelRequest
 import com.example.petify.data.server.repository.InvoiceDetailRepository
 import com.example.petify.data.server.service.InvoiceDetailService
 import kotlinx.coroutines.launch
@@ -42,7 +43,7 @@ class InvoiceDetailViewModel : BaseViewModel() {
         }
     }
 
-    fun addInvoiceDetail(invoiceDetail: InvoiceDetailModel) {
+    fun addInvoiceDetail(invoiceDetail: InvoiceDetailModelRequest) {
         viewModelScope.launch {
             try {
                 val apiService : InvoiceDetailService = CreateInteface.createService()

@@ -29,6 +29,7 @@ import com.example.petify.R
 import com.example.petify.data.database.enitities.CartItem
 import com.example.petify.data.server.enitities.CartResponse
 import com.example.petify.data.server.enitities.InvoiceDetailModel
+import com.example.petify.data.server.enitities.InvoiceDetailModelRequest
 import com.example.petify.data.server.enitities.InvoiceModel
 import com.example.petify.data.server.enitities.OrderModel
 import com.example.petify.databinding.ActivityPaymentBinding
@@ -187,28 +188,38 @@ class PaymentActivity : BaseActivity<ActivityPaymentBinding, OrderViewModel>() {
                     ""
                 )
                 viewModel.addOrder(order)
-                selectedItems?.let {
-                    for (item in it) {
-                        val invoiceModel = InvoiceDetailModel(
-                            "",
-                            userId,
-                            item.id,
-                            item.quantity,
-                            item.quantity * item.productId.price
-                        )
-                        invoiceDetailViewModel.addInvoiceDetail(invoiceModel)
-                        cartApiViewModel.deleteCart(item.id,userId)
+                viewModel.order.observe(this) { order ->
+                    if (order != null) {
+                        Log.d("TAG12345",order.id)
+                        selectedItems?.let {
+                            for (item in it) {
+                                val invoiceModel = InvoiceDetailModelRequest(
+                                    userId,
+                                    item.id,
+                                    order.id,
+                                    item.quantity,
+                                    item.quantity * item.productId.price
+                                )
+                                invoiceDetailViewModel.addInvoiceDetail(invoiceModel)
+                                cartApiViewModel.deleteCart(item.id, userId)
+                            }
+
+                        }
+                        navigateToPaymentResult("Đặt hàng thành công", orderModel = order)
                     }
 
                 }
-                navigateToPaymentResult("Đặt hàng thành công", orderModel = order)
+
 
             } else {
                 lifecycleScope.launch(Dispatchers.IO) {
                     try {
                         showLoading(true)
                         val orderApi = CreateOrder()
-                        val data: JSONObject = orderApi.createOrder(binding.tvTotalPriceHaveToPay.text.toString().toDouble().toInt().toString())
+                        val data: JSONObject = orderApi.createOrder(
+                            binding.tvTotalPriceHaveToPay.text.toString().toDouble().toInt()
+                                .toString()
+                        )
 
                         withContext(Dispatchers.Main) {
                             Log.d("TAG_API_RESPONSE", "Response from API: $data")
@@ -262,7 +273,7 @@ class PaymentActivity : BaseActivity<ActivityPaymentBinding, OrderViewModel>() {
         addressUser: String?,
         totalPrice: Double,
         selectedItems: ArrayList<CartResponse>?,
-        shippingPrice : Double
+        shippingPrice: Double
     ) {
         ZaloPaySDK.getInstance().payOrder(
             this@PaymentActivity, token, "demozpdk://app",
@@ -282,21 +293,27 @@ class PaymentActivity : BaseActivity<ActivityPaymentBinding, OrderViewModel>() {
                                 ""
                             )
                             viewModel.addOrder(order)
-                            selectedItems?.forEach { item ->
-                                val invoiceModel = InvoiceDetailModel(
-                                    "",
-                                    userId,
-                                    item.id,
-                                    item.quantity,
-                                    item.quantity * item.productId.price
-                                )
-                                invoiceDetailViewModel.addInvoiceDetail(invoiceModel)
+                            viewModel.order.observe(this@PaymentActivity) { order ->
+                                if (order != null) {
+                                    selectedItems?.let {
+                                        for (item in it) {
+                                            val invoiceModel = InvoiceDetailModelRequest(
+                                                userId,
+                                                item.id,
+                                                order.id,
+                                                item.quantity,
+                                                item.quantity * item.productId.price
+                                            )
+                                            invoiceDetailViewModel.addInvoiceDetail(invoiceModel)
+                                            cartApiViewModel.deleteCart(item.id, userId)
+                                        }
+
+                                    }
+                                    navigateToPaymentResult("Đặt hàng thành công", orderModel = order)
+                                }
+
                             }
 
-                            withContext(Dispatchers.Main) {
-
-                                navigateToPaymentResult("Thanh toán thành công", orderModel = order)
-                            }
                         } catch (e: Exception) {
                             withContext(Dispatchers.Main) {
                                 Toast.makeText(
