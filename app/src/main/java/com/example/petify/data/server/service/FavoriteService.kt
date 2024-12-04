@@ -11,8 +11,8 @@ import retrofit2.http.Path
 
 interface FavoriteService {
 
-    @GET("favorites/getListfavorites")
-    suspend fun getListFavorites(): Response<List<FavoriteResponse>>
+    @GET("favorites/getListfavorites/{user_id}")
+    suspend fun getListFavorites(@Path("user_id") user_id: String): Response<List<FavoriteResponse>>
 
     @POST("favorites/addTofavorites")
     suspend fun addFavorites(@Body favorites: FavoriteRequest): Response<FavoriteRequest>

@@ -56,7 +56,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
     private lateinit var cartViewModel: CartViewModel
     private lateinit var favoriteViewModel : FavoriteViewModel
     private lateinit var cartApi: CartApiViewModel
-    private var listFavorite1 : List<FavoriteResponse>? = null
+    private var listFavorite1: List<FavoriteResponse> = emptyList()
     override fun initView() {
         super.initView()
         val userModel = SharePreUtils.getUserModel(requireActivity())
@@ -65,7 +65,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
             ViewModelProvider(requireActivity())[ProductCategoryViewModel::class.java]
         productCategoryViewModel.getProductsGroupedByCategory()
         favoriteViewModel = ViewModelProvider(this)[FavoriteViewModel::class.java]
-        favoriteViewModel.getListFavorites()
+        favoriteViewModel.getListFavorites(userModel!!.id)
         Glide.with(requireActivity())
             .load(userModel?.avata)
             .into(viewBinding.ivUser)
@@ -96,9 +96,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
 
 
         favoriteViewModel.favoriteList.observe(this) { listFavorite ->
-            listFavorite1 = listFavorite
+            listFavorite1 = listFavorite ?: emptyList() // Gán danh sách trống nếu listFavorite là null
         }
-            productCategoryViewModel.responseProductCategoryList.observe(this) {
+        productCategoryViewModel.responseProductCategoryList.observe(this) {
                 Log.d("TAG12345", "productCategoryList: $it")
                 it?.let { categories ->
                     categoryProductParentAdapter = CategoryProductParentAdapter(
@@ -112,8 +112,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
                             if(isFavorite){
                                 val favoriteRequest = FavoriteRequest(productModel.id,userModel!!.id)
                                 favoriteViewModel.addFavorites(favoriteRequest)
+                                Log.d("TAG12345", "ProductThanhCong ${productModel.id} favorite status: $isFavorite")
                             }else{
                                 favoriteViewModel.deleteFavorite(productModel.id,userModel!!.id)
+                                    Log.d("TAG12345", "ProductThatBai ${productModel.id} favorite status: $isFavorite")
                             }
                             Log.d(
                                 "TAG12345",
@@ -139,7 +141,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
                             }
 
                         },
-                        emptyList(),
+                        listFavorite1!!.toMutableList(),
+//                        emptyList(),
                     )
                     viewBinding.rvProduct.adapter = categoryProductParentAdapter
                     viewBinding.rvProduct.layoutManager = LinearLayoutManager(requireContext())
