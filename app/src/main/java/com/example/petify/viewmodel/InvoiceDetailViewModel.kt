@@ -6,8 +6,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.petify.BaseViewModel
 import com.example.petify.data.server.CreateInteface
+import com.example.petify.data.server.enitities.InvoiceDetailAndProductModel
 import com.example.petify.data.server.enitities.InvoiceDetailModel
 import com.example.petify.data.server.enitities.InvoiceDetailModelRequest
+import com.example.petify.data.server.enitities.OrderResponse
 import com.example.petify.data.server.repository.InvoiceDetailRepository
 import com.example.petify.data.server.service.InvoiceDetailService
 import kotlinx.coroutines.launch
@@ -16,6 +18,13 @@ class InvoiceDetailViewModel : BaseViewModel() {
 
     private val _invoiceDetailList = MutableLiveData<List<InvoiceDetailModel>?>()
     val invoiceDetailList: LiveData<List<InvoiceDetailModel>?> get() = _invoiceDetailList
+
+
+    private val _invoiceDetailListIdUser = MutableLiveData<List<InvoiceDetailAndProductModel>?>()
+    val invoiceDetailListIdUser: LiveData<List<InvoiceDetailAndProductModel>?> get() = _invoiceDetailListIdUser
+
+    private val _orderDetailListIdUser = MutableLiveData<List<OrderResponse>?>()
+    val orderDetailListIdUser: LiveData<List<OrderResponse>?> get() = _orderDetailListIdUser
 
     private val _invoiceDetail = MutableLiveData<InvoiceDetailModel?>()
     val invoiceDetail: LiveData<InvoiceDetailModel?> get() = _invoiceDetail
@@ -28,6 +37,38 @@ class InvoiceDetailViewModel : BaseViewModel() {
 
     private val _isInvoiceDetailDeleted = MutableLiveData<Boolean>()
     val isInvoiceDetailDeleted: LiveData<Boolean> get() = _isInvoiceDetailDeleted
+
+
+    fun getAllOrderDetailsWithStatus(user_id: String) {
+        viewModelScope.launch {
+            try {
+                val apiService : InvoiceDetailService = CreateInteface.createService()
+                val invoiceDetailRepository = InvoiceDetailRepository(apiService)
+                val result = invoiceDetailRepository.getAllOrderDetailsWithStatus(user_id)
+                _orderDetailListIdUser.value = result
+            } catch (e: Exception) {
+                Log.e("InvoiceDetailViewModel", "Error fetching invoice details", e)
+                _orderDetailListIdUser.value = null
+            }
+        }
+    }
+
+    fun getinvoicedetailByIdUser(user_id: String) {
+        viewModelScope.launch {
+            try {
+                val apiService : InvoiceDetailService = CreateInteface.createService()
+                val invoiceDetailRepository = InvoiceDetailRepository(apiService)
+                val result = invoiceDetailRepository.getinvoicedetailByIdUser(user_id)
+                _invoiceDetailListIdUser.value = result
+            } catch (e: Exception) {
+                Log.e("InvoiceDetailViewModel", "Error fetching invoice details", e)
+                _invoiceDetailListIdUser.value = null
+            }
+        }
+    }
+    
+    
+    
 
     fun fetchInvoiceDetails() {
         viewModelScope.launch {

@@ -2,10 +2,6 @@ const db = require("../db/db");
 const orderDetailSchema = new db.mongoose.Schema(
   {
 
-    user_id: {
-        type: String,
-        required: true
-    },
     product_id: {
       type: db.mongoose.Schema.Types.ObjectId,
       required: true,

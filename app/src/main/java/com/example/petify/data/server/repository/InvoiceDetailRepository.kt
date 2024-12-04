@@ -1,8 +1,10 @@
 package com.example.petify.data.server.repository
 
 import android.util.Log
+import com.example.petify.data.server.enitities.InvoiceDetailAndProductModel
 import com.example.petify.data.server.enitities.InvoiceDetailModel
 import com.example.petify.data.server.enitities.InvoiceDetailModelRequest
+import com.example.petify.data.server.enitities.OrderResponse
 import com.example.petify.data.server.service.InvoiceDetailService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -10,6 +12,29 @@ import kotlinx.coroutines.withContext
 class InvoiceDetailRepository( private val api: InvoiceDetailService) {
     suspend fun getListInvoiceDetail(): List<InvoiceDetailModel>? = withContext(Dispatchers.IO) {
         val response = api.getListInvoiceDetail()
+        if (response.isSuccessful) {
+            Log.d("InvoiceDetailRepository", "getListInvoiceDetail Success: ${response.body()}")
+            response.body()
+        } else {
+            Log.e("InvoiceDetailRepository", "getListInvoiceDetail Error: ${response.errorBody()}")
+            null
+        }
+    }
+
+    suspend fun getAllOrderDetailsWithStatus(user_id: String): List<OrderResponse>? = withContext(Dispatchers.IO) {
+        val response = api.getAllOrderDetailsWithStatus(user_id)
+        if (response.isSuccessful) {
+            Log.d("OrderResponse", "OrderResponse Success: ${response.body()}")
+            response.body()
+        } else {
+            Log.e("OrderResponse", "OrderResponse Error: ${response.errorBody()}")
+            null
+        }
+    }
+
+
+    suspend fun getinvoicedetailByIdUser(user_id: String): List<InvoiceDetailAndProductModel>? = withContext(Dispatchers.IO) {
+        val response = api.getinvoicedetailByIdUser(user_id)
         if (response.isSuccessful) {
             Log.d("InvoiceDetailRepository", "getListInvoiceDetail Success: ${response.body()}")
             response.body()

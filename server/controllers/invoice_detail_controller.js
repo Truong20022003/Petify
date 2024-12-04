@@ -75,8 +75,14 @@ exports.getAllInvoiceDetailsByUserId = async (req, res, next) => {
     try {
         let userId = req.params.user_id;
         // Tìm tất cả các chi tiết hóa đơn liên quan đến user_id
-        let invoiceDetails = await invoice_detailModel.find({ user_id: userId }).populate("product_id").populate("invoice_id");
-        res.json(invoiceDetails);
+        let invoiceDetails = await invoice_detailModel.find({ user_id: userId })
+            .populate({
+                path: "product_id", // Liên kết bảng product
+                select: "-__v", // Loại bỏ trường không cần thiết (ví dụ: versionKey)
+            })
+            .populate("invoice_id"); // Liên kết bảng invoice
+
+        res.json( invoiceDetails);
     } catch (error) {
         res.json({ status: "Failed", result: error.message });
     }

@@ -77,21 +77,21 @@ exports.getorder_detailById = async (req, res, next) => {
 exports.getAllOrderDetailsWithStatus = async (req, res, next) => {
     try {
         let userId = req.params.user_id;
+        
         // Tìm tất cả các chi tiết đơn hàng liên quan đến user_id
         let orderDetails = await order_detailModel.find({ user_id: userId })
             .populate({
                 path: "order_id", // Populate bảng order
-                select: "status", // Lấy trường status
+                select: "status", // Lấy trường status của đơn hàng
             })
-            .populate("product_id"); // Populate bảng product (nếu cần)
-
-        // Chuyển đổi dữ liệu trả về với status của đơn hàng
+            .populate("product_id"); // Populate bảng product (lấy tất cả các trường từ bảng product)
+            let validOrderDetails = orderDetails.filter(detail => detail.order_id !== null);
+        // Chuyển đổi dữ liệu trả về với status của đơn hàng và thông tin sản phẩm
         let result = orderDetails.map(detail => ({
             _id: detail._id,
             user_id: detail.user_id,
-            product_id: detail.product_id,
-            order_id: detail.order_id._id, // ID của đơn hàng
-            order_status: detail.order_id.status, // Trạng thái của đơn hàng
+            product: detail.product_id, // Trả về toàn bộ dữ liệu sản phẩm
+            order_id: detail.order_id, // ID của đơn hàng
             quantity: detail.quantity,
             total_price: detail.total_price,
         }));
