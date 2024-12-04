@@ -304,3 +304,50 @@ exports.addCategoryToProduct = async (req, res, next) => {
         res.status(500).json({ status: "Failed to add Category to Product", error: error.message });
     }
 };
+
+
+
+exports.getListProductsByCategoryId = async (req, res, next) => {
+    try {
+        const categoryId = req.params.id;
+
+        const products = await product_categoryModel.aggregate([
+            {
+                $addFields: {
+                    category_id: { $toObjectId: "$category_id" },
+                    product_id: { $toObjectId: "$product_id" }
+                }
+            },
+            {
+                $match: {
+                    category_id: new mongoose.Types.ObjectId(categoryId)
+                }
+            },
+            {
+                $lookup: {
+                    from: "product",
+                    localField: "product_id",
+                    foreignField: "_id",
+                    as: "product"
+                }
+            },
+            {
+                $unwind: "$product" // Giải nén sản phẩm từ mảng
+            },
+            {
+                $project: {
+                    _id: 0,
+                    product: 1 // Chỉ trả về thông tin sản phẩm
+                }
+            }
+        ]);
+
+        if (products.length === 0) {
+            return res.status(404).json({ status: "No products found for this category", result: [] });
+        }
+
+        res.json(products.map(p => p.product));
+    } catch (error) {
+        res.status(500).json({ status: "Failed to retrieve products", error: error.message });
+    }
+};

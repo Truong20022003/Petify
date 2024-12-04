@@ -1,6 +1,7 @@
 package com.example.petify.data.server.service
 
 import com.example.petify.data.server.enitities.ProductCategoryModel
+import com.example.petify.data.server.enitities.ProductModel
 import com.example.petify.data.server.enitities.ResponeCategoryProduct
 import retrofit2.Response
 import retrofit2.http.Body
@@ -32,5 +33,8 @@ interface ProductCategoryService {
 
     @GET("productCategory/getProductsGroupedByCategory")
     suspend fun getProductsGroupedByCategory(): Response<ResponeCategoryProduct>
+
+    @GET("productCategory/getListProductsByCategoryId/{id}")
+    suspend fun getListProductsByCategoryId(@Path("id") id: String): Response<List<ProductModel>>
 
 }

@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -60,6 +61,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
         super.initView()
         val userModel = SharePreUtils.getUserModel(requireActivity())
 
+        productCategoryViewModel =
+            ViewModelProvider(requireActivity())[ProductCategoryViewModel::class.java]
+        productCategoryViewModel.getProductsGroupedByCategory()
         favoriteViewModel = ViewModelProvider(this)[FavoriteViewModel::class.java]
         favoriteViewModel.getListFavorites()
         Glide.with(requireActivity())
@@ -71,35 +75,26 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
         cartViewModel = ViewModelProvider(this, factory)[CartViewModel::class.java]
         productViewModel = ViewModelProvider(requireActivity())[ProductViewModel::class.java]
         cartApi = ViewModelProvider(requireActivity())[CartApiViewModel::class.java]
-        productViewModel.getListProduct()
-        productViewModel.productList.observe(requireActivity()) { productList ->
-            Log.d(
-                "TAG12345",
-                "productList: $productList"
-            )
-        }
+
         categoryViewModel = ViewModelProvider(requireActivity())[CategoryViewModel::class.java]
         categoryViewModel.getListCategory()
 
+        viewBinding.rvCategory.visibility =  View.GONE
+        viewBinding.btnAll.visibility =  View.GONE
         categoryViewModel.categoryList.observe(requireActivity()) {
-            Log.d("TAG12345", "categoryList: $it")
+//            Log.d("TAG12345", "categoryList: $it")
             it?.let {
                 adapter = CategoryAdapter(
                     it,
                     itemClickListener = { productModel ->
-                        val intent = Intent(context, ProductDetailActivity::class.java).apply {
-                        }
-                        startActivity(intent)
+
                     },
                 )
-                viewBinding.rvCategory.adapter = adapter
+//                viewBinding.rvCategory.adapter = adapter
             }
         }
 
 
-        productCategoryViewModel =
-            ViewModelProvider(requireActivity())[ProductCategoryViewModel::class.java]
-        productCategoryViewModel.getProductsGroupedByCategory()
         favoriteViewModel.favoriteList.observe(this) { listFavorite ->
             listFavorite1 = listFavorite
         }
@@ -110,6 +105,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
                         categories.toMutableList(),
                         itemClickListener = { productModel ->
                             val intent = Intent(context, ProductDetailActivity::class.java)
+                            intent.putExtra("productModel", productModel)
                             startActivity(intent)
                         },
                         onFavoriteChanged = { productModel, isFavorite ->
@@ -143,7 +139,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
                             }
 
                         },
-                        listFavorite1!!.toMutableList(),
+                        emptyList(),
                     )
                     viewBinding.rvProduct.adapter = categoryProductParentAdapter
                     viewBinding.rvProduct.layoutManager = LinearLayoutManager(requireContext())

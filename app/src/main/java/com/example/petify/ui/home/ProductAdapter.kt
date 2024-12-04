@@ -42,7 +42,7 @@ class ProductAdapter(
             }
             tvProductName.text = product.name
             tvDiscount.text = "${product.sale} %"
-            tvSalePrice.text = "${product.price} đ"
+            tvSalePrice.text = "${product.price.toInt()} đ"
             tvOriginalPrice.apply {
                 text = "${product.price} đ"
                 paintFlags = paintFlags or android.graphics.Paint.STRIKE_THRU_TEXT_FLAG

@@ -170,7 +170,7 @@ class PaymentActivity : BaseActivity<ActivityPaymentBinding, OrderViewModel>() {
                     addressUser!!,
                     totalPrice,
                     "Đang chờ xác nhận",
-                    "Thanh toán qua Zalo Pay",
+                    "Thanh toán khi nhận hàng",
                     addressUser!!,
                     shippingPrice,
                     ""
@@ -314,5 +314,6 @@ class PaymentActivity : BaseActivity<ActivityPaymentBinding, OrderViewModel>() {
         intent.putExtra("result", resultMessage)
         intent.putExtra("order", orderModel)
         startActivity(intent)
+        finish()
     }
 }

@@ -44,18 +44,18 @@ class SearchActivity : BaseActivity<ActivitySearchBinding, BaseViewModel>() {
         productViewModel = ViewModelProvider(this)[ProductViewModel::class.java]
         sharedPreferences = getSharedPreferences("SearchHistory", Context.MODE_PRIVATE)
 
-        adapterProduct = ProductAdapter(
-            productList = emptyList(),
-            itemClickListener = { product ->
-                Log.d("CLICK", "Clicked on product: ${product.name}")
-            },
-            onFavoriteChanged = { product, isFavorite ->
-                Log.d("FAVORITE", "Product: ${product.name}, isFavorite: $isFavorite")
-            },
-            onAddToCart = { product, isAdded ->
-                Log.d("CART", "Added to cart: ${product.name}, isAdded: $isAdded")
-            }
-        )
+//        adapterProduct = ProductAdapter(
+//            productList = emptyList(),
+//            itemClickListener = { product ->
+//                Log.d("CLICK", "Clicked on product: ${product.name}")
+//            },
+//            onFavoriteChanged = { product, isFavorite ->
+//                Log.d("FAVORITE", "Product: ${product.name}, isFavorite: $isFavorite")
+//            },
+//            onAddToCart = { product, isAdded ->
+//                Log.d("CART", "Added to cart: ${product.name}, isAdded: $isAdded")
+//            }
+//        )
 
         binding.rcvProduct.adapter = adapterProduct
         binding.rcvProduct.layoutManager = GridLayoutManager(this, 2)
@@ -69,7 +69,7 @@ class SearchActivity : BaseActivity<ActivitySearchBinding, BaseViewModel>() {
                             ?.contains(suggestion.normalizeSearch()) == true
             } ?: emptyList()
 
-            adapterProduct.updateData(filteredProducts)
+//            adapterProduct.updateData(filteredProducts)
             binding.rcvProduct.visibility =
                 if (filteredProducts.isNotEmpty()) View.VISIBLE else View.GONE
             binding.rcvSuggestions.visibility = View.GONE
@@ -134,7 +134,7 @@ class SearchActivity : BaseActivity<ActivitySearchBinding, BaseViewModel>() {
                             normalizedProductName.contains(queryWord)
                         }
                     }
-                    filteredNames?.let { adapterProduct.updateData(it) }
+//                    filteredNames?.let { adapterProduct.updateData(it) }
                     binding.layoutEmpty.visibility =
                         if (!filteredNames?.isNotEmpty()!!) View.VISIBLE else View.GONE
 
@@ -205,7 +205,7 @@ class SearchActivity : BaseActivity<ActivitySearchBinding, BaseViewModel>() {
                 ignoreCase = true
             ) == true
         }
-        adapterProduct.updateData(filteredProducts)
+//        adapterProduct.updateData(filteredProducts)
         binding.rcvProduct.visibility =
             if (filteredProducts.isNotEmpty()) View.VISIBLE else View.GONE
         binding.rcvSuggestions.visibility = View.GONE

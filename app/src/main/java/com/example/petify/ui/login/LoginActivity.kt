@@ -68,9 +68,14 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, UserViewModel>() {
             startActivity(intent)
         }
         binding.btnLogin.setOnClickListener {
-            val email = binding.etEmail.text.toString()
+            val phoneNumberInput = binding.etEmail.text.toString()
+            val phoneNumber = if (phoneNumberInput.startsWith("0")) {
+                "+84" + phoneNumberInput.substring(1)
+            } else {
+                phoneNumberInput
+            }
             val password = binding.etPassword.text.toString()
-            viewModel.loginUser(email, password, this@LoginActivity)
+            viewModel.loginUser(phoneNumber, password, this@LoginActivity)
         }
 
         observeViewModel()
@@ -80,6 +85,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, UserViewModel>() {
         viewModel.loginSuccess.observe(this) { success ->
             if (success) {
                 startActivity(Intent(this, MainActivity::class.java))
+                finish()
             } else {
                 Log.d("TAG1111", "Login failed")
             }
@@ -130,7 +136,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, UserViewModel>() {
                 } else {
                     val exception = task.exception
                     Log.e("GoogleSignIn", "Sign-in failed: ${exception?.message}")
-                    Toast.makeText(this, "Authentication Failed.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Tên tài khoản hoặc mật khẩu không đúng", Toast.LENGTH_SHORT).show()
                 }
             }
     }

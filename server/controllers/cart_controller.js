@@ -2,6 +2,14 @@ const {cartModel} = require("../models/cart_model")
 
 exports.addCart = async (req, res, next) => {
     try {
+        const existingCart = await cartModel.findOne({
+            product_id: req.body.product_id,
+            user_id: req.body.user_id
+        });
+
+        if (existingCart) {
+            return res.json({ status: "Product already in cart" });
+        }
         let obj = new cartModel({
             product_id: req.body.product_id,
             user_id: req.body.user_id,

@@ -44,7 +44,7 @@ class CartAdapter(
                 }
                 ivNameSp.text = cart.productId.name
                 ivTypeSp.text = "${cart.productId.date}"
-                ivPriceSp.text = "${cart.productId.price*cart.quantity} VND"
+                ivPriceSp.text = "${(cart.productId.price*cart.quantity).toInt()} VND"
                 tvQuantity.text = cart.quantity.toString()
 
                 ivAddition.setOnClickListener {
