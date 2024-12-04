@@ -6,17 +6,28 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.petify.R
+import com.example.petify.data.server.enitities.CartResponse
 import com.example.petify.data.server.enitities.FavoriteResponse
 import com.example.petify.data.server.enitities.ProductModel
 import com.example.petify.databinding.ItemFavoritesBinding
 
 
 class FavoritesAdapter(
-    private val productList: List<ProductModel>,
-    private val favoriteList: List<FavoriteResponse>,
+    private var favoriteList: List<FavoriteResponse>,
     private val itemClickListener: (ProductModel) -> Unit,
     private val onFavoriteChanged: (ProductModel, Boolean) -> Unit
 ) : RecyclerView.Adapter<FavoritesAdapter.FavoritesViewHolder>() {
+
+    val selectedItems = mutableSetOf<FavoriteResponse>()
+
+    fun updateItems(newItems: List<FavoriteResponse>) {
+        favoriteList = newItems
+        notifyDataSetChanged()
+    }
+
+    fun getSelectedItems(): List<FavoriteResponse> {
+        return selectedItems.toList()
+    }
 
     class FavoritesViewHolder(val binding: ItemFavoritesBinding) :
         RecyclerView.ViewHolder(binding.root)
@@ -28,17 +39,16 @@ class FavoritesAdapter(
     }
 
     override fun getItemCount(): Int {
-        return productList.size
+        return favoriteList.size
     }
 
     override fun onBindViewHolder(holder: FavoritesViewHolder, position: Int) {
-        val product = productList[position]
+        val product = favoriteList[position]
 
-        // Kiểm tra nếu sản phẩm có trong danh sách yêu thích từ API
+//        // Kiểm tra nếu sản phẩm có trong danh sách yêu thích từ API
         val isFavorite = favoriteList.any { it.productId.id == product.id }
-
         holder.binding.apply {
-            val imageUrl = product.image[0]
+            val imageUrl = product.productId.image[0]
             if (imageUrl.isNotEmpty()) {
                 Glide.with(holder.binding.root.context)
                     .load(imageUrl)
@@ -47,25 +57,27 @@ class FavoritesAdapter(
                 ivProductImage.setImageResource(R.drawable.img_item_sp1)
             }
 
-            tvProductName.text = product.name
-            tvDiscount.text = "${product.sale} %"
-            tvSalePrice.text = "${product.price} đ"
+            tvProductName.text = product.productId.name
+            tvDiscount.text = "${product.productId.sale} %"
+            tvSalePrice.text = "${product.productId.price} đ"
             tvOriginalPrice.apply {
-                text = "${product.price} đ"
+                text = "${product.productId.price} đ"
                 paintFlags = paintFlags or android.graphics.Paint.STRIKE_THRU_TEXT_FLAG
             }
-            tvSold.text = "Đã bán ${product.quantity}"
+            tvSold.text = "Đã bán ${product.productId.quantity}"
 
-            ivFavorite.setImageResource(
-                if (isFavorite) R.drawable.ic_love_favorites_off else R.drawable.ic_love_item_home
-            )
+
 
             ivFavorite.setOnClickListener {
-                onFavoriteChanged(product, !isFavorite)
+                onFavoriteChanged(product.productId, !isFavorite)
+                ivFavorite.setImageResource(
+                    if (isFavorite) R.drawable.ic_love_item_home else R.drawable.ic_love_favorites_off
+                )
             }
 
+
             holder.itemView.setOnClickListener {
-                itemClickListener(product)
+                itemClickListener(product.productId)
             }
         }
     }

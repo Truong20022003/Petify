@@ -21,6 +21,9 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="34">
         <activity
+            android:name=".ui.invoice.InvoiceActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.payment.EditAddressActivity"
             android:exported="false" />
         <activity

@@ -49,12 +49,20 @@ class ProductAdapter(
             }
             tvSold.text = "Đã bán ${product.quantity}"
 
-            ivFavorite.setImageResource(
-                if (isFavorite) R.drawable.ic_love_favorites_off else R.drawable.ic_love_item_home
-            )
+
 
             ivFavorite.setOnClickListener {
-                onFavoriteChanged(product, !isFavorite)
+                // Đổi trạng thái yêu thích (toggle)
+                val newIsFavorite = !isFavorite
+
+                // Gọi hàm xử lý thay đổi trạng thái yêu thích
+                onFavoriteChanged(product, newIsFavorite)
+
+                // Cập nhật lại biểu tượng theo trạng thái mới
+                ivFavorite.setImageResource(
+                    if (newIsFavorite) R.drawable.ic_love_item_home else R.drawable.ic_love_favorites_off
+                )
+
             }
 
             ivCart.setOnClickListener {
