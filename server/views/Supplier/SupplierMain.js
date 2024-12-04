@@ -13,7 +13,7 @@ const getList = async () => {
     });
     const data = await response.json();
     renderTable(data);
-    addEventListeners();
+
   } catch (err) {
     console.log(err);
   }
@@ -86,6 +86,7 @@ const renderList = (data) => {
       tableBody.innerHTML += row;
     });
   }
+  addEventListeners();
 };
 
 ////
@@ -336,8 +337,8 @@ const saveEdit = async (_id) => {
         if (data.status) {
           dialogSuccess("Cập nhật thành công!").then(() => {
             getList();  // Chỉ gọi sau khi thông báo xong
-          });  
-         
+          });
+
         } else {
           dialogError("Cập nhật thất bại!")
         }
@@ -387,9 +388,9 @@ const saveAdd = async () => {
         const data = await response.json();
         if (data.status === "Add successfully") {
           dialogSuccess("Thêm thành công!").then(() => {
-           getList();  // Chỉ gọi sau khi thông báo xong
-          });  
-          
+            getList();  // Chỉ gọi sau khi thông báo xong
+          });
+
         } else {
           dialogError("Thêm thất bại!")
         }

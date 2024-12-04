@@ -12,6 +12,7 @@ const getList = async () => {
       headers,
     });
     const data = await response.json();
+    console.log(data);
     renderTable(data);
   } catch (err) {
     console.log(err);

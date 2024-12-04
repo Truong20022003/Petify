@@ -78,7 +78,7 @@ document
     var emailError = document.getElementById("emailError");
     var passwordError = document.getElementById("passwordError");
     var isValid = true;
-
+    console.log(email.value, "email", password.value, "password")
     // Kiểm tra email
     if (email.value.trim() === "") {
       email.classList.add("error-border");
@@ -122,7 +122,7 @@ document
             (dt.email === email.value || dt.user_name === email.value) &&
             dt.password === password.value
         );
-
+        console.log(user, "heeh")
         if (user) {
           // Lấy vai trò người dùng
           const roles = await getAllUsersWithRoles(user._id);
@@ -150,12 +150,12 @@ document
 
             console.log(`${user.name}, ${user.avata}`);
             // alert("Đăng nhập thành công");
-            dialogSuccessLogin("Đăng nhập thành công","/views/Home/HomeScreen.html" )
+            dialogSuccessLogin("Đăng nhập thành công", "/views/Home/HomeScreen.html")
           } else {
-            dialogWarning("Xin lỗi!","Bạn không có quyền truy cập")
+            dialogWarning("Xin lỗi!", "Bạn không có quyền truy cập")
           }
         } else {
-          dialogError("Xin lỗi!","Bạn nhập sai tài khoản hoặc mật khẩu")
+          dialogError("Xin lỗi!", "Bạn nhập sai tài khoản hoặc mật khẩu")
         }
       } catch (error) {
         console.error("Lỗi khi đăng nhập:", error); // Xử lý lỗi nếu có

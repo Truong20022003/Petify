@@ -131,6 +131,7 @@ const renderList = (data, categories) => {
         tableBody.innerHTML += row;
       })
   }
+  addEventListeners(categories);
 }
 
 function filterProductsByPrice(maxPrice, data) {
