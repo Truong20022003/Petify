@@ -35,6 +35,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="5dp"
             android:fontFamily="@font/bevietnampro_bold"
             android:gravity="center"
             android:text="Đơn hàng đã hoàn tất thanh toán"
