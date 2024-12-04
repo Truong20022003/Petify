@@ -108,6 +108,7 @@ exports.ProcessOrder = async (req, res, next) => {
             status: order.status,
             shipping_fee: order.shipping_fee,
             carrier_id: order.carrier_id,
+            code: order.code,
             createdAt: new Date(),
             order_id: orderId  // Thêm order_id vào hóa đơn
         });
