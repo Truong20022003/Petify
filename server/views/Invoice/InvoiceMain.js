@@ -43,39 +43,34 @@ const renderTable = async (data) => {
       </thead>
       <tbody>
         ${data
-          .map(
-            (item, index) => /*html*/ `
+      .map(
+        (item, index) => /*html*/ `
               <tr id="row-${item._id}">
                 <td class="border border-gray-300 px-4 py-2">${index + 1}</td>
                 <td class="border border-gray-300 px-4 py-2">
-                    ${
-                      namesuser[index] === ""
-                        ? "User không tồn tại"
-                        : namesuser[index]
-                    }
+                    ${namesuser[index] === ""
+            ? "User không tồn tại"
+            : namesuser[index]
+          }
                 </td>
                 <td class="border border-gray-300 px-4 py-2">${item.total}</td>
                 <td class="border border-gray-300 px-4 py-2">${item.date}</td>
                 <td class="border border-gray-300 px-4 py-2">${item.status}</td>
-                <td class="border border-gray-300 px-4 py-2">${
-                  item.delivery_address
-                }</td>
+                <td class="border border-gray-300 px-4 py-2">${item.delivery_address
+          }</td>
                 <td class="border border-gray-300 px-4 py-2">
                   <div class="button-group flex flex-col space-y-2">
-                    <!-- <button class="bg-blue-500 text-white px-2 py-1 rounded btnedit" data-id="${
-                      item._id
-                    }">Cập nhật</button> -->
-                    <!-- <button class="bg-red-500 text-white px-2 py-1 rounded btndelete" data-id="${
-                      item._id
-                    }">Xóa</button> -->
-                    <button class="bg-[#008080] text-white px-2 py-1 rounded btndetail" data-id="${
-                      item._id
-                    }">Chi tiết</button>
+                    <!-- <button class="bg-blue-500 text-white px-2 py-1 rounded btnedit" data-id="${item._id
+          }">Cập nhật</button> -->
+                    <!-- <button class="bg-red-500 text-white px-2 py-1 rounded btndelete" data-id="${item._id
+          }">Xóa</button> -->
+                    <button class="bg-[#008080] text-white px-2 py-1 rounded btndetail" data-id="${item._id
+          }">Chi tiết</button>
                   </div>
                 </td>
               </tr>`
-          )
-          .join("")}
+      )
+      .join("")}
       </tbody>
     </table>`;
   addEventListeners();
@@ -373,7 +368,7 @@ async function getByIDCarrier(id) {
     };
   } catch (err) {
     console.log(err);
-    return ""; 
+    return "";
   }
 }
 async function checkUser(id) {
@@ -388,10 +383,10 @@ async function checkUser(id) {
     );
 
     const data = await response.json();
-    // console.log(data.result, "datauser");
+    console.log(data, "datauser");
 
-    const name = data.result.name;
-    // console.log(name, "name");
+    const name = data.name;
+    console.log(name, "name333");
 
     return name; // Trả về giá trị tên sau khi fetch thành công
   } catch (err) {
@@ -414,7 +409,7 @@ async function checkListInvoiceDetail(id) {
     console.log(data.result, "InvoiceDetail");
 
     const name = data.result.name;
-    // console.log(name, "name");
+    console.log(name, "name");
 
     return name; // Trả về giá trị tên sau khi fetch thành công
   } catch (err) {

@@ -22,7 +22,7 @@ const getList = async () => {
     const namesrole = await Promise.all(
       data.map((item) => checkRole(item.role_id))
     );
-    
+
     content.innerHTML = /*html*/ `<div class="flex mb-4">
             <!-- <button class="bg-[#396060] text-white px-4 py-2 rounded mr-2 btnadd">
               Thêm mới
@@ -48,36 +48,29 @@ const getList = async () => {
             </thead>
             <tbody>
               ${data
-                .map(
-                  (item, index) => /*html*/ `<tr id="row-${item._id}">
-                      <td class="border border-gray-300 px-4 py-2">${
-                        index + 1
-                      }</td>
-                      <td class="border border-gray-300 px-4 py-2">${
-                        item._id
-                      }</td>
-                      <td class="border border-gray-300 px-4 py-2">${
-                        namesrole[index]
-                      }</td> 
-                      <td class="border border-gray-300 px-4 py-2">${
-                        namesuser[index]
-                      }</td>
+        .map(
+          (item, index) => /*html*/ `<tr id="row-${item._id}">
+                      <td class="border border-gray-300 px-4 py-2">${index + 1
+            }</td>
+                      <td class="border border-gray-300 px-4 py-2">${item._id
+            }</td>
+                      <td class="border border-gray-300 px-4 py-2">${namesrole[index]
+            }</td> 
+                      <td class="border border-gray-300 px-4 py-2">${namesuser[index]
+            }</td>
                       <td class="border border-gray-300 px-4 py-2">
                         <div class="button-group flex flex-col space-y-2">
-                          <!-- <button class="bg-blue-500 text-white px-2 py-1 rounded btnedit" data-id="${
-                            item._id
-                          }">Cập nhật</button> -->
-                          <button class="bg-red-500 text-white px-2 py-1 rounded btndelete" data-id="${
-                            item._id
-                          }">Xóa</button> 
-                          <button class="bg-[#008080] text-white px-2 py-1 rounded btndetail" data-id="${
-                            item._id
-                          }">Chi tiết</button>
+                          <!-- <button class="bg-blue-500 text-white px-2 py-1 rounded btnedit" data-id="${item._id
+            }">Cập nhật</button> -->
+                          <button class="bg-red-500 text-white px-2 py-1 rounded btndelete" data-id="${item._id
+            }">Xóa</button> 
+                          <button class="bg-[#008080] text-white px-2 py-1 rounded btndetail" data-id="${item._id
+            }">Chi tiết</button>
                         </div>
                       </td>
                     </tr>`
-                )
-                .join("")}
+        )
+        .join("")}
             </tbody>
           </table>`;
 
@@ -106,8 +99,8 @@ async function checkUser(id) {
     const data = await response.json();
     // console.log(data.result, "datauser");
 
-    const name = data.result.name;
-    // console.log(name, "name");
+    const name = data.name;
+    console.log(name, "name");
 
     return name; // Trả về giá trị tên sau khi fetch thành công
   } catch (err) {

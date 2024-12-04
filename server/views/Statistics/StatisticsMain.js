@@ -3,70 +3,97 @@ const headers = {
     "Content-Type": "application/json",
 };
 
-let currentYear = new Date().getFullYear();
-let currentMonth = new Date().getMonth() + 1; // Lấy tháng hiện tại (1-12)
+const yearSelect = document.getElementById("yearSelect");
+const monthSelect = document.getElementById("monthSelect");
+const daySelect = document.getElementById("daySelect");
 
-const yearDisplay = document.getElementById("currentYear");
-const monthDisplay = document.getElementById("currentMonth");
-let revenueChart, productRevenueChart;
+// Lấy năm, tháng, ngày hiện tại
+let currentDate = new Date();
+let currentYear = currentDate.getFullYear();
+let currentMonth = currentDate.getMonth() + 1; // Tháng (1-12)
+let currentDay = currentDate.getDate(); // Ngày (1-31)
 
-function updateYearDisplay(year) {
-    yearDisplay.textContent = year;
+// Hàm khởi tạo danh sách năm
+function populateYears() {
+    const maxYear = new Date().getFullYear(); // Năm hiện tại
+    const minYear = 2000; // Giới hạn năm thấp nhất
+    for (let year = maxYear; year >= minYear; year--) {
+        const option = document.createElement("option");
+        option.value = year;
+        option.textContent = year;
+        yearSelect.appendChild(option);
+    }
+    yearSelect.value = currentYear; // Đặt giá trị mặc định là năm hiện tại
 }
-function updateMonthDisplay(month) {
-    monthDisplay.textContent = `Tháng ${month}`;
+
+// Hàm khởi tạo danh sách tháng
+function populateMonths() {
+    for (let month = 1; month <= 12; month++) {
+        const option = document.createElement("option");
+        option.value = month;
+        option.textContent = `Tháng ${month}`;
+        monthSelect.appendChild(option);
+    }
+    monthSelect.value = currentMonth; // Đặt giá trị mặc định là tháng hiện tại
 }
-document.getElementById("prevYearBtn").addEventListener("click", () => {
-    currentYear--;
-    updateYearDisplay(currentYear);
-    fetchData()
-});
 
-document.getElementById("nextYearBtn").addEventListener("click", () => {
-    if (currentYear < new Date().getFullYear()) {
-        currentYear++;
-        updateYearDisplay(currentYear);
-        fetchData()
-    } else {
-        alert("Đã đến năm hiện tại. Không thể chọn năm sau.");
+// Hàm khởi tạo danh sách ngày
+function populateDays(year, month) {
+    daySelect.innerHTML = ""; // Xóa ngày cũ
+    const daysInMonth = new Date(year, month, 0).getDate(); // Số ngày trong tháng
+    for (let day = 1; day <= daysInMonth; day++) {
+        const option = document.createElement("option");
+        option.value = day;
+        option.textContent = `Ngày ${day}`;
+        daySelect.appendChild(option);
     }
-});
-document.getElementById("prevMonthBtn").addEventListener("click", () => {
-    if (currentMonth > 1) {
-        currentMonth--;
-    } else {
-        currentMonth = 12; // Nếu vượt qua tháng 1, quay về tháng 12
-        currentYear--;     // Lùi năm
-        updateYearDisplay(currentYear);
-    }
-    updateMonthDisplay(currentMonth);
-    fetchData(); // Gọi hàm lấy dữ liệu mới
-});
+    daySelect.value = currentDay; // Đặt giá trị mặc định là ngày hiện tại
+}
 
-document.getElementById("nextMonthBtn").addEventListener("click", () => {
-    if (currentMonth < 12) {
-        currentMonth++;
-    } else {
-        currentMonth = 1; // Nếu vượt qua tháng 12, quay về tháng 1
-        currentYear++;     // Tăng năm
-        updateYearDisplay(currentYear);
+// Hàm xử lý khi giá trị combobox thay đổi
+function handleDateChange() {
+    currentYear = parseInt(yearSelect.value, 10);
+    currentMonth = parseInt(monthSelect.value, 10);
+    currentDay = parseInt(daySelect.value, 10);
+
+    // Kiểm tra ngày hợp lệ (nếu thay đổi tháng hoặc năm)
+    const maxDays = new Date(currentYear, currentMonth, 0).getDate();
+    if (currentDay > maxDays) {
+        currentDay = maxDays;
+        daySelect.value = currentDay;
     }
-    updateMonthDisplay(currentMonth);
-    fetchData(); // Gọi hàm lấy dữ liệu mới
+
+    // Gọi API hoặc cập nhật dữ liệu
+    fetchData();
+}
+
+// Gán sự kiện thay đổi cho các combobox
+yearSelect.addEventListener("change", () => {
+    handleDateChange();
+    populateDays(currentYear, currentMonth); // Cập nhật lại ngày theo tháng và năm mới
 });
+monthSelect.addEventListener("change", () => {
+    handleDateChange();
+    populateDays(currentYear, currentMonth); // Cập nhật lại ngày theo tháng mới
+});
+daySelect.addEventListener("change", handleDateChange);
+
+// Gọi hàm khởi tạo combobox khi tải trang
 document.addEventListener("DOMContentLoaded", () => {
-    updateYearDisplay(currentYear);
-    yearDisplay.textContent = currentYear;
-    monthDisplay.textContent = `Tháng ${currentMonth}`;
-    fetchData()
+    populateYears();
+    populateMonths();
+    populateDays(currentYear, currentMonth);
+    fetchData(); // Gọi dữ liệu ban đầu
 });
 async function fetchData() {
     const year = currentYear;
     const month = currentMonth
+    const day = currentDay
 
     fetchDataAndRenderChart(year);
     // fetchTopProducts(month, year);
     fetchTopProducts22(month, year)
+    data1(year, month, day)
 }
 // Gọi API và vẽ biểu đồ cột doanh thu hàng tháng
 async function fetchDataAndRenderChart(year) {
@@ -78,8 +105,6 @@ async function fetchDataAndRenderChart(year) {
             "Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6",
             "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12"
         ];
-
-
 
         // Tạo dữ liệu cho biểu đồ
         const revenueData = monthlyData.map(item => item.totalRevenue);
@@ -488,4 +513,68 @@ async function fetchTopProducts22(month, year) {
         console.error("Lỗi khi lấy dữ liệu:", error);
     }
 }
+const content = document.querySelector("#content");
+const data1 = async (year, month, day) => {
+    console.log(year, month, day, "aaaa")
+    document.getElementById("tv1").textContent = `Thống kê ngày: ${day}-${month}-${year}`
+    document.getElementById("tv2").textContent = `Những sản phẩm đã được bán ra trong ngày: ${day}-${month}-${year}`
 
+    try {
+        // Gửi request đến API
+        const response = await fetch(`http://localhost:3000/invoice/statistics_by_date?year=${year}&month=${month}&day=${day}`, {
+            headers: {
+                Authorization: "trinh_nhung",
+                "Content-Type": "application/json",
+            },
+
+        });
+
+        // Kiểm tra nếu có lỗi
+        if (!response.ok) {
+            throw new Error('Error fetching data');
+        }
+
+        // Parse dữ liệu trả về
+        const data = await response.json();
+
+        // Hiển thị kết quả tổng quan
+        document.getElementById("totalOrders").textContent = data.totalOrders || 0;
+        document.getElementById("totalRevenue").textContent = data.totalRevenue || 0;
+
+        // Hiển thị sản phẩm bán chạy
+        const productsTableBody = document.getElementById("productsTable").querySelector("tbody");
+        productsTableBody.innerHTML = ""; // Xóa dữ liệu cũ
+
+        if (data.topProducts && data.topProducts.length > 0) {
+            data.topProducts.forEach(product => {
+                const row = document.createElement("tr");
+                row.innerHTML = /*html*/`
+                  <td class="border border-gray-300 py-2 w-[180px]"> 
+          <div class=" h-[220px]  flex justify-center items-center ">
+                  <img
+                    alt="Product image"
+                    class="w-full h-full object-contain"
+                    src="${product.image[0]}"
+                  />
+                </div>
+                </td>
+                    <td class="border border-gray-300 px-4 py-2">${product.name}</td>
+                    <td class="border border-gray-300 px-4 py-2">${product.totalQuantity}</td>
+                `;
+                productsTableBody.appendChild(row);
+            });
+        } else {
+            // Nếu không có sản phẩm nào, hiển thị thông báo
+            const row = document.createElement("tr");
+            const cell = document.createElement("td");
+            cell.setAttribute("colspan", "3");
+            cell.classList.add("px-4", "py-2", "text-center", "text-sm", "text-red-500", "font-bold");
+            cell.textContent = "Không có sản phẩm nào ";
+            row.appendChild(cell);
+            productsTableBody.appendChild(row);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert("Failed to fetch data. Please try again.");
+    }
+}
