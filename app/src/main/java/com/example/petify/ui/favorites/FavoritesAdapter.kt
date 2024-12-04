@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.petify.R
+import com.example.petify.base.view.tap
 import com.example.petify.data.server.enitities.CartResponse
 import com.example.petify.data.server.enitities.FavoriteResponse
 import com.example.petify.data.server.enitities.ProductModel
@@ -68,11 +69,13 @@ class FavoritesAdapter(
 
 
 
-            ivFavorite.setOnClickListener {
+            ivFavorite.tap {
                 onFavoriteChanged(product.productId, !isFavorite)
                 ivFavorite.setImageResource(
                     if (isFavorite) R.drawable.ic_love_item_home else R.drawable.ic_love_favorites_off
                 )
+                // Làm mới RecyclerView để cập nhật giao diện
+                notifyDataSetChanged()
             }
 
 
