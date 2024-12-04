@@ -2,7 +2,7 @@ package com.example.petify.ultils
 
 object Constans {
     //BACKEND
-    const val DOMAIN = "http://192.168.100.166:3000/"
+    const val DOMAIN = "http://192.168.43.74:3000/"
     const val API_NAME = "Authorization"
     const val API_KEY = "trinh_nhung"
     const val TIME_OUT = 30L

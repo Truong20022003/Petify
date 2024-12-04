@@ -17,7 +17,7 @@ exports.addFavorites = async (req, res, next) => {
 
 exports.getFavoritesByUserId = async (req, res, next) => {
     try {
-        const { user_id } = req.body;
+        const { user_id } = req.params;
 
         const favoriteItems = await favoritesModel.find({ user_id: user_id })
             .populate('product_id'); // Populate thông tin sản phẩm từ productModel

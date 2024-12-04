@@ -1,21 +1,30 @@
 package com.example.petify.ui.payment
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.StrictMode
 import android.util.Log
 import android.view.View
+import android.widget.RemoteViews
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.petify.BaseActivity
 import com.example.petify.BaseViewModel
+import com.example.petify.MainActivity
 import com.example.petify.R
 import com.example.petify.data.database.enitities.CartItem
 import com.example.petify.data.server.enitities.CartResponse
@@ -62,6 +71,8 @@ class PaymentActivity : BaseActivity<ActivityPaymentBinding, OrderViewModel>() {
 
     override fun initView() {
         super.initView()
+
+
         // Cấu hình StrictMode
         val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
         StrictMode.setThreadPolicy(policy)
@@ -283,6 +294,7 @@ class PaymentActivity : BaseActivity<ActivityPaymentBinding, OrderViewModel>() {
                             }
 
                             withContext(Dispatchers.Main) {
+
                                 navigateToPaymentResult("Thanh toán thành công", orderModel = order)
                             }
                         } catch (e: Exception) {
@@ -316,4 +328,5 @@ class PaymentActivity : BaseActivity<ActivityPaymentBinding, OrderViewModel>() {
         startActivity(intent)
         finish()
     }
+
 }
