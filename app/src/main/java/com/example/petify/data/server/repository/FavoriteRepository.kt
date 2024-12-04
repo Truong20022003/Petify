@@ -9,8 +9,8 @@ import kotlinx.coroutines.withContext
 
 class FavoriteRepository(private val api: FavoriteService) {
 
-    suspend fun getListFavorites(): List<FavoriteResponse>? = withContext(Dispatchers.IO) {
-        val response = api.getListFavorites()
+    suspend fun getListFavorites(user_id : String): List<FavoriteResponse>? = withContext(Dispatchers.IO) {
+        val response = api.getListFavorites(user_id)
         if (response.isSuccessful) {
             Log.d("FavoriteRepository", "getListFavorites Success: ${response.body()}")
             response.body()

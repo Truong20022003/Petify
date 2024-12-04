@@ -24,12 +24,12 @@ class FavoriteViewModel : BaseViewModel() {
     val errorMessage: LiveData<String?> get() = _errorMessage
 
 
-    fun getListFavorites() {
+    fun getListFavorites(user_id : String) {
         viewModelScope.launch {
             try {
                 val apiService: FavoriteService = CreateInteface.createService()
                 val favoriteRepository = FavoriteRepository(apiService)
-                _favoriteList.value = favoriteRepository.getListFavorites()
+                _favoriteList.value = favoriteRepository.getListFavorites(user_id)
             } catch (e: Exception) {
                 Log.e("FavoriteViewModel", "Error fetching favorites list", e)
                 _errorMessage.value = "Error fetching favorites list: ${e.message}"

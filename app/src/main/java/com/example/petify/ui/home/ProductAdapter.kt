@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.petify.R
+import com.example.petify.base.view.tap
 import com.example.petify.data.server.enitities.FavoriteResponse
 import com.example.petify.data.server.enitities.ProductModel
 import com.example.petify.databinding.ItemProductBinding
@@ -49,18 +50,26 @@ class ProductAdapter(
             }
             tvSold.text = "Đã bán ${product.quantity}"
 
-            ivFavorite.setImageResource(
-                if (isFavorite) R.drawable.ic_love_favorites_off else R.drawable.ic_love_item_home
-            )
 
-            ivFavorite.setOnClickListener {
-                onFavoriteChanged(product, !isFavorite)
+
+            ivFavorite.tap {
+                // Đổi trạng thái yêu thích (toggle)
+                val newIsFavorite = !isFavorite
+
+                // Gọi hàm xử lý thay đổi trạng thái yêu thích
+                onFavoriteChanged(product, newIsFavorite)
+
+                // Cập nhật lại biểu tượng theo trạng thái mới
+                ivFavorite.setImageResource(
+                    if (newIsFavorite) R.drawable.ic_love_item_home else R.drawable.ic_love_favorites_off
+                )
+
             }
 
-            ivCart.setOnClickListener {
+            ivCart.tap {
                 onAddToCart(product, true)
             }
-            holder.itemView.setOnClickListener {
+            holder.itemView.tap {
                 itemClickListener(product)
             }
         }
