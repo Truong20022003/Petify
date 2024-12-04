@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.petify.R
+import com.example.petify.base.view.tap
 import com.example.petify.data.server.enitities.FavoriteResponse
 import com.example.petify.data.server.enitities.ProductModel
 import com.example.petify.databinding.ItemProductBinding
@@ -51,7 +52,7 @@ class ProductAdapter(
 
 
 
-            ivFavorite.setOnClickListener {
+            ivFavorite.tap {
                 // Đổi trạng thái yêu thích (toggle)
                 val newIsFavorite = !isFavorite
 
@@ -65,10 +66,10 @@ class ProductAdapter(
 
             }
 
-            ivCart.setOnClickListener {
+            ivCart.tap {
                 onAddToCart(product, true)
             }
-            holder.itemView.setOnClickListener {
+            holder.itemView.tap {
                 itemClickListener(product)
             }
         }
