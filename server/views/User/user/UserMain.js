@@ -120,7 +120,7 @@ function renderUserList(users, roles) {
             <div class="button-group flex flex-col space-y-2">
               <button class="bg-blue-500 text-white px-2 py-1 rounded btnedit" data-id="${user._id
         }">Cập nhật</button>
-   <button class="bg-red-500 text-white px-2 py-1 rounded btndelete" data-id="${user._id}">Xóa</button>
+   <!-- <button class="bg-red-500 text-white px-2 py-1 rounded btndelete" data-id="${user._id}">Xóa</button> -->
               <button class="bg-[#008080] text-white px-2 py-1 rounded btndetail" data-id="${user._id
         }">Chi tiết</button>
             </div>
