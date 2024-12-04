@@ -1,6 +1,7 @@
 package com.example.petify.data.server.service
 
 import com.example.petify.data.server.enitities.InvoiceDetailModel
+import com.example.petify.data.server.enitities.InvoiceDetailModelRequest
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -10,11 +11,11 @@ import retrofit2.http.PUT
 import retrofit2.http.Path
 
 interface InvoiceDetailService {
-    @GET("invoiceDetail/getListInvoiceDetail")
+    @GET("order_detail/getListorderDetail")
     suspend fun getListInvoiceDetail(): Response<List<InvoiceDetailModel>>
 
-    @POST("invoiceDetail/addinvoice_detail")
-    suspend fun addInvoiceDetail(@Body InvoiceDetail: InvoiceDetailModel): Response<InvoiceDetailModel>
+    @POST("order_detail/addorder_detail")
+    suspend fun addInvoiceDetail(@Body InvoiceDetail: InvoiceDetailModelRequest): Response<InvoiceDetailModel>
 
     @GET("invoiceDetail/getinvoice_detailById/{id}")
     suspend fun getInvoiceDetailById(@Path("id") id: String): Response<InvoiceDetailModel>

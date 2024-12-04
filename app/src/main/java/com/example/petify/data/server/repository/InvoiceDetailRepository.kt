@@ -2,6 +2,7 @@ package com.example.petify.data.server.repository
 
 import android.util.Log
 import com.example.petify.data.server.enitities.InvoiceDetailModel
+import com.example.petify.data.server.enitities.InvoiceDetailModelRequest
 import com.example.petify.data.server.service.InvoiceDetailService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -18,7 +19,7 @@ class InvoiceDetailRepository( private val api: InvoiceDetailService) {
         }
     }
 
-    suspend fun addInvoiceDetail(InvoiceDetail: InvoiceDetailModel): InvoiceDetailModel? = withContext(Dispatchers.IO) {
+    suspend fun addInvoiceDetail(InvoiceDetail: InvoiceDetailModelRequest): InvoiceDetailModel? = withContext(Dispatchers.IO) {
         val response = api.addInvoiceDetail(InvoiceDetail)
         if (response.isSuccessful) {
             Log.d("InvoiceDetailRepository", "addInvoiceDetail Success: ${response.body()}")
