@@ -8,6 +8,7 @@ import androidx.core.view.WindowInsetsCompat
 import com.example.petify.BaseActivity
 import com.example.petify.BaseViewModel
 import com.example.petify.R
+import com.example.petify.data.server.enitities.OrderModel
 import com.example.petify.databinding.ActivityPaymentNotificationBinding
 
 class PaymentNotificationActivity :
@@ -22,6 +23,7 @@ class PaymentNotificationActivity :
         super.initView()
 
         binding.textViewNotify.text = intent.getStringExtra("result")
+        val order = intent.getSerializableExtra("order") as? OrderModel
 
     }
 }

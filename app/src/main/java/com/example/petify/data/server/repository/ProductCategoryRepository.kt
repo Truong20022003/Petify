@@ -3,6 +3,7 @@ package com.example.petify.data.server.repository
 import android.util.Log
 import com.example.petify.data.server.enitities.CategoryWithProductsModel
 import com.example.petify.data.server.enitities.ProductCategoryModel
+import com.example.petify.data.server.enitities.ProductModel
 import com.example.petify.data.server.service.ProductCategoryService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -11,6 +12,16 @@ class ProductCategoryRepository(private val api: ProductCategoryService) {
 
     suspend fun getListProductCategory(): List<ProductCategoryModel>? = withContext(Dispatchers.IO) {
         val response = api.getListProductCategory()
+        if (response.isSuccessful) {
+            Log.d("ProductCategoryRepository", "getListProductCategory Success: ${response.body()}")
+            response.body()
+        } else {
+            Log.e("ProductCategoryRepository", "getListProductCategory Error: ${response.errorBody()}")
+            null
+        }
+    }
+    suspend fun getListProductsByCategoryId(id : String): List<ProductModel>? = withContext(Dispatchers.IO) {
+        val response = api.getListProductsByCategoryId(id)
         if (response.isSuccessful) {
             Log.d("ProductCategoryRepository", "getListProductCategory Success: ${response.body()}")
             response.body()

@@ -21,6 +21,8 @@ var reviewRouter = require('./routes/review_router');
 var roleRouter = require('./routes/role_router');
 var supplierRouter = require('./routes/supplier_router');
 var user_roleRouter = require('./routes/user_role_router');
+var cartRouter = require('./routes/cart_router');
+var favoritesRouter = require('./routes/favorites_router');
 var userRouter = require('./routes/user_router');
 var app = express();
 
@@ -56,6 +58,8 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use('/', indexRouter);
 app.use('/users', checkHeader, usersRouter);
 app.use("/carrier", checkHeader, carrierRouter)
+app.use("/cart", checkHeader, cartRouter)
+app.use("/favorites", checkHeader, favoritesRouter)
 app.use("/category", checkHeader, categoryRouter)
 app.use("/invoiceDetail", checkHeader, invoice_detailRouter)
 app.use("/invoice", checkHeader, invoiceRouter)

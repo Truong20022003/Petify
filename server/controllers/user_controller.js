@@ -133,7 +133,7 @@ exports.getuserById = async (req, res, next) => {
     try {
         let id = req.params.id;
         let result = await userModel.findById(id);
-        res.json({ status: "Successfully", result: result });
+        res.json(result);
     } catch (error) {
         res.json({ status: "Not found", result: error });
     }

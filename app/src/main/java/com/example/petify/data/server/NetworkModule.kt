@@ -26,7 +26,7 @@ private val url: String
 
         val headerInterceptor = Interceptor { chain ->
             val request = chain.request().newBuilder()
-                .addHeader("Authorization", "trinh_nhung")
+                .addHeader(Constans.API_NAME, Constans.API_KEY)
                 .build()
             chain.proceed(request)
         }
@@ -34,8 +34,9 @@ private val url: String
         return OkHttpClient.Builder()
             .addInterceptor(headerInterceptor)
             .addInterceptor(logger)
-            .readTimeout(Constans.TIME_OUT, TimeUnit.SECONDS)
             .connectTimeout(Constans.TIME_OUT, TimeUnit.SECONDS)
+            .readTimeout(Constans.TIME_OUT, TimeUnit.SECONDS)
+            .writeTimeout(Constans.TIME_OUT, TimeUnit.SECONDS)
             .build()
     }
 

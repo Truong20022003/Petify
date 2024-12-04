@@ -8,6 +8,7 @@ import com.example.petify.BaseViewModel
 import com.example.petify.data.server.CreateInteface
 import com.example.petify.data.server.enitities.CategoryWithProductsModel
 import com.example.petify.data.server.enitities.ProductCategoryModel
+import com.example.petify.data.server.enitities.ProductModel
 import com.example.petify.data.server.repository.ProductCategoryRepository
 import com.example.petify.data.server.service.OrderService
 import com.example.petify.data.server.service.ProductCategoryService
@@ -16,6 +17,9 @@ import kotlinx.coroutines.launch
 class ProductCategoryViewModel : BaseViewModel() {
     private val _productCategoryList = MutableLiveData<List<ProductCategoryModel>?>()
     val productCategoryList: LiveData<List<ProductCategoryModel>?> get() = _productCategoryList
+
+    private val _product = MutableLiveData<List<ProductModel>?>()
+    val product : LiveData<List<ProductModel>?> get() = _product
 
     private val _responseProductCategoryList = MutableLiveData<List<CategoryWithProductsModel>?>()
     val responseProductCategoryList: LiveData<List<CategoryWithProductsModel>?> get() = _responseProductCategoryList
@@ -44,6 +48,24 @@ class ProductCategoryViewModel : BaseViewModel() {
             } catch (e: Exception) {
                 Log.e("ProductCategoryViewModel", "Error geting product categories", e)
                 _responseProductCategoryList.value = null
+            }finally {
+
+            }
+        }
+    }
+
+    fun getListProductsByCategoryId(id : String) {
+        viewModelScope.launch {
+            try {
+
+                val apiService : ProductCategoryService = CreateInteface.createService()
+                val productCategoryRepository = ProductCategoryRepository(apiService)
+                val result = productCategoryRepository.getListProductsByCategoryId(id)
+                _product.value = result
+                Log.d("ProductCategoryViewModel", " product  $result")
+            } catch (e: Exception) {
+                Log.e("ProductCategoryViewModel", "Error geting product ", e)
+                _product.value = null
             }
         }
     }

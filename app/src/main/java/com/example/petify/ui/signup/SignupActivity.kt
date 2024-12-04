@@ -61,7 +61,12 @@ class SignupActivity : BaseActivity<ActivitySignupBinding, UserViewModel>() {
         val email = binding.etEmail.text.toString().trim()
         val password = binding.etPassword.text.toString().trim()
         val confirmPassword = binding.etRePassword.text.toString().trim()
-        val phoneNumber = binding.etNumber.text.toString().trim()
+        val phoneNumberInput = binding.etNumber.text.toString().trim()
+        val phoneNumber = if (phoneNumberInput.startsWith("0")) {
+            "+84" + phoneNumberInput.substring(1)
+        } else {
+            phoneNumberInput
+        }
         if (password != confirmPassword) {
             Toast.makeText(this, "Mật khẩu không khớp!", Toast.LENGTH_SHORT).show()
             return
