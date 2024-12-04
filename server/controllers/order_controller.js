@@ -24,13 +24,15 @@ exports.addorder = async (req, res, next) => {
             delivery_address: req.body.delivery_address,
             shipping_fee: req.body.shipping_fee,
             code: generateCode()
-        })
+        });
         let result = await obj.save();
         res.json({ status: "Add successfully", result: result });
     } catch (error) {
-        res.json({ status: "Add failed" })
+        console.error("Error adding order:", error.message, error.stack);
+        res.json({ status: "Add failed", error: error.message });
     }
-}
+};
+
 
 exports.updateorder = async (req, res, next) => {
     try {

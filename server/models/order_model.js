@@ -31,11 +31,6 @@ const orderSchema = new db.mongoose.Schema(
       type: String,
       require: true
     },
-    carrier_id: {
-      type: db.mongoose.Schema.Types.ObjectId,
-      required: true,
-      ref: "carrier"
-  },
   code:{
       type: String,
       required: true
