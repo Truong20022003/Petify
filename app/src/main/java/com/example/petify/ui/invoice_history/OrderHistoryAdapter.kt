@@ -8,7 +8,8 @@ import com.example.petify.data.server.enitities.OrderResponse
 import com.example.petify.databinding.ItemInvoiceBinding
 
 class OrderHistoryAdapter(
-    private val list: MutableList<OrderResponse>
+    private val list: MutableList<OrderResponse>,
+    private val onClick: (OrderResponse) -> Unit
 ) : RecyclerView.Adapter<OrderHistoryAdapter.ViewHodel>() {
 
 
@@ -43,6 +44,9 @@ class OrderHistoryAdapter(
                 tvPriceProduct.text = list[position].total_price.toString()
                 tvTotalQuantity.text = list[position].quantity.toString()
                 tvTotalAmount.text = list[position].total_price.toString()
+            }
+            tvEvaluate.setOnClickListener{
+                onClick(list[position])
             }
 
         }
