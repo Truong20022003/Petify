@@ -13,21 +13,19 @@ const getList = async () => {
     });
     const data = await response.json();
     renderTable(data);
+
   } catch (err) {
     console.log(err);
   }
 };
 
 const renderTable = async (data) => {
-  const namesuser = await Promise.all(
-    data.map((item) => checkUser(item.user_id))
-  );
   // console.log(namesuser, "namesuser");
   content.innerHTML = /*html*/ `
     <div class="flex mb-4">
       <!-- <button class="bg-[#396060] text-white px-4 py-2 rounded mr-2 btnadd">Thêm mới</button> -->
-      <input class="border border-gray-300 rounded px-4 py-2 flex-grow" placeholder="Tìm kiếm" type="text" />
-      <button class="bg-[#396060] text-white px-4 py-2 rounded ml-2">Tìm kiếm</button>
+      <input class="border border-gray-300 rounded px-4 py-2 flex-grow" id="searchInput" placeholder="Tìm kiếm theo mã đơn hàng" type="text" />
+      <button class="bg-[#396060] text-white px-4 py-2 rounded ml-2" id="searchButton">Tìm kiếm</button>
     </div>
     <table class="content w-full border-collapse">
       <thead>
@@ -42,42 +40,86 @@ const renderTable = async (data) => {
           <th class="border border-gray-300 px-4 py-2">Hành động</th>
         </tr>
       </thead>
-      <tbody>
-        ${data
-      .map(
-        (item, index) => /*html*/ `
-              <tr id="row-${item._id}">
+      <tbody id="roleList">
+      </tbody>
+    </table>`;
+  document
+    .getElementById("searchInput")
+    .addEventListener("input", async (e) => {
+      const query = e.target.value;
+      const filtered = search(query, data);
+      renderList(filtered);
+    });
+  renderList(data);
+
+};
+
+
+const renderList = async (data) => {
+  const tableBody = document.getElementById("roleList");
+  tableBody.innerHTML = "";
+  console.log(data, "dataaaa");
+  const namesuser = await Promise.all(
+    data.map((item) => checkUser(item.user_id))
+  );
+  if (data.length === 0) {
+    // Nếu không có người dùng nào trong kết quả tìm kiếm
+    const noDataRow = /*html*/ `
+      <tr>
+        <td colspan="8" class="border border-gray-300 px-4 py-2 text-center text-red-500">
+          Không có kết quả trùng khớp
+        </td>
+      </tr>`;
+    tableBody.innerHTML = noDataRow;
+  } else {
+    data.forEach((item, index) => {
+
+      const row = /*html*/ `
+       <tr id="row-${item._id}">
                 <td class="border border-gray-300 px-4 py-2">${index + 1}</td>
                 <td class="border border-gray-300 px-4 py-2">
                     ${namesuser[index] === ""
-            ? "User không tồn tại"
-            : namesuser[index]
-          }
+          ? "User không tồn tại"
+          : namesuser[index]
+        }
                 </td>
                 <td class="border border-gray-300 px-4 py-2">${item.code}</td>
                 <td class="border border-gray-300 px-4 py-2">${item.total_price}</td>
                 <td class="border border-gray-300 px-4 py-2">${item.oder_date}</td>
                 <td class="border border-gray-300 px-4 py-2">${item.status}</td>
                 <td class="border border-gray-300 px-4 py-2">${item.delivery_address
-          }</td>
+        }</td>
                 <td class="border border-gray-300 px-4 py-2">
                   <div class="button-group flex flex-col space-y-2">
                     <button class="bg-blue-500 text-white px-2 py-1 rounded btnedit" data-id="${item._id
-          }">Cập nhật</button>
+        }">Cập nhật</button>
                     <!-- <button class="bg-red-500 text-white px-2 py-1 rounded btndelete" data-id="${item._id
-          }">Xóa</button> -->
+        }">Xóa</button> -->
                     <button class="bg-[#008080] text-white px-2 py-1 rounded btndetail" data-id="${item._id
-          }">Chi tiết</button>
+        }">Chi tiết</button>
                   </div>
                 </td>
-              </tr>`
-      )
-      .join("")}
-      </tbody>
-    </table>`;
+              </tr>`;
+      tableBody.innerHTML += row;
+    });
+  }
   addEventListeners();
 };
+// Hàm tìm kiếm người dùng
+function search(query, data) {
+  function removeVietnameseTones(str) {
+    return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  }
+  const queryNormalized = removeVietnameseTones(query.toLowerCase());
 
+  // Lọc danh sách người dùng
+  const filtered = data.filter((role) => {
+    const userNameNormalized = removeVietnameseTones(role.code.toLowerCase());
+    return userNameNormalized.includes(queryNormalized);
+  });
+
+  return filtered;
+}
 const addEventListeners = () => {
   console.log("Adding event listeners");
   document.querySelectorAll(".btndelete").forEach((btn) =>
@@ -253,7 +295,7 @@ const saveEdit = async (_id) => {
   if (selectedValue == 0 || selectedValue == 1 || selectedValue == 2) {
     const updateStatusResult = await upDateStatus(_id, selectedText);
     if (updateStatusResult) {
-      alert("Cập nhật trạng thái thành công.");
+      dialogSuccess("Cập nhật trạng thái thành công.");
       getList();
     }
   } else {
@@ -270,16 +312,16 @@ const saveEdit = async (_id) => {
             headers: { Authorization: "trinh_nhung" },
           });
           const data = await response.json();
-          alert(data.message);
+          dialogSuccess(data.message);
           getList();
           console.log(data.invoice, "Hoa đơn thành công");
           console.log(data.invoice_details, "Chi tiết hóa đơn thành công");
         } catch (error) {
           console.error("Lỗi khi xử lý đơn hàng:", error);
-          alert("Đã xảy ra lỗi. Vui lòng thử lại.");
+          dialogError("Đã xảy ra lỗi. Vui lòng thử lại.");
         }
       } else {
-        alert("Đơn hàng chưa ở trạng thái thành công, không thể xử lý.");
+        dialogError("Đơn hàng chưa ở trạng thái thành công, không thể xử lý.");
       }
     }
   }
@@ -293,16 +335,15 @@ const upDateStatus = async (_id, selectedText) => {
       body: JSON.stringify({ status: selectedText }),
     });
     const data = await response.json();
-    alert(data.message);
     if (data.status === "Update successfully") {
       return true;  // Trả về true khi cập nhật thành công
     } else {
-      alert("Cập nhật trạng thái thất bại.");
+      dialogError("Cập nhật trạng thái thất bại.");
       return false;
     }
   } catch (error) {
     console.error("Lỗi khi cập nhật trạng thái:", error);
-    alert("Đã xảy ra lỗi khi cập nhật trạng thái.");
+    dialogError("Đã xảy ra lỗi khi cập nhật trạng thái.");
     return false;
   }
 };

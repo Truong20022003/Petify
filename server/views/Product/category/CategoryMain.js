@@ -14,7 +14,7 @@ const getList = async () => {
     });
     const data = await response.json();
     renderTable(data);
-    addEventListeners();
+
     loadingDialog.close();
   } catch (err) {
     console.log(err);
@@ -93,7 +93,7 @@ const renderList = (data) => {
         tableBody.innerHTML += row;
       })
   }
-
+  addEventListeners();
 }
 
 ////
@@ -135,13 +135,13 @@ const addEventListeners = () => {
     );
 };
 
-const handleDelete = async (id) => { 
-  const checkcategotry=await CheckCategoryByID(id)
-  if(checkcategotry.length>0){
+const handleDelete = async (id) => {
+  const checkcategotry = await CheckCategoryByID(id)
+  if (checkcategotry.length > 0) {
     dialogWarning("Loại sản phẩm đang được dùng trong sản phẩm, không thể xóa")
     return
   }
- dialogDelete("Xóa loại sản phẩm", "Bạn có chắc chắn muốn xóa sản phẩm này?", async () => {
+  dialogDelete("Xóa loại sản phẩm", "Bạn có chắc chắn muốn xóa sản phẩm này?", async () => {
     try {
       await fetch(`${url}/category/deletecategory/${id}`, { method: "DELETE", headers });
       getList();
@@ -207,12 +207,12 @@ const saveEdit = async (_id) => {
     name: namevalues,
     image: image,
   };
- 
-  if (!namevalues ) {
+
+  if (!namevalues) {
     dialogError("Tên loại người dùng không được để trống")
     return
   }
-  if (!image ) {
+  if (!image) {
     dialogError("Link ảnh không được để trống")
     return
   }
@@ -228,9 +228,9 @@ const saveEdit = async (_id) => {
         const data = await response.json();
         if (data.status) {
           dialogSuccess("Cập nhật thành công!").then(() => {
-             getList();  // Chỉ gọi sau khi thông báo xong
-          });  
-         
+            getList();  // Chỉ gọi sau khi thông báo xong
+          });
+
         } else {
           dialogError("Cập nhật thất bại!")
         }
@@ -243,7 +243,7 @@ const saveEdit = async (_id) => {
     () => {
       getList();
     })
- 
+
 };
 
 const saveAdd = async () => {
@@ -253,12 +253,12 @@ const saveAdd = async () => {
     name: namevalues,
     image: image,
   };
- 
-  if (!namevalues ) {
+
+  if (!namevalues) {
     dialogError("Tên loại người dùng không được để trống")
     return
   }
-  if (!image ) {
+  if (!image) {
     dialogError("Link ảnh không được để trống")
     return
   }
@@ -274,9 +274,9 @@ const saveAdd = async () => {
         const data = await response.json();
         if (data.status) {
           dialogSuccess("Thêm thành công!").then(() => {
-           getList();   // Chỉ gọi sau khi thông báo xong
-          });  
-          
+            getList();   // Chỉ gọi sau khi thông báo xong
+          });
+
         } else {
           dialogError("Thêm thất bại!")
         }
@@ -303,7 +303,7 @@ async function CheckCategoryByID(id) {
 
     const data = await response.json();
     console.log(data.result, "categories");
-      return data.result;
+    return data.result;
     // if (userRole) {
     //   // console.log(userRole.roles, "Tên người dùng");
     //   return userRole.roles;

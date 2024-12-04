@@ -14,7 +14,7 @@ const getListUser = async () => {
     });
     const data = await response.json();
     renderTable(data);
-    addEventListeners();
+
     loadingDialog.close();
   } catch (err) {
     console.log(err);
@@ -87,7 +87,7 @@ const renderList = (data) => {
         tableBody.innerHTML += row;
       })
   }
-
+  addEventListeners();
 }
 
 ////
@@ -219,9 +219,9 @@ const saveEditUserRole = async (_id) => {
         const data = await response.json();
         if (data.status) {
           dialogSuccess("Cập nhật thành công!").then(() => {
-          getListUser();   // Chỉ gọi sau khi thông báo xong
-          });  
-          
+            getListUser();   // Chỉ gọi sau khi thông báo xong
+          });
+
         } else {
           dialogError("Cập nhật thất bại!")
         }
