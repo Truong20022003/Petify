@@ -1,37 +1,21 @@
 package com.example.petify.ui.payment
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
-import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Build
-import android.os.Bundle
 import android.os.StrictMode
 import android.util.Log
 import android.view.View
-import android.widget.RemoteViews
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.petify.BaseActivity
-import com.example.petify.BaseViewModel
-import com.example.petify.MainActivity
 import com.example.petify.R
-import com.example.petify.data.database.enitities.CartItem
 import com.example.petify.data.server.enitities.CartResponse
-import com.example.petify.data.server.enitities.InvoiceDetailModel
 import com.example.petify.data.server.enitities.InvoiceDetailModelRequest
-import com.example.petify.data.server.enitities.InvoiceModel
 import com.example.petify.data.server.enitities.OrderModel
+import com.example.petify.data.server.enitities.OrderModelRequest
 import com.example.petify.databinding.ActivityPaymentBinding
 import com.example.petify.payment.zalopay.Api.CreateOrder
 import com.example.petify.payment.zalopay.PaymentNotificationActivity
@@ -48,6 +32,8 @@ import vn.zalopay.sdk.Environment
 import vn.zalopay.sdk.ZaloPayError
 import vn.zalopay.sdk.ZaloPaySDK
 import vn.zalopay.sdk.listeners.PayOrderListener
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 class PaymentActivity : BaseActivity<ActivityPaymentBinding, OrderViewModel>() {
     private lateinit var paymentAdapter: PaymentAdapter
@@ -56,11 +42,12 @@ class PaymentActivity : BaseActivity<ActivityPaymentBinding, OrderViewModel>() {
     private lateinit var cartApiViewModel: CartApiViewModel
     private var addressUser: String? = null
     private lateinit var carrierAdapter: CarrierAdapter
-    private var checkPaymentMethodZaloPay = false
-    private var checkPaymentMethodCOD = true
+    private var checkPaymentMethodZaloPay = true
+    private var checkPaymentMethodCOD = false
     private var checkPaymentGHN = false
     private var checkPaymentGHTK = true
     private var paymentMethod = ""
+    private var carMethod = "Giao hàng tiết kiệm"
     private var shippingPrice = 10000.0
     override fun createBinding(): ActivityPaymentBinding {
         return ActivityPaymentBinding.inflate(layoutInflater)
@@ -70,6 +57,20 @@ class PaymentActivity : BaseActivity<ActivityPaymentBinding, OrderViewModel>() {
         return OrderViewModel()
     }
 
+    override fun onResume() {
+        super.onResume()
+        val userId = SharePreUtils.getUserModel(this)!!.id
+        userViewModel.getUserById(userId)
+
+        userViewModel.user.observe(this) { user ->
+            addressUser = user?.location
+            binding.tvName.text = user?.name
+            binding.tvPhonenumber.text = user?.phoneNumber
+            binding.tvAddress.text = user?.location
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun initView() {
         super.initView()
 
@@ -82,8 +83,6 @@ class PaymentActivity : BaseActivity<ActivityPaymentBinding, OrderViewModel>() {
         ZaloPaySDK.init(2553, Environment.SANDBOX)
 
         binding.tvShippingFee.text = shippingPrice.toString()
-
-
         binding.tvCOD.setOnClickListener {
             checkPaymentMethodZaloPay = false
             checkPaymentMethodCOD = true
@@ -138,7 +137,7 @@ class PaymentActivity : BaseActivity<ActivityPaymentBinding, OrderViewModel>() {
             checkPaymentGHN = true
             checkPaymentGHTK = false
             shippingPrice = 20000.0
-
+            carMethod = "Giao hàng tiết kiệm"
             binding.tvShippingFee.text = shippingPrice.toString()
             binding.tvTotalPrice.text = (totalPrice + shippingPrice).toString()
             binding.tvTotalPriceHaveToPay.text = (totalPrice + shippingPrice).toString()
@@ -154,7 +153,7 @@ class PaymentActivity : BaseActivity<ActivityPaymentBinding, OrderViewModel>() {
             checkPaymentGHN = false
             checkPaymentGHTK = true
             shippingPrice = 10000.0
-
+            carMethod = "Giao hàng nhanh"
             binding.tvShippingFee.text = shippingPrice.toString()
             binding.tvTotalPrice.text = (totalPrice + shippingPrice).toString()
             binding.tvTotalPriceHaveToPay.text = (totalPrice + shippingPrice).toString()
@@ -175,33 +174,35 @@ class PaymentActivity : BaseActivity<ActivityPaymentBinding, OrderViewModel>() {
             paymentAdapter.updateItems(it)
         }
         binding.btnOrder.setOnClickListener {
+            val currentDateTime = LocalDateTime.now()
+            val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy ss-mm-hh")
+            val formattedDate = currentDateTime.format(formatter)
             if (paymentMethod.equals("Thanh toán khi nhận hàng")) {
-                val order = OrderModel(
-                    "",
+                val order = OrderModelRequest(
                     userId,
-                    addressUser!!,
+                    formattedDate,
                     totalPrice,
                     "Đang chờ xác nhận",
                     "Thanh toán khi nhận hàng",
                     addressUser!!,
                     shippingPrice,
-                    ""
+                    "67068264ecffca4b44fdef77"
                 )
                 viewModel.addOrder(order)
                 viewModel.order.observe(this) { order ->
-                    if (order != null) {
-                        Log.d("TAG12345",order.id)
+                    if (order!!.id != null) {
+                        Log.d("TAG123456", order.id)
                         selectedItems?.let {
                             for (item in it) {
                                 val invoiceModel = InvoiceDetailModelRequest(
                                     userId,
-                                    item.id,
+                                    item.productId.id,
                                     order.id,
                                     item.quantity,
                                     item.quantity * item.productId.price
                                 )
                                 invoiceDetailViewModel.addInvoiceDetail(invoiceModel)
-                                cartApiViewModel.deleteCart(item.id, userId)
+                                cartApiViewModel.deleteCart(item.productId.id, userId)
                             }
 
                         }
@@ -281,16 +282,15 @@ class PaymentActivity : BaseActivity<ActivityPaymentBinding, OrderViewModel>() {
                 override fun onPaymentSucceeded(s: String?, s1: String?, s2: String?) {
                     lifecycleScope.launch(Dispatchers.IO) {
                         try {
-                            val order = OrderModel(
-                                "",
+                            val order = OrderModelRequest(
                                 userId,
                                 addressUser!!,
                                 totalPrice,
                                 "Đang chờ xác nhận",
                                 "Thanh toán qua Zalo Pay",
                                 addressUser,
-                                0.0,
-                                ""
+                                shippingPrice,
+                                "67068264ecffca4b44fdef77"
                             )
                             viewModel.addOrder(order)
                             viewModel.order.observe(this@PaymentActivity) { order ->
@@ -309,7 +309,10 @@ class PaymentActivity : BaseActivity<ActivityPaymentBinding, OrderViewModel>() {
                                         }
 
                                     }
-                                    navigateToPaymentResult("Đặt hàng thành công", orderModel = order)
+                                    navigateToPaymentResult(
+                                        "Đặt hàng thành công",
+                                        orderModel = order
+                                    )
                                 }
 
                             }
@@ -342,6 +345,7 @@ class PaymentActivity : BaseActivity<ActivityPaymentBinding, OrderViewModel>() {
         val intent = Intent(this@PaymentActivity, PaymentNotificationActivity::class.java)
         intent.putExtra("result", resultMessage)
         intent.putExtra("order", orderModel)
+        intent.putExtra("carMethod",carMethod)
         startActivity(intent)
         finish()
     }

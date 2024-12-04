@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Build
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -38,7 +39,7 @@ class CartFragment : BaseFragment<FragmentCartBinding>() {
         cartAdapter.selectedItems.clear()
         updateTotalPrice(0.0)
         cartApi.getListCart(userModel!!.id)
-        cartApi.cartList.observe(viewLifecycleOwner){ listCart ->
+        cartApi.cartList.observe(viewLifecycleOwner) { listCart ->
             if (listCart != null) {
                 cartAdapter.updateItems(listCart)
                 viewBinding.rcvCart.layoutManager = LinearLayoutManager(requireContext())
@@ -51,6 +52,7 @@ class CartFragment : BaseFragment<FragmentCartBinding>() {
         }
 
     }
+
     @RequiresApi(Build.VERSION_CODES.O)
     override fun initView() {
         super.initView()
@@ -67,11 +69,11 @@ class CartFragment : BaseFragment<FragmentCartBinding>() {
             },
             onQuantityChangeListener = object : OnQuantityChangeListener {
                 override fun onQuantityUpdated(cart: CartResponse) {
-                    val cartRequest = CartRequest(cart.productId.id,cart.userId,cart.quantity)
+                    val cartRequest = CartRequest(cart.productId.id, cart.userId, cart.quantity)
                     if (cart.quantity == 0) {
-                        cartApi.deleteCart(cart.productId.id,cart.userId)
+                        cartApi.deleteCart(cart.productId.id, cart.userId)
                         cartApi.getListCart(userModel!!.id)
-                        cartApi.cartList.observe(viewLifecycleOwner){ listCart ->
+                        cartApi.cartList.observe(viewLifecycleOwner) { listCart ->
                             if (listCart != null) {
                                 cartAdapter.updateItems(listCart)
                             } else {
@@ -85,7 +87,7 @@ class CartFragment : BaseFragment<FragmentCartBinding>() {
             }
         )
         cartApi.getListCart(userModel!!.id)
-        cartApi.cartList.observe(viewLifecycleOwner){ listCart ->
+        cartApi.cartList.observe(viewLifecycleOwner) { listCart ->
             if (listCart != null) {
                 cartAdapter.updateItems(listCart)
                 viewBinding.rcvCart.layoutManager = LinearLayoutManager(requireContext())
@@ -110,15 +112,21 @@ class CartFragment : BaseFragment<FragmentCartBinding>() {
             addToOrder()
         }
     }
+
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun addToOrder(){
+    private fun addToOrder() {
         val selectedItems = cartAdapter.getSelectedItems()
         val totalPrice = cartAdapter.getTotalPrice()
+        if (selectedItems.size < 1 || totalPrice == 0.0) {
+            Toast.makeText(requireContext(), "Vui lòng chọn sản phẩm", Toast.LENGTH_SHORT).show()
+            return
+        }
         val intent = Intent(requireContext(), PaymentActivity::class.java)
         intent.putExtra("totalPrice", totalPrice)
         intent.putExtra("selectedItems", ArrayList(selectedItems))
         startActivity(intent)
     }
+
     private fun toggleSelectAll() {
         isAllSelected = !isAllSelected
         viewBinding.ivCheckAll.setImageResource(

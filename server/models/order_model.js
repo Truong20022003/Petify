@@ -33,7 +33,7 @@ const orderSchema = new db.mongoose.Schema(
     },
     carrier_id: {
       type: db.mongoose.Schema.Types.ObjectId,
-      required: true,
+      required: false,
       ref: "carrier"
     },
     code: {
