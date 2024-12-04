@@ -15,6 +15,7 @@ import android.view.View
 import android.widget.RemoteViews
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.app.NotificationCompat
@@ -48,6 +49,8 @@ import vn.zalopay.sdk.Environment
 import vn.zalopay.sdk.ZaloPayError
 import vn.zalopay.sdk.ZaloPaySDK
 import vn.zalopay.sdk.listeners.PayOrderListener
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 class PaymentActivity : BaseActivity<ActivityPaymentBinding, OrderViewModel>() {
     private lateinit var paymentAdapter: PaymentAdapter
@@ -70,6 +73,7 @@ class PaymentActivity : BaseActivity<ActivityPaymentBinding, OrderViewModel>() {
         return OrderViewModel()
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun initView() {
         super.initView()
 
@@ -175,11 +179,14 @@ class PaymentActivity : BaseActivity<ActivityPaymentBinding, OrderViewModel>() {
             paymentAdapter.updateItems(it)
         }
         binding.btnOrder.setOnClickListener {
+            val currentDateTime = LocalDateTime.now()
+            val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy ss-mm-hh")
+            val formattedDate = currentDateTime.format(formatter)
             if (paymentMethod.equals("Thanh toán khi nhận hàng")) {
                 val order = OrderModel(
                     "",
                     userId,
-                    addressUser!!,
+                    formattedDate,
                     totalPrice,
                     "Đang chờ xác nhận",
                     "Thanh toán khi nhận hàng",
@@ -195,13 +202,13 @@ class PaymentActivity : BaseActivity<ActivityPaymentBinding, OrderViewModel>() {
                             for (item in it) {
                                 val invoiceModel = InvoiceDetailModelRequest(
                                     userId,
-                                    item.id,
+                                    item.productId.id,
                                     order.id,
                                     item.quantity,
                                     item.quantity * item.productId.price
                                 )
                                 invoiceDetailViewModel.addInvoiceDetail(invoiceModel)
-                                cartApiViewModel.deleteCart(item.id, userId)
+                                cartApiViewModel.deleteCart(item.productId.id, userId)
                             }
 
                         }

@@ -72,3 +72,32 @@ exports.getorder_detailById = async (req, res, next) => {
         res.json({ status: "Not found", result: error });
     }
 };
+
+
+exports.getAllOrderDetailsWithStatus = async (req, res, next) => {
+    try {
+        let userId = req.params.user_id;
+        // Tìm tất cả các chi tiết đơn hàng liên quan đến user_id
+        let orderDetails = await order_detailModel.find({ user_id: userId })
+            .populate({
+                path: "order_id", // Populate bảng order
+                select: "status", // Lấy trường status
+            })
+            .populate("product_id"); // Populate bảng product (nếu cần)
+
+        // Chuyển đổi dữ liệu trả về với status của đơn hàng
+        let result = orderDetails.map(detail => ({
+            _id: detail._id,
+            user_id: detail.user_id,
+            product_id: detail.product_id,
+            order_id: detail.order_id._id, // ID của đơn hàng
+            order_status: detail.order_id.status, // Trạng thái của đơn hàng
+            quantity: detail.quantity,
+            total_price: detail.total_price,
+        }));
+
+        res.json(result);
+    } catch (error) {
+        res.json({ status: "Failed", result: error.message });
+    }
+};

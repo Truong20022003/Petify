@@ -70,3 +70,14 @@ exports.getinvoice_detailById = async (req, res, next) => {
         res.json({ status: "Not found", result: error });
     }
 };
+
+exports.getAllInvoiceDetailsByUserId = async (req, res, next) => {
+    try {
+        let userId = req.params.user_id;
+        // Tìm tất cả các chi tiết hóa đơn liên quan đến user_id
+        let invoiceDetails = await invoice_detailModel.find({ user_id: userId }).populate("product_id").populate("invoice_id");
+        res.json(invoiceDetails);
+    } catch (error) {
+        res.json({ status: "Failed", result: error.message });
+    }
+};
