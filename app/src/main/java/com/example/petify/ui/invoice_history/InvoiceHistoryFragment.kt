@@ -1,5 +1,6 @@
 package com.example.petify.ui.invoice_history
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -11,6 +12,7 @@ import com.example.petify.BaseFragment
 import com.example.petify.R
 import com.example.petify.data.server.enitities.OrderResponse
 import com.example.petify.databinding.FragmentInvoiceHistoryBinding
+import com.example.petify.ui.review.ReviewWriteActivity
 import com.example.petify.ultils.SharePreUtils
 import com.example.petify.viewmodel.InvoiceDetailViewModel
 import com.example.petify.viewmodel.UserViewModel
@@ -20,7 +22,11 @@ class InvoiceHistoryFragment : BaseFragment<FragmentInvoiceHistoryBinding>() {
 
 
     private val invoiceAdapter by lazy {
-        InvoiceAdapter(mutableListOf())
+        InvoiceAdapter(mutableListOf(),onClick = {model ->
+            val intent = Intent(requireActivity(), ReviewWriteActivity::class.java)
+            intent.putExtra("idProduct",model.productId.id)
+            startActivity(intent)
+        })
     }
     private lateinit var categoryOrderAdapter: CategoryOrderAdapter
 
@@ -43,7 +49,11 @@ class InvoiceHistoryFragment : BaseFragment<FragmentInvoiceHistoryBinding>() {
 
 
     private val orderHistoryAdapter by lazy {
-        OrderHistoryAdapter(mutableListOf())
+        OrderHistoryAdapter(mutableListOf(),onClick = {model ->
+            val intent = Intent(requireActivity(), ReviewWriteActivity::class.java)
+            intent.putExtra("idProduct",model.product_id.id)
+            startActivity(intent)
+        })
     }
 
     private lateinit var invoiceDetailViewModel: InvoiceDetailViewModel

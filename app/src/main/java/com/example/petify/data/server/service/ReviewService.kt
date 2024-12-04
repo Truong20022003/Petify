@@ -1,6 +1,7 @@
 package com.example.petify.data.server.service
 
 import com.example.petify.data.server.enitities.ReviewModel
+import com.example.petify.data.server.enitities.ReviewModelRequest
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -14,7 +15,7 @@ interface ReviewService {
     suspend fun getListReview(): Response<List<ReviewModel>>
 
     @POST("review/addreview")
-    suspend fun addReview(@Body Review: ReviewModel): Response<ReviewModel>
+    suspend fun addReview(@Body Review: ReviewModelRequest): Response<ReviewModel>
 
     @GET("review/getreviewById/{id}")
     suspend fun getReviewById(@Path("id") id: String): Response<ReviewModel>

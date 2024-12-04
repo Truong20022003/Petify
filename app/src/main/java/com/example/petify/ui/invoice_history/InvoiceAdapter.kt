@@ -11,7 +11,8 @@ import com.example.petify.data.server.enitities.OrderResponse
 import com.example.petify.databinding.ItemInvoiceBinding
 
 class InvoiceAdapter(
-    private val list: MutableList<InvoiceDetailAndProductModel>
+    private val list: MutableList<InvoiceDetailAndProductModel>,
+    private val onClick: (InvoiceDetailAndProductModel) -> Unit
 ) : RecyclerView.Adapter<InvoiceAdapter.ViewHodel>() {
 
 
@@ -46,7 +47,9 @@ class InvoiceAdapter(
                 tvTotalQuantity.text = list[position].quantity.toString()
                 tvTotalAmount.text = list[position].totalPrice.toString()
             }
-
+            tvEvaluate.setOnClickListener {
+                onClick(list[position])
+            }
         }
 
 
