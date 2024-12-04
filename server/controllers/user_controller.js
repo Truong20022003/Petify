@@ -2,6 +2,7 @@ const { userModel } = require("../models/user_model")
 const admin = require("../db/firebase_admin");
 const { uploadToCloudinary } = require("../routes/uploads");
 const fs = require("fs");
+const cloudinary = require('cloudinary').v2;
 exports.getListuser = async (req, res, next) => {
     try {
         let listuser = await userModel.find({});
@@ -56,17 +57,29 @@ exports.getListuser = async (req, res, next) => {
 
 exports.adduser = async (req, res, next) => {
     const { email, password } = req.body;
-    if (!req.file || req.file.length === 0) {
-        return res.status(400).json({ success: false, message: 'No files uploaded' });
+
+    // Kiểm tra xem có tệp được tải lên hay không
+    if (!req.file) {
+        return res.status(400).json({ success: false, message: 'No file uploaded' });
     }
 
     try {
+        // Tạo người dùng trên Firebase Authentication
         const userRecord = await admin.auth().createUser({
             email: email,
             password: password,
         });
 
-        let avatarUrl = req.file.path;
+        // Upload ảnh lên Cloudinary
+        const uploadedImage = await cloudinary.uploader.upload(req.file.path, {
+            folder: 'Petify_Images', // Thư mục lưu ảnh trên Cloudinary
+            allowed_formats: ['jpg', 'jpeg', 'png']
+        });
+
+        // Lấy URL của ảnh sau khi tải lên
+        const avatarUrl = uploadedImage.secure_url;
+
+        // Tạo đối tượng người dùng trong MongoDB
         const obj = new userModel({
             name: req.body.name,
             email: req.body.email,
@@ -74,13 +87,17 @@ exports.adduser = async (req, res, next) => {
             password: req.body.password,
             user_name: req.body.user_name,
             location: req.body.location,
-            avata: avatarUrl,
+            avata: avatarUrl, // URL từ Cloudinary
         });
 
+        // Lưu người dùng vào cơ sở dữ liệu
         const result = await obj.save();
+
+        // Phản hồi lại client
         res.json({ status: "Add successfully", result });
     } catch (error) {
-        res.json({ status: "Add failed", error: error.message });
+        console.error('Error in adduser:', error);
+        res.status(500).json({ status: "Add failed", error: error.message });
     }
 };
 
@@ -88,8 +105,18 @@ exports.updateuser = async (req, res, next) => {
     try {
         const id = req.params.id;
 
-        let avatarUrl = req.file ? req.file.path : null;
+        // Kiểm tra xem có tệp mới được tải lên hay không
+        let avatarUrl = null;
+        if (req.file) {
+            // Upload tệp mới lên Cloudinary
+            const uploadedImage = await cloudinary.uploader.upload(req.file.path, {
+                folder: 'Petify_Images', // Thư mục lưu ảnh trên Cloudinary
+                allowed_formats: ['jpg', 'jpeg', 'png']
+            });
+            avatarUrl = uploadedImage.secure_url; // Lấy URL từ Cloudinary
+        }
 
+        // Tạo đối tượng cập nhật
         const obj = {
             name: req.body.name,
             email: req.body.email,
@@ -99,13 +126,20 @@ exports.updateuser = async (req, res, next) => {
             location: req.body.location,
         };
 
+        // Nếu có avatar mới, thêm URL vào đối tượng
         if (avatarUrl) {
             obj.avata = avatarUrl;
         }
-        console.log(obj, "obj")
+
+        console.log(obj, "Đối tượng cập nhật");
+
+        // Thực hiện cập nhật người dùng
         const result = await userModel.findByIdAndUpdate(id, obj, { new: true });
+
+        // Trả về phản hồi
         res.status(200).json({ status: "Update successfully", result });
     } catch (error) {
+        console.error('Error in updateuser:', error);
         res.status(500).json({ status: "Update failed", error: error.message });
     }
 };
