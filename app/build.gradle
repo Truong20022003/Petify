@@ -81,7 +81,14 @@ dependencies {
     implementation 'com.google.android.gms:play-services-auth:21.2.0'
     implementation 'com.google.firebase:firebase-auth:23.1.0'
     //zaloplay
-    implementation fileTree(dir: 'D:\\DATN\\Petify', include: ['*.aar', '*.jar'], exclude: [])
+    implementation fileTree(dir: 'D:\\DATN\\Petify\\Demo', include: ['*.aar', '*.jar'], exclude: [])
+//    implementation("commons-codec:commons-codec:1.14")
+
+    //zaloplay
+//    implementation fileTree(dir: 'D:\\Du_an_tot_ngiep\\Petify\\Demo', include: ['*.aar', '*.jar'], exclude: [])
+
+    implementation("com.squareup.okhttp3:okhttp:4.6.0")
     implementation("commons-codec:commons-codec:1.14")
+
 
 }

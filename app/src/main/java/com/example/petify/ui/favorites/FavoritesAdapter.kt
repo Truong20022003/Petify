@@ -6,18 +6,17 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.petify.R
+import com.example.petify.data.server.enitities.FavoriteResponse
 import com.example.petify.data.server.enitities.ProductModel
 import com.example.petify.databinding.ItemFavoritesBinding
 
 
 class FavoritesAdapter(
     private val productList: List<ProductModel>,
+    private val favoriteList: List<FavoriteResponse>,
     private val itemClickListener: (ProductModel) -> Unit,
     private val onFavoriteChanged: (ProductModel, Boolean) -> Unit
 ) : RecyclerView.Adapter<FavoritesAdapter.FavoritesViewHolder>() {
-
-
-    private val favoriteProducts = mutableSetOf<ProductModel>()
 
     class FavoritesViewHolder(val binding: ItemFavoritesBinding) :
         RecyclerView.ViewHolder(binding.root)
@@ -34,18 +33,20 @@ class FavoritesAdapter(
 
     override fun onBindViewHolder(holder: FavoritesViewHolder, position: Int) {
         val product = productList[position]
-        Log.d("TAG1111", "Url ${product.image[0]}")
+
+        // Kiểm tra nếu sản phẩm có trong danh sách yêu thích từ API
+        val isFavorite = favoriteList.any { it.productId.id == product.id }
+
         holder.binding.apply {
             val imageUrl = product.image[0]
-
             if (imageUrl.isNotEmpty()) {
-
                 Glide.with(holder.binding.root.context)
                     .load(imageUrl)
                     .into(ivProductImage)
             } else {
                 ivProductImage.setImageResource(R.drawable.img_item_sp1)
             }
+
             tvProductName.text = product.name
             tvDiscount.text = "${product.sale} %"
             tvSalePrice.text = "${product.price} đ"
@@ -55,29 +56,17 @@ class FavoritesAdapter(
             }
             tvSold.text = "Đã bán ${product.quantity}"
 
-            // Set favorite icon based on selection
             ivFavorite.setImageResource(
-                if (favoriteProducts.contains(product)) R.drawable.ic_love_favorites_off else R.drawable.ic_love_item_home
+                if (isFavorite) R.drawable.ic_love_favorites_off else R.drawable.ic_love_item_home
             )
 
-            // Handle favorite button click
             ivFavorite.setOnClickListener {
-                val isFavorite = favoriteProducts.contains(product)
-                if (isFavorite) {
-                    favoriteProducts.remove(product)
-                    ivFavorite.setImageResource(R.drawable.ic_love_item_home)
-                } else {
-                    favoriteProducts.add(product)
-                    ivFavorite.setImageResource(R.drawable.ic_love_favorites_off)
-                }
-                onFavoriteChanged(product, !isFavorite) // Notify favorite status change
+                onFavoriteChanged(product, !isFavorite)
             }
-
 
             holder.itemView.setOnClickListener {
                 itemClickListener(product)
             }
         }
     }
-
 }

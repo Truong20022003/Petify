@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.petify.data.server.enitities.CategoryWithProductsModel
+import com.example.petify.data.server.enitities.FavoriteResponse
 import com.example.petify.data.server.enitities.ProductModel
 import com.example.petify.databinding.ItemRcvCategoryBinding
 
@@ -13,7 +14,8 @@ class CategoryProductParentAdapter(
     private val categoryModels: List<CategoryWithProductsModel>,
     private val itemClickListener: (ProductModel) -> Unit,
     private val onFavoriteChanged: (ProductModel, Boolean) -> Unit,
-    private val onAddToCart: (ProductModel, Boolean) -> Unit
+    private val onAddToCart: (ProductModel, Boolean) -> Unit,
+    private val favoriteList: List<FavoriteResponse>,
 ) : RecyclerView.Adapter<CategoryProductParentAdapter.ProductViewHolder>() {
 
     class ProductViewHolder(val binding: ItemRcvCategoryBinding) :
@@ -34,6 +36,7 @@ class CategoryProductParentAdapter(
             // Khởi tạo ProductAdapter với các lambda để xử lý sự kiện
             val productAdapter = ProductAdapter(
                 categoryModel.products ?: emptyList(),
+                favoriteList,
                 itemClickListener,
                 onFavoriteChanged,
                 onAddToCart

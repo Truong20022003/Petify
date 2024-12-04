@@ -14,4 +14,5 @@ router.get("/getCategoriesByProduct",product_categoryController.getCategoriesByP
 router.get("/getCategoriesByProductId/:id",product_categoryController.getCategoriesByProductId)
 router.post('/product_category/:product_id/add', product_categoryController.addCategoryToProduct);
 router.post('/product_category/:product_id/remove', product_categoryController.removeCategoryFromProduct);
+router.get("/getListProductsByCategoryId/:id",product_categoryController.getListProductsByCategoryId)
 module.exports = router;

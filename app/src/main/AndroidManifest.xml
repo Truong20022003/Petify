@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!--zalopay-->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission
         android:name="android.permission.POST_NOTIFICATIONS"
@@ -19,22 +21,6 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".payment.zalopay.OrderPaymentActivity"
-            android:exported="true"
-            android:label="Merchant Demo"
-            android:launchMode="singleTask">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data
-                    android:host="app"
-                    android:scheme="demozpdk" />
-            </intent-filter>
-        </activity>
-        <activity
             android:name=".ui.payment.EditAddressActivity"
             android:exported="false" />
         <activity
@@ -43,9 +29,7 @@
         <activity
             android:name=".ui.createpassword.CreatePasswordActivity"
             android:exported="false" />
-        <activity
-            android:name=".ui.payment.PaymentActivity"
-            android:exported="false" />
+
         <activity
             android:name=".ui.forgotpassword.NewPasswordActivity"
             android:exported="false" />
@@ -87,12 +71,48 @@
             android:exported="false" />
         <activity
             android:name=".MainActivity"
-            android:exported="true"></activity>
+            android:exported="false" />
         <activity
             android:name=".ui.signup.SignupActivity"
             android:exported="false" />
         <activity
             android:name=".ui.login.LoginActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.intro.IntroActivity"
+            android:exported="false" />
+        <activity
+            android:name=".payment.zalopay.PaymentNotificationActivity"
+            android:exported="true" />
+        <activity
+            android:name=".payment.zalopay.OrderPaymentActivity"
+            android:exported="true"
+            android:label="Merchant Demo"
+            android:launchMode="singleTask">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:host="app" android:scheme="demozpdk" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".ui.payment.PaymentActivity"
+            android:exported="true"
+            android:label="Merchant Demo"
+            android:launchMode="singleTask">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:host="app" android:scheme="demozpdk" />
+            </intent-filter>
+
+
+        </activity>
+        <activity
+            android:name=".ui.splash.SplashActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -101,10 +121,10 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.intro.IntroActivity"
-            android:exported="true"></activity>
+            android:name=".ui.search.SearchActivity"
+            android:exported="false" />
         <activity
-            android:name=".ui.splash.SplashActivity"
+            android:name=".payment.zalopay.ZalopayMainActivity"
             android:exported="false" />
     </application>
 

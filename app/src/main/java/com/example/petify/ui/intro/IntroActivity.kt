@@ -6,11 +6,14 @@ import android.widget.LinearLayout
 import androidx.viewpager2.widget.ViewPager2
 import com.example.petify.BaseActivity
 import com.example.petify.BaseViewModel
+import com.example.petify.MainActivity
 import com.example.petify.R
 import com.example.petify.databinding.ActivityIntroBinding
 import com.example.petify.ui.login.LoginActivity
+import com.example.petify.payment.zalopay.ZalopayMainActivity
+import com.example.petify.ultils.SharePreUtils
 
-class IntroActivity : BaseActivity<ActivityIntroBinding, BaseViewModel> () {
+class IntroActivity : BaseActivity<ActivityIntroBinding, BaseViewModel>() {
 
 
     var isFirst = true
@@ -61,7 +64,7 @@ class IntroActivity : BaseActivity<ActivityIntroBinding, BaseViewModel> () {
                 R.string.content_intro_3
             )
         )
-        viewPagerAdapter = ViewPagerAdapter( data)
+        viewPagerAdapter = ViewPagerAdapter(data)
         binding.viewPager2.apply {
             adapter = viewPagerAdapter
             registerOnPageChangeCallback(myPageChangeCallback)
@@ -83,11 +86,18 @@ class IntroActivity : BaseActivity<ActivityIntroBinding, BaseViewModel> () {
     }
 
 
-
     private fun startNextScreen() {
-        var intent = Intent(this, LoginActivity::class.java)
-        startActivity(intent)
-        finishAffinity()
+
+        val userModel = SharePreUtils.getUserModel(this)
+        if (userModel != null) {
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+            finishAffinity()
+        } else {
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
+            finishAffinity()
+        }
     }
 
     private fun addBottomDots(currentPage: Int) {

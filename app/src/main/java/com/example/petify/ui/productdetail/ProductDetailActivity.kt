@@ -4,6 +4,7 @@ import android.util.Log
 import android.widget.Toast
 import com.example.petify.BaseActivity
 import com.example.petify.BaseViewModel
+import com.example.petify.data.server.enitities.ProductModel
 import com.example.petify.databinding.ActivityProductDetailBinding
 
 
@@ -16,20 +17,20 @@ class ProductDetailActivity : BaseActivity<ActivityProductDetailBinding, BaseVie
     override fun initView() {
         super.initView()
 
-//        val productItem: ProductModel? = intent.getParcelableExtra("PRODUCT_ITEM")
+        val productItem: ProductModel? = intent.getParcelableExtra("productModel")
 
-//        productItem?.let { product ->
-//            binding.tvProductName.text = product.name
-//            binding.tvProductPrice.text = "${product.price} VNĐ"
-//            binding.tvDescribe.text = product.description
-//            binding.tvSold.text = "Số lượng: ${product.quantity}"
-//
-//
-//            setupViewPager(product.image)
-//        } ?: run {
-//            Log.e("Product_DetailActivity", "Không nhận được thông tin sản phẩm")
-//            Toast.makeText(this, "Không nhận được thông tin sản phẩm", Toast.LENGTH_SHORT).show()
-//        }
+        productItem?.let { product ->
+            binding.tvProductName.text = product.name
+            binding.tvProductPrice.text = "${product.price} VNĐ"
+            binding.tvDescribe.text = product.description
+            binding.tvSold.text = "Số lượng: ${product.quantity}"
+
+
+            setupViewPager(product.image)
+        } ?: run {
+            Log.e("Product_DetailActivity", "Không nhận được thông tin sản phẩm")
+            Toast.makeText(this, "Không nhận được thông tin sản phẩm", Toast.LENGTH_SHORT).show()
+        }
 
         setListeners()
     }

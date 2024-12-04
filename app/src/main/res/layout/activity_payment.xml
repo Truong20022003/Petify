@@ -8,6 +8,15 @@
     android:orientation="vertical"
     tools:context=".ui.payment.PaymentActivity">
 
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+       android:layout_gravity="center"
+        />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -180,57 +189,30 @@
                     android:textColor="@color/black"
                     android:textSize="20sp" />
 
-                <LinearLayout
+                <TextView
+                    android:id="@+id/tvGHN"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="10dp"
-                    android:orientation="horizontal">
+                    android:drawableEnd="@drawable/ic_payment"
+                    android:drawablePadding="15dp"
+                    android:fontFamily="@font/bevietnampro_regular"
+                    android:paddingVertical="10dp"
+                    android:text="Giao hàng nhanh"
+                    android:textColor="@color/black"
+                    android:textSize="18sp" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/bevietnampro_bold"
-                        android:text="Nhanh"
-                        android:textColor="@color/black"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/tvFast"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:fontFamily="@font/bevietnampro_bold"
-                        android:gravity="end"
-                        android:text="@string/nhanh"
-                        android:textColor="@color/black"
-                        android:textSize="18sp" />
-                </LinearLayout>
-
-
-                <LinearLayout
+                <TextView
+                    android:id="@+id/tvGHTK"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:drawableEnd="@drawable/ic_payment_selected"
+                    android:drawablePadding="15dp"
+                    android:fontFamily="@font/bevietnampro_regular"
+                    android:paddingVertical="10dp"
+                    android:text="Giao hàng tiết kiệm"
+                    android:textColor="@color/black"
+                    android:textSize="18sp" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Tổng số tiền (1 sản phẩm):"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/tvPriceFor1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:fontFamily="@font/bevietnampro_bold"
-                        android:gravity="end"
-                        android:text="@string/tong_so_tien_1_san_pham"
-                        android:textColor="@color/color_red"
-                        android:textSize="18sp" />
-                </LinearLayout>
 
             </LinearLayout>
 
@@ -242,17 +224,23 @@
                 android:background="@color/white"
                 android:orientation="vertical"
                 android:padding="10dp">
-
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:fontFamily="@font/bevietnampro_regular"
+                    android:text="Phương thức thanh toán"
+                    android:textColor="@color/black"
+                    android:textSize="20sp" />
                 <TextView
                     android:id="@+id/tvMoMo"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:drawableStart="@drawable/ic_momo"
                     android:drawableEnd="@drawable/ic_payment"
                     android:drawablePadding="15dp"
                     android:fontFamily="@font/bevietnampro_regular"
                     android:paddingVertical="10dp"
-                    android:text="Ví điện tử MoMo"
+                    android:text="Ví điện tử Zalopay"
                     android:textColor="@color/black"
                     android:textSize="18sp" />
 
@@ -260,7 +248,6 @@
                     android:id="@+id/tvCOD"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:drawableStart="@drawable/ic_cod"
                     android:drawableEnd="@drawable/ic_payment_selected"
                     android:drawablePadding="15dp"
                     android:fontFamily="@font/bevietnampro_regular"

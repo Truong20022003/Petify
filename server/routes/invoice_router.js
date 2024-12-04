@@ -14,5 +14,5 @@ router.get("/invoices-by-month",invoiceController.InvoicesByMonth)
 router.get("/revenue-by-month/:year",invoiceController.RevenueByMonth)//Thống kê doanh thu theo từng tháng trong năm
 router.get("/revenue-by-product/:year",invoiceController.RevenueByMonth)/////Thống kê doanh thu theo sản phẩm
 router.get("/top-products",invoiceController.TopProducts)/////Top 5 sản phẩm bán chạy nhất theo tháng và năm
-
+router.get("/getinvoiceByIdUser/:id",invoiceController.getInvoiceByIdUser)
 module.exports = router;

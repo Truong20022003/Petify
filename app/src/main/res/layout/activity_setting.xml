@@ -1,31 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     android:orientation="vertical"
     tools:context=".ui.setting.SettingActivity">
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:layout_marginTop="270dp"
-            android:paddingHorizontal="10dp"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingHorizontal="10dp">
 
             <TextView
                 android:id="@+id/tv_username"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:fontFamily="@font/bevietnampro_medium"
                 android:gravity="center"
                 android:text="Đoàn ĐT"
-                android:fontFamily="@font/bevietnampro_medium"
                 android:textColor="@color/black"
                 android:textSize="20sp"
                 android:textStyle="bold" />
@@ -34,10 +39,12 @@
                 android:id="@+id/tv_email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
                 android:fontFamily="@font/bevietnampro_regular"
-                android:textColor="@color/black"
+                android:gravity="center"       android:maxLines="1"
+                android:ellipsize="end"
+
                 android:text="doandtph3777@fpt.edu.vn"
+                android:textColor="@color/black"
                 android:textSize="14sp" />
 
             <TextView
@@ -47,11 +54,11 @@
                 android:drawableStart="@drawable/ic_user_profile"
                 android:drawableEnd="@drawable/ic_next"
                 android:drawablePadding="20dp"
-                android:padding="10dp"
                 android:fontFamily="@font/bevietnampro_medium"
-                android:textColor="@color/black"
                 android:gravity="center_vertical"
+                android:padding="10dp"
                 android:text="Hồ sơ của bạn"
+                android:textColor="@color/black"
                 android:textSize="16sp" />
 
 
@@ -62,11 +69,11 @@
                 android:drawableStart="@drawable/ic_order_history"
                 android:drawableEnd="@drawable/ic_next"
                 android:drawablePadding="20dp"
-                android:gravity="center_vertical"
                 android:fontFamily="@font/bevietnampro_medium"
-                android:textColor="@color/black"
+                android:gravity="center_vertical"
                 android:padding="10dp"
                 android:text="Lịch sử đơn hàng của tôi"
+                android:textColor="@color/black"
                 android:textSize="16sp" />
 
             <TextView
@@ -77,10 +84,10 @@
                 android:drawableEnd="@drawable/ic_next"
                 android:drawablePadding="20dp"
                 android:fontFamily="@font/bevietnampro_medium"
-                android:textColor="@color/black"
                 android:gravity="center_vertical"
                 android:padding="10dp"
                 android:text="Trung tâm trợ giúp"
+                android:textColor="@color/black"
                 android:textSize="16sp" />
 
             <TextView
@@ -90,11 +97,11 @@
                 android:drawableStart="@drawable/ic_privacy_policy"
                 android:drawableEnd="@drawable/ic_next"
                 android:drawablePadding="20dp"
-                android:gravity="center_vertical"
                 android:fontFamily="@font/bevietnampro_medium"
-                android:textColor="@color/black"
+                android:gravity="center_vertical"
                 android:padding="10dp"
                 android:text="Chính sách bảo mật"
+                android:textColor="@color/black"
                 android:textSize="16sp" />
 
 
@@ -105,11 +112,11 @@
                 android:drawableStart="@drawable/ic_addfriend"
                 android:drawableEnd="@drawable/ic_next"
                 android:drawablePadding="20dp"
+                android:fontFamily="@font/bevietnampro_medium"
                 android:gravity="center_vertical"
                 android:padding="10dp"
-                android:fontFamily="@font/bevietnampro_medium"
-                android:textColor="@color/black"
                 android:text="Mời bạn bè"
+                android:textColor="@color/black"
                 android:textSize="16sp" />
 
 
@@ -120,10 +127,10 @@
                 android:drawableStart="@drawable/ic_notification"
                 android:drawableEnd="@drawable/ic_switch"
                 android:drawablePadding="20dp"
+                android:fontFamily="@font/bevietnampro_medium"
                 android:gravity="center_vertical"
                 android:padding="10dp"
                 android:text="Thông báo"
-                android:fontFamily="@font/bevietnampro_medium"
                 android:textColor="@color/black"
                 android:textSize="16sp" />
 
@@ -134,11 +141,11 @@
                 android:drawableStart="@drawable/ic_change_password"
                 android:drawableEnd="@drawable/ic_next"
                 android:drawablePadding="20dp"
+                android:fontFamily="@font/bevietnampro_medium"
                 android:gravity="center_vertical"
                 android:padding="10dp"
-                android:fontFamily="@font/bevietnampro_medium"
-                android:textColor="@color/black"
                 android:text="Đổi mật khẩu"
+                android:textColor="@color/black"
                 android:textSize="16sp" />
 
             <TextView
@@ -148,10 +155,10 @@
                 android:drawableStart="@drawable/ic_logout"
                 android:drawableEnd="@drawable/ic_next"
                 android:drawablePadding="20dp"
+                android:fontFamily="@font/bevietnampro_medium"
                 android:gravity="center_vertical"
                 android:padding="10dp"
                 android:text="Đăng xuất"
-                android:fontFamily="@font/bevietnampro_medium"
                 android:textColor="@color/black"
                 android:textSize="16sp" />
 
@@ -172,20 +179,29 @@
                 android:scaleType="centerCrop"
                 android:src="@drawable/img_top_profile" />
 
-            <ImageView
-                android:id="@+id/iv_avtProfile"
-                android:layout_width="90dp"
-                android:layout_height="90dp"
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal|bottom"
+                android:background="@color/color_transparent"
+                app:cardCornerRadius="60dp">
 
-                android:src="@drawable/img_avt_profile" />
+                <ImageView
+                    android:id="@+id/iv_avtProfile"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:scaleType="centerCrop" />
+            </androidx.cardview.widget.CardView>
         </FrameLayout>
+
         <ImageView
             android:id="@+id/img_back"
             android:layout_width="43dp"
             android:layout_height="40dp"
-            android:layout_margin="10dp"
-            android:padding="20dp"
-            android:background="@drawable/ic_back"/>
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/ic_back"
+            android:padding="20dp" />
     </FrameLayout>
 </ScrollView>

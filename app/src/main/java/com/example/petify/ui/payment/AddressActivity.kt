@@ -41,6 +41,9 @@ class AddressActivity : BaseActivity<ActivityAddressBinding, AddressViewmodel>()
 
     override fun initView() {
         super.initView()
+        val userModel = SharePreUtils.getUserModel(this)
+        binding.tvName.text = userModel?.name
+        binding.tvPhonenumber.text = userModel?.phoneNumber
         binding.ivBack.setOnClickListener {
             finish()
         }

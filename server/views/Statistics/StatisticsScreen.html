@@ -63,16 +63,16 @@
         font-weight: bold;
         margin: 0 10px;
       }
-     
+
       .chart-container {
-            width: 100%;
-            height: 700px;
-            margin: auto;
-            padding: 20px;
-            color: #333333;
-            font-family: "Arial", sans-serif;
-        }
-        #chart {
+        width: 100%;
+        height: 700px;
+        margin: auto;
+        padding: 20px;
+        color: #333333;
+        font-family: "Arial", sans-serif;
+      }
+      #chart {
         width: 100%;
         height: 500px;
         margin: 0 auto;
@@ -245,37 +245,60 @@
             class="chart-container"
           ></div>
           <table class="content w-full border-collapse">
-            <h1 class="text-center text-xl font-bold mb-4">Thống kê doanh thu theo từng tháng trong năm</h1>
-            
+            <h1 class="text-center text-xl font-bold mb-4">
+              Thống kê doanh thu theo từng tháng trong năm
+            </h1>
+
             <div class="flex justify-between mb-6">
               <div class="flex items-center space-x-2">
-                <button id="prevYearBtn" class="arrow-btn px-3 py-1 border rounded hover:bg-gray-200">←</button>
-                <span id="currentYear" class="year-display text-lg font-semibold"></span>
-                <button id="nextYearBtn" class="arrow-btn px-3 py-1 border rounded hover:bg-gray-200">→</button>
+                <button
+                  id="prevYearBtn"
+                  class="arrow-btn px-3 py-1 border rounded hover:bg-gray-200"
+                >
+                  ←
+                </button>
+                <span
+                  id="currentYear"
+                  class="year-display text-lg font-semibold"
+                ></span>
+                <button
+                  id="nextYearBtn"
+                  class="arrow-btn px-3 py-1 border rounded hover:bg-gray-200"
+                >
+                  →
+                </button>
               </div>
               <div class="flex items-center space-x-2">
-                <button id="prevMonthBtn" class="arrow-btn px-3 py-1 border rounded hover:bg-gray-200">←</button>
-                <span id="currentMonth" class="month-display text-lg font-semibold"></span>
-                <button id="nextMonthBtn" class="arrow-btn px-3 py-1 border rounded hover:bg-gray-200">→</button>
+                <button
+                  id="prevMonthBtn"
+                  class="arrow-btn px-3 py-1 border rounded hover:bg-gray-200"
+                >
+                  ←
+                </button>
+                <span
+                  id="currentMonth"
+                  class="month-display text-lg font-semibold"
+                ></span>
+                <button
+                  id="nextMonthBtn"
+                  class="arrow-btn px-3 py-1 border rounded hover:bg-gray-200"
+                >
+                  →
+                </button>
               </div>
             </div>
-          
+
             <div class="flex gap-8 mt-8">
-              <!-- Biểu đồ cột -->
-              <div class="flex-1">
-                <h1 class="text-center text-lg font-semibold mb-4">Doanh Thu Theo Tháng</h1>
-                <div id="chart"></div>
-              </div>
-            
-              <!-- Biểu đồ tròn -->
-              <div class="flex-1">
-               
-                <div id="donutChart" class="mt-4"></div>
-              </div>
+              <!-- <div class="flex-1">
+                <h1 class="text-center text-lg font-semibold mb-4">Doanh Thu Theo Tháng</h1> -->
+              <div id="chart"></div>
+              <!-- </div> -->
+
+              <!-- <div class="flex-1"> -->
+              <!-- <div id="donutChart" class="mt-4"></div> -->
+              <!-- </div> -->
             </div>
-            
           </table>
-          
         </div>
       </div>
     </div>

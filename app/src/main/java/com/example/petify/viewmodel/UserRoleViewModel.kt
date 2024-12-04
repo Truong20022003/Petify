@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.petify.BaseViewModel
 import com.example.petify.data.server.CreateInteface
 import com.example.petify.data.server.enitities.UserRoleModel
+import com.example.petify.data.server.enitities.UserRoleRequest
 import com.example.petify.data.server.repository.UserRoleRepository
 import com.example.petify.data.server.service.SupplierService
 import com.example.petify.data.server.service.UserRoleService
@@ -44,7 +45,7 @@ class UserRoleViewModel : BaseViewModel() {
         }
     }
 
-    fun addUserRole(userRole: UserRoleModel) {
+    fun addUserRole(userRole: UserRoleRequest) {
         viewModelScope.launch {
             try {
                 val apiService: UserRoleService = CreateInteface.createService()

@@ -14,7 +14,11 @@ import com.example.petify.data.server.repository.UserRepository
 import com.example.petify.data.server.service.UserRoleService
 import com.example.petify.data.server.service.UserService
 import kotlinx.coroutines.launch
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
 import retrofit2.HttpException
+import java.io.File
 import java.io.IOException
 
 class UserViewModel : BaseViewModel() {
@@ -125,6 +129,8 @@ class UserViewModel : BaseViewModel() {
                 val apiService: UserService = CreateInteface.createService()
                 val userRepository = UserRepository(apiService)
                 val registeredUser = userRepository.registerUser(name, email, password, phoneNumber)
+                Log.e("UserViewModel", "$registeredUser")
+
                 _userRegisterUser.value = registeredUser
                 _registrationSuccess.value = registeredUser != null
             } catch (e: Exception) {
@@ -169,18 +175,24 @@ class UserViewModel : BaseViewModel() {
         }
     }
 
-    fun updateUser(id: String, user: UserModel) {
+    fun updateUser(id: String, user: UserModel, avataFile: File?) {
         viewModelScope.launch {
             try {
                 val apiService: UserService = CreateInteface.createService()
                 val userRepository = UserRepository(apiService)
-                _isUserUpdated.value = userRepository.updateUser(id, user) != null
+                val updatedUser = userRepository.updateUser(id, user, avataFile)
+                _isUserUpdated.value = updatedUser != null
+                _user.value = updatedUser
+                Log.d("UserViewModel", "User updated successfully: $updatedUser")
             } catch (e: Exception) {
                 Log.e("UserViewModel", "Error updating user", e)
+                _isUserUpdated.value = false
                 _errorMessage.value = "Error updating user: ${e.message}"
             }
         }
     }
+
+
 
     fun deleteUser(id: String) {
         viewModelScope.launch {

@@ -312,3 +312,21 @@ exports.TopProducts = async (req, res, next) => {
         res.status(500).json({ message: "Error fetching top products" });
     }
 }
+exports.getInvoiceByIdUser = async (req, res, next) => {
+    try {
+        const userId = req.params.user_id; // Lấy user_id từ tham số URL
+
+        // Tìm các hóa đơn có `user_id` tương ứng
+        const invoices = await invoiceModel.find({ user_id: userId });
+
+        if (!invoices || invoices.length === 0) {
+            return res.status(404).json({ message: "No invoices found for this user." });
+        }
+
+        // Nếu tìm thấy hóa đơn
+        res.status(200).json(invoices);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ status: "Error fetching invoices", result: error });
+    }
+};
