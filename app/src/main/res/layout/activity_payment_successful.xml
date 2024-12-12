@@ -9,15 +9,12 @@
     tools:context=".ui.payment.PaymentSuccessfulActivity">
 
 
-
-
     <ProgressBar
         android:id="@+id/progressBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="gone"
         android:layout_gravity="center"
-        />
+        android:visibility="gone" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -169,8 +166,7 @@
                     android:orientation="vertical"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     app:spanCount="1"
-                    tools:listitem="@layout/item_rv_payment"
-                    />
+                    tools:listitem="@layout/item_rv_payment" />
 
             </LinearLayout>
 
@@ -191,7 +187,6 @@
                     android:text="Phương thức vận chuyển"
                     android:textColor="@color/black"
                     android:textSize="20sp" />
-
 
 
                 <TextView
@@ -277,21 +272,20 @@
                         android:textSize="18sp" />
 
                     <TextView
-                        android:id="@+id/tvPrice"
+                        android:id="@+id/tvMDH"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:gravity="end"
                         android:text="323532"
                         android:textSize="18sp" />
-                    
+
                     <ImageView
                         android:layout_width="11dp"
                         android:layout_height="11dp"
-                        android:background="@drawable/ic_copy"
-                        android:gravity="end"
                         android:layout_gravity="center"
-                        />
+                        android:background="@drawable/ic_copy"
+                        android:gravity="end" />
                 </LinearLayout>
 
                 <LinearLayout

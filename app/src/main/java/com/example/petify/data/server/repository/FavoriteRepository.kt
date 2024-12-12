@@ -34,10 +34,10 @@ class FavoriteRepository(private val api: FavoriteService) {
     suspend fun deleteFavorite(idProduct: String, idUser: String): Boolean = withContext(Dispatchers.IO) {
         val response = api.deleteFavorites(idProduct,idUser)
         if (response.isSuccessful) {
-            Log.d("CartRepository", "deleteInvoiceDetail Success")
+            Log.d("FavoriteRepository", "deleteInvoiceDetail Success")
             true
         } else {
-            Log.e("CartRepository", "deleteInvoiceDetail Error: ${response.errorBody()}")
+            Log.e("FavoriteRepository", "deleteInvoiceDetail Error: ${response.errorBody()}")
             false
         }
     }

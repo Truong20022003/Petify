@@ -14,7 +14,7 @@ import com.example.petify.databinding.ItemFavoritesBinding
 
 
 class FavoritesAdapter(
-    private var favoriteList: List<FavoriteResponse>,
+    private var favoriteList: MutableList<FavoriteResponse>,// Danh sách có thể thay đổi để cho phép sửa đổi
     private val itemClickListener: (ProductModel) -> Unit,
     private val onFavoriteChanged: (ProductModel, Boolean) -> Unit
 ) : RecyclerView.Adapter<FavoritesAdapter.FavoritesViewHolder>() {
@@ -22,7 +22,7 @@ class FavoritesAdapter(
     val selectedItems = mutableSetOf<FavoriteResponse>()
 
     fun updateItems(newItems: List<FavoriteResponse>) {
-        favoriteList = newItems
+        favoriteList = newItems.toMutableList() //Cập nhật danh sách dưới dạng có thể thay đổi
         notifyDataSetChanged()
     }
 
@@ -70,12 +70,10 @@ class FavoritesAdapter(
 
 
             ivFavorite.tap {
+                // Khi bấm, xóa mục khỏi danh sách
+                favoriteList.removeAt(position)  // Xóa mục khỏi danh sách
+                notifyItemRemoved(position)      // Thông báo cho adapter về việc loại bỏ
                 onFavoriteChanged(product.productId, !isFavorite)
-                ivFavorite.setImageResource(
-                    if (isFavorite) R.drawable.ic_love_item_home else R.drawable.ic_love_favorites_off
-                )
-                // Làm mới RecyclerView để cập nhật giao diện
-                notifyDataSetChanged()
             }
 
 

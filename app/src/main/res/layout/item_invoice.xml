@@ -43,7 +43,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="10dp"
-            android:text="Traạng thái đơn hàng"
+            android:text="Trạng thái đơn hàng"
             android:textColor="#397C85"
             android:textSize="12sp"
             app:layout_constraintBottom_toBottomOf="parent"
