@@ -70,10 +70,14 @@ class FavoritesAdapter(
 
 
             ivFavorite.tap {
-                // Khi bấm, xóa mục khỏi danh sách
-                favoriteList.removeAt(position)  // Xóa mục khỏi danh sách
-                notifyItemRemoved(position)      // Thông báo cho adapter về việc loại bỏ
-                onFavoriteChanged(product.productId, !isFavorite)
+                if (position >= 0 && position < favoriteList.size) {
+                    favoriteList.removeAt(position)      // Xóa mục khỏi danh sách
+                    notifyItemRemoved(position)         // Thông báo mục đã bị xóa
+                    notifyItemRangeChanged(position, favoriteList.size) // Cập nhật các mục còn lại
+                    onFavoriteChanged(product.productId, !isFavorite)  // Gọi callback
+                } else {
+                    Log.e("FavoritesAdapter", "Invalid position: $position for list size: ${favoriteList.size}")
+                }
             }
 
 
