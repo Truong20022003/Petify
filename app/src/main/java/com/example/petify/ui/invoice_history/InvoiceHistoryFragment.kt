@@ -40,6 +40,7 @@ class InvoiceHistoryFragment : BaseFragment<FragmentInvoiceHistoryBinding>() {
         orders.forEach { order ->
             when (order.order_id.status) {
                 "Đang chờ xác nhận" -> pendingOrders.add(order)
+                "Chờ giao hàng" -> pendingOrders.add(order)
                 else -> shippingOrders.add(order)
             }
         }
@@ -65,7 +66,7 @@ class InvoiceHistoryFragment : BaseFragment<FragmentInvoiceHistoryBinding>() {
     override fun initView() {
         super.initView()
         categoryOrderAdapter = CategoryOrderAdapter(
-            listOf("Chờ xác nhận", "Đang vận chuyển", "Giao hàng thành công"),
+            listOf("Đang chờ xác nhận", "Chờ giao hàng", "Thành công", "Hủy đơn"),
             onClick = {
                 when (it) {
                     0 -> {

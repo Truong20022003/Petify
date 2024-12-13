@@ -71,3 +71,17 @@ exports.getreviewById = async (req, res, next) => {
         res.json({ status: "Not found", result: error });
     }
 };
+exports.getReviewsByProductId = async (req, res, next) => {
+    try {
+        const productId = req.params.product_id; // Lấy product_id từ params
+        const reviews = await reviewModel.find({ product_id: productId }); // Tìm review theo product_id
+
+        if (reviews.length === 0) {
+            return res.json({ status: "No reviews found", result: [] });
+        }
+
+        res.json({ status: "Successfully", result: reviews });
+    } catch (error) {
+        res.json({ status: "Error", result: error.message });
+    }
+};

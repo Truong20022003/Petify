@@ -1,7 +1,11 @@
 const db = require("../db/db");
 const orderDetailSchema = new db.mongoose.Schema(
   {
-
+    user_id: {
+      type: db.mongoose.Schema.Types.ObjectId,
+      required: false,
+      ref: "user"
+    },
     product_id: {
       type: db.mongoose.Schema.Types.ObjectId,
       required: true,

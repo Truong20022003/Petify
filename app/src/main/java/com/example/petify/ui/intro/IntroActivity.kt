@@ -1,6 +1,7 @@
 package com.example.petify.ui.intro
 
 import android.content.Intent
+import android.util.Log
 import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.viewpager2.widget.ViewPager2
@@ -89,6 +90,7 @@ class IntroActivity : BaseActivity<ActivityIntroBinding, BaseViewModel>() {
     private fun startNextScreen() {
 
         val userModel = SharePreUtils.getUserModel(this)
+        Log.d("TAG_USER_MODEL", "User model: $userModel")
         if (userModel != null) {
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)

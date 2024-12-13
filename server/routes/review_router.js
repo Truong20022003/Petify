@@ -7,4 +7,5 @@ router.post("/addreview",reviewController.addreview)
 router.put("/updatereview/:id",reviewController.updatereview)
 router.delete("/deletereview/:id",reviewController.deletereview)
 router.get("/getreviewById/:id",reviewController.getreviewById)
+router.get("/getreviewByIdProduct/:product_id",reviewController.getReviewsByProductId)
 module.exports = router;
