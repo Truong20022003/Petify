@@ -17,7 +17,7 @@ interface FavoriteService {
     @POST("favorites/addTofavorites")
     suspend fun addFavorites(@Body favorites: FavoriteRequest): Response<FavoriteRequest>
 
-    @DELETE("cart/delete/{product_id}/{user_id}")
-    suspend fun deleteFavorites(@Path("product_id") product_id: String, @Path("user_id") user_id: String): Response<Unit>// này là ko cần data trả ve
+    @DELETE("favorites/delete/{product_id}/{user_id}")
+    suspend fun deleteFavorites(@Path("product_id") product_id: String, @Path("user_id") user_id: String): Response<FavoriteRequest>// này là ko cần data trả ve
 
 }

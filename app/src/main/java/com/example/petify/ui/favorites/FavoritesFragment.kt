@@ -12,6 +12,7 @@ import com.example.petify.R
 import com.example.petify.data.database.AppDatabase
 import com.example.petify.data.server.enitities.FavoriteRequest
 import com.example.petify.data.server.enitities.FavoriteResponse
+import com.example.petify.data.server.enitities.UserModel
 import com.example.petify.databinding.FragmentFavoritesBinding
 import com.example.petify.ultils.SharePreUtils
 import com.example.petify.viewmodel.FavoriteViewModel
@@ -48,32 +49,40 @@ class FavoritesFragment : BaseFragment<FragmentFavoritesBinding>() {
         val userModel = SharePreUtils.getUserModel(requireActivity())
         favoriteViewModel = ViewModelProvider(requireActivity())[FavoriteViewModel::class.java]
         adapter = FavoritesAdapter(
-            emptyList(),
+            favoriteList = mutableListOf(),
             itemClickListener = { product ->
                 // Xử lý khi click vào item
             },
-            onFavoriteChanged = { product, isFavorite ->
-                if (isFavorite) {
-                    favoriteViewModel.deleteFavorite(product.id,userModel!!.id)
-                    Log.d("TAG12345", "ProductXoathanhcong ${product.id} favorite status: $isFavorite")
-//                    // Xử lý thêm vào danh sách yêu thích
-//                    favoriteViewModel.addFavorites(FavoriteRequest(
-//                        userId = userModel!!.id,
-//                        productId = product.id
-//                    ))
-                } else {
-                    // Xử lý xóa khỏi danh sách yêu thích
-//                    favoriteViewModel.deleteFavorite(product.id,userModel!!.id)
-//                    Log.d("TAG12345", "ProductXoaThanhCong ${product.id} favorite status: $isFavorite")
-//                    favoriteViewModel.deleteFavorite(idProduct = product.id,
-//                        idUser = userModel!!.id)
-                    Log.d("TAG12345", "Không thể thêm sản phẩm vào yêu thích từ FavoritesFragment")
+
+            onFavoriteChanged = { productModel, isFavorite ->
+                if(isFavorite){
+                    val favoriteRequest = FavoriteRequest(productModel.id,userModel!!.id)
+                    favoriteViewModel.deleteFavorite(productModel.id,userModel!!.id)
+                    Log.d("TAG12345", "ProductThanhCong ${productModel.id} favorite status: $isFavorite")
+                }else{
+                    favoriteViewModel.deleteFavorite(productModel.id,userModel!!.id)
+                    Log.d("TAG12345", "ProductXoa ${productModel.id} favorite status: $isFavorite")
                 }
-                favoriteViewModel.getListFavorites(userModel!!.id)
+                Log.d(
+                    "TAG12345",
+                    "Product ${productModel.id} favorite status: $isFavorite"
+                )
             }
+//            onFavoriteChanged = { product, isFavorite ->
+//                if (isFavorite) {
+//                    // Khi sản phẩm bị thay đổi trạng thái yêu thích (ví dụ: bị xóa)
+////                    favoriteViewModel.deleteFavorite(idProduct = product.id, idUser =  userModel!!.id)
+//                    favoriteViewModel.deleteFavorite(product.id,userModel!!.id)
+//                    Log.d("TAG12345", "ProductXoathanhcong ${product.id} favorite status: $isFavorite")
+//
+//                }
+//                // Cập nhật lại danh sách yêu thích sau khi thay đổi
+//                favoriteViewModel.getListFavorites(userModel!!.id)
+//            }
         )
 
         favoriteViewModel.getListFavorites(userModel!!.id)
+        // Lắng nghe thay đổi từ ViewModel để cập nhật lại danh sách yêu thích
         favoriteViewModel.favoriteList.observe(viewLifecycleOwner) { favoriteList ->
             if (favoriteList != null) {
                 // Log danh sách yêu thích
@@ -81,6 +90,7 @@ class FavoritesFragment : BaseFragment<FragmentFavoritesBinding>() {
                 for (item in favoriteList) {
                     Log.d("FavoritesFragment", "Item: ${item.productId} - ${item.id}")
                 }
+                // Cập nhật dữ liệu cho adapter khi danh sách thay đổi
                 adapter.updateItems(favoriteList)
                 viewBinding.rcvFavorite.layoutManager = GridLayoutManager(requireContext(), 2)
                 viewBinding.rcvFavorite.adapter = adapter
