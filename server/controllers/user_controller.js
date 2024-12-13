@@ -436,3 +436,30 @@ exports.updateUserAddress = async (req, res, next) => {
         res.status(500).json({ status: "Update failed", error: error.message });
     }
 };
+
+
+exports.getNewUsers = async (req, res, next) => {
+    const { startDate, endDate } = req.query;
+
+    // Kiểm tra và chuyển đổi startDate và endDate sang kiểu Date
+    const startOfDay = startDate ? new Date(startDate) : new Date();
+    startOfDay.setHours(0, 0, 0, 0);
+
+    const endOfDay = endDate ? new Date(endDate) : new Date();
+    endOfDay.setHours(23, 59, 59, 999);
+
+    try {
+        // Truy vấn danh sách người dùng được tạo trong khoảng thời gian
+        const newUsers = await userModel.find({
+            createdAt: {
+                $gte: startOfDay,
+                $lte: endOfDay,
+            },
+        });
+
+        res.status(200).json({ success: true, result: newUsers });
+    } catch (error) {
+        console.error("Lỗi khi lấy danh sách user mới:", error);
+        res.status(500).json({ error: "Lỗi server" });
+    }
+};
