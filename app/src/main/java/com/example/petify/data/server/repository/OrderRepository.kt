@@ -2,6 +2,7 @@ package com.example.petify.data.server.repository
 
 import android.util.Log
 import com.example.petify.data.server.enitities.OrderModel
+import com.example.petify.data.server.enitities.OrderModelRequest
 import com.example.petify.data.server.service.OrderService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -19,7 +20,7 @@ class OrderRepository(private val api: OrderService) {
         }
     }
 
-    suspend fun addOrder(Order: OrderModel): OrderModel? = withContext(Dispatchers.IO) {
+    suspend fun addOrder(Order: OrderModelRequest): OrderModel? = withContext(Dispatchers.IO) {
         val response = api.addOrder(Order)
         if (response.isSuccessful) {
             Log.d("OrderRepository", "addOrder Success: ${response.body()}")

@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.petify.BaseViewModel
 import com.example.petify.data.server.CreateInteface
 import com.example.petify.data.server.enitities.ReviewModel
+import com.example.petify.data.server.enitities.ReviewModelRequest
 import com.example.petify.data.server.repository.ReviewRepository
 import com.example.petify.data.server.service.ReviewProductService
 import com.example.petify.data.server.service.ReviewService
@@ -44,7 +45,7 @@ class ReviewViewModel : BaseViewModel() {
         }
     }
 
-    fun addReview(review: ReviewModel) {
+    fun addReview(review: ReviewModelRequest) {
         viewModelScope.launch {
             try {
                 val apiService: ReviewService = CreateInteface.createService()

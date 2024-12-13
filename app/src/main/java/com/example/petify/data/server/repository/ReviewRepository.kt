@@ -2,6 +2,7 @@ package com.example.petify.data.server.repository
 
 import android.util.Log
 import com.example.petify.data.server.enitities.ReviewModel
+import com.example.petify.data.server.enitities.ReviewModelRequest
 import com.example.petify.data.server.service.ReviewService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -18,7 +19,7 @@ class ReviewRepository(private val api: ReviewService) {
         }
     }
 
-    suspend fun addReview(Review: ReviewModel): ReviewModel? = withContext(Dispatchers.IO) {
+    suspend fun addReview(Review: ReviewModelRequest): ReviewModel? = withContext(Dispatchers.IO) {
         val response = api.addReview(Review)
         if (response.isSuccessful) {
             Log.d("ReviewRepository", "addReview Success: ${response.body()}")

@@ -1,6 +1,7 @@
 package com.example.petify.data.server.service
 
 import com.example.petify.data.server.enitities.OrderModel
+import com.example.petify.data.server.enitities.OrderModelRequest
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -14,7 +15,7 @@ interface OrderService {
     suspend fun getListOrder(): Response<List<OrderModel>>
 
     @POST("order/addorder")
-    suspend fun addOrder(@Body Order: OrderModel): Response<OrderModel>
+    suspend fun addOrder(@Body Order: OrderModelRequest): Response<OrderModel>
 
     @GET("order/getorderById/{id}")
     suspend fun getOrderById(@Path("id") id: String): Response<OrderModel>

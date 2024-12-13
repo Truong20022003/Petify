@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.petify.BaseViewModel
 import com.example.petify.data.server.CreateInteface
 import com.example.petify.data.server.enitities.OrderModel
+import com.example.petify.data.server.enitities.OrderModelRequest
 import com.example.petify.data.server.repository.OrderRepository
 import com.example.petify.data.server.service.InvoiceService
 import com.example.petify.data.server.service.OrderService
@@ -43,7 +44,7 @@ class OrderViewModel : BaseViewModel() {
         }
     }
 
-    fun addOrder(order: OrderModel) {
+    fun addOrder(order: OrderModelRequest) {
         viewModelScope.launch {
             try {
 

@@ -75,10 +75,21 @@ exports.deleteCartByProductIdAndUserId = async (req, res, next) => {
     try {
         const { product_id, user_id } = req.params;
 
-        const result = await cartModel.findOneAndDelete({ product_id: product_id, user_id: user_id });
+        // Kiểm tra tham số
+        if (!product_id || !user_id) {
+            return res.status(400).json({
+                status: "Invalid input",
+                message: "Both product_id and user_id are required"
+            });
+        }
+
+        // Tìm và xóa sản phẩm
+        const result = await cartModel.findOneAndDelete({ product_id, user_id });
 
         if (result) {
-            res.json(result);
+            res.json({ status: "Deleted successfully", data: result });
+        } else {
+            res.status(404).json({ status: "Not found", message: "Cart item not found" });
         }
     } catch (error) {
         res.status(500).json({
@@ -87,3 +98,4 @@ exports.deleteCartByProductIdAndUserId = async (req, res, next) => {
         });
     }
 };
+

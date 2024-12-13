@@ -10,13 +10,19 @@ exports.getListreview = async (req, res, next) => {
 };
 exports.addreview = async (req, res, next) => {
     try {
+        console.log(req.body.rating)
+        console.log(req.body.comment)
+        console.log(req.body.user_id)
+        console.log(req.body.product_id)
         let obj = new reviewModel({
             rating: req.body.rating,
             comment: req.body.comment,
-            user_id: req.body.user_id
+            user_id: req.body.user_id,
+            product_id: req.body.product_id
         })
+        console.log(obj)
         let result = await obj.save();
-        res.json({ status: "Add successfully", result: result });
+        res.json(result);
     } catch (error) {
         res.json({status: "Add failed" })
     }

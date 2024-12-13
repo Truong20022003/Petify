@@ -8,12 +8,17 @@ const reviewSchema = new db.mongoose.Schema(
     },
     comment: {
         type: String,
-        require: true
+        require: false
     },
     user_id: {
       type: db.mongoose.Schema.Types.ObjectId,
       required: true,
       ref: "user"
+    },
+    product_id: {
+      type: db.mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: "product"
     }
   },
   {
