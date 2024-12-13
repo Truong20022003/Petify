@@ -12,6 +12,12 @@ data class CartRequest(
     @field:SerializedName("user_id") var userId: String = "",
     @field:SerializedName("quantity") var quantity: Int = 0,
 )
+
+data class CartResponseAndStatus(
+    @field:SerializedName("status") var status: String = "",
+    @field:SerializedName("data") var data: CartRequest
+)
+
 @Parcelize
 data class CartResponse(
     @field:SerializedName("_id") var id: String = "",
@@ -19,6 +25,7 @@ data class CartResponse(
     @field:SerializedName("product_id") var productId: ProductModel,
     @field:SerializedName("quantity") var quantity: Int = 0
 ) : Parcelable
+
 data class FavoriteRequest(
 //    @field:SerializedName("_id") var id: String = "",
     @field:SerializedName("product_id") var productId: String = "",

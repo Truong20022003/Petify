@@ -102,12 +102,12 @@ class InvoiceHistoryFragment : BaseFragment<FragmentInvoiceHistoryBinding>() {
                 invoiceAdapter.fillData(it)
             }
         }
-        invoiceDetailViewModel.getAllOrderDetailsWithStatus(userModel!!.id)
+        invoiceDetailViewModel.getAllOrderDetailsWithStatus(userModel.id)
         invoiceDetailViewModel.orderDetailListIdUser.observe(requireActivity()) {orderDetails ->
             orderDetails?.let {
                 updateOrderLists(it.toMutableList())
-                orderHistoryAdapter.fillData(pendingOrders) // Hiển thị pendingOrders mặc định
-                viewBinding.rvOrder.visibility = View.VISIBLE // Đảm bảo rvOrder hiển thị)
+                orderHistoryAdapter.fillData(pendingOrders)
+                viewBinding.rvOrder.visibility = View.VISIBLE
             }
 
         }

@@ -77,6 +77,7 @@ exports.getorder_detailById = async (req, res, next) => {
 exports.getAllOrderDetailsWithStatus = async (req, res, next) => {
     try {
         let userId = req.params.user_id;
+        console.log(userId)
         
         // Tìm tất cả các chi tiết đơn hàng liên quan đến user_id
         let orderDetails = await order_detailModel.find({ user_id: userId })

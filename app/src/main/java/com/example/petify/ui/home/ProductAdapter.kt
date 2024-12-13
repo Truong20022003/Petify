@@ -29,7 +29,7 @@ class ProductAdapter(
     override fun onBindViewHolder(holder: ProductViewHolder, position: Int) {
         val product = productList[position]
         val isFavorite = favoriteList.any { it.productId.id == product.id }
-        Log.d("TAG1111", "Url ${product.image[0]}")
+//        Log.d("TAG1111", "Url ${product.image[0]}")
         holder.binding.apply {
             val imageUrl = product.image[0]
 
@@ -50,10 +50,15 @@ class ProductAdapter(
                 paintFlags = paintFlags or android.graphics.Paint.STRIKE_THRU_TEXT_FLAG
             }
             tvSold.text = "Đã bán ${product.quantity}"
+            if (product.quantity == 0) {
+                ivCart.isEnabled = false
+                ivCart.alpha = 0.5f
+            } else {
+                ivCart.isEnabled = true
+                ivCart.alpha = 1.0f
+            }
 
-
-
-            ivFavorite.tap {
+            ivFavorite.setOnClickListener {
                 // Đổi trạng thái yêu thích (toggle)
                 val newIsFavorite = !isFavorite
 
@@ -67,10 +72,10 @@ class ProductAdapter(
 
             }
 
-            ivCart.tap {
+            ivCart.setOnClickListener {
                 onAddToCart(product, true)
             }
-            holder.itemView.tap {
+            holder.itemView.setOnClickListener {
                 itemClickListener(product)
             }
         }

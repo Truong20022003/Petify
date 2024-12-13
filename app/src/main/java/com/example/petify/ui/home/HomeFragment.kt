@@ -54,7 +54,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
     private lateinit var productCategoryViewModel: ProductCategoryViewModel
     private lateinit var categoryProductParentAdapter: CategoryProductParentAdapter
     private lateinit var cartViewModel: CartViewModel
-    private lateinit var favoriteViewModel : FavoriteViewModel
+    private lateinit var favoriteViewModel: FavoriteViewModel
     private lateinit var cartApi: CartApiViewModel
     private var listFavorite1: List<FavoriteResponse> = emptyList()
     override fun initView() {
@@ -79,8 +79,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
         categoryViewModel = ViewModelProvider(requireActivity())[CategoryViewModel::class.java]
         categoryViewModel.getListCategory()
 
-        viewBinding.rvCategory.visibility =  View.GONE
-        viewBinding.btnAll.visibility =  View.GONE
+        viewBinding.rvCategory.visibility = View.GONE
+        viewBinding.btnAll.visibility = View.GONE
         categoryViewModel.categoryList.observe(requireActivity()) {
 //            Log.d("TAG12345", "categoryList: $it")
             it?.let {
@@ -96,57 +96,75 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
 
 
         favoriteViewModel.favoriteList.observe(this) { listFavorite ->
-            listFavorite1 = listFavorite ?: emptyList() // Gán danh sách trống nếu listFavorite là null
+            listFavorite1 =
+                listFavorite ?: emptyList() // Gán danh sách trống nếu listFavorite là null
         }
         productCategoryViewModel.responseProductCategoryList.observe(this) {
-                Log.d("TAG12345", "productCategoryList: $it")
-                it?.let { categories ->
-                    categoryProductParentAdapter = CategoryProductParentAdapter(
-                        categories.toMutableList(),
-                        itemClickListener = { productModel ->
-                            val intent = Intent(context, ProductDetailActivity::class.java)
-                            intent.putExtra("productModel", productModel)
-                            startActivity(intent)
-                        },
-                        onFavoriteChanged = { productModel, isFavorite ->
-                            if(isFavorite){
-                                val favoriteRequest = FavoriteRequest(productModel.id,userModel!!.id)
-                                favoriteViewModel.addFavorites(favoriteRequest)
-                                Log.d("TAG12345", "ProductThanhCong ${productModel.id} favorite status: $isFavorite")
-                            }else{
-                                favoriteViewModel.deleteFavorite(productModel.id,userModel!!.id)
-                                    Log.d("TAG12345", "ProductThatBai ${productModel.id} favorite status: $isFavorite")
+//            Log.d("TAG12345", "productCategoryList: $it")
+            it?.let { categories ->
+                categoryProductParentAdapter = CategoryProductParentAdapter(
+                    categories.toMutableList(),
+                    itemClickListener = { productModel ->
+                        val intent = Intent(context, ProductDetailActivity::class.java)
+                        intent.putExtra("productModel", productModel)
+                        startActivity(intent)
+                    },
+                    onFavoriteChanged = { productModel, isFavorite ->
+                        if (isFavorite) {
+                            val favoriteRequest = FavoriteRequest(productModel.id, userModel!!.id)
+                            favoriteViewModel.addFavorites(favoriteRequest)
+                            Log.d(
+                                "TAG12345",
+                                "ProductThanhCong ${productModel.id} favorite status: $isFavorite"
+                            )
+                        } else {
+                            favoriteViewModel.deleteFavorite(productModel.id, userModel!!.id)
+                            Log.d(
+                                "TAG12345",
+                                "ProductThatBai ${productModel.id} favorite status: $isFavorite"
+                            )
+                        }
+                        Log.d(
+                            "TAG12345",
+                            "Product ${productModel.id} favorite status: $isFavorite"
+                        )
+                    },
+                    onAddToCart = { productModel, isAddToCart ->
+                        if (userModel?.id != null || userModel.email != null || userModel.phoneNumber != null || userModel.location != null) {
+                            if (isAddToCart) {
+                                val cartItem = CartRequest(
+                                    productModel.id,
+                                    userModel!!.id,
+                                    1
+                                )
+                                cartApi.addCart(cartItem)
+                                cartApi.cartResponse.observe(this) {
+                                    it?.let {
+                                        Log.d("TAG1234", "${it.status}")
+                                        Toast.makeText(requireActivity(), "${it.status}", Toast.LENGTH_SHORT).show()
+                                        cartApi.clearCartResponse()
+                                    }
+
+                                }
                             }
                             Log.d(
                                 "TAG12345",
-                                "Product ${productModel.id} favorite status: $isFavorite"
+                                "Product ${productModel.id} favorite status: $isAddToCart"
                             )
-                        },
-                        onAddToCart = { productModel, isAddToCart ->
-                            if (userModel?.id != null && userModel.email != null && userModel.phoneNumber != null && userModel.location != null){
-                                if (isAddToCart) {
-                                    val cartItem = CartRequest(
-                                        productModel.id,
-                                        userModel!!.id,
-                                        1
-                                    )
-                                    cartApi.addCart(cartItem)
-                                }
-                                Log.d(
-                                    "TAG12345",
-                                    "Product ${productModel.id} favorite status: $isAddToCart"
-                                )
-                            }else{
-                                Toast.makeText(requireActivity(), "Hoàn tất hồ sơ người dùng để thêm vào giỏ hàng", Toast.LENGTH_SHORT).show()
-                            }
+                        } else {
+                            Toast.makeText(
+                                requireActivity(),
+                                "Hoàn tất hồ sơ người dùng để thêm vào giỏ hàng",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
 
-                        },
-                        listFavorite1!!.toMutableList(),
+                    },
+                    listFavorite1!!.toMutableList(),
 //                        emptyList(),
-                    )
-                    viewBinding.rvProduct.adapter = categoryProductParentAdapter
-                    viewBinding.rvProduct.layoutManager = LinearLayoutManager(requireContext())
-
+                )
+                viewBinding.rvProduct.adapter = categoryProductParentAdapter
+                viewBinding.rvProduct.layoutManager = LinearLayoutManager(requireContext())
 
 
             }
@@ -156,7 +174,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
             startActivity(intent)
 
         }
-        viewBinding.ivSearch.setOnClickListener{
+        viewBinding.ivSearch.setOnClickListener {
             val intent = Intent(requireContext(), SearchActivity::class.java)
             startActivity(intent)
 
