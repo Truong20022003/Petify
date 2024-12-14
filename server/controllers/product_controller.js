@@ -70,6 +70,36 @@ const updateSalePrice = async (req, res) => {
         return res.status(500).json({ success: false, message: "Lỗi máy chủ nội bộ.", error });
     }
 };
+const getLatestSaleUpdatedProduct = async (req, res) => {
+    try {
+        // Tìm sản phẩm có `sale` được chỉnh sửa gần nhất, sắp xếp theo `updatedAt`
+        const latestSaleUpdatedProduct = await productModel
+            .findOne({ sale: { $ne: null } }) // Chỉ lấy các sản phẩm có trường `sale`
+            .sort({ updatedAt: -1 }) // Sắp xếp theo `updatedAt` giảm dần
+            .exec();
+
+        if (!latestSaleUpdatedProduct) {
+            return res.status(404).json({
+                success: false,
+                message: "Không tìm thấy sản phẩm nào có giá sale được chỉnh sửa gần đây.",
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            message: "Sản phẩm có giá sale được chỉnh sửa gần nhất.",
+            product: latestSaleUpdatedProduct,
+        });
+    } catch (error) {
+        console.error("Error fetching latest sale updated product:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Lỗi máy chủ nội bộ.",
+            error: error.message,
+        });
+    }
+};
+
 
 const getListproduct = async (req, res, next) => {
     try {
@@ -361,5 +391,6 @@ module.exports = {
     deleteproduct,
     getproductById,
     updateSalePrice,
-    getProductsToday
+    getProductsToday,
+    getLatestSaleUpdatedProduct
 };

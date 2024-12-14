@@ -68,6 +68,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
         favoriteViewModel.getListFavorites(userModel!!.id)
         Glide.with(requireActivity())
             .load(userModel?.avata)
+            .error(R.drawable.image_default)
             .into(viewBinding.ivUser)
         val cartDao = AppDatabase.getDatabase(requireContext()).cartDao()
 

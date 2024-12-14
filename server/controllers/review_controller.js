@@ -74,7 +74,9 @@ exports.getreviewById = async (req, res, next) => {
 exports.getReviewsByProductId = async (req, res, next) => {
     try {
         const productId = req.params.product_id; // Lấy product_id từ params
-        const reviews = await reviewModel.find({ product_id: productId }); // Tìm review theo product_id
+        // Tìm reviews theo product_id và populate thông tin user
+        const reviews = await reviewModel.find({ product_id: productId })
+            .populate('user_id', 'name avata') // Lấy name và avatar từ user_id
 
         if (reviews.length === 0) {
             return res.json({ status: "No reviews found", result: [] });

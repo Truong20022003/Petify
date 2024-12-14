@@ -43,13 +43,15 @@ class ProductAdapter(
             }
             tvProductName.text = product.name
             tvDiscount.text = "${product.sale} %"
-            tvSalePrice.text = "${product.price.toInt()} đ"
-            val originalPrice = product.price.toInt() * (product.sale / 100)
+            val originalPrice = product.price * (1 - product.sale / 100.0)
+
+            Log.d("TAG2003","sale ${product.sale} price ${product.price} originalPrice $originalPrice quantity: ${product.quantity} ")
+            tvSalePrice.text = "${originalPrice.toInt()} đ"
             tvOriginalPrice.apply {
-                text = "${originalPrice} đ"
+                text = "${product.price.toInt()} đ"
                 paintFlags = paintFlags or android.graphics.Paint.STRIKE_THRU_TEXT_FLAG
             }
-            tvSold.text = "Đã bán ${product.quantity}"
+            tvSold.text = "Còn lại ${product.quantity}"
             if (product.quantity == 0) {
                 ivCart.isEnabled = false
                 ivCart.alpha = 0.5f
