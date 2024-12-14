@@ -85,11 +85,9 @@
         <activity
             android:name=".ui.intro.IntroActivity"
             android:exported="false" />
+
         <activity
             android:name=".payment.zalopay.PaymentNotificationActivity"
-            android:exported="true" />
-        <activity
-            android:name=".payment.zalopay.OrderPaymentActivity"
             android:exported="true"
             android:label="Merchant Demo"
             android:launchMode="singleTask">

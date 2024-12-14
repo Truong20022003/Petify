@@ -40,7 +40,7 @@ class InvoiceHistoryFragment : BaseFragment<FragmentInvoiceHistoryBinding>() {
         orders.forEach { order ->
             when (order.order_id.status) {
                 "Đang chờ xác nhận" -> pendingOrders.add(order)
-                "Chờ giao hàng" -> pendingOrders.add(order)
+                "Chờ giao hàng" -> shippingOrders.add(order)
                 else -> shippingOrders.add(order)
             }
         }

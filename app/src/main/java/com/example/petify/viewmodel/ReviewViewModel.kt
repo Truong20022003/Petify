@@ -8,6 +8,7 @@ import com.example.petify.BaseViewModel
 import com.example.petify.data.server.CreateInteface
 import com.example.petify.data.server.enitities.ReviewModel
 import com.example.petify.data.server.enitities.ReviewModelRequest
+import com.example.petify.data.server.enitities.ReviewResponse
 import com.example.petify.data.server.repository.ReviewRepository
 import com.example.petify.data.server.service.ReviewProductService
 import com.example.petify.data.server.service.ReviewService
@@ -19,6 +20,9 @@ class ReviewViewModel : BaseViewModel() {
 
     private val _review = MutableLiveData<ReviewModel?>()
     val review: LiveData<ReviewModel?> get() = _review
+
+    private val _reviewResponse = MutableLiveData<ReviewResponse?>()
+    val reviewResponse: LiveData<ReviewResponse?> get() = _reviewResponse
 
     private val _isReviewAdded = MutableLiveData<Boolean>()
     val isReviewAdded: LiveData<Boolean> get() = _isReviewAdded
@@ -54,6 +58,19 @@ class ReviewViewModel : BaseViewModel() {
             } catch (e: Exception) {
                 Log.e("ReviewViewModel", "Error adding review", e)
                 _errorMessage.value = "Error adding review: ${e.message}"
+            }
+        }
+    }
+
+    fun getReviewByProductId(id: String) {
+        viewModelScope.launch {
+            try {
+                val apiService: ReviewService = CreateInteface.createService()
+                val reviewRepository = ReviewRepository(apiService)
+                _reviewResponse.value = reviewRepository.getReviewByProductId(id)
+            } catch (e: Exception) {
+                Log.e("ReviewViewModel", "Error fetching review by ID", e)
+                _errorMessage.value = "Error fetching review by ID: ${e.message}"
             }
         }
     }

@@ -331,12 +331,12 @@ class PaymentActivity : BaseActivity<ActivityPaymentBinding, OrderViewModel>() {
                 }
 
                 override fun onPaymentCanceled(s: String?, s1: String?) {
-                    navigateToPaymentResult("Hủy thanh toán")
+                    navigateToPaymentResult("Hủy thanh toán",null)
                 }
 
                 override fun onPaymentError(error: ZaloPayError?, s: String?, s1: String?) {
                     Log.e("TAG_API_RESPONSE", "Payment error: ${error?.name}, Message: $s")
-                    navigateToPaymentResult("Lỗi thanh toán")
+                    navigateToPaymentResult("Lỗi thanh toán", null)
                 }
             }
         )

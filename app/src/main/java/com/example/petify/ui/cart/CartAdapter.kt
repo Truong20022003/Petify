@@ -20,7 +20,6 @@ class CartAdapter(
 
      val selectedItems = mutableSetOf<CartResponse>()
     private val selectedcarts = HashMap<String, Boolean>()
-
     fun updateItems(newItems: List<CartResponse>) {
         cartList = newItems
         notifyDataSetChanged()
@@ -44,7 +43,8 @@ class CartAdapter(
                 }
                 ivNameSp.text = cart.productId.name
                 ivTypeSp.text = "${cart.productId.date}"
-                ivPriceSp.text = "${(cart.productId.price*cart.quantity).toInt()} VND"
+                val originalPrice =  cart.productId.price * (1 - (cart.productId.sale / 100.0))
+                ivPriceSp.text = "${(originalPrice*cart.quantity).toInt()} VND"
                 tvQuantity.text = cart.quantity.toString()
 
                 ivAddition.setOnClickListener {
@@ -100,7 +100,7 @@ class CartAdapter(
     }
 
     private fun calculateTotalPrice() {
-        val totalPrice = selectedItems.sumOf { it.productId.price * it.quantity }
+        val totalPrice = selectedItems.sumOf { (it.productId.price * (1 - (it.productId.sale / 100.0))) * it.quantity }
         onTotalPriceUpdated(totalPrice)
     }
 
@@ -123,7 +123,7 @@ class CartAdapter(
         onTotalPriceUpdated(totalPrice)
     }
     fun getTotalPrice(): Double {
-        return selectedItems.sumOf { it.productId.price * it.quantity }
+        return selectedItems.sumOf { (it.productId.price * (1 - (it.productId.sale / 100.0))) * it.quantity }
     }
 
 }
