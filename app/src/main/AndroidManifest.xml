@@ -20,6 +20,9 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="34">
         <activity
+            android:name=".ui.productdetail.FromNotificationActivity"
+            android:exported="true" />
+        <activity
             android:name=".ui.chat.ChatActivity"
             android:exported="false" />
         <activity
@@ -67,6 +70,13 @@
 
         <service
             android:name=".base.service.MyFirebaseMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+        <service
+            android:name=".base.service.NotiFromServer"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />

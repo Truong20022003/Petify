@@ -26,6 +26,7 @@ var user_roleRouter = require('./routes/user_role_router');
 var cartRouter = require('./routes/cart_router');
 var favoritesRouter = require('./routes/favorites_router');
 var userRouter = require('./routes/user_router');
+// var supportRouter = require("./routes/support_router")
 
 var app = express();
 
@@ -62,6 +63,7 @@ app.use('/', indexRouter);
 app.use('/users', checkHeader, usersRouter);
 app.use("/carrier", checkHeader, carrierRouter)
 app.use("/order_detail",checkHeader,order_detailRouter)
+// app.use("/support",checkHeader,supportRouter)
 app.use("/cart", checkHeader, cartRouter)
 app.use("/favorites", checkHeader, favoritesRouter)
 app.use("/category", checkHeader, categoryRouter)

@@ -20,7 +20,7 @@ const sendSaleUpdateNotification = async (productName, newSale) => {
         const message = {
             notification: {
                 title: "Giảm giá sản phẩm",
-                body: `Sản phẩm "${productName}" đang được giảm giá ${newSale} %!`,
+                body: `Sản phẩm "${productName}" đang được giảm giá ${newSale}%!`,
             },
             topic: "sale_updates",
         };
@@ -380,6 +380,55 @@ const getProductsToday = async (req, res, next) => {
     }
 };
 
+const reduceProductQuantity = async (req, res) => {
+    try {
+        const { id } = req.params; // ID sản phẩm
+        const { quantity } = req.body; // Số lượng cần trừ
+
+        if (!quantity || quantity <= 0) {
+            return res.status(400).json({
+                success: false,
+                message: "Số lượng cần trừ phải lớn hơn 0.",
+            });
+        }
+
+        // Tìm sản phẩm theo ID
+        const product = await productModel.findById(id);
+        if (!product) {
+            return res.status(404).json({
+                success: false,
+                message: "Không tìm thấy sản phẩm.",
+            });
+        }
+
+        // Kiểm tra số lượng tồn kho
+        if (product.quantity < quantity) {
+            return res.status(400).json({
+                success: false,
+                message: "Số lượng sản phẩm không đủ.",
+            });
+        }
+
+        // Trừ số lượng sản phẩm
+        product.quantity -= quantity;
+
+        // Lưu thay đổi
+        await product.save();
+
+        return res.status(200).json({
+            success: true,
+            message: "Đã trừ số lượng sản phẩm thành công.",
+            product,
+        });
+    } catch (error) {
+        console.error("Error reducing product quantity:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Lỗi máy chủ nội bộ.",
+            error: error.message,
+        });
+    }
+};
 
 
 module.exports = { getProductsToday };
@@ -392,5 +441,6 @@ module.exports = {
     getproductById,
     updateSalePrice,
     getProductsToday,
-    getLatestSaleUpdatedProduct
+    getLatestSaleUpdatedProduct,
+    reduceProductQuantity
 };

@@ -18,3 +18,14 @@ data class ProductModel(
     @field:SerializedName("description") var description: String = "",
     @field:SerializedName("sale") var sale: Int = 0,
 ) : Parcelable
+
+data class ProductModelSaleNew(
+    @field:SerializedName("success") val success: Boolean,
+    @field:SerializedName("message") val message: String,
+    @field:SerializedName("product") val product: ProductModel
+)
+
+data class UpdateQuantity(
+    @field:SerializedName("quantity") val quantity: Int
+)
+
