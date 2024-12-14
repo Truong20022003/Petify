@@ -2,6 +2,69 @@ const { productModel } = require("../models/product_model")
 const { invoice_detailModel } = require("../models/invoice_detail_model")
 const { uploadToCloudinary } = require('../routes/uploads');
 const cloudinary = require('cloudinary').v2;
+
+const admin = require("../db/firebase_admin");
+if (!admin.apps.length) {
+    admin.initializeApp({
+        credential: admin.credential.applicationDefault(),
+    });
+}
+const sendSaleUpdateNotification = async (productName, newSale) => {
+    try {
+        const message = {
+            notification: {
+                title: "Giảm giá sản phẩm",
+                body: `Sản phẩm "${productName}" đang được giảm giá ${newSale} %!`,
+            },
+            topic: "sale_updates", 
+        };
+
+        await admin.messaging().send(message);
+        console.log(`Notification sent for product: ${productName}`);
+    } catch (error) {
+        console.error("Error sending sale update notification:", error);
+    }
+};
+const updateSalePrice = async (req, res) => {
+    try {
+        const { id } = req.params; // ID sản phẩm
+        const { sale } = req.body; // Giá sale mới
+
+        if (sale == null) {
+            return res.status(400).json({ success: false, message: "Giá sale là bắt buộc." });
+        }
+
+        // Tìm sản phẩm theo ID
+        const product = await productModel.findById(id);
+        if (!product) {
+            return res.status(404).json({ success: false, message: "Không tìm thấy sản phẩm." });
+        }
+
+        // Cập nhật giá sale nếu có thay đổi
+        if (product.sale !== sale) {
+            product.sale = sale;
+            await product.save();
+
+            // Gửi thông báo
+            await sendSaleUpdateNotification(product.name, sale);
+            return res.status(200).json({
+                success: true,
+                message: "Cập nhật giá sale thành công và thông báo đã được gửi.",
+                product,
+            });
+        } else {
+            return res.status(200).json({
+                success: true,
+                message: "Không có thay đổi về giá sale.",
+                product,
+            });
+        }
+    } catch (error) {
+        console.error("Error updating sale price:", error);
+        return res.status(500).json({ success: false, message: "Lỗi máy chủ nội bộ.", error });
+    }
+};
+
 const getListproduct = async (req, res, next) => {
     try {
         let listproduct = await productModel.find({});
@@ -214,4 +277,5 @@ module.exports = {
     getListproduct,
     deleteproduct,
     getproductById,
+    updateSalePrice
 };
