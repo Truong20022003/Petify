@@ -50,8 +50,8 @@ class CartAdapter(
                 ivAddition.setOnClickListener {
                     cart.quantity++
                     tvQuantity.text = cart.quantity.toString()
+                    selectedItems.remove(cart)
                     notifyItemChanged(position)
-                    // Cập nhật số lượng trong ViewModel hoặc API
                     onQuantityChangeListener.onQuantityUpdated(cart)
                 }
 
@@ -59,12 +59,14 @@ class CartAdapter(
                     if (cart.quantity > 1) {
                         cart.quantity--
                         tvQuantity.text = cart.quantity.toString()
+                        selectedItems.remove(cart)
                         notifyItemChanged(position)
                         onQuantityChangeListener.onQuantityUpdated(cart)
                     } else if (cart.quantity == 1) {
                         // Khi số lượng là 0, xóa sản phẩm khỏi giỏ hàng
                         cart.quantity = 0
                         tvQuantity.text = "0"
+                        selectedItems.remove(cart)
                         onQuantityChangeListener.onQuantityUpdated(cart) // Xóa sản phẩm khỏi giỏ hàng
                     }
                 }

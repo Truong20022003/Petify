@@ -12,13 +12,30 @@ data class CartRequest(
     @field:SerializedName("user_id") var userId: String = "",
     @field:SerializedName("quantity") var quantity: Int = 0,
 )
+
+data class CartResponseAndStatus(
+    @field:SerializedName("status") var status: String = "",
+    @field:SerializedName("data") var data: CartRequest
+)
+
 @Parcelize
 data class CartResponse(
     @field:SerializedName("_id") var id: String = "",
     @field:SerializedName("user_id") var userId: String = "",
     @field:SerializedName("product_id") var productId: ProductModel,
     @field:SerializedName("quantity") var quantity: Int = 0
-) : Parcelable
+) : Parcelable{
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is CartResponse) return false
+        return id == other.id
+    }
+
+    override fun hashCode(): Int {
+        return id.hashCode()
+    }
+}
+
 data class FavoriteRequest(
 //    @field:SerializedName("_id") var id: String = "",
     @field:SerializedName("product_id") var productId: String = "",

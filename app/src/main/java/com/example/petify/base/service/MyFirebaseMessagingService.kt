@@ -29,33 +29,33 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
         remoteMessage.notification?.let {
+            // Hiển thị thông báo
             showNotification(it.title ?: "Thông báo", it.body ?: "Có thông báo mới")
         }
     }
 
     private fun showNotification(title: String, body: String) {
-        val channelId = "notification_channel"
+        val channelId = "sale_updates"
+
+        // Tạo notification channel (nếu cần)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(channelId, "Thông báo", NotificationManager.IMPORTANCE_HIGH)
+            val channel = NotificationChannel(
+                channelId,
+                "Thông báo giảm giá",
+                NotificationManager.IMPORTANCE_HIGH
+            )
             val manager = getSystemService(NotificationManager::class.java)
             manager?.createNotificationChannel(channel)
         }
 
-        val builder = NotificationCompat.Builder(this, channelId)
-            .setSmallIcon(R.drawable.img_star)
+        val notification = NotificationCompat.Builder(this, channelId)
+            .setSmallIcon(R.drawable.ic_notification) // Icon thông báo
             .setContentTitle(title)
             .setContentText(body)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setAutoCancel(true)
+            .build()
 
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.POST_NOTIFICATIONS
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-
-            return
-        }
-        NotificationManagerCompat.from(this).notify(1, builder.build())
+        NotificationManagerCompat.from(this).notify(1, notification)
     }
 }

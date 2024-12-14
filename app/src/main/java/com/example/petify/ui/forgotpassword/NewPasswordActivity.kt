@@ -32,12 +32,12 @@ class NewPasswordActivity : BaseActivity<ActivityNewPasswordBinding, UserViewMod
             val confirmPassword = binding.etReNewPassword.text.toString().trim()
 
             if (newPassword.isEmpty() || confirmPassword.isEmpty()) {
-                Toast.makeText(this, "Please fill in all fields", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Vui lòng nhập mật khẩu", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
             if (newPassword != confirmPassword) {
-                Toast.makeText(this, "Passwords do not match", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Mật khẩu không trùng nhau", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 

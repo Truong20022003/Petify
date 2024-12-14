@@ -137,7 +137,7 @@ class CartFragment : BaseFragment<FragmentCartBinding>() {
 
     private fun updateTotalPrice(totalPrice: Double) {
         viewBinding.tvMoney.text = "$totalPrice"
-        Log.d("TagCart", "$totalPrice")
+//        Log.d("TagCart", "$totalPrice")
     }
 
 }

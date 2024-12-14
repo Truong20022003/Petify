@@ -40,6 +40,7 @@ class InvoiceHistoryFragment : BaseFragment<FragmentInvoiceHistoryBinding>() {
         orders.forEach { order ->
             when (order.order_id.status) {
                 "Đang chờ xác nhận" -> pendingOrders.add(order)
+                "Chờ giao hàng" -> pendingOrders.add(order)
                 else -> shippingOrders.add(order)
             }
         }
@@ -65,7 +66,7 @@ class InvoiceHistoryFragment : BaseFragment<FragmentInvoiceHistoryBinding>() {
     override fun initView() {
         super.initView()
         categoryOrderAdapter = CategoryOrderAdapter(
-            listOf("Chờ xác nhận", "Đang vận chuyển", "Giao hàng thành công"),
+            listOf("Đang chờ xác nhận", "Chờ giao hàng", "Thành công", "Hủy đơn"),
             onClick = {
                 when (it) {
                     0 -> {
@@ -102,12 +103,12 @@ class InvoiceHistoryFragment : BaseFragment<FragmentInvoiceHistoryBinding>() {
                 invoiceAdapter.fillData(it)
             }
         }
-        invoiceDetailViewModel.getAllOrderDetailsWithStatus(userModel!!.id)
+        invoiceDetailViewModel.getAllOrderDetailsWithStatus(userModel.id)
         invoiceDetailViewModel.orderDetailListIdUser.observe(requireActivity()) {orderDetails ->
             orderDetails?.let {
                 updateOrderLists(it.toMutableList())
-                orderHistoryAdapter.fillData(pendingOrders) // Hiển thị pendingOrders mặc định
-                viewBinding.rvOrder.visibility = View.VISIBLE // Đảm bảo rvOrder hiển thị)
+                orderHistoryAdapter.fillData(pendingOrders)
+                viewBinding.rvOrder.visibility = View.VISIBLE
             }
 
         }

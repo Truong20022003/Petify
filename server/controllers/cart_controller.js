@@ -2,25 +2,37 @@ const {cartModel} = require("../models/cart_model")
 
 exports.addCart = async (req, res, next) => {
     try {
+        console.log("Request body:", req.body);
+
         const existingCart = await cartModel.findOne({
             product_id: req.body.product_id,
             user_id: req.body.user_id
         });
+        console.log("Existing cart result:", existingCart);
 
         if (existingCart) {
-            return res.json({ status: "Product already in cart" });
+            return res.json({ status: "Sản phẩm đã có trong giỏ hàng", data: existingCart });
         }
-        let obj = new cartModel({
+
+        const obj = new cartModel({
             product_id: req.body.product_id,
             user_id: req.body.user_id,
             quantity: req.body.quantity
-        })
-        let result = await obj.save();
-        res.json(result);
+        });
+
+        console.log("Saving new cart item:", obj);
+
+        const result = await obj.save();
+        console.log("Saved result:", result);
+
+        res.json({ status: "Thêm vào giỏ hàng thành công", data: result });
     } catch (error) {
-        res.json({status: "Add failed" })
+        console.error("Error adding cart:", error);
+        res.json({ status: "Thêm vào giỏ hàng thất bại", error: error.message });
     }
-}
+};
+
+
 exports.getCartByUserId = async (req, res, next) => {
     try {
         const { user_id } = req.params;
@@ -28,7 +40,6 @@ exports.getCartByUserId = async (req, res, next) => {
         const cartItems = await cartModel.find({ user_id: user_id })
             .populate('product_id');
 
-            console.log(cartItems)
             res.json(cartItems);
         
     } catch (error) {
@@ -87,7 +98,7 @@ exports.deleteCartByProductIdAndUserId = async (req, res, next) => {
         const result = await cartModel.findOneAndDelete({ product_id, user_id });
 
         if (result) {
-            res.json({ status: "Deleted successfully", data: result });
+            res.json({ status: "Xóa sản phẩm khỏi giỏ hành tha", data: result });
         } else {
             res.status(404).json({ status: "Not found", message: "Cart item not found" });
         }

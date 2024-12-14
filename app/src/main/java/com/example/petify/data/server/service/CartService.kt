@@ -2,6 +2,7 @@ package com.example.petify.data.server.service
 
 import com.example.petify.data.server.enitities.CartRequest
 import com.example.petify.data.server.enitities.CartResponse
+import com.example.petify.data.server.enitities.CartResponseAndStatus
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -16,7 +17,7 @@ interface CartService {
     suspend fun getListCart(@Path("user_id") user_id: String): Response<List<CartResponse>>
 
     @POST("cart/addToCart")
-    suspend fun addCart(@Body cart: CartRequest): Response<CartRequest>
+    suspend fun addCart(@Body cart: CartRequest): Response<CartResponseAndStatus>
 
     @PUT("cart/update-quantity")
     suspend fun updateCartQuantity(@Body cart: CartRequest): Response<CartRequest>

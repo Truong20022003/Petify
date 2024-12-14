@@ -44,7 +44,7 @@ class ProductCategoryViewModel : BaseViewModel() {
                 val productCategoryRepository = ProductCategoryRepository(apiService)
                 val result = productCategoryRepository.getProductsGroupedByCategory()
                 _responseProductCategoryList.value = result
-                Log.d("ProductCategoryViewModel", " product categories $result")
+//                Log.d("ProductCategoryViewModel", " product categories $result")
             } catch (e: Exception) {
                 Log.e("ProductCategoryViewModel", "Error geting product categories", e)
                 _responseProductCategoryList.value = null
@@ -62,7 +62,7 @@ class ProductCategoryViewModel : BaseViewModel() {
                 val productCategoryRepository = ProductCategoryRepository(apiService)
                 val result = productCategoryRepository.getListProductsByCategoryId(id)
                 _product.value = result
-                Log.d("ProductCategoryViewModel", " product  $result")
+//                Log.d("ProductCategoryViewModel", " product  $result")
             } catch (e: Exception) {
                 Log.e("ProductCategoryViewModel", "Error geting product ", e)
                 _product.value = null

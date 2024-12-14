@@ -31,7 +31,7 @@ class CategoryProductParentAdapter(
         val categoryModel = categoryModels[position]
         holder.binding.apply {
             tvDes.text = categoryModel.category_name
-            Log.d("TAG1111", "list product ${categoryModel.products}")
+//            Log.d("TAG1111", "list product ${categoryModel.products}")
 
             // Khởi tạo ProductAdapter với các lambda để xử lý sự kiện
             val productAdapter = ProductAdapter(

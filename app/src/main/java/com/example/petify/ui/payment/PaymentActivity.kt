@@ -190,8 +190,8 @@ class PaymentActivity : BaseActivity<ActivityPaymentBinding, OrderViewModel>() {
                 )
                 viewModel.addOrder(order)
                 viewModel.order.observe(this) { order ->
+                    Log.d("TAG123456", userId)
                     if (order!!.id != null) {
-                        Log.d("TAG123456", order.id)
                         selectedItems?.let {
                             for (item in it) {
                                 val invoiceModel = InvoiceDetailModelRequest(
@@ -295,6 +295,7 @@ class PaymentActivity : BaseActivity<ActivityPaymentBinding, OrderViewModel>() {
                             viewModel.addOrder(order)
                             viewModel.order.observe(this@PaymentActivity) { order ->
                                 if (order != null) {
+                                    Log.d("TAG123456", userId)
                                     selectedItems?.let {
                                         for (item in it) {
                                             val invoiceModel = InvoiceDetailModelRequest(

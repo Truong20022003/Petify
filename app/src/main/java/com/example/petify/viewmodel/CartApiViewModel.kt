@@ -8,6 +8,7 @@ import com.example.petify.BaseViewModel
 import com.example.petify.data.server.CreateInteface
 import com.example.petify.data.server.enitities.CartRequest
 import com.example.petify.data.server.enitities.CartResponse
+import com.example.petify.data.server.enitities.CartResponseAndStatus
 import com.example.petify.data.server.repository.CartRepository
 import com.example.petify.data.server.service.CartService
 import kotlinx.coroutines.launch
@@ -25,6 +26,9 @@ class CartApiViewModel : BaseViewModel() {
 
     private val _errorMessage = MutableLiveData<String?>()
     val errorMessage: LiveData<String?> get() = _errorMessage
+
+    private val _cartResponse = MutableLiveData<CartResponseAndStatus?>()
+    val cartResponse: LiveData<CartResponseAndStatus?> get() = _cartResponse
 
     fun getListCart(user_id : String) {
         viewModelScope.launch {
@@ -44,14 +48,22 @@ class CartApiViewModel : BaseViewModel() {
             try {
                 val apiService: CartService = CreateInteface.createService()
                 val cartRepository = CartRepository(apiService)
-                _isCartAdded.value = cartRepository.addCart(cartRequest) != null
+                val response = cartRepository.addCart(cartRequest)
+
+                if (response != null) {
+                    _cartResponse.value = response
+                } else {
+                    _errorMessage.value = "Không thể thêm sản phẩm vào giỏ hàng. Vui lòng thử lại."
+                }
             } catch (e: Exception) {
                 Log.e("CartViewModel", "Error adding cart", e)
-                _errorMessage.value = "Error adding cart: ${e.message}"
+                _errorMessage.value = "Lỗi khi thêm sản phẩm vào giỏ hàng: ${e.message}"
             }
         }
     }
-
+    fun clearCartResponse() {
+        _cartResponse.value = null
+    }
     fun updateCartQuantity(cartRequest: CartRequest) {
         viewModelScope.launch {
             try {
