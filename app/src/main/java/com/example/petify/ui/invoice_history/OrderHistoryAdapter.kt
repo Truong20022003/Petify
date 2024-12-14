@@ -32,20 +32,30 @@ class OrderHistoryAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHodel, position: Int) {
+        val order = list[position]
+        val product = order.product_id
         holder.binding.apply {
             if (list[position].product_id != null) {
                 if (list[position].product_id.image.size > 0) {
                     Glide.with(holder.itemView.context).load(list[position].product_id.image[0])
                         .into(ivProduct)
                 }
-                tvStatus.text = list[position].order_id.status
-                tvNameProduct.text = list[position].product_id.name
-                tvQuantityProduct.text = list[position].quantity.toString()
-                tvPriceProduct.text = list[position].total_price.toString()
-                tvTotalQuantity.text = list[position].quantity.toString()
-                tvTotalAmount.text = list[position].total_price.toString()
+                // Hiển thị trạng thái đơn hàng
+                tvStatus.text = order.order_id.status
+                // Hiển thị tên sản phẩm
+                tvNameProduct.text = product.name
+                // Hiển thị giá sản phẩm
+                val price = order.total_price
+                tvPriceProduct.text = "Giá sản phẩm: $price"
+                // Hiển thị số lượng
+                val quantity = order.quantity
+                tvTotalQuantity.text = "Số lượng: $quantity"
+                // Tính toán tổng tiền
+                val totalAmount = price * quantity
+                tvTotalAmount.text = "Tổng tiền: $totalAmount"
+
             }
-            tvEvaluate.setOnClickListener{
+            tvEvaluate.setOnClickListener {
                 onClick(list[position])
             }
 

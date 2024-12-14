@@ -23,6 +23,9 @@
             android:name=".ui.productdetail.FromNotificationActivity"
             android:exported="true" />
         <activity
+            android:name=".ui.chat.ChatActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.payment.PaymentSuccessfulActivity"
             android:exported="false" />
         <activity
@@ -95,6 +98,7 @@
         <activity
             android:name=".ui.intro.IntroActivity"
             android:exported="false" />
+
         <activity
             android:name=".payment.zalopay.PaymentNotificationActivity"
             android:exported="true"
