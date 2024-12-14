@@ -12,8 +12,8 @@ import com.example.petify.data.server.enitities.ProductModel
 import com.example.petify.databinding.ItemProductBinding
 
 class ProductAdapter(
-    private val productList: List<ProductModel>,
-    private val favoriteList: List<FavoriteResponse>,
+    private var productList: List<ProductModel>,
+    private var favoriteList: List<FavoriteResponse>,
     private val itemClickListener: (ProductModel) -> Unit,
     private val onFavoriteChanged: (ProductModel, Boolean) -> Unit,
     private val onAddToCart: (ProductModel, Boolean) -> Unit,
@@ -25,7 +25,11 @@ class ProductAdapter(
         val binding = ItemProductBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ProductViewHolder(binding)
     }
-
+    fun fillData(newProductList: List<ProductModel>, newFavoriteList: List<FavoriteResponse>) {
+        this.productList = newProductList
+        this.favoriteList = newFavoriteList
+        notifyDataSetChanged() // Cập nhật lại RecyclerView khi dữ liệu thay đổi
+    }
     override fun onBindViewHolder(holder: ProductViewHolder, position: Int) {
         val product = productList[position]
         val isFavorite = favoriteList.any { it.productId.id == product.id }
@@ -60,7 +64,7 @@ class ProductAdapter(
                 ivCart.alpha = 1.0f
             }
 
-            ivFavorite.setOnClickListener {
+            ivFavorite.tap {
                 // Đổi trạng thái yêu thích (toggle)
                 val newIsFavorite = !isFavorite
 
@@ -74,10 +78,10 @@ class ProductAdapter(
 
             }
 
-            ivCart.setOnClickListener {
+            ivCart.tap {
                 onAddToCart(product, true)
             }
-            holder.itemView.setOnClickListener {
+            holder.itemView.tap {
                 itemClickListener(product)
             }
         }

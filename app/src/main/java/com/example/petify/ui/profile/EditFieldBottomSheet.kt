@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import com.example.petify.databinding.BottomSheetEditUserBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -25,16 +24,18 @@ class EditFieldBottomSheet(
         initView()
         return binding.root
     }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val bottomSheetBehavior = BottomSheetBehavior.from(view.parent as View)
         bottomSheetBehavior.isDraggable = false
         isCancelable = false  // Không cho đóng bằng cách chạm ngoài BottomSheet
     }
+
     private fun initView() {
         binding.edtContent.setText(tvValues)
         binding.tvTitle.text = fieldName
-        binding.tvClose.setOnClickListener{
+        binding.tvClose.setOnClickListener {
             dismiss()
         }
         binding.tvCheckSussess.setOnClickListener {
@@ -58,24 +59,28 @@ class EditFieldBottomSheet(
                     false
                 } else true
             }
+
             "Email" -> {
                 if (!android.util.Patterns.EMAIL_ADDRESS.matcher(value).matches()) {
                     binding.edtContent.error = "Email không hợp lệ"
                     false
                 } else true
             }
+
             "Số điện thoại" -> {
                 if (!value.matches(Regex("^[0-9]{10,11}$"))) {
                     binding.edtContent.error = "Số điện thoại phải gồm 10 hoặc 11 chữ số"
                     false
                 } else true
             }
+
             "Địa chỉ" -> {
                 if (value.isEmpty()) {
                     binding.edtContent.error = "Địa chỉ không được để trống"
                     false
                 } else true
             }
+
             else -> true
         }
     }

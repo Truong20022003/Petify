@@ -1,17 +1,10 @@
 package com.example.petify.ui.profile
 
 import android.content.Intent
-import android.database.Cursor
 import android.net.Uri
-import android.os.Bundle
-import android.provider.MediaStore
 import android.util.Log
 import android.view.View
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.example.petify.BaseActivity
