@@ -9,4 +9,6 @@ router.delete("/deleteproduct/:id",productController.deleteproduct)
 router.get("/getproductById/:id",productController.getproductById)
 router.put("/updateSalePrice/:id/sale", productController.updateSalePrice);
 router.get("/getProductsToday", productController.getProductsToday)
+router.get("/getLatestSaleUpdatedProduct",productController.getLatestSaleUpdatedProduct)
+router.put("/reduceProductQuantity/:id", productController.reduceProductQuantity);
 module.exports = router;

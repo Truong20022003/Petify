@@ -2,6 +2,8 @@ package com.example.petify.data.server.repository
 
 import android.util.Log
 import com.example.petify.data.server.enitities.ProductModel
+import com.example.petify.data.server.enitities.ProductModelSaleNew
+import com.example.petify.data.server.enitities.UpdateQuantity
 import com.example.petify.data.server.service.ProductService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -18,7 +20,16 @@ class ProductRepository(private val api: ProductService) {
             null
         }
     }
-
+    suspend fun getLatestSaleUpdatedProduct(): ProductModelSaleNew? = withContext(Dispatchers.IO) {
+        val response = api.getLatestSaleUpdatedProduct()
+        if (response.isSuccessful) {
+            Log.d("ProductRepository", "getLatestSaleUpdatedProduct Success: ${response.body()}")
+            response.body()
+        } else {
+            Log.e("ProductRepository", "getLatestSaleUpdatedProduct Error: ${response.errorBody()}")
+            null
+        }
+    }
     suspend fun addProduct(Product: ProductModel): ProductModel? = withContext(Dispatchers.IO) {
         val response = api.addProduct(Product)
         if (response.isSuccessful) {
@@ -44,6 +55,17 @@ class ProductRepository(private val api: ProductService) {
     suspend fun updateProduct(id: String, Product: ProductModel): ProductModel? = withContext(
         Dispatchers.IO) {
         val response = api.updateProduct(id, Product)
+        if (response.isSuccessful) {
+            Log.d("ProductRepository", "updateProduct Success: ${response.body()}")
+            response.body()
+        } else {
+            Log.e("ProductRepository", "updateProduct Error: ${response.errorBody()}")
+            null
+        }
+    }
+    suspend fun updateQuantity(id: String, product: UpdateQuantity): ProductModelSaleNew? = withContext(
+        Dispatchers.IO) {
+        val response = api.updateQuantity(id, product)
         if (response.isSuccessful) {
             Log.d("ProductRepository", "updateProduct Success: ${response.body()}")
             response.body()
