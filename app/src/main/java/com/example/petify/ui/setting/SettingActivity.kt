@@ -1,17 +1,14 @@
 package com.example.petify.ui.setting
 
 import android.content.Intent
-import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import com.bumptech.glide.Glide
 import com.example.petify.BaseActivity
 import com.example.petify.BaseViewModel
 import com.example.petify.R
+import com.example.petify.base.view.tap
 import com.example.petify.data.server.enitities.UserModel
 import com.example.petify.databinding.ActivitySettingBinding
+import com.example.petify.ui.chat.ChatActivity
 import com.example.petify.ui.helpcenter.HelpCenterActivity
 import com.example.petify.ui.privacypolicy.PrivacyPolicyActivity
 import com.example.petify.ui.profile.ProfileActivity
@@ -31,22 +28,27 @@ class SettingActivity : BaseActivity<ActivitySettingBinding, BaseViewModel>() {
         super.initView()
         val userModel = SharePreUtils.getUserModel(this)
         userModel?.let { updateUI(it) }
-        binding.icProfile.setOnClickListener {
+        binding.icProfile.tap {
             val intent = Intent(this, ProfileActivity::class.java)
             startActivity(intent)
         }
-        binding.imgBack.setOnClickListener {
+        binding.imgBack.tap {
             finish()
         }
-        binding.icPrivacyPolicy.setOnClickListener {
+        binding.icPrivacyPolicy.tap {
             val intent = Intent(this, PrivacyPolicyActivity::class.java)
             startActivity(intent)
         }
-        binding.icHelpCenter.setOnClickListener {
+        binding.icHelpCenter.tap {
             val intent = Intent(this, HelpCenterActivity::class.java)
             startActivity(intent)
         }
+        binding.icChatHistory.tap {
+            val intent = Intent(this, ChatActivity::class.java)
+            startActivity(intent)
+        }
     }
+
     override fun onResume() {
         super.onResume()
         val updatedUser = SharePreUtils.getUserModel(this)
@@ -54,9 +56,10 @@ class SettingActivity : BaseActivity<ActivitySettingBinding, BaseViewModel>() {
             updateUI(updatedUser)
         }
     }
+
     private fun updateUI(updatedUser: UserModel) {
-        binding.tvUsername.text=updatedUser?.user_name
-        binding.tvEmail.text=updatedUser?.email
+        binding.tvUsername.text = updatedUser?.user_name
+        binding.tvEmail.text = updatedUser?.email
         Glide.with(this)
             .load(updatedUser?.avata)
             .placeholder(R.drawable.img_loading)

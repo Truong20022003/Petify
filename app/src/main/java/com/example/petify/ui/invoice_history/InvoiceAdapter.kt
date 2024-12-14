@@ -42,10 +42,9 @@ class InvoiceAdapter(
                     .into(ivProduct)
                 tvStatus.visibility = View.INVISIBLE
                 tvNameProduct.text = list[position].productId.name
-                tvQuantityProduct.text = list[position].quantity.toString()
-                tvPriceProduct.text = list[position].productId.price.toString()
-                tvTotalQuantity.text = list[position].quantity.toString()
-                tvTotalAmount.text = list[position].totalPrice.toString()
+                tvPriceProduct.text = ("Giá tiền: " + list[position].productId.price.toString())
+                tvTotalQuantity.text = ("Số lượng: "+ list[position].quantity.toString())
+                tvTotalAmount.text = ("Thành tiền: "+list[position].totalPrice.toString())
             }
             tvEvaluate.setOnClickListener {
                 onClick(list[position])

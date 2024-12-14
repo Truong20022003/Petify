@@ -63,7 +63,7 @@
 
 
             <TextView
-                android:id="@+id/ic_order_history"
+                android:id="@+id/ic_chat_history"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:drawableStart="@drawable/ic_order_history"
@@ -72,7 +72,7 @@
                 android:fontFamily="@font/bevietnampro_medium"
                 android:gravity="center_vertical"
                 android:padding="10dp"
-                android:text="Lịch sử đơn hàng của tôi"
+                android:text="Chat với chúng tôi"
                 android:textColor="@color/black"
                 android:textSize="16sp" />
 

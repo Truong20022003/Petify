@@ -118,6 +118,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
                                 "TAG12345",
                                 "ProductThanhCong ${productModel.id} favorite status: $isFavorite"
                             )
+                            Toast.makeText(
+                                requireActivity(),
+                                "Thêm sản phẩm vào màn yêu thích thành công",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         } else {
                             favoriteViewModel.deleteFavorite(productModel.id, userModel!!.id)
                             Log.d(

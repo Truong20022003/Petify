@@ -68,17 +68,7 @@ class FavoritesFragment : BaseFragment<FragmentFavoritesBinding>() {
                     "Product ${productModel.id} favorite status: $isFavorite"
                 )
             }
-//            onFavoriteChanged = { product, isFavorite ->
-//                if (isFavorite) {
-//                    // Khi sản phẩm bị thay đổi trạng thái yêu thích (ví dụ: bị xóa)
-////                    favoriteViewModel.deleteFavorite(idProduct = product.id, idUser =  userModel!!.id)
-//                    favoriteViewModel.deleteFavorite(product.id,userModel!!.id)
-//                    Log.d("TAG12345", "ProductXoathanhcong ${product.id} favorite status: $isFavorite")
-//
-//                }
-//                // Cập nhật lại danh sách yêu thích sau khi thay đổi
-//                favoriteViewModel.getListFavorites(userModel!!.id)
-//            }
+
         )
 
         favoriteViewModel.getListFavorites(userModel!!.id)
