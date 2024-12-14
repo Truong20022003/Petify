@@ -2,6 +2,7 @@ const { orderModel } = require("../models/order_model")
 const { order_detailModel } = require("../models/order_detail_model")
 const { invoiceModel } = require("../models/invoice_model")
 const { invoice_detailModel } = require("../models/invoice_detail_model")
+const mongoose = require('mongoose');
 exports.getListorder = async (req, res, next) => {
     try {
         let listorder = await orderModel.find({});
@@ -104,10 +105,10 @@ exports.ProcessOrder = async (req, res, next) => {
             total: order.total_price,
             payment_method: order.payment_method,
             delivery_address: order.delivery_address,
-            date: order.oder_date,
+            date: new Date().toISOString(),
             status: order.status,
             shipping_fee: order.shipping_fee,
-            carrier_id: order.carrier_id,
+            carrier_id: order.carrier_id || new mongoose.Types.ObjectId('67068264ecffca4b44fdef77'),
             code: order.code,
             createdAt: new Date(),
             order_id: orderId  // Thêm order_id vào hóa đơn

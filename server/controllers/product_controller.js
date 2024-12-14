@@ -1,5 +1,11 @@
 const { productModel } = require("../models/product_model")
 const { invoice_detailModel } = require("../models/invoice_detail_model")
+const { order_detailModel } = require("../models/order_detail_model")
+const { cartModel } = require("../models/cart_model")
+const { favoritesModel } = require("../models/favotites_model")
+const { categoryModel } = require("../models/category_model");
+const { product_categoryModel } = require("../models/product_category_model");
+
 const { uploadToCloudinary } = require('../routes/uploads');
 const cloudinary = require('cloudinary').v2;
 const getListproduct = async (req, res, next) => {
@@ -154,15 +160,28 @@ const deleteproduct = async (req, res, next) => {
         }
 
         // Kiểm tra nếu sản phẩm tồn tại trong hóa đơn
-        const existingInvoiceDetails = await invoice_detailModel.findOne({ productId: id });
+        const existingOderDetails = await order_detailModel.findOne({ product_id: id });
+        const existingCart = await cartModel.findOne({ product_id: id });
+        const existingFavorite = await favoritesModel.findOne({ product_id: id });
 
-        if (existingInvoiceDetails) {
+        if (existingOderDetails) {
             return res.status(400).json({
                 status: "failed",
-                message: "Không thể xóa sản phẩm. Sản phẩm tồn tại trong chi tiết hóa đơn."
+                message: "Không thể xóa sản phẩm này vì nó vẫn còn tồn tại trong đơn hàng chưa hoàn tất."
             });
         }
-
+        if (existingCart) {
+            return res.status(400).json({
+                status: "failed",
+                message: "Không thể xóa sản phẩm này vì nó còn tồn tại trong giỏ hàng của khách hàng."
+            });
+        }
+        if (existingFavorite) {
+            return res.status(400).json({
+                status: "failed",
+                message: "Không thể xóa sản phẩm này vì nó vẫn còn tồn tại trong danh sách yêu thích của khách hàng."
+            });
+        }
         // Xóa sản phẩm trong database
         let result = await productModel.findByIdAndDelete(id);
 
@@ -208,10 +227,74 @@ const getproductById = async (req, res, next) => {
         res.json({ status: "Not found", result: error });
     }
 };
+
+
+
+const getProductsToday = async (req, res, next) => {
+    try {
+        const { startDate, endDate } = req.query;
+
+        // Kiểm tra và chuyển đổi startDate và endDate sang kiểu Date
+        const startOfDay = startDate ? new Date(startDate) : new Date();
+        startOfDay.setHours(0, 0, 0, 0);
+
+        const endOfDay = endDate ? new Date(endDate) : new Date();
+        endOfDay.setHours(23, 59, 59, 999);
+
+        // Lấy danh sách sản phẩm được thêm mới trong khoảng thời gian
+        const products = await productModel.find({
+            createdAt: {
+                $gte: startOfDay,
+                $lte: endOfDay,
+            },
+        }).populate("supplier_id", "name"); // Chỉ lấy trường `name` từ bảng supplier
+
+        // Lấy danh sách product_id từ các sản phẩm
+        const productIds = products.map(product => product._id);
+
+        // Lấy danh sách product-category mappings
+        const productCategories = await product_categoryModel.find({
+            product_id: { $in: productIds },
+        }).populate("category_id");
+
+        // Tạo kết quả gồm sản phẩm, loại sản phẩm, và thông tin nhà phân phối tương ứng
+        const results = products.map(product => {
+            // Lấy danh sách categories cho sản phẩm này
+            const categories = productCategories
+                .filter(mapping => mapping.product_id.toString() === product._id.toString())
+                .map(mapping => mapping.category_id);
+
+            return {
+                product,
+                categories,
+                supplier: product.supplier_id, // Thông tin nhà phân phối
+            };
+        });
+
+        // Trả về kết quả
+        res.status(200).json({
+            success: true,
+            result: results,
+        });
+    } catch (error) {
+        console.error("Error fetching products with categories and suppliers:", error);
+        res.status(500).json({
+            success: false,
+            message: "Failed to fetch products",
+            error: error.message,
+        });
+    }
+};
+
+
+
+module.exports = { getProductsToday };
+
 module.exports = {
     addproduct,
     updateproduct,
     getListproduct,
     deleteproduct,
     getproductById,
+    getProductsToday
 };
