@@ -14,10 +14,12 @@ class ReviewAdapter(private var reviewList: List<ReviewModelResult>) :
     inner class ReviewViewHolder(val binding: ItemReviewBinding) :
         RecyclerView.ViewHolder(binding.root) {
     }
+
     fun fillData(newReviewList: List<ReviewModelResult>) {
         reviewList = newReviewList // Cập nhật danh sách
         notifyDataSetChanged() // Làm mới RecyclerView
     }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ReviewViewHolder {
         val binding = ItemReviewBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ReviewViewHolder(binding)

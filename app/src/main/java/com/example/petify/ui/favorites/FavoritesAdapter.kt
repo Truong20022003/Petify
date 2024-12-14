@@ -48,6 +48,14 @@ class FavoritesAdapter(
 
 //        // Kiểm tra nếu sản phẩm có trong danh sách yêu thích từ API
         val isFavorite = favoriteList.any { it.productId.id == product.id }
+
+        holder.binding.ivFavorite.tap {
+            val newFavoriteStatus = !isFavorite
+            onFavoriteChanged(product.productId, newFavoriteStatus)
+            notifyItemChanged(position) // Cập nhật trạng thái icon
+            notifyItemRangeChanged(position, favoriteList.size) // Cập nhật các mục còn lại
+            onFavoriteChanged(product.productId, false)  // Gọi callback với trạng thái false
+        }
         holder.binding.apply {
             val imageUrl = product.productId.image[0]
             if (imageUrl.isNotEmpty()) {
@@ -74,9 +82,9 @@ class FavoritesAdapter(
                     favoriteList.removeAt(position)      // Xóa mục khỏi danh sách
                     notifyItemRemoved(position)         // Thông báo mục đã bị xóa
                     notifyItemRangeChanged(position, favoriteList.size) // Cập nhật các mục còn lại
-                    onFavoriteChanged(product.productId, !isFavorite)  // Gọi callback
+                    onFavoriteChanged(product.productId, false)  // Gọi callback với trạng thái false
                 } else {
-                    Log.e("FavoritesAdapter", "Invalid position: $position for list size: ${favoriteList.size}")
+                    Log.e("FavoritesAdapter", "Vị trí không hợp lệ: $position cho kích thước danh sách: ${favoriteList.size}")
                 }
             }
 

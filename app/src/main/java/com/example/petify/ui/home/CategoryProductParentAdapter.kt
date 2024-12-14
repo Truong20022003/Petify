@@ -15,7 +15,7 @@ class CategoryProductParentAdapter(
     private val itemClickListener: (ProductModel) -> Unit,
     private val onFavoriteChanged: (ProductModel, Boolean) -> Unit,
     private val onAddToCart: (ProductModel, Boolean) -> Unit,
-    private val favoriteList: List<FavoriteResponse>,
+    private var favoriteList: List<FavoriteResponse>,
 ) : RecyclerView.Adapter<CategoryProductParentAdapter.ProductViewHolder>() {
 
     class ProductViewHolder(val binding: ItemRcvCategoryBinding) :
@@ -25,6 +25,11 @@ class CategoryProductParentAdapter(
         val binding =
             ItemRcvCategoryBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ProductViewHolder(binding)
+    }
+
+    fun updateFavoriteList(newFavoriteList: List<FavoriteResponse>) {
+        favoriteList = newFavoriteList
+        notifyDataSetChanged()
     }
 
     override fun onBindViewHolder(holder: ProductViewHolder, position: Int) {

@@ -20,6 +20,7 @@
             android:layout_height="24dp"
             android:layout_marginStart="12dp"
             android:background="@drawable/iv_left"
+            android:contentDescription="@drawable/iv_left"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -44,6 +45,7 @@
             android:layout_height="24dp"
             android:layout_marginStart="12dp"
             android:background="@drawable/img_share"
+            android:contentDescription="@drawable/img_share"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/iv_search"
             app:layout_constraintTop_toTopOf="parent" />
@@ -53,6 +55,7 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:background="@drawable/img_shopping_cart"
+            android:contentDescription="@drawable/img_shopping_cart"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/iv_share"
@@ -98,8 +101,7 @@
                 android:id="@+id/tvProductName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:paddingHorizontal="16dp"
+                android:layout_marginHorizontal="10dp"
                 android:text="Nhà nhựa cho chó mèo cửa sắt PAW Pet House..."
                 android:textSize="14sp"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -111,6 +113,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
+                android:padding="5dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tvProductName">
@@ -123,6 +126,7 @@
                     android:numStars="5"
                     android:rating="4.5"
                     android:stepSize="0.5"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -134,8 +138,9 @@
                     android:text="Đã bán 12"
                     android:textColor="@android:color/darker_gray"
                     android:textSize="14sp"
-                    app:layout_constraintBottom_toBottomOf="@id/ratingBar"
-                    app:layout_constraintStart_toEndOf="@id/ratingBar" />
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/ratingBar"
+                    app:layout_constraintTop_toTopOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -155,38 +160,38 @@
                         android:id="@+id/tv_title_review"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:fontFamily="@font/bevietnampro_bold"
+                        android:padding="5dp"
                         android:text="Đánh giá của khách hàng"
                         android:textColor="@color/black"
-                        android:fontFamily="@font/bevietnampro_bold"
                         android:textSize="15sp"
-                        android:padding="5dp"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"/>
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
                         android:id="@+id/tv_see_all"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:drawableEnd="@drawable/ic_next"
+                        android:drawablePadding="10dp"
+                        android:gravity="center"
+                        android:padding="5dp"
                         android:text="Xem thêm"
                         android:textColor="#BDBDBD"
                         android:textSize="15sp"
-                        android:gravity="center"
-                        android:padding="5dp"
-                        android:drawablePadding="10dp"
-                        android:drawableEnd="@drawable/ic_next"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"/>
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/rcy_review"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
-                        tools:listitem="@layout/item_review"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/tv_title_review" />
+                        app:layout_constraintTop_toBottomOf="@+id/tv_title_review"
+                        tools:listitem="@layout/item_review" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
-
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -249,9 +254,7 @@
                     android:text="Nội dung Mô tả"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/title_4" />
-
             </androidx.constraintlayout.widget.ConstraintLayout>
-
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/ctl_product_toobar"
@@ -266,26 +269,24 @@
                     android:id="@+id/tv_title_product"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/bevietnampro_bold"
+                    android:padding="5dp"
                     android:text="Có thể bạn cũng thích"
                     android:textColor="@color/black"
-                    android:fontFamily="@font/bevietnampro_bold"
                     android:textSize="15sp"
-                    android:padding="5dp"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"/>
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rcvProducts"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    tools:listitem="@layout/item_product"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/tv_title_product" />
+                    app:layout_constraintTop_toBottomOf="@id/tv_title_product"
+                    tools:listitem="@layout/item_product" />
             </androidx.constraintlayout.widget.ConstraintLayout>
-
-
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
@@ -306,7 +307,7 @@
             android:background="@drawable/bg_btn_add"
             android:drawableEnd="@drawable/ic_cart"
             android:padding="10dp"
-            android:text="Thêm "
+            android:text="Thêm"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -320,7 +321,6 @@
             android:text="Mua Ngay"
             android:textColor="@color/white"
             app:layout_constraintEnd_toEndOf="parent"
-
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -24,8 +24,6 @@ import com.example.petify.viewmodel.ReviewViewModel
 
 
 class ProductDetailActivity : BaseActivity<ActivityProductDetailBinding, BaseViewModel>() {
-
-
     private lateinit var revirewViewModel: ReviewViewModel
     private lateinit var reviewAdapter: ReviewAdapter
     private lateinit var productAdapter: ProductAdapter
@@ -137,22 +135,22 @@ class ProductDetailActivity : BaseActivity<ActivityProductDetailBinding, BaseVie
             Log.e("Product_DetailActivity", "Không nhận được thông tin sản phẩm")
             Toast.makeText(this, "Không nhận được thông tin sản phẩm", Toast.LENGTH_SHORT).show()
         }
-        favoriteViewModel.favoriteList.observe(this) { favoriteList ->
-            // Lắng nghe thay đổi từ API để cập nhật sản phẩm
-            productViewModel.productList.observe(this) { product ->
-                Log.d("product", "productResponse: $product")
-                product?.let {
-                    // Cập nhật dữ liệu cho adapter khi danh sách thay đổi
-                    binding.rcvProducts.layoutManager = GridLayoutManager(this, 2)
-                    productAdapter.fillData(product, favoriteList!!)
-                    binding.rcvProducts.adapter = productAdapter
 
-                }
+        // Lắng nghe thay đổi từ API để cập nhật sản phẩm
+        productViewModel.productList.observe(this) { product ->
+            Log.d("ProductDetailActivity", "productResponse: $product")
+            product?.let {
+                productAdapter.fillData(product)
+                // Cập nhật dữ liệu cho adapter khi danh sách thay đổi
+                binding.rcvProducts.layoutManager = GridLayoutManager(this, 2)
+                binding.rcvProducts.adapter = productAdapter
+
             }
-
         }
+
+
         revirewViewModel.reviewResponse.observe(this) { reviewResponse ->
-            Log.d("Revview", "reviewResponse: $reviewResponse")
+            Log.d("ProductDetailActivity", "reviewResponse: $reviewResponse")
             reviewResponse?.let {
                 reviewAdapter.fillData(it.result)
                 binding.rcyReview.layoutManager = LinearLayoutManager(this)
@@ -160,12 +158,6 @@ class ProductDetailActivity : BaseActivity<ActivityProductDetailBinding, BaseVie
 
             }
         }
-
-
-
-
-
-
         setListeners()
     }
 

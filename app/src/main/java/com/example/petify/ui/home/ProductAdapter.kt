@@ -25,15 +25,25 @@ class ProductAdapter(
         val binding = ItemProductBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ProductViewHolder(binding)
     }
-    fun fillData(newProductList: List<ProductModel>, newFavoriteList: List<FavoriteResponse>) {
+    fun fillData(newProductList: List<ProductModel>) {
         this.productList = newProductList
-        this.favoriteList = newFavoriteList
         notifyDataSetChanged() // Cập nhật lại RecyclerView khi dữ liệu thay đổi
     }
     override fun onBindViewHolder(holder: ProductViewHolder, position: Int) {
         val product = productList[position]
+        // Kiểm tra trạng thái yêu thích từ danh sách favoriteList
         val isFavorite = favoriteList.any { it.productId.id == product.id }
 //        Log.d("TAG1111", "Url ${product.image[0]}")
+
+        holder.binding.ivFavorite.setImageResource(
+            if (isFavorite) R.drawable.ic_love_item_home else R.drawable.ic_love_favorites_off
+        )
+
+        holder.binding.ivFavorite.tap {
+            val newFavoriteStatus = !isFavorite
+            onFavoriteChanged(product, newFavoriteStatus)
+            notifyItemChanged(position) // Cập nhật trạng thái icon
+        }
         holder.binding.apply {
             val imageUrl = product.image[0]
 
@@ -51,10 +61,8 @@ class ProductAdapter(
 
             Log.d("TAG2003","sale ${product.sale} price ${product.price} originalPrice $originalPrice quantity: ${product.quantity} ")
             tvSalePrice.text = "${originalPrice.toInt()} đ"
-            tvOriginalPrice.apply {
-                text = "${product.price.toInt()} đ"
-                paintFlags = paintFlags or android.graphics.Paint.STRIKE_THRU_TEXT_FLAG
-            }
+            tvOriginalPrice.apply { text = "${product.price.toInt()} đ"
+                paintFlags = paintFlags or android.graphics.Paint.STRIKE_THRU_TEXT_FLAG }
             tvSold.text = "Còn lại ${product.quantity}"
             if (product.quantity == 0) {
                 ivCart.isEnabled = false
@@ -63,20 +71,19 @@ class ProductAdapter(
                 ivCart.isEnabled = true
                 ivCart.alpha = 1.0f
             }
-
-            ivFavorite.tap {
-                // Đổi trạng thái yêu thích (toggle)
-                val newIsFavorite = !isFavorite
-
-                // Gọi hàm xử lý thay đổi trạng thái yêu thích
-                onFavoriteChanged(product, newIsFavorite)
-
-                // Cập nhật lại biểu tượng theo trạng thái mới
-                ivFavorite.setImageResource(
-                    if (newIsFavorite) R.drawable.ic_love_item_home else R.drawable.ic_love_favorites_off
-                )
-
-            }
+//            ivFavorite.tap {
+//                // Đổi trạng thái yêu thích (toggle)
+////                val newIsFavorite = !isFavorite
+//                // Gọi hàm xử lý thay đổi trạng thái yêu thích
+//                onFavoriteChanged(product, !isFavorite)
+//                notifyItemChanged(position) // Cập nhật trạng thái icon
+//                // Gọi callback để thêm/xóa yêu thích
+////                val isFavorite = ivFavorite.tag == true
+////
+////                onFavoriteChanged(product, !isFavorite)
+////                ivFavorite.tag = !isFavorite
+//
+//            }
 
             ivCart.tap {
                 onAddToCart(product, true)
