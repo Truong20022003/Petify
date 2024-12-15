@@ -8,6 +8,14 @@
     <title>Petify</title>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="/views/exten/dialog.js"></script>
+    <!-- Thêm Font Awesome để sử dụng biểu tượng -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.3.1/jspdf.umd.min.js"></script>
+
     <style>
       body {
         background-image: url("/views/img/n.jpg");
@@ -34,7 +42,10 @@
   <body class="bg-gray-800">
     <div class="flex h-screen">
       <!-- Sidebar -->
-      <div class="w-[300px] bg-white shadow-md p-6" style="border-radius: 10px; flex-shrink: 0;">
+      <div
+        class="w-[300px] bg-white shadow-md p-6"
+        style="border-radius: 10px; flex-shrink: 0"
+      >
         <div class="flex items-center justify-center py-6">
           <img
             alt="Logo"
@@ -56,7 +67,7 @@
           <!--  -->
           <div id="manageMenu">
             <a
-              class="flex items-center py-2 px-6 cursor-pointer  "
+              class="flex items-center py-2 px-6 cursor-pointer"
               onclick="toggleUserSubmenu()"
             >
               <i class="fas fa-user"> </i>
@@ -65,7 +76,7 @@
             </a>
             <div id="userSubmenuItems" class="submenu pl-12">
               <a
-                class="block py-2 px-6 text-gray-700 hover:bg-gray-200 block py-2 px-6 text-gray-700 hover:bg-gray-200  "
+                class="block py-2 px-6 text-gray-700 hover:bg-gray-200 block py-2 px-6 text-gray-700 hover:bg-gray-200"
                 href="/views/User/user/UserScreen.html"
                 onclick="activateSubmenu(this)"
               >
@@ -78,13 +89,13 @@
               >
                 Quản lý loại người dùng
               </a>
-              <a
+              <!-- <a
                 class="block py-2 px-6 text-gray-700 hover:bg-gray-200"
                 href="/views/User/userRole/userRoleScreen.html"
                 onclick="activateSubmenu(this)"
               >
                 Quản lý loại người dùng & ngươi dùng
-              </a>
+              </a> -->
             </div>
           </div>
           <!--  -->
@@ -114,61 +125,77 @@
               </a>
             </div>
           </div>
-           <!-- danh gia -->
-           <a
-           class="flex items-center py-2 px-6 text-gray-700 hover:bg-gray-200"
-           href="/views/Review/ReviewScreen.html"
-         >
-           <i class="fas fa-star"></i>
-           <span class="ml-3"> Quản lý đánh giá</span>
-         </a>
-         <!-- hóa đơn -->
-         <a
-           class="flex items-center py-2 px-6 text-gray-700 hover:bg-gray-200 bg-[#6b9484] text-white"
-           href="/views/Invoice/InvoiceScreen.html"
-         >
-           <i class="fas fa-file-invoice"></i>
-           <span class="ml-3"> Quản lý hóa đơn</span>
-         </a>
-         <!-- đơn hàng -->
-         <a
-           class="flex items-center py-2 px-6 text-gray-700 hover:bg-gray-200"
-           href="/views/Oder/OderScreen.html"
-         >
-           <i class="fas fa-shopping-cart"></i>
-           <span class="ml-3"> Quản lý đơn hàng</span>
-         </a>
-         <!-- thông báo -->
-         <!-- <a
+          <!-- danh gia -->
+          <a
+            class="flex items-center py-2 px-6 text-gray-700 hover:bg-gray-200"
+            href="/views/Review/ReviewScreen.html"
+          >
+            <i class="fas fa-star"></i>
+            <span class="ml-3"> Quản lý đánh giá</span>
+          </a>
+          <!-- hóa đơn -->
+          <a
+            class="flex items-center py-2 px-6 text-gray-700 hover:bg-gray-200 bg-[#6b9484] text-white"
+            href="/views/Invoice/InvoiceScreen.html"
+          >
+            <i class="fas fa-file-invoice"></i>
+            <span class="ml-3"> Quản lý hóa đơn</span>
+          </a>
+          <!-- đơn hàng -->
+          <a
+            class="flex items-center py-2 px-6 text-gray-700 hover:bg-gray-200"
+            href="/views/Oder/OderScreen.html"
+          >
+            <i class="fas fa-shopping-cart"></i>
+            <span class="ml-3"> Quản lý đơn hàng</span>
+          </a>
+          <!-- Giảm giá -->
+          <a
+            class="flex items-center py-2 px-6 text-gray-700 hover:bg-gray-200"
+            href="/views/sale/SaleProduct.html"
+          >
+            <i class="fas fa-tag"></i>
+            <span class="ml-3"> Quản giảm giá</span>
+          </a>
+          <!-- thông báo -->
+          <!-- <a
            class="flex items-center py-2 px-6 text-gray-700 hover:bg-gray-200"
            href="/views/Notification/NotificationScreen.html"
          >
            <i class="fas fa-bell"></i>
            <span class="ml-3"> Quản lý thông báo</span>
          </a> -->
-         <!-- nhà cung cấp -->
-         <a
-           class="flex items-center py-2 px-6 text-gray-700 hover:bg-gray-200"
-           href="/views/Supplier/SupplierScreen.html"
-         >
-           <i class="fas fa-truck"></i>
-           <span class="ml-3"> Quản lý nhà cung cấp</span>
-         </a>
-         <!-- Thống kê  -->
-         <a
-           class="flex items-center py-2 px-6 text-gray-700 hover:bg-gray-200"
-           href="/views/Statistics/StatisticsScreen.html"
-         >
-           <i class="fas fa-chart-bar"> </i>
-           <span class="ml-3"> Thống kê </span>
-         </a>
+          <!-- nhà cung cấp -->
+          <a
+            class="flex items-center py-2 px-6 text-gray-700 hover:bg-gray-200"
+            href="/views/Supplier/SupplierScreen.html"
+          >
+            <i class="fas fa-truck"></i>
+            <span class="ml-3"> Quản lý nhà cung cấp</span>
+          </a>
+          <!--  Quản lý đơn vị vận chuyển -->
+          <a
+            class="flex items-center py-2 px-6 text-gray-700 hover:bg-gray-200"
+            href="/views/Carrier/CarrierScreen.html"
+          >
+            <i class="fas fa-route"></i>
+            <span class="ml-3"> Quản lý đơn vị vận chuyển</span>
+          </a>
+          <!-- Thống kê  -->
+          <a
+            class="flex items-center py-2 px-6 text-gray-700 hover:bg-gray-200"
+            href="/views/Statistics/StatisticsScreen.html"
+          >
+            <i class="fas fa-chart-bar"> </i>
+            <span class="ml-3"> Thống kê </span>
+          </a>
         </nav>
         <button
-            onclick="logout()"
-            class="bg-red-500 text-white text-lg font-semibold py-2 px-6 mb-4 mx-4 rounded hover:bg-red-600"
-          >
-            Đăng xuất
-          </button>
+          onclick="logout()"
+          class="bg-red-500 text-white text-lg font-semibold py-2 px-6 mb-4 mx-4 rounded hover:bg-red-600"
+        >
+          Đăng xuất
+        </button>
       </div>
       <!-- Main Content -->
       <div
