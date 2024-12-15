@@ -23,19 +23,25 @@ class ChatActivity : BaseActivity<ActivityChatBinding, BaseViewModel>() {
     private val messages = mutableListOf<MessageModel>()
     override fun onResume() {
         super.onResume()
+        val userModel = SharePreUtils.getUserModel(this)
         if (!ChatSocketManager.isConnected()) {
-            ChatSocketManager.initializeSocket()
+            ChatSocketManager.initializeSocket(userModel!!.id)
         }
+
+        ChatSocketManager.joinRoom(userModel!!.id)
     }
 
     override fun onPause() {
         super.onPause()
         ChatSocketManager.disconnectSocket()
     }
+
     override fun initView() {
         super.initView()
-        ChatSocketManager.initializeSocket()
+
         val userModel = SharePreUtils.getUserModel(this)
+        ChatSocketManager.initializeSocket(userModel!!.id)
+        ChatSocketManager.joinRoom(userModel!!.id)
         binding.ivBack.tap {
             finish()
         }
@@ -70,12 +76,14 @@ class ChatActivity : BaseActivity<ActivityChatBinding, BaseViewModel>() {
 
         ChatSocketManager.onMessageReceived { userId, sender, content ->
             runOnUiThread {
-                if (sender.equals("Admin")) {
+//                if (sender.equals("Admin")) {
+                if (sender != "user") {
                     val serverMessage = MessageModel(userId, sender, content)
                     messages.add(serverMessage)
                     chatAdapter.notifyItemInserted(messages.size - 1)
                     binding.recyclerViewChat.scrollToPosition(messages.size - 1)
                 }
+//                }
             }
         }
     }

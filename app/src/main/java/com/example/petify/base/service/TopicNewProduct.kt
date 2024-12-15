@@ -8,12 +8,13 @@ import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import com.example.petify.MainActivity
 import com.example.petify.R
 import com.example.petify.ui.productdetail.FromNotificationActivity
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 
-class NotiFromServer  : FirebaseMessagingService() {
+class TopicNewProduct  : FirebaseMessagingService() {
 
     override fun onNewToken(token: String) {
         super.onNewToken(token)
@@ -35,19 +36,19 @@ class NotiFromServer  : FirebaseMessagingService() {
     }
 
     private fun showNotification(title: String, body: String) {
-        val channelId = "status_order"
+        val channelId = "new_product"
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 channelId,
-                "Thông báo trạng thái đơn hàng",
-                NotificationManager.IMPORTANCE_DEFAULT
+                "Thông báo sản phẩm mới",
+                NotificationManager.IMPORTANCE_HIGH
             )
             val manager = getSystemService(NotificationManager::class.java)
             manager?.createNotificationChannel(channel)
         }
 
-        val intent = Intent(this, FromNotificationActivity::class.java)
+        val intent = Intent(this, MainActivity::class.java)
         val pendingIntent: PendingIntent = PendingIntent.getActivity(
             this, 0, intent, PendingIntent.FLAG_IMMUTABLE
         )

@@ -13,34 +13,34 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center">
+
         <ImageView
             android:id="@+id/img_back"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:padding="10dp"
-            android:src="@drawable/ic_back"
-            />
+            android:src="@drawable/ic_back" />
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Trung tâm trợ giúp"
-            android:textSize="24sp"
             android:gravity="center"
+            android:text="Trung tâm trợ giúp"
             android:textColor="@color/black"
-            />
+            android:textSize="24sp" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        >
+        android:orientation="vertical">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="20dp"
             android:layout_marginTop="8dp"
+            android:fontFamily="@font/bevietnampro_regular"
             android:text="Liên hệ với chúng tôi qua mail: "
             android:textColor="@color/black"
             android:textSize="20sp" />
@@ -50,14 +50,61 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="20dp"
             android:layout_marginTop="8dp"
+            android:drawableStart="@drawable/ic_dot"
+            android:fontFamily="@font/bevietnampro_regular"
+            android:drawablePadding="10dp"
             android:text="@string/tv_pricacy_email"
             android:textColor="@color/black"
-            android:textSize="18sp"
-            android:drawableStart="@drawable/ic_dot"
-            android:drawablePadding="10dp" />
+            android:textSize="18sp" />
 
     </LinearLayout>
 
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:id="@+id/xemtrongbando"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Bản đồ Google Maps -->
+            <ImageView
+                android:id="@+id/mapFragment"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/img_maps_fake" />
+
+            <!-- Địa chỉ -->
+            <TextView
+                android:id="@+id/locationAddress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/bevietnampro_regular"
+                android:paddingStart="10dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="5dp"
+                android:text="26 Ng. 38 P. Yên Lãng, Láng Hạ, Đống Đa, Hà Nội"
+                android:textColor="@color/black"
+                android:textSize="12sp" />
+
+            <TextView
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
+                android:fontFamily="@font/bevietnampro_regular"
+                android:paddingStart="10dp"
+                android:paddingBottom="5dp"
+                android:text="Xem trong bản đồ >"
+                android:textColor="#64A89C"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
 
 
 </LinearLayout>
