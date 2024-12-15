@@ -80,7 +80,8 @@
                 android:id="@+id/ivCart"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_cart" />
+                android:src="@drawable/ic_cart_item_home"
+                />
 
 
         </LinearLayout>
@@ -111,7 +112,7 @@
             android:orientation="vertical">
 
             <ImageView
-                android:id="@+id/ivProfile"
+                android:id="@+id/ivInvoice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_favorite" />

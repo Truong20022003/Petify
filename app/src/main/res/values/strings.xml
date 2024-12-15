@@ -333,5 +333,43 @@
     <string name="question54_card60">The Hermit suggests adding solitude or quiet time to your routine. A period of introspection can help you reconnect with yourself.</string>
 
     <string name="danh_gia_san_pham"> Đánh giá sản phẩm này<font color="#FF0000">*</font></string>
+    <string name="th_m">Thêm</string>
+    <string name="mua_ngay">Mua Ngay</string>
+    <string name="c_th_b_n_c_ng_th_ch">Có thể bạn cũng thích</string>
+    <string name="n_i_dung_m_t">Nội dung Mô tả</string>
+    <string name="m_t">Mô tả</string>
+    <string name="ch">chó</string>
+    <string name="lo_i_th_th_c_ng">Loại thú thú cưng:</string>
+    <string name="chi_ti_t">Chi tiết</string>
+    <string name="gi_i_thi_u_v_s_n_ph_m_n_y">Giới thiệu về sản phẩm này</string>
+    <string name="xem_th_m">Xem thêm</string>
+    <string name="nh_gi_c_a_kh_ch_h_ng">Đánh giá của khách hàng</string>
+    <string name="b_n_12">Đã bán 12</string>
+    <string name="nh_nh_a_cho_ch_m_o_c_a_s_t_paw_pet_house">Nhà nhựa cho chó mèo cửa sắt PAW Pet House...</string>
+    <string name="_210_000">210.000đ</string>
+    <string name="t_m_ki_m_s_n_ph_m">Tìm kiếm sản phẩm</string>
+    <string name="trung_t_m_tr_gi_p">Trung tâm trợ giúp</string>
+    <string name="li_n_h_v_i_ch_ng_t_i_qua_mail">Liên hệ với chúng tôi qua mail:</string>
+    <string name="_26_ng_38_p_y_n_l_ng_l_ng_h_ng_a_h_n_i">26 Ng. 38 P. Yên Lãng, Láng Hạ, Đống Đa, Hà Nội</string>
+    <string name="xem_trong_b_n"><![CDATA[Xem trong bản đồ >]]></string>
+    <string name="chat_ai">Chat Ai</string>
+    <string name="please_wait">Please wait</string>
+    <string name="b_t_u_cu_c_tr_chuy_n">Bắt đầu cuộc trò chuyện</string>
+    <string name="_900g">900g</string>
+    <string name="h_t_dinh_d_ng_himalayasssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss">Hạt dinh dưỡng himalayasssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss</string>
+    <string name="_150_000">150.000</string>
+    <string name="_5">5</string>
+    <string name="mua_h_ng">Mua hàng</string>
+    <string name="t_ng_thanh_to_n">Tổng thanh toán:</string>
+    <string name="l_ch_s_n_h_ng">Lịch sử đơn hàng</string>
+    <string name="h_s_c_a_b_n">Hồ sơ của bạn</string>
+    <string name="ai_t_v_n">AI tư vấn</string>
+    <string name="li_n_h_v_i_ch_ng_t_i">Liên hệ với chúng tôi</string>
+    <string name="ch_nh_s_ch_b_o_m_t">Chính sách bảo mật</string>
+    <string name="m_i_b_n_b">Mời bạn bè</string>
+    <string name="th_ng_b_o">Thông báo</string>
+    <string name="i_m_t_kh_u">Đổi mật khẩu</string>
+    <string name="ng_xu_t">Đăng xuất</string>
+    <string name="chat">Chat</string>
 
 </resources>

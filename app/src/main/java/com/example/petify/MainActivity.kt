@@ -8,8 +8,8 @@ import com.example.petify.ultils.SharePreUtils
 import com.google.firebase.messaging.FirebaseMessaging
 
 class MainActivity : BaseActivity<ActivityMainBinding, BaseViewModel>() {
-    override fun createBinding() = ActivityMainBinding.inflate(layoutInflater)
 
+    override fun createBinding() = ActivityMainBinding.inflate(layoutInflater)
     override fun setViewModel() = BaseViewModel()
 
     override fun initView() {
@@ -27,22 +27,22 @@ class MainActivity : BaseActivity<ActivityMainBinding, BaseViewModel>() {
                 when (position) {
                     0 -> {
                         setDefault()
-                        binding.ivHome.setColorFilter(getColor(R.color.color_ff2e626a))
+                        binding.ivHome.setColorFilter(getColor(R.color.black))
                     }
 
                     1 -> {
                         setDefault()
-                        binding.ivCart.setColorFilter(getColor(R.color.color_ff2e626a))
+                        binding.ivCart.setColorFilter(getColor(R.color.black))
                     }
 
                     2 -> {
                         setDefault()
-                        binding.ivFavorite.setColorFilter(getColor(R.color.color_ff2e626a))
+                        binding.ivFavorite.setColorFilter(getColor(R.color.black))
                     }
 
                     3 -> {
                         setDefault()
-                        binding.ivProfile.setColorFilter(getColor(R.color.color_ff2e626a))
+                        binding.ivInvoice.setColorFilter(getColor(R.color.black))
                     }
                 }
             }
@@ -66,7 +66,7 @@ class MainActivity : BaseActivity<ActivityMainBinding, BaseViewModel>() {
         binding.ivHome.setColorFilter(getColor(R.color.color_ffa7a7ac))
         binding.ivCart.setColorFilter(getColor(R.color.color_ffa7a7ac))
         binding.ivFavorite.setColorFilter(getColor(R.color.color_ffa7a7ac))
-        binding.ivProfile.setColorFilter(getColor(R.color.color_ffa7a7ac))
+        binding.ivInvoice.setColorFilter(getColor(R.color.color_ffa7a7ac))
     }
 
 

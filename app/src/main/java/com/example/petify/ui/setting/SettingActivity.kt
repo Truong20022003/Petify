@@ -9,7 +9,9 @@ import com.example.petify.base.view.tap
 import com.example.petify.data.server.enitities.UserModel
 import com.example.petify.databinding.ActivitySettingBinding
 import com.example.petify.ui.chat.ChatActivity
+import com.example.petify.ui.chat_ai.ChatAiActivity
 import com.example.petify.ui.helpcenter.HelpCenterActivity
+import com.example.petify.ui.invoice.InvoiceActivity
 import com.example.petify.ui.privacypolicy.PrivacyPolicyActivity
 import com.example.petify.ui.profile.ProfileActivity
 import com.example.petify.ultils.SharePreUtils
@@ -39,6 +41,10 @@ class SettingActivity : BaseActivity<ActivitySettingBinding, BaseViewModel>() {
             val intent = Intent(this, PrivacyPolicyActivity::class.java)
             startActivity(intent)
         }
+        binding.icChatAiHistory.tap {
+            val intent = Intent(this, ChatAiActivity::class.java)
+            startActivity(intent)
+        }
         binding.icHelpCenter.tap {
             val intent = Intent(this, HelpCenterActivity::class.java)
             startActivity(intent)
@@ -47,6 +53,11 @@ class SettingActivity : BaseActivity<ActivitySettingBinding, BaseViewModel>() {
             val intent = Intent(this, ChatActivity::class.java)
             startActivity(intent)
         }
+        binding.icHistory.tap {
+            val intent = Intent(this, InvoiceActivity::class.java)
+            startActivity(intent)
+        }
+
     }
 
     override fun onResume() {

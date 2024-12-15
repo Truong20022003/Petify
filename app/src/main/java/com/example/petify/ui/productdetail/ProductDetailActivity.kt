@@ -64,27 +64,13 @@ class ProductDetailActivity : BaseActivity<ActivityProductDetailBinding, BaseVie
                 if (isFavorite) {
                     val favoriteRequest = FavoriteRequest(productModel.id, userModel!!.id)
                     favoriteViewModel.addFavorites(favoriteRequest)
-                    Log.d(
-                        "TAG12345",
-                        "ProductThanhCong ${productModel.id} favorite status: $isFavorite"
-                    )
-                    Toast.makeText(
-                        this@ProductDetailActivity,
-                        "Thêm sản phẩm vào màn yêu thích thành công",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    Log.d("TAG12345", "ProductThanhCong ${productModel.id} favorite status: $isFavorite")
+                    Toast.makeText(this@ProductDetailActivity, "Thêm sản phẩm vào màn yêu thích thành công", Toast.LENGTH_SHORT).show()
                 } else {
                     favoriteViewModel.deleteFavorite(productModel.id, userModel!!.id)
-
-                    Log.d(
-                        "TAG12345",
-                        "ProductThatBai ${productModel.id} favorite status: $isFavorite"
-                    )
+                    Log.d("TAG12345", "ProductThatBai ${productModel.id} favorite status: $isFavorite")
                 }
-                Log.d(
-                    "TAG12345",
-                    "Product ${productModel.id} favorite status: $isFavorite"
-                )
+                Log.d("TAG12345", "Product ${productModel.id} favorite status: $isFavorite")
             },
             onAddToCart = { productModel, isAddToCart ->
                 if (userModel?.id != null || userModel.email != null || userModel.phoneNumber != null || userModel.location != null) {
@@ -101,22 +87,13 @@ class ProductDetailActivity : BaseActivity<ActivityProductDetailBinding, BaseVie
                                 Toast.makeText(this, "${it.status}", Toast.LENGTH_SHORT).show()
                                 cartApi.clearCartResponse()
                             }
-
                         }
                     }
-                    Log.d(
-                        "TAG12345",
-                        "Product ${productModel.id} favorite status: $isAddToCart"
-                    )
+                    Log.d("TAG12345", "Product ${productModel.id} favorite status: $isAddToCart")
                 } else {
-                    Toast.makeText(
-                        this,
-                        "Hoàn tất hồ sơ người dùng để thêm vào giỏ hàng",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    Toast.makeText(this, "Hoàn tất hồ sơ người dùng để thêm vào giỏ hàng", Toast.LENGTH_SHORT).show()
                 }
             }
-
         )
 
         // Lấy dữ liệu sản phẩm từ Intent
@@ -128,8 +105,6 @@ class ProductDetailActivity : BaseActivity<ActivityProductDetailBinding, BaseVie
             binding.tvProductPrice.text = "${product.price} VNĐ"
             binding.tvDescribe.text = product.description
             binding.tvSold.text = "Số lượng: ${product.quantity}"
-
-
             setupViewPager(product.image)
         } ?: run {
             Log.e("Product_DetailActivity", "Không nhận được thông tin sản phẩm")
@@ -144,7 +119,6 @@ class ProductDetailActivity : BaseActivity<ActivityProductDetailBinding, BaseVie
                 // Cập nhật dữ liệu cho adapter khi danh sách thay đổi
                 binding.rcvProducts.layoutManager = GridLayoutManager(this, 2)
                 binding.rcvProducts.adapter = productAdapter
-
             }
         }
 
@@ -155,7 +129,6 @@ class ProductDetailActivity : BaseActivity<ActivityProductDetailBinding, BaseVie
                 reviewAdapter.fillData(it.result)
                 binding.rcyReview.layoutManager = LinearLayoutManager(this)
                 binding.rcyReview.adapter = reviewAdapter
-
             }
         }
         setListeners()
@@ -171,12 +144,9 @@ class ProductDetailActivity : BaseActivity<ActivityProductDetailBinding, BaseVie
             finish()
         }
 
-
-
         binding.ivShare.setOnClickListener {
             Toast.makeText(this, "Chia sẻ sản phẩm", Toast.LENGTH_SHORT).show()
         }
-
 
         binding.btnAddToCart.setOnClickListener {
             Toast.makeText(this, "Sản phẩm đã được thêm vào giỏ hàng", Toast.LENGTH_SHORT).show()

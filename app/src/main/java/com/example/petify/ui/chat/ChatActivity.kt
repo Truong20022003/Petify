@@ -45,10 +45,6 @@ class ChatActivity : BaseActivity<ActivityChatBinding, BaseViewModel>() {
         binding.ivBack.tap {
             finish()
         }
-        binding.ivHome.tap {
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
-        }
         chatAdapter = ChatAdapter(messages)
         binding.recyclerViewChat.adapter = chatAdapter
         binding.recyclerViewChat.layoutManager = LinearLayoutManager(this)
