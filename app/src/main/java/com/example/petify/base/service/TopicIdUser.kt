@@ -10,11 +10,11 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.example.petify.MainActivity
 import com.example.petify.R
-import com.example.petify.ui.productdetail.FromNotificationActivity
+import com.example.petify.ultils.SharePreUtils
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 
-class TopicNewProduct : FirebaseMessagingService() {
+class TopicIdUser : FirebaseMessagingService() {
 
     override fun onNewToken(token: String) {
         super.onNewToken(token)
@@ -36,7 +36,10 @@ class TopicNewProduct : FirebaseMessagingService() {
     }
 
     private fun showNotification(title: String, body: String) {
-        val channelId = "new_product"
+
+        val userModel = SharePreUtils.getUserModel(this)
+        Log.d("TopicIdUser", "userModel: $userModel")
+        val channelId = "${userModel!!.id}"
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(

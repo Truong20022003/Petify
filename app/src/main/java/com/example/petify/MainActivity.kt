@@ -1,8 +1,11 @@
 package com.example.petify
 
+import android.util.Log
 import androidx.viewpager2.widget.ViewPager2
 import com.example.petify.databinding.ActivityMainBinding
 import com.example.petify.base.view.tap
+import com.example.petify.ultils.SharePreUtils
+import com.google.firebase.messaging.FirebaseMessaging
 
 class MainActivity : BaseActivity<ActivityMainBinding, BaseViewModel>() {
     override fun createBinding() = ActivityMainBinding.inflate(layoutInflater)
@@ -11,7 +14,7 @@ class MainActivity : BaseActivity<ActivityMainBinding, BaseViewModel>() {
 
     override fun initView() {
         super.initView()
-
+        subscribeToTopics()
         val mainAdapter = MainAdapter(this)
         binding.viewPager.adapter = mainAdapter
         binding.viewPager.offscreenPageLimit = 4
@@ -67,4 +70,17 @@ class MainActivity : BaseActivity<ActivityMainBinding, BaseViewModel>() {
     }
 
 
+    private fun subscribeToTopics() {
+        val userModel = SharePreUtils.getUserModel(this)
+        val topic = userModel!!.id
+        FirebaseMessaging.getInstance().subscribeToTopic(topic)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Log.d("FCM", "Subscribed to topic: $topic")
+                } else {
+                    Log.e("FCM", "Failed to subscribe to topic: $topic", task.exception)
+                }
+            }
+
+    }
 }
