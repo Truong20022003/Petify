@@ -32,12 +32,14 @@
             android:layout_marginHorizontal="10dp"
             android:background="@drawable/bg_edittext"
             android:drawableStart="@drawable/ic_search"
-            android:hint="Tìm kiếm sản phẩm "
+            android:hint="@string/t_m_ki_m_s_n_ph_m"
             android:paddingStart="12dp"
             android:textSize="14sp"
+            android:inputType="text"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="RtlSymmetry" />
 
         <ImageView
             android:id="@+id/iv_share"
@@ -90,7 +92,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="8dp"
-                android:text="210.000đ"
+                android:text="@string/_210_000"
                 android:textColor="@android:color/holo_red_dark"
                 android:textSize="20sp"
                 android:textStyle="bold"
@@ -102,7 +104,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="10dp"
-                android:text="Nhà nhựa cho chó mèo cửa sắt PAW Pet House..."
+                android:text="@string/nh_nh_a_cho_ch_m_o_c_a_s_t_paw_pet_house"
                 android:textSize="14sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -135,7 +137,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
-                    android:text="Đã bán 12"
+                    android:text="@string/b_n_12"
                     android:textColor="@android:color/darker_gray"
                     android:textSize="14sp"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -162,7 +164,7 @@
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/bevietnampro_bold"
                         android:padding="5dp"
-                        android:text="Đánh giá của khách hàng"
+                        android:text="@string/nh_gi_c_a_kh_ch_h_ng"
                         android:textColor="@color/black"
                         android:textSize="15sp"
                         app:layout_constraintStart_toStartOf="parent"
@@ -172,13 +174,13 @@
                         android:id="@+id/tv_see_all"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:drawableEnd="@drawable/ic_next"
                         android:drawablePadding="10dp"
                         android:gravity="center"
                         android:padding="5dp"
-                        android:text="Xem thêm"
+                        android:text="@string/xem_th_m"
                         android:textColor="#BDBDBD"
                         android:textSize="15sp"
+                        app:drawableEndCompat="@drawable/ic_next"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
@@ -206,7 +208,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
-                    android:text="Giới thiệu về sản phẩm này"
+                    android:text="@string/gi_i_thi_u_v_s_n_ph_m_n_y"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -215,7 +217,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
-                    android:text="Chi tiết"
+                    android:text="@string/chi_ti_t"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/tv_introduce" />
 
@@ -224,7 +226,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
-                    android:text="Loại thú thú cưng: "
+                    android:text="@string/lo_i_th_th_c_ng"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/tv_detail" />
 
@@ -233,7 +235,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
-                    android:text="chó"
+                    android:text="@string/ch"
                     app:layout_constraintStart_toEndOf="@+id/title_3"
                     app:layout_constraintTop_toBottomOf="@id/tv_detail" />
 
@@ -242,7 +244,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
-                    android:text="Mô tả"
+                    android:text="@string/m_t"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/title_3" />
 
@@ -251,7 +253,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
-                    android:text="Nội dung Mô tả"
+                    android:text="@string/n_i_dung_m_t"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/title_4" />
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -271,7 +273,7 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/bevietnampro_bold"
                     android:padding="5dp"
-                    android:text="Có thể bạn cũng thích"
+                    android:text="@string/c_th_b_n_c_ng_th_ch"
                     android:textColor="@color/black"
                     android:textSize="15sp"
                     app:layout_constraintStart_toStartOf="parent"
@@ -305,9 +307,9 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:background="@drawable/bg_btn_add"
-            android:drawableEnd="@drawable/ic_cart"
+            android:drawableEnd="@drawable/ic_cart_item_home"
             android:padding="10dp"
-            android:text="Thêm"
+            android:text="@string/th_m"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -318,7 +320,7 @@
             android:layout_marginTop="10dp"
             android:background="@drawable/bg_btn_buynow"
             android:padding="10dp"
-            android:text="Mua Ngay"
+            android:text="@string/mua_ngay"
             android:textColor="@color/white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

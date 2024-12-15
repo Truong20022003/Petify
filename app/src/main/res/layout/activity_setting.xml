@@ -26,10 +26,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
-                android:maxLines="1"
                 android:ellipsize="end"
                 android:fontFamily="@font/bevietnampro_medium"
                 android:gravity="center"
+                android:maxLines="1"
                 android:text="Đoàn ĐT"
                 android:textColor="@color/black"
                 android:textSize="20sp"
@@ -39,10 +39,10 @@
                 android:id="@+id/tv_email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/bevietnampro_regular"
-                android:gravity="center"       android:maxLines="1"
                 android:ellipsize="end"
-
+                android:fontFamily="@font/bevietnampro_regular"
+                android:gravity="center"
+                android:maxLines="1"
                 android:text="doandtph3777@fpt.edu.vn"
                 android:textColor="@color/black"
                 android:textSize="14sp" />
@@ -51,13 +51,27 @@
                 android:id="@+id/ic_profile"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:drawableStart="@drawable/ic_user_profile"
-                android:drawableEnd="@drawable/ic_next"
                 android:drawablePadding="20dp"
                 android:fontFamily="@font/bevietnampro_medium"
                 android:gravity="center_vertical"
                 android:padding="10dp"
-                android:text="Hồ sơ của bạn"
+                android:text="@string/h_s_c_a_b_n"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                app:drawableEndCompat="@drawable/ic_next"
+                app:drawableStartCompat="@drawable/ic_user_profile" />
+
+            <TextView
+                android:id="@+id/ic_chat_ai_history"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:drawableStartCompat="@drawable/ic_chat_seleted"
+                app:drawableEndCompat="@drawable/ic_next"
+                android:drawablePadding="10dp"
+                android:fontFamily="@font/bevietnampro_medium"
+                android:gravity="center_vertical"
+                android:padding="10dp"
+                android:text="@string/ai_t_v_n"
                 android:textColor="@color/black"
                 android:textSize="16sp" />
 
@@ -67,28 +81,30 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:drawableStart="@drawable/ic_order_history"
-                android:drawableEnd="@drawable/ic_next"
                 android:drawablePadding="20dp"
                 android:fontFamily="@font/bevietnampro_medium"
                 android:gravity="center_vertical"
                 android:padding="10dp"
-                android:text="Chat với chúng tôi"
+                android:text="@string/li_n_h_v_i_ch_ng_t_i"
                 android:textColor="@color/black"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                app:drawableEndCompat="@drawable/ic_next"
+                tools:ignore="UseCompatTextViewDrawableXml" />
 
             <TextView
                 android:id="@+id/ic_history"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:drawableStart="@drawable/ic_order_history"
                 android:drawableEnd="@drawable/ic_next"
                 android:drawablePadding="20dp"
                 android:fontFamily="@font/bevietnampro_medium"
                 android:gravity="center_vertical"
                 android:padding="10dp"
-                android:text="Lịch sử đơn hàng"
+                android:text="@string/l_ch_s_n_h_ng"
                 android:textColor="@color/black"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                app:drawableStartCompat="@drawable/ic_order_history"
+                tools:ignore="UseCompatTextViewDrawableXml" />
 
             <TextView
                 android:id="@+id/ic_help_center"
@@ -100,9 +116,10 @@
                 android:fontFamily="@font/bevietnampro_medium"
                 android:gravity="center_vertical"
                 android:padding="10dp"
-                android:text="Trung tâm trợ giúp"
+                android:text="@string/trung_t_m_tr_gi_p"
                 android:textColor="@color/black"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                tools:ignore="UseCompatTextViewDrawableXml" />
 
             <TextView
                 android:id="@+id/ic_privacy_policy"
@@ -114,9 +131,10 @@
                 android:fontFamily="@font/bevietnampro_medium"
                 android:gravity="center_vertical"
                 android:padding="10dp"
-                android:text="Chính sách bảo mật"
+                android:text="@string/ch_nh_s_ch_b_o_m_t"
                 android:textColor="@color/black"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                tools:ignore="UseCompatTextViewDrawableXml" />
 
 
             <TextView
@@ -129,9 +147,10 @@
                 android:fontFamily="@font/bevietnampro_medium"
                 android:gravity="center_vertical"
                 android:padding="10dp"
-                android:text="Mời bạn bè"
+                android:text="@string/m_i_b_n_b"
                 android:textColor="@color/black"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                tools:ignore="UseCompatTextViewDrawableXml" />
 
 
             <TextView
@@ -144,9 +163,10 @@
                 android:fontFamily="@font/bevietnampro_medium"
                 android:gravity="center_vertical"
                 android:padding="10dp"
-                android:text="Thông báo"
+                android:text="@string/th_ng_b_o"
                 android:textColor="@color/black"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                tools:ignore="UseCompatTextViewDrawableXml" />
 
             <TextView
                 android:id="@+id/ic_change_password"
@@ -158,9 +178,10 @@
                 android:fontFamily="@font/bevietnampro_medium"
                 android:gravity="center_vertical"
                 android:padding="10dp"
-                android:text="Đổi mật khẩu"
+                android:text="@string/i_m_t_kh_u"
                 android:textColor="@color/black"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                tools:ignore="UseCompatTextViewDrawableXml" />
 
             <TextView
                 android:id="@+id/logout"
@@ -172,9 +193,10 @@
                 android:fontFamily="@font/bevietnampro_medium"
                 android:gravity="center_vertical"
                 android:padding="10dp"
-                android:text="Đăng xuất"
+                android:text="@string/ng_xu_t"
                 android:textColor="@color/black"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                tools:ignore="UseCompatTextViewDrawableXml" />
 
 
         </LinearLayout>
@@ -185,6 +207,7 @@
             android:layout_height="wrap_content">
 
             <ImageView
+                android:contentDescription="@drawable/img_top_profile"
                 android:id="@+id/iv_bgProfile"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -202,6 +225,7 @@
                 app:cardCornerRadius="60dp">
 
                 <ImageView
+                    android:contentDescription="@drawable/img_top_profile"
                     android:id="@+id/iv_avtProfile"
                     android:layout_width="100dp"
                     android:layout_height="100dp"
@@ -210,6 +234,7 @@
         </FrameLayout>
 
         <ImageView
+            android:contentDescription="@drawable/ic_back"
             android:id="@+id/img_back"
             android:layout_width="43dp"
             android:layout_height="40dp"

@@ -6,9 +6,22 @@
     </style>
     <style name="TopRoundedCorners">
         <item name="cornerFamily">rounded</item>
-        <item name="cornerSizeTopLeft">5dp</item>
-        <item name="cornerSizeTopRight">5dp</item>
+        <item name="cornerSizeTopLeft">12dp</item>
+        <item name="cornerSizeTopRight">12dp</item>
         <item name="cornerSizeBottomLeft">0dp</item>
         <item name="cornerSizeBottomRight">0dp</item>
     </style>
+
+
+        <!-- Shape Appearance cho CardView -->
+        <style name="TopRoundedCorners1" parent="Widget.MaterialComponents.CardView">
+            <item name="cornerFamily">rounded</item>
+            <item name="android:topLeftRadius">12dp</item>
+            <item name="android:topRightRadius">12dp</item>
+            <item name="android:bottomLeftRadius">0dp</item>
+            <item name="android:bottomRightRadius">0dp</item>
+        </style>
+
+
+
 </resources>

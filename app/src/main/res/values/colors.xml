@@ -21,5 +21,6 @@
     <color name="color_5AB2FF">#5AB2FF</color>
     <color name="color_C3C4C4">#C3C4C4</color>
     <color name="color_red">#ffcc0000</color>
+    <color name="color_FFFF8787">#FFFF8787</color>
     <color name="color_transparent">#00000000</color>
 </resources>

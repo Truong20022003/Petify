@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/textMessageBot"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/bg_bot_message"
+        android:fontFamily="@font/bevietnampro_regular"
+        android:lineSpacingExtra="2dp"
+        android:padding="10dp"
+        android:textColor="@color/black"
+        android:textSize="12sp"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/textTimestampBot"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textMessageBot"
+        android:layout_alignStart="@id/textMessageBot"
+        android:layout_marginTop="8dp"
+        android:fontFamily="@font/bevietnampro_regular"
+        android:textColor="#70757E"
+        android:textSize="10sp"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/textMessageUser"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/bg_user_message"
+        android:fontFamily="@font/bevietnampro_regular"
+        android:lineSpacingExtra="2dp"
+        android:padding="10dp"
+        android:textColor="@color/black"
+        android:textSize="12sp"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/textTimestampUser"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textMessageUser"
+        android:layout_alignEnd="@id/textMessageUser"
+        android:layout_marginTop="8dp"
+        android:fontFamily="@font/bevietnampro_regular"
+        android:textColor="#70757E"
+        android:textSize="10sp"
+        android:visibility="gone" />
+
+</RelativeLayout>

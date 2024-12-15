@@ -8,16 +8,22 @@
     android:orientation="vertical"
     tools:context=".ui.helpcenter.HelpCenterActivity">
 
-
     <LinearLayout
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center">
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        tools:ignore="UseCompoundDrawables">
 
         <ImageView
             android:id="@+id/img_back"
             android:layout_width="40dp"
             android:layout_height="40dp"
+            android:layout_gravity="start"
+            android:contentDescription="@drawable/ic_back"
             android:padding="10dp"
             android:src="@drawable/ic_back" />
 
@@ -25,7 +31,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="Trung tâm trợ giúp"
+            android:text="@string/trung_t_m_tr_gi_p"
             android:textColor="@color/black"
             android:textSize="24sp" />
     </LinearLayout>
@@ -33,29 +39,32 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginTop="10dp"
         android:orientation="vertical">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="20dp"
+            android:layout_marginHorizontal="10dp"
             android:layout_marginTop="8dp"
             android:fontFamily="@font/bevietnampro_regular"
-            android:text="Liên hệ với chúng tôi qua mail: "
+            android:text="@string/li_n_h_v_i_ch_ng_t_i_qua_mail"
             android:textColor="@color/black"
             android:textSize="20sp" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="20dp"
+            android:layout_marginHorizontal="10dp"
             android:layout_marginTop="8dp"
-            android:drawableStart="@drawable/ic_dot"
-            android:fontFamily="@font/bevietnampro_regular"
             android:drawablePadding="10dp"
+            android:fontFamily="@font/bevietnampro_regular"
+            android:padding="10dp"
             android:text="@string/tv_pricacy_email"
             android:textColor="@color/black"
-            android:textSize="18sp" />
+            android:textSize="18sp"
+            app:drawableStartCompat="@drawable/ic_dot" />
 
     </LinearLayout>
 
@@ -74,6 +83,7 @@
                 android:id="@+id/mapFragment"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
+                android:layout_marginHorizontal="10dp"
                 android:scaleType="centerCrop"
                 android:src="@drawable/img_maps_fake" />
 
@@ -82,29 +92,29 @@
                 android:id="@+id/locationAddress"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
                 android:fontFamily="@font/bevietnampro_regular"
                 android:paddingStart="10dp"
                 android:paddingTop="8dp"
                 android:paddingBottom="5dp"
-                android:text="26 Ng. 38 P. Yên Lãng, Láng Hạ, Đống Đa, Hà Nội"
+                android:text="@string/_26_ng_38_p_y_n_l_ng_l_ng_h_ng_a_h_n_i"
                 android:textColor="@color/black"
-                android:textSize="12sp" />
+                android:textSize="12sp"
+                tools:ignore="RtlSymmetry" />
 
             <TextView
-
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
                 android:clickable="true"
                 android:focusable="true"
                 android:fontFamily="@font/bevietnampro_regular"
                 android:paddingStart="10dp"
                 android:paddingBottom="5dp"
-                android:text="Xem trong bản đồ >"
+                android:text="@string/xem_trong_b_n"
                 android:textColor="#64A89C"
-                android:textSize="12sp" />
+                android:textSize="12sp"
+                tools:ignore="RtlSymmetry" />
         </LinearLayout>
-
     </androidx.cardview.widget.CardView>
-
-
 </LinearLayout>
