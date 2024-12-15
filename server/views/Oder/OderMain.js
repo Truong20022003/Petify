@@ -5,6 +5,13 @@ const headers = {
   "Content-Type": "application/json",
 };
 
+let currentPage = 1;
+let totalPages = 1;
+let allData = [];  // Dữ liệu tổng hợp sau khi lấy từ API.
+let filteredData = []; // Dữ liệu đã lọc từ tìm kiếm
+const urlParams = new URLSearchParams(window.location.search);
+let orderCode = urlParams.get("orderCode");
+console.log(orderCode, "dddddddddddddddddddddddddddddddddddd")
 const getList = async () => {
   try {
     const response = await fetch(`${url}/order/getListOrder`, {
@@ -12,18 +19,32 @@ const getList = async () => {
       headers,
     });
     const data = await response.json();
-    renderTable(data);
-
+    allData = data;  // Lưu dữ liệu tổng hợp
+    filteredData = data;  // Mặc định ban đầu là toàn bộ dữ liệu
+    totalPages = Math.ceil(allData.length / 10);  // Giả sử mỗi trang có 10 bản gh
+    if (orderCode && orderCode.startsWith("#")) {
+      orderCode = orderCode.slice(1);
+    }
+    if (orderCode) {
+      filteredData = search(orderCode, allData); // Tìm kiếm theo mã đơn hàng
+      currentPage = 1; // Đặt lại trang đầu tiên
+      totalPages = Math.ceil(filteredData.length / 10); // Tính lại số trang
+    }
+    renderTable(filteredData);
   } catch (err) {
     console.log(err);
   }
 };
 
 const renderTable = async (data) => {
-  // console.log(namesuser, "namesuser");
   content.innerHTML = /*html*/ `
     <div class="flex mb-4">
-      <!-- <button class="bg-[#396060] text-white px-4 py-2 rounded mr-2 btnadd">Thêm mới</button> -->
+      <select id="statusFilter" class="border border-gray-300 rounded px-4 py-2 flex-grow">
+        <option value="">Tất cả</option>
+        <option value="Đang chờ xác nhận">Đang chờ xác nhận</option>
+        <option value="Hủy đơn">Hủy đơn</option>
+        <option value="Chờ giao hàng">Chờ giao hàng</option>
+      </select>
       <input class="border border-gray-300 rounded px-4 py-2 flex-grow" id="searchInput" placeholder="Tìm kiếm theo mã đơn hàng" type="text" />
       <button class="bg-[#396060] text-white px-4 py-2 rounded ml-2" id="searchButton">Tìm kiếm</button>
     </div>
@@ -31,39 +52,77 @@ const renderTable = async (data) => {
       <thead>
         <tr class="bg-[#396060] text-white">
           <th class="border border-gray-300 px-4 py-2">STT</th>
-          <th class="border border-gray-300 px-4 py-2">Tên nguòi dùng</th> <!-- user_id -->
+          <th class="border border-gray-300 px-4 py-2">Tên người dùng</th>
           <th class="border border-gray-300 px-4 py-2">Mã hóa đơn</th>
-          <th class="border border-gray-300 px-4 py-2">Tổng tiền</th><!-- total -->
-          <th class="border border-gray-300 px-4 py-2">Ngày</th><!-- date -->
-          <th class="border border-gray-300 px-4 py-2">Trạng thái</th><!-- status -->
-          <th class="border border-gray-300 px-4 py-2">Địa chỉ</th><!-- delivery_address -->
+          <th class="border border-gray-300 px-4 py-2">Tổng tiền hàng(đ)</th>
+          <th class="border border-gray-300 px-4 py-2">Ngày</th>
+          <th class="border border-gray-300 px-4 py-2">Trạng thái</th>
+          <th class="border border-gray-300 px-4 py-2">Địa chỉ</th>
           <th class="border border-gray-300 px-4 py-2">Hành động</th>
         </tr>
       </thead>
-      <tbody id="roleList">
-      </tbody>
-    </table>`;
-  document
-    .getElementById("searchInput")
-    .addEventListener("input", async (e) => {
-      const query = e.target.value;
-      const filtered = search(query, data);
-      renderList(filtered);
-    });
-  renderList(data);
+      <tbody id="roleList"></tbody>
+    </table>
+    <div class="pagination flex justify-between mt-4">
+        <button id="prevPage" class="bg-[#008080] text-white px-4 py-2 rounded" disabled>Trang trước</button>
+        <span id="pageInfo" class="text-gray-700">Trang ${currentPage} / ${totalPages}</span>
+        <button id="nextPage" class="bg-[#008080] text-white px-4 py-2 rounded">Trang sau</button>
+    </div>`;
 
+  const datasuser = await Promise.all(
+    data.map((item) => checkUser(item.user_id))
+  );
+
+  // Xử lý lọc theo trạng thái
+  document.getElementById("statusFilter").addEventListener("change", (e) => {
+    const statusFilterValue = e.target.value;
+    filteredData = statusFilterValue
+      ? allData.filter(order => order.status === statusFilterValue)  // Lọc theo trạng thái
+      : allData;  // Nếu không chọn trạng thái, hiển thị tất cả dữ liệu
+    currentPage = 1;  // Đặt lại trang đầu tiên khi lọc theo trạng thái
+    totalPages = Math.ceil(filteredData.length / 10);  // Tính lại số trang sau khi lọc
+    renderList(filteredData, datasuser);  // Render lại dữ liệu sau khi lọc theo trạng thái
+  });
+
+  // Xử lý tìm kiếm (chỉ tìm trong filteredData)
+  document.getElementById("searchInput").addEventListener("input", (e) => {
+    const query = e.target.value;
+    filteredData = search(query, filteredData);  // Tìm kiếm chỉ trong filteredData đã lọc theo trạng thái
+    currentPage = 1;  // Reset về trang đầu khi tìm kiếm
+    totalPages = Math.ceil(filteredData.length / 10);  // Tính lại số trang sau tìm kiếm
+    renderList(filteredData, datasuser);  // Render lại dữ liệu sau tìm kiếm
+  });
+
+  // Xử lý chuyển trang
+  document.getElementById("nextPage").addEventListener("click", () => {
+    if (currentPage < totalPages) {
+      currentPage++;
+      renderList(filteredData, datasuser);  // Render lại dữ liệu sau khi chuyển trang
+    }
+  });
+
+  document.getElementById("prevPage").addEventListener("click", () => {
+    if (currentPage > 1) {
+      currentPage--;
+      renderList(filteredData, datasuser);  // Render lại dữ liệu khi quay lại trang trước
+    }
+  });
+
+  renderList(filteredData, datasuser);  // Render dữ liệu ban đầu (đã lọc trạng thái)
 };
 
 
-const renderList = async (data) => {
+
+const renderList = async (data, namesuser) => {
   const tableBody = document.getElementById("roleList");
   tableBody.innerHTML = "";
-  console.log(data, "dataaaa");
-  const namesuser = await Promise.all(
-    data.map((item) => checkUser(item.user_id))
-  );
-  if (data.length === 0) {
-    // Nếu không có người dùng nào trong kết quả tìm kiếm
+
+  // Phân trang dữ liệu đã lọc
+  const start = (currentPage - 1) * 10;
+  const end = start + 10;
+  const paginatedData = data.slice(start, end);
+
+  if (paginatedData.length === 0) {
     const noDataRow = /*html*/ `
       <tr>
         <td colspan="8" class="border border-gray-300 px-4 py-2 text-center text-red-500">
@@ -72,54 +131,67 @@ const renderList = async (data) => {
       </tr>`;
     tableBody.innerHTML = noDataRow;
   } else {
-    data.forEach((item, index) => {
-
+    // Kết hợp tên người dùng với dữ liệu đơn hàng
+    paginatedData.forEach((item, index) => {
+      const user = namesuser.find(user => user._id === item.user_id); // Tìm user tương ứng
+      let statusClass = '';
+      switch (item.status) {
+        case "Đang chờ xác nhận":
+          statusClass = 'bg-yellow-100';  // Màu vàng cho trạng thái này
+          break;
+        case "Hủy đơn":
+          statusClass = 'bg-red-100';  // Màu đỏ cho trạng thái hủy
+          break;
+        case "Chờ giao hàng":
+          statusClass = 'bg-blue-100';  // Màu xanh cho trạng thái chờ giao
+          break;
+        case "Thành công":
+          statusClass = 'bg-green-100';  // Màu xanh lá cho trạng thái thành công
+          break;
+        default:
+          statusClass = 'bg-white';  // Mặc định
+          break;
+      }
       const row = /*html*/ `
-       <tr id="row-${item._id}">
-                <td class="border border-gray-300 px-4 py-2">${index + 1}</td>
-                <td class="border border-gray-300 px-4 py-2">
-                    ${namesuser[index] === ""
-          ? "User không tồn tại"
-          : namesuser[index]
-        }
-                </td>
-                <td class="border border-gray-300 px-4 py-2">${item.code}</td>
-                <td class="border border-gray-300 px-4 py-2">${item.total_price}</td>
-                <td class="border border-gray-300 px-4 py-2">${item.oder_date}</td>
-                <td class="border border-gray-300 px-4 py-2">${item.status}</td>
-                <td class="border border-gray-300 px-4 py-2">${item.delivery_address
-        }</td>
-                <td class="border border-gray-300 px-4 py-2">
-                  <div class="button-group flex flex-col space-y-2">
-                    <button class="bg-blue-500 text-white px-2 py-1 rounded btnedit" data-id="${item._id
-        }">Cập nhật</button>
-                    <!-- <button class="bg-red-500 text-white px-2 py-1 rounded btndelete" data-id="${item._id
-        }">Xóa</button> -->
-                    <button class="bg-[#008080] text-white px-2 py-1 rounded btndetail" data-id="${item._id
-        }">Chi tiết</button>
-                  </div>
-                </td>
-              </tr>`;
+        <tr id="row-${item._id}">
+          <td class="border border-gray-300 px-4 py-2">${start + index + 1}</td>
+          <td class="border border-gray-300 px-4 py-2">${user ? user.name : "User không tồn tại"}</td>
+          <td class="border border-gray-300 px-4 py-2">${item.code}</td>
+          <td class="border border-gray-300 px-4 py-2">${item.total_price.toLocaleString('vi-VN')}đ</td>
+          <td class="border border-gray-300 px-4 py-2">${formatDate(item.oder_date)}</td>
+          <td class="border border-gray-300 px-4 py-2 ${statusClass}">${item.status}</td>
+          <td class="border border-gray-300 px-4 py-2">${item.delivery_address}</td>
+          <td class="border border-gray-300 px-4 py-2">
+            <button class="bg-blue-500 text-white px-2 py-1 rounded btnedit" data-id="${item._id}">Cập nhật</button>
+            <button class="bg-[#008080] text-white px-2 py-1 rounded btndetail" data-id="${item._id}">Chi tiết</button>
+          </td>
+        </tr>`;
       tableBody.innerHTML += row;
     });
   }
+
+  updatePaginationButtons();
   addEventListeners();
 };
-// Hàm tìm kiếm người dùng
+
+
+const updatePaginationButtons = () => {
+  document.getElementById("pageInfo").textContent = `Trang ${currentPage} / ${totalPages}`;
+  document.getElementById("prevPage").disabled = currentPage === 1;
+  document.getElementById("nextPage").disabled = currentPage === totalPages;
+};
+
 function search(query, data) {
-  function removeVietnameseTones(str) {
-    return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-  }
+  const removeVietnameseTones = (str) => str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
   const queryNormalized = removeVietnameseTones(query.toLowerCase());
 
-  // Lọc danh sách người dùng
-  const filtered = data.filter((role) => {
-    const userNameNormalized = removeVietnameseTones(role.code.toLowerCase());
-    return userNameNormalized.includes(queryNormalized);
+  return data.filter((order) => {
+    const codeNormalized = removeVietnameseTones(order.code.toLowerCase());
+    return codeNormalized.includes(queryNormalized);
   });
-
-  return filtered;
 }
+
+
 const addEventListeners = () => {
   console.log("Adding event listeners");
   document.querySelectorAll(".btndelete").forEach((btn) =>
@@ -157,6 +229,7 @@ const handleDelete = async (id) => {
     console.log(err);
   }
 };
+
 const handleEdit = async (id) => {
   try {
     const response = await fetch(`${url}/order/getorderById/${id}`, {
@@ -186,14 +259,17 @@ const handleDetail = async (id) => {
     const data = await response.json();
     // Lấy chi tiết hóa đơn (Invoice Detail) của hóa đơn này
     const invoiceDetailHTML = await getInvoiceDetail(id);
-    console.log(invoiceDetailHTML, "invoiceDetailHTML");
-    renderDetailForm(
-      data.result,
-      true,
-      false,
-      "Chi tiết hóa đơn",
-      invoiceDetailHTML
-    );
+    const userName = await checkUser(data.result.user_id);
+    console.log(userName.name, "userName")
+    const carrier = await getByIDCarrier(data.result.carrier_id);
+    dialogOder(data.result, userName, invoiceDetailHTML, carrier.name)
+    // renderDetailForm(
+    //   ,
+    //   true,
+    //   false,
+    //   "Chi tiết hóa đơn",
+    //   invoiceDetailHTML
+    // );
   } catch (err) {
     console.log(err);
   }
@@ -211,81 +287,113 @@ const renderDetailForm = async (
   const {
     _id = "",
     user_id = "",
-    total = "",
-    date = "",
+    total_price = "",
+    oder_date = "",
     status = "",
     payment_method = "",
     delivery_address = "",
     shipping_fee = "",
+    code = "",
     carrier_id = "",
   } = invoice;
 
   const readonlyAttr = isReadonly ? "readonly" : "";
   const userName = await checkUser(user_id);
-  console.log(invoiceDetailHTML, "rr");
   const carrier = await getByIDCarrier(carrier_id);
   const saveButtonHTML = showSaveButton
-    ? `<button class="bg-green-500 text-white px-4 py-2 rounded save m-5" onclick="${_id ? `saveEdit('${_id}')` : "saveAdd()"
-    }">Lưu</button>`
+    ? `<button class="bg-green-500 text-white px-4 py-2 rounded save m-5" onclick="${_id ? `saveEdit('${_id}','${code}','${user_id}')` : "saveAdd()"}">Lưu</button>`
     : "";
+
+  // Kiểm tra trạng thái hủy và vô hiệu hóa select
+  const isDisabled = status === "Hủy đơn" ? "disabled" : "";
 
   content.innerHTML = /*html*/ `
       <h2 class="text-xl font-bold mb-4">${title}</h2>
       <div class="grid grid-cols-2 gap-4">
           <div class="">
               <label class="block text-sm font-medium text-gray-700">Tên người dùng</label>
-              <input class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" value="${userName}" ${readonlyAttr} />
+              <input class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" value="${userName.name}"readonly />
           </div>
           <div class="">
-              <label class="block text-sm font-medium text-gray-700">Phương thức thanh toán</label>
-              <input class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" value="${payment_method}" ${readonlyAttr} />
+              <label class="block text-sm font-medium text-gray-700">Mã đơn hàng</label>
+              <input class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" value="${code}" readonly />
+          </div>
+          <div class="">
+              <label class="block text-sm font-medium text-gray-700">Tổng tiền hàng (đ)</label>
+              <input class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" value="${total_price.toLocaleString('vi-VN')}" readonly />
+          </div>
+          <div class="">
+              <label class="block text-sm font-medium text-gray-700">Ngày đặt hàng</label>
+              <input class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" value="${formatDate(oder_date)}" readonly />
           </div>
           <div class="">
               <label class="block text-sm font-medium text-gray-700">Địa chỉ giao hàng</label>
-              <input class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" value="${delivery_address}" ${readonlyAttr} />
+              <input class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" value="${delivery_address}" readonly />
+          </div>
+          <div class="">
+              <label class="block text-sm font-medium text-gray-700">Phương thức thanh toán</label>
+              <input class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" value="${payment_method}" readonly />
           </div>
           <div class="">
               <label class="block text-sm font-medium text-gray-700">Trạng thái</label>
               <select id="statusSelect"
-                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" 
-                ${readonlyAttr}> 
+                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 " 
+                ${readonlyAttr} ${isDisabled}>
                 <option value="0" ${status === "Đang chờ xác nhận" ? "selected" : ""}>Đang chờ xác nhận</option>
                 <option value="1" ${status === "Hủy đơn" ? "selected" : ""}>Hủy đơn</option>
                 <option value="2" ${status === "Chờ giao hàng" ? "selected" : ""}>Chờ giao hàng</option>
                 <option value="3" ${status === "Thành công" ? "selected" : ""}>Thành công</option>
               </select>
-              </div>
-
-          <div class=""><label class="block text-sm font-medium text-gray-700">Phí vận chuyển</label>
-              <input class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" value="${shipping_fee}" ${readonlyAttr} />
+          </div>
+          <div class=""><label class="block text-sm font-medium text-gray-700">Phí vận chuyển (đ)</label>
+              <input class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" value="${Number(shipping_fee).toLocaleString('vi-VN')}" readonly />
           </div>
           <div class=""><label class="block text-sm font-medium text-gray-700">Đơn vị vận chuyển</label>
-              <input class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" value="${carrier.name}" ${readonlyAttr} />
+              <input class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" value="${carrier === "" ? "Giao hàng nhanh" : carrier.name}" readonly />
           </div>
       </div>
-     
+
       <h3 class="text-lg font-semibold mt-4">Chi tiết sản phẩm</h3>
       <table class="w-full mt-4">
           <thead>
               <tr class="bg-[#396060] text-white">
                   <th class="border border-gray-300 px-4 py-2">Ảnh sản phẩm</th>
                   <th class="border border-gray-300 px-4 py-2">Sản phẩm</th>
-                  <th class="border border-gray-300 px-4 py-2">Số lượng</th>
-                  <th class="border border-gray-300 px-4 py-2">Tổng giá</th>
+                  <th class="border border-gray-300 px-4 py-2">Số lượng</th> 
+                  <th class="border border-gray-300 px-4 py-2">Đơn giá</th>
+                  <th class="border border-gray-300 px-4 py-2">Thành tiền</th>
               </tr>
           </thead>
           <tbody>
               ${invoiceDetailHTML}
           </tbody>
       </table>
-       <div class="mt-4">
+      <div class="mt-4">
         ${saveButtonHTML}
-          <button class="bg-blue-500 text-white px-4 py-2 rounded back" onclick="getList()">Quay lại</button>
+        <button class="bg-blue-500 text-white px-4 py-2 rounded back" onclick="getList()">Quay lại</button>
       </div>
   `;
 };
+const formatDate = (dateString) => {
+  const parts = dateString.split(' ');
 
-const saveEdit = async (_id) => {
+  // Tách ngày và giờ
+  const dateParts = parts[0].split('-');
+  const timeParts = parts[1] ? parts[1].split('-') : ['00', '00', '00'];
+
+  // Kiểm tra giờ, phút, giây
+  const hour = parseInt(timeParts[0], 10);
+  const minute = parseInt(timeParts[1], 10);
+  const second = parseInt(timeParts[2], 10);
+
+  // Tạo chuỗi hiển thị với các ký hiệu phân biệt
+  const formattedDate = `${dateParts[0]}/${dateParts[1]}/${dateParts[2]}`;
+  const formattedTime = `H:${timeParts[2]} m:${timeParts[1]}`;
+  return `${formattedDate}  ${formattedTime}`;
+};
+
+const saveEdit = async (_id, code, user_id) => {
+  console.log(code, "edit")
   const statusSelect = document.getElementById("statusSelect");
   const selectedText = statusSelect.options[statusSelect.selectedIndex].text; // Lấy text của tùy chọn được chọn
   const selectedValue = statusSelect.value;
@@ -293,25 +401,27 @@ const saveEdit = async (_id) => {
 
   // Cập nhật trạng thái nếu nó là một trong các trạng thái yêu cầu
   if (selectedValue == 0 || selectedValue == 1 || selectedValue == 2) {
-    const updateStatusResult = await upDateStatus(_id, selectedText);
+    const updateStatusResult = await upDateStatus(_id, selectedText, code, user_id);
     if (updateStatusResult) {
       dialogSuccess("Cập nhật trạng thái thành công.");
       getList();
     }
   } else {
     // Nếu trạng thái đã được cập nhật thành công và là "Thành công"
-    const updateStatusResult = await upDateStatus(_id, selectedText);
+    const updateStatusResult = await upDateStatus(_id, selectedText, code, user_id);
     if (updateStatusResult) {
       // Kiểm tra lại trạng thái sau khi cập nhật
       const order = await fetchOrderById(_id);
       if (order.status === "Thành công") {
         // Gọi API process-order nếu trạng thái là "Thành công"
         try {
+          const loadding = dialogLoading("Dữ liệu đang được cập nhật...")
           const response = await fetch(`${url}/order/process-order/${_id}`, {
             method: "POST",
             headers: { Authorization: "trinh_nhung" },
           });
           const data = await response.json();
+          loadding.close()
           dialogSuccess(data.message);
           getList();
           console.log(data.invoice, "Hoa đơn thành công");
@@ -327,12 +437,15 @@ const saveEdit = async (_id) => {
   }
 };
 
-const upDateStatus = async (_id, selectedText) => {
+const upDateStatus = async (_id, selectedText, code, userId) => {
+  console.log(code, "sss")
+  console.log(userId, "userId")
+
   try {
     const response = await fetch(`${url}/order/updateorder/${_id}`, {
       method: "PUT",
       headers,
-      body: JSON.stringify({ status: selectedText }),
+      body: JSON.stringify({ status: selectedText, code: code, user_id: userId }),
     });
     const data = await response.json();
     if (data.status === "Update successfully") {
@@ -347,6 +460,7 @@ const upDateStatus = async (_id, selectedText) => {
     return false;
   }
 };
+
 const fetchOrderById = async (_id) => {
   try {
     const response = await fetch(`${url}/order/getorderById/${_id}`, { headers });
@@ -403,7 +517,8 @@ const getInvoiceDetail = async (orderid) => {
                   />
                 </td>
               <td class="border border-gray-300 px-4 py-2">${product.name}</td>
-              <td class="border border-gray-300 px-4 py-2">${detail.quantity}</td>
+             <td class="border border-gray-300 px-4 py-2">${detail.quantity}</td> 
+             <td class="border border-gray-300 px-4 py-2">${product.price}</td>
               <td class="border border-gray-300 px-4 py-2">${detail.total_price}</td>
           </tr>
         `;
@@ -428,6 +543,7 @@ const getByIdProduct = async (id) => {
     return {
       name: data.result.name,
       image: data.result.image,
+      price: data.result.price
     };
   } catch (err) {
     console.log(err);
@@ -469,12 +585,12 @@ async function checkUser(id) {
     );
 
     const data = await response.json();
-    console.log(data, "datauser");
+    // console.log(data, "datauser");
 
-    const name = data.name;
-    console.log(name, "name333");
+    // const name = data.name;
+    // console.log(name, "name333");
 
-    return name; // Trả về giá trị tên sau khi fetch thành công
+    return data; // Trả về giá trị tên sau khi fetch thành công
   } catch (err) {
     console.log(err);
     return ""; // Trả về chuỗi rỗng nếu có lỗi
@@ -526,4 +642,5 @@ async function checkProduct(id) {
     return ""; // Trả về chuỗi rỗng nếu có lỗi
   }
 }
+
 getList();
