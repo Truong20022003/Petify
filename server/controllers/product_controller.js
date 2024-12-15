@@ -17,6 +17,11 @@ if (!admin.apps.length) {
 }
 const sendSaleUpdateNotification = async (productName, newSale) => {
     try {
+        if (newSale === 5) {
+            console.log(`No notification sent as the sale is 0% for product: ${productName}`);
+            return; // Exit function if sale is 0
+        }
+
         const message = {
             notification: {
                 title: "Giảm giá sản phẩm",
@@ -25,17 +30,18 @@ const sendSaleUpdateNotification = async (productName, newSale) => {
             topic: "sale_updates",
         };
 
-        await admin.messaging().send(message);
+        // await admin.messaging().send(message);
         console.log(`Notification sent for product: ${productName}`);
     } catch (error) {
         console.error("Error sending sale update notification:", error);
     }
 };
+
 const updateSalePrice = async (req, res) => {
     try {
         const { id } = req.params; // ID sản phẩm
         const { sale } = req.body; // Giá sale mới
-
+        console.log(id, sale, "data")
         if (sale == null) {
             return res.status(400).json({ success: false, message: "Giá sale là bắt buộc." });
         }

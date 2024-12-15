@@ -3,6 +3,30 @@ const { order_detailModel } = require("../models/order_detail_model")
 const { invoiceModel } = require("../models/invoice_model")
 const { invoice_detailModel } = require("../models/invoice_detail_model")
 const mongoose = require('mongoose');
+
+const admin = require("../db/firebase_admin");
+if (!admin.apps.length) {
+    admin.initializeApp({
+        credential: admin.credential.applicationDefault(),
+    });
+}
+const sendStatusUpdateNotification = async (status, code) => {
+    try {
+        const message = {
+            notification: {
+                title: "Trạng thái đơn hàng",
+                body: `Đơn hàng đã được cập nhật trạng thái: ${status}, đơn hàng có mã đơn hàng: ${code}`,
+            },
+            topic: "status_order",
+        };
+
+        await admin.messaging().send(message);
+        console.log(`Notification sent for product:${status}`);
+    } catch (error) {
+        console.error("Error sending sale update notification:", error);
+    }
+};
+
 exports.getListorder = async (req, res, next) => {
     try {
         let listorder = await orderModel.find({});
@@ -47,11 +71,13 @@ exports.updateorder = async (req, res, next) => {
         obj.payment_method = req.body.payment_method
         obj.delivery_address = req.body.delivery_address
         obj.shipping_fee = req.body.shipping_fee
+        obj.code = req.body.code
         obj.status = req.body.status;
+        await sendStatusUpdateNotification(req.body.status, req.body.code)
         let result = await orderModel.findByIdAndUpdate(id, obj, { new: true });
-        res.json({ status: "Update successfully", result: result });
+        res.status(200).json({ status: "Update successfully", result: result });
     } catch (error) {
-        res.json({ status: "Update falied", result: error });
+        res.status(200).json({ status: "Update falied", result: error });
     }
 };
 
