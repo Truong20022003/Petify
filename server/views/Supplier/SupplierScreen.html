@@ -34,7 +34,10 @@
   <body class="bg-gray-800">
     <div class="flex h-screen">
       <!-- Sidebar -->
-      <div class="w-[300px] bg-white shadow-md p-6" style="border-radius: 10px; flex-shrink: 0;">
+      <div
+        class="w-[300px] bg-white shadow-md p-6"
+        style="border-radius: 10px; flex-shrink: 0"
+      >
         <div class="flex items-center justify-center py-6">
           <img
             alt="Logo"
@@ -78,13 +81,13 @@
               >
                 Quản lý loại người dùng
               </a>
-              <a
+              <!-- <a
                 class="block py-2 px-6 text-gray-700 hover:bg-gray-200"
                 href="/views/User/userRole/userRoleScreen.html"
                 onclick="activateSubmenu(this)"
               >
                 Quản lý loại người dùng & ngươi dùng
-              </a>
+              </a> -->
             </div>
           </div>
           <!--  -->
@@ -138,6 +141,14 @@
             <i class="fas fa-shopping-cart"></i>
             <span class="ml-3"> Quản lý đơn hàng</span>
           </a>
+            <!-- Giảm giá -->
+            <a
+            class="flex items-center py-2 px-6 text-gray-700 hover:bg-gray-200"
+            href="/views/sale/SaleProduct.html"
+          >
+            <i class="fas fa-tag"></i>
+            <span class="ml-3"> Quản giảm giá</span>
+          </a>
           <!-- thông báo -->
           <!-- <a
             class="flex items-center py-2 px-6 text-gray-700 hover:bg-gray-200"
@@ -153,6 +164,14 @@
           >
             <i class="fas fa-truck"></i>
             <span class="ml-3"> Quản lý nhà cung cấp</span>
+          </a>
+          <!--  Quản lý đơn vị vận chuyển -->
+          <a
+            class="flex items-center py-2 px-6 text-gray-700 hover:bg-gray-200"
+            href="/views/Carrier/CarrierScreen.html"
+          >
+            <i class="fas fa-route"></i>
+            <span class="ml-3"> Quản lý đơn vị vận chuyển</span>
           </a>
           <!-- Thống kê  -->
           <a
@@ -187,7 +206,9 @@
             <div id="nameuser" class="text-lg font-bold"></div>
           </div>
         </div>
-        <div class="bg-white p-4 rounded shadow">
+        <div
+          class="bg-white p-4 rounded shadow"
+        >
           <table class="content w-full border-collapse">
             <tbody></tbody>
           </table>
