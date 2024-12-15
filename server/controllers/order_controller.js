@@ -10,8 +10,9 @@ if (!admin.apps.length) {
         credential: admin.credential.applicationDefault(),
     });
 }
-const sendStatusUpdateNotification = async (status, code) => {
+const sendStatusUpdateNotification = async (status, code, userId) => {
     try {
+        console.log(userId, 'userId kkk')
         const message = {
             notification: {
                 title: "Trạng thái đơn hàng",
@@ -73,7 +74,8 @@ exports.updateorder = async (req, res, next) => {
         obj.shipping_fee = req.body.shipping_fee
         obj.code = req.body.code
         obj.status = req.body.status;
-        await sendStatusUpdateNotification(req.body.status, req.body.code)
+        console.log(req.body.user_id, 'kkkk')
+        await sendStatusUpdateNotification(req.body.status, req.body.code, req.body.user_id)
         let result = await orderModel.findByIdAndUpdate(id, obj, { new: true });
         res.status(200).json({ status: "Update successfully", result: result });
     } catch (error) {
