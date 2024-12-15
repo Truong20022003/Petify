@@ -23,6 +23,10 @@ class FavoriteViewModel : BaseViewModel() {
     private val _errorMessage = MutableLiveData<String?>()
     val errorMessage: LiveData<String?> get() = _errorMessage
 
+    fun updateFavoriteList(favoriteList: List<FavoriteResponse>) {
+        _favoriteList.value = favoriteList
+    }
+
 
     fun getListFavorites(user_id : String) {
         viewModelScope.launch {

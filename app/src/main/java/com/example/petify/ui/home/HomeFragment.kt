@@ -12,17 +12,15 @@ import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
 import com.example.petify.BaseFragment
 import com.example.petify.R
-import com.example.petify.databinding.FragmentHomeBinding
-import com.example.petify.ui.productdetail.ProductDetailActivity
-import com.example.petify.ui.profile.ProfileActivity
 import com.example.petify.base.view.tap
 import com.example.petify.data.database.AppDatabase
-import com.example.petify.data.database.enitities.CartItem
-import com.example.petify.ui.search.SearchActivity
-import com.example.petify.ui.setting.SettingActivity
 import com.example.petify.data.server.enitities.CartRequest
 import com.example.petify.data.server.enitities.FavoriteRequest
 import com.example.petify.data.server.enitities.FavoriteResponse
+import com.example.petify.databinding.FragmentHomeBinding
+import com.example.petify.ui.productdetail.ProductDetailActivity
+import com.example.petify.ui.search.SearchActivity
+import com.example.petify.ui.setting.SettingActivity
 import com.example.petify.ultils.SharePreUtils
 import com.example.petify.viewmodel.CartApiViewModel
 import com.example.petify.viewmodel.CartViewModel
@@ -64,7 +62,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
         productCategoryViewModel =
             ViewModelProvider(requireActivity())[ProductCategoryViewModel::class.java]
         productCategoryViewModel.getProductsGroupedByCategory()
-        favoriteViewModel = ViewModelProvider(this)[FavoriteViewModel::class.java]
+        favoriteViewModel = ViewModelProvider(requireActivity())[FavoriteViewModel::class.java]
         favoriteViewModel.getListFavorites(userModel!!.id)
         Glide.with(requireActivity())
             .load(userModel?.avata)
@@ -114,26 +112,28 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
                         if (isFavorite) {
                             val favoriteRequest = FavoriteRequest(productModel.id, userModel!!.id)
                             favoriteViewModel.addFavorites(favoriteRequest)
-                            Log.d(
-                                "TAG12345",
-                                "ProductThanhCong ${productModel.id} favorite status: $isFavorite"
+                            // Tạo đối tượng FavoriteResponse
+                            val favoriteResponse = FavoriteResponse(
+                                id = "", // Nếu không có giá trị ID, để trống hoặc xử lý theo API trả về
+                                userId = userModel.id,
+                                productId = productModel // Truyền toàn bộ đối tượng productModel
                             )
-                            Toast.makeText(
-                                requireActivity(),
-                                "Thêm sản phẩm vào màn yêu thích thành công",
-                                Toast.LENGTH_SHORT
-                            ).show()
+                            listFavorite1 =
+                                listFavorite1 + favoriteResponse // Thêm vào danh sách yêu thích
+                            Log.d("TAG12345", "ProductThanhCong ${productModel.id} favorite status: $isFavorite")
+                            Toast.makeText(requireActivity(), "Thêm sản phẩm vào màn yêu thích thành công", Toast.LENGTH_SHORT).show()
                         } else {
                             favoriteViewModel.deleteFavorite(productModel.id, userModel!!.id)
-                            Log.d(
-                                "TAG12345",
-                                "ProductThatBai ${productModel.id} favorite status: $isFavorite"
-                            )
+                            listFavorite1 =
+                                listFavorite1.filter { it.productId.id != productModel.id } // Loại bỏ sản phẩm khỏi danh sách yêu thích
+                            Log.d("TAG12345", "ProductThatBai ${productModel.id} favorite status: $isFavorite")
+                            Toast.makeText(requireActivity(), "Xóa sản phẩm yêu thích thành công", Toast.LENGTH_SHORT).show()
                         }
-                        Log.d(
-                            "TAG12345",
-                            "Product ${productModel.id} favorite status: $isFavorite"
-                        )
+
+                        // Cập nhật danh sách yêu thích trong adapter
+                        categoryProductParentAdapter.updateFavoriteList(listFavorite1)
+                        categoryProductParentAdapter.notifyDataSetChanged() // Cập nhật lại adapter
+                        Log.d("TAG12345", "Product ${productModel.id} favorite status: $isFavorite")
                     },
                     onAddToCart = { productModel, isAddToCart ->
                         if (userModel?.id != null || userModel.email != null || userModel.phoneNumber != null || userModel.location != null) {
@@ -147,7 +147,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
                                 cartApi.cartResponse.observe(this) {
                                     it?.let {
                                         Log.d("TAG1234", "${it.status}")
-                                        Toast.makeText(requireActivity(), "${it.status}", Toast.LENGTH_SHORT).show()
+                                        Toast.makeText(
+                                            requireActivity(),
+                                            "${it.status}",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
                                         cartApi.clearCartResponse()
                                     }
 
@@ -234,6 +238,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
         Glide.with(requireActivity())
             .load(userModel?.avata)
             .into(viewBinding.ivUser)
+        // Cập nhật lại danh sách yêu thích
+        favoriteViewModel.getListFavorites(userModel!!.id)
+
+        // Cập nhật lại danh sách sản phẩm nếu cần thiết
+        productCategoryViewModel.getProductsGroupedByCategory()
     }
 
 }
