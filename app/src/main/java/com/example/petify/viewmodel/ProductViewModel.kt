@@ -7,6 +7,8 @@ import androidx.lifecycle.viewModelScope
 import com.example.petify.BaseViewModel
 import com.example.petify.data.server.CreateInteface
 import com.example.petify.data.server.enitities.ProductModel
+import com.example.petify.data.server.enitities.ProductModelSaleNew
+import com.example.petify.data.server.enitities.UpdateQuantity
 import com.example.petify.data.server.repository.ProductRepository
 import com.example.petify.data.server.service.ProductCategoryService
 import com.example.petify.data.server.service.ProductService
@@ -18,6 +20,9 @@ class ProductViewModel : BaseViewModel() {
 
     private val _product = MutableLiveData<ProductModel?>()
     val product: LiveData<ProductModel?> get() = _product
+
+    private val _productSaleNew = MutableLiveData<ProductModelSaleNew?>()
+    val productSaleNew: LiveData<ProductModelSaleNew?> get() = _productSaleNew
 
     private val _isProductAdded = MutableLiveData<Boolean>()
     val isProductAdded: LiveData<Boolean> get() = _isProductAdded
@@ -66,6 +71,31 @@ class ProductViewModel : BaseViewModel() {
             } catch (e: Exception) {
                 Log.e("ProductViewModel", "Error fetching product by ID", e)
                 _errorMessage.value = "Error fetching product by ID: ${e.message}"
+            }
+        }
+    }
+    fun getLatestSaleUpdatedProduct() {
+        viewModelScope.launch {
+            try {
+                val apiService: ProductService = CreateInteface.createService()
+                val productRepository = ProductRepository(apiService)
+                _productSaleNew.value = productRepository.getLatestSaleUpdatedProduct()
+            } catch (e: Exception) {
+                Log.e("ProductViewModel", "Error fetching product by ID", e)
+                _errorMessage.value = "Error fetching product by ID: ${e.message}"
+            }
+        }
+    }
+
+    fun updateQuantity(id: String, product: UpdateQuantity) {
+        viewModelScope.launch {
+            try {
+                val apiService: ProductService = CreateInteface.createService()
+                val productRepository = ProductRepository(apiService)
+                _isProductUpdated.value = productRepository.updateQuantity(id, product) != null
+            } catch (e: Exception) {
+                Log.e("ProductViewModel", "Error updating product", e)
+                _errorMessage.value = "Error updating product: ${e.message}"
             }
         }
     }

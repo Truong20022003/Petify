@@ -187,7 +187,7 @@ class ProfileActivity : BaseActivity<ActivityProfileBinding, BaseViewModel>() {
             Glide.with(this)
                 .load(userModel.avata)
                 .placeholder(R.drawable.img_loading)
-                .error(R.drawable.img_avt_profile)
+                .error(R.drawable.image_default)
                 .fitCenter()
                 .into(binding.imgProfile)
         } else {

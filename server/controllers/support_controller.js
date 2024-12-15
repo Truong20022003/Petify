@@ -1,0 +1,1 @@
+const { supportModel } = require('./models/support_model'); // Import model support

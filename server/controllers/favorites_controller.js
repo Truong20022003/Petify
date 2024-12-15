@@ -8,6 +8,8 @@ exports.addFavorites = async (req, res, next) => {
             user_id: req.body.user_id,
         });
 
+
+
         let result = await obj.save();
         res.json(result);
     } catch (error) {
