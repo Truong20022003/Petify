@@ -21,7 +21,7 @@ class SplashActivity : AppCompatActivity() {
     }
 
     private fun subscribeToTopics() {
-        val topics = listOf("sale_updates", "status_order") // Danh sách các topic
+        val topics = listOf("sale_updates", "status_order","new_product")
         for (topic in topics) {
             FirebaseMessaging.getInstance().subscribeToTopic(topic)
                 .addOnCompleteListener { task ->

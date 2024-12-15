@@ -26,8 +26,9 @@ const io = socketIo(server, {
 
 io.on("connection", (socket) => {
   socket.on("register", (user_id) => {
+    console.log(`Socket ${socket.id} joined room ${user_id}`);
     socket.join(user_id); 
-  });
+});
   console.log(`Client connected: ${socket.id}`);
   socket.on("error", (error) => {
     console.error("Socket error:", error);
@@ -64,7 +65,7 @@ io.on("connection", (socket) => {
         content,
         createdAt: new Date(),
       };
-
+console.log(message)
       // Lưu tin nhắn vào database
       await supportModel.updateOne(
         { user_id: user_id },
@@ -75,12 +76,13 @@ io.on("connection", (socket) => {
       console.log("Admin message saved successfully");
 
       // Phát tin nhắn đến client cụ thể (theo user_id)
-      socket.to(user_id).emit("receiveMessage", {
+      socket.broadcast.emit("receiveMessage", {
         user_id,
         sender: "Admin",
         content,
         createdAt: message.createdAt,
       });
+      console.log(`Message sent to room ${user_id}: ${content}`);
     } catch (err) {
       console.error("Error sending admin message:", err);
     }
