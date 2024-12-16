@@ -22,6 +22,7 @@ import com.example.petify.viewmodel.CartApiViewModel
 import com.example.petify.viewmodel.CartViewModel
 import com.example.petify.viewmodel.InvoiceDetailViewModel
 import com.example.petify.viewmodel.OrderViewModel
+import com.example.petify.viewmodel.ProductViewModel
 import java.text.DecimalFormat
 
 class CartFragment : BaseFragment<FragmentCartBinding>() {

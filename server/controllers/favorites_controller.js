@@ -27,7 +27,7 @@ exports.getFavoritesByUserId = async (req, res, next) => {
         if (favoriteItems && favoriteItems.length > 0) {
             res.json(favoriteItems);
         } else {
-            res.json({ status: "Not found", message: "No favorite items found for the user" });
+            res.json([]);
         }
     } catch (error) {
         res.status(500).json({ status: "Error", message: error.message });

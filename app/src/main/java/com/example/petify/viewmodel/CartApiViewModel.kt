@@ -23,6 +23,8 @@ class CartApiViewModel : BaseViewModel() {
 
     private val _isCartUpdated = MutableLiveData<Boolean>()
     val isCartUpdated: LiveData<Boolean> get() = _isCartUpdated
+    private val _isCartDelete = MutableLiveData<Boolean>()
+    val isCartDelete: LiveData<Boolean> get() = _isCartDelete
 
     private val _errorMessage = MutableLiveData<String?>()
     val errorMessage: LiveData<String?> get() = _errorMessage
@@ -82,6 +84,7 @@ class CartApiViewModel : BaseViewModel() {
                 val apiService: CartService = CreateInteface.createService()
                 val cartRepository = CartRepository(apiService)
                 val result = cartRepository.deleteCart(idProduct, idUser)
+                _isCartDelete.value = result != null
                 if (result == null) {
                     Log.e("CartApiViewModel", "Error: No result received from API")
                 } else {

@@ -3,6 +3,7 @@ package com.example.petify.data.server.repository
 import android.util.Log
 import com.example.petify.data.server.enitities.ProductModel
 import com.example.petify.data.server.enitities.ProductModelSaleNew
+import com.example.petify.data.server.enitities.SuccessResponse
 import com.example.petify.data.server.enitities.UpdateQuantity
 import com.example.petify.data.server.service.ProductService
 import kotlinx.coroutines.Dispatchers
@@ -63,7 +64,7 @@ class ProductRepository(private val api: ProductService) {
             null
         }
     }
-    suspend fun updateQuantity(id: String, product: UpdateQuantity): ProductModelSaleNew? = withContext(
+    suspend fun updateQuantity(id: String, product: UpdateQuantity): SuccessResponse? = withContext(
         Dispatchers.IO) {
         val response = api.updateQuantity(id, product)
         if (response.isSuccessful) {

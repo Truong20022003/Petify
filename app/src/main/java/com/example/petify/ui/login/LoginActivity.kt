@@ -1,6 +1,9 @@
 package com.example.petify.ui.login
 
+import android.annotation.SuppressLint
 import android.content.Intent
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -33,6 +36,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, UserViewModel>() {
         return UserViewModel()
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun initView() {
         super.initView()
         binding.root.setBackgroundResource(R.drawable.bg_login)
@@ -67,17 +71,95 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, UserViewModel>() {
             val intent = Intent(this, ForgotPasswordActivity::class.java)
             startActivity(intent)
         }
-        binding.btnLogin.setOnClickListener {
-            val phoneNumberInput = binding.etEmail.text.toString()
-            val phoneNumber = if (phoneNumberInput.startsWith("0")) {
-                "+84" + phoneNumberInput.substring(1)
-            } else {
-                phoneNumberInput
+        binding.etEmail.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
-            val password = binding.etPassword.text.toString()
-            viewModel.loginUser(phoneNumber, password, this@LoginActivity)
-        }
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                val input = s.toString()
+                if (validatePassword(input)) {
+                    binding.tilEmail.error = null
+                } else {
+                    binding.tilEmail.error = "Email hoặc số điện thoại không hợp lệ"
+                }
+            }
+            override fun afterTextChanged(s: Editable?) {
 
+            }
+        })
+        var isPasswordVisible = false // Biến kiểm soát trạng thái hiện/ẩn mật khẩu
+
+        binding.etPassword.setOnTouchListener { _, event ->
+            val drawableEndIndex = 2 // DrawableEnd có index là 2
+            if (event.action == android.view.MotionEvent.ACTION_UP) {
+                val drawableEnd = binding.etPassword.compoundDrawables[drawableEndIndex]
+                if (drawableEnd != null) {
+                    // Kiểm tra xem vị trí click có phải là drawableEnd không
+                    val touchArea = binding.etPassword.width - binding.etPassword.paddingEnd - drawableEnd.intrinsicWidth
+                    if (event.rawX >= touchArea) {
+                        // Thay đổi trạng thái hiện/ẩn mật khẩu
+                        isPasswordVisible = !isPasswordVisible
+                        if (isPasswordVisible) {
+                            // Hiện mật khẩu
+                            binding.etPassword.inputType = android.text.InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+                            binding.etPassword.setCompoundDrawablesWithIntrinsicBounds(
+                                R.drawable.ic_password, // DrawableStart
+                                0,                      // DrawableTop
+                                R.drawable.ic_eye_off,  // DrawableEnd
+                                0                       // DrawableBottom
+                            )
+                        } else {
+                            // Ẩn mật khẩu
+                            binding.etPassword.inputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD
+                            binding.etPassword.setCompoundDrawablesWithIntrinsicBounds(
+                                R.drawable.ic_password, // DrawableStart
+                                0,                      // DrawableTop
+                                R.drawable.ic_eye,      // DrawableEnd
+                                0                       // DrawableBottom
+                            )
+                        }
+                        // Đặt con trỏ về cuối văn bản
+                        binding.etPassword.setSelection(binding.etPassword.text.length)
+                        return@setOnTouchListener true
+                    }
+                }
+            }
+            false
+        }
+        binding.etPassword.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+
+            }
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                val input = s.toString()
+                if (validatePassword(input)) {
+                    binding.tilPassword.error = null
+                } else {
+                    binding.tilPassword.error = "Mật khẩu phải có ít nhất 6 ký tự"
+                }
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+
+            }
+        })
+        binding.btnLogin.setOnClickListener {
+            val emailOrPhone = binding.etEmail.text.toString().trim()
+            val password = binding.etPassword.text.toString().trim()
+
+            if (validateEmailOrPhone(emailOrPhone) && validatePassword(password)) {
+                // Xử lý số điện thoại đầu vào
+                val phoneNumber = if (emailOrPhone.startsWith("0")) {
+                    "+84" + emailOrPhone.substring(1)
+                } else {
+                    emailOrPhone
+                }
+
+                // Gửi thông tin đăng nhập đến ViewModel
+                viewModel.loginUser(phoneNumber, password, this@LoginActivity)
+            } else {
+                Toast.makeText(this, "Vui lòng kiểm tra lại thông tin!", Toast.LENGTH_SHORT).show()
+            }
+        }
         observeViewModel()
     }
 
@@ -151,6 +233,19 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, UserViewModel>() {
         }
 
     }
+    private fun validateEmailOrPhone(input: String): Boolean {
+        // Regex để kiểm tra số điện thoại Việt Nam
+        val phoneRegex = Regex("^((\\+84)|0)[3|5|7|8|9][0-9]{8}\$")
+        // Regex để kiểm tra email đúng định dạng
+        val emailRegex = Regex("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\$")
+
+        return input.matches(phoneRegex) || input.matches(emailRegex)
+    }
+
+    private fun validatePassword(input: String): Boolean {
+        return input.length >= 6
+    }
+
 
 }
 

@@ -17,6 +17,7 @@ import com.example.petify.data.server.enitities.CartResponse
 import com.example.petify.data.server.enitities.InvoiceDetailModelRequest
 import com.example.petify.data.server.enitities.OrderModel
 import com.example.petify.data.server.enitities.OrderModelRequest
+import com.example.petify.data.server.enitities.UpdateQuantity
 import com.example.petify.databinding.ActivityPaymentBinding
 import com.example.petify.payment.zalopay.Api.CreateOrder
 import com.example.petify.payment.zalopay.PaymentNotificationActivity
@@ -25,6 +26,7 @@ import com.example.petify.viewmodel.CarrierViewModel
 import com.example.petify.viewmodel.CartApiViewModel
 import com.example.petify.viewmodel.InvoiceDetailViewModel
 import com.example.petify.viewmodel.OrderViewModel
+import com.example.petify.viewmodel.ProductViewModel
 import com.example.petify.viewmodel.UserViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -43,6 +45,7 @@ class PaymentActivity : BaseActivity<ActivityPaymentBinding, OrderViewModel>() {
     private lateinit var invoiceDetailViewModel: InvoiceDetailViewModel
     private lateinit var carrierViewmodel: CarrierViewModel
     private lateinit var cartApiViewModel: CartApiViewModel
+    private lateinit var productViewModel: ProductViewModel
     private var addressUser: String? = null
     private lateinit var carrierAdapter: CarrierAdapter
     private var checkPaymentMethodZaloPay = true
@@ -111,6 +114,7 @@ class PaymentActivity : BaseActivity<ActivityPaymentBinding, OrderViewModel>() {
                 0
             )
         }
+        productViewModel = ViewModelProvider(this)[ProductViewModel::class.java]
         cartApiViewModel = ViewModelProvider(this)[CartApiViewModel::class.java]
         userViewModel = ViewModelProvider(this)[UserViewModel::class.java]
         invoiceDetailViewModel = ViewModelProvider(this)[InvoiceDetailViewModel::class.java]
@@ -139,7 +143,8 @@ class PaymentActivity : BaseActivity<ActivityPaymentBinding, OrderViewModel>() {
 
             selectedCarrier = carrier // Lưu lại Carrier được chọn
             Log.d("PaymentActivity", "Selected Carrier: $selectedCarrier")
-            shippingPrice = price.replace("đ", "").replace(".", "").toDouble() // Cập nhật phí giao hàng
+            shippingPrice =
+                price.replace("đ", "").replace(".", "").toDouble() // Cập nhật phí giao hàng
             binding.tvShippingFee.text = price // Hiển thị phí giao hàng trên giao diện
             binding.tvTotalPriceHaveToPay.text = (totalPrice + shippingPrice).toString()
             binding.tvPrice.text = totalPrice.toString()
@@ -147,7 +152,7 @@ class PaymentActivity : BaseActivity<ActivityPaymentBinding, OrderViewModel>() {
         }
         carrierViewmodel = ViewModelProvider(this)[CarrierViewModel::class.java]
         carrierViewmodel.getListCarrier()
-        carrierViewmodel.carrierList.observe(this){
+        carrierViewmodel.carrierList.observe(this) {
             if (it != null) {
                 carrierAdapter.fillData(it)
             }
@@ -164,6 +169,10 @@ class PaymentActivity : BaseActivity<ActivityPaymentBinding, OrderViewModel>() {
         }
 
         binding.btnOrder.setOnClickListener {
+            if (addressUser == null && addressUser.isNullOrEmpty()) {
+                Toast.makeText(this, "Vui lòng cập nhật địa chỉ", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
             val currentDateTime = LocalDateTime.now()
             val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy hh:mm:ss a")
             val formattedDate = currentDateTime.format(formatter)
@@ -193,8 +202,23 @@ class PaymentActivity : BaseActivity<ActivityPaymentBinding, OrderViewModel>() {
                                     item.quantity,
                                     item.quantity * originalPrice
                                 )
-                                invoiceDetailViewModel.addInvoiceDetail(invoiceModel)
-                                cartApiViewModel.deleteCart(item.productId.id, userId)
+                                val quantityProduct = UpdateQuantity(item.quantity)
+                                productViewModel.updateQuantity(item.productId.id, quantityProduct)
+                                productViewModel.productQuantity.observe(this) { suc ->
+                                    suc?.let {
+                                        if (it.success) {
+                                            Toast.makeText(this, it.message, Toast.LENGTH_SHORT)
+                                                .show()
+
+                                        } else {
+                                            Log.d("TAG123456", it.message!!)
+                                            invoiceDetailViewModel.addInvoiceDetail(invoiceModel)
+                                            cartApiViewModel.deleteCart(item.productId.id, userId)
+                                        }
+                                    }
+
+                                }
+
                             }
 
                         }
@@ -280,6 +304,7 @@ class PaymentActivity : BaseActivity<ActivityPaymentBinding, OrderViewModel>() {
                     lifecycleScope.launch(Dispatchers.IO) {
                         try {
                             lifecycleScope.launch(Dispatchers.Main) {
+                                showLoading(true)
                                 val order = OrderModelRequest(
                                     userId,
                                     formattedDate,
@@ -294,8 +319,10 @@ class PaymentActivity : BaseActivity<ActivityPaymentBinding, OrderViewModel>() {
                                 viewModel.order.observe(this@PaymentActivity) { order ->
                                     if (order != null) {
                                         Log.d("TAG123456", userId)
-                                        selectedItems?.let {
-                                            for (item in it) {
+                                        selectedItems?.let { ct ->
+                                            val processedItems = mutableListOf<String>() // Lưu các sản phẩm đã xử lý
+
+                                            for ((index, item) in ct.withIndex()) {
                                                 val invoiceModel = InvoiceDetailModelRequest(
                                                     userId,
                                                     item.id,
@@ -303,15 +330,49 @@ class PaymentActivity : BaseActivity<ActivityPaymentBinding, OrderViewModel>() {
                                                     item.quantity,
                                                     item.quantity * item.productId.price
                                                 )
-                                                invoiceDetailViewModel.addInvoiceDetail(invoiceModel)
-                                                cartApiViewModel.deleteCart(item.id, userId)
-                                            }
+                                                val quantityProduct = UpdateQuantity(item.quantity)
 
+                                                // Cập nhật số lượng sản phẩm
+                                                productViewModel.updateQuantity(item.productId.id, quantityProduct)
+
+                                                productViewModel.productQuantity.observe(this@PaymentActivity) { suc ->
+                                                    suc?.let {
+                                                        if (!it.success) {
+                                                            Toast.makeText(
+                                                                this@PaymentActivity,
+                                                                it.message,
+                                                                Toast.LENGTH_SHORT
+                                                            ).show()
+                                                        } else if (!processedItems.contains(item.id)) { // Chỉ xử lý nếu chưa xử lý
+                                                            processedItems.add(item.id)
+
+                                                            // Thêm chi tiết hóa đơn
+                                                            invoiceDetailViewModel.addInvoiceDetail(invoiceModel)
+
+                                                            // Xóa sản phẩm khỏi giỏ hàng
+                                                            cartApiViewModel.deleteCart(item.productId.id, userId)
+
+                                                            // Nếu là phần tử cuối cùng, kiểm tra và điều hướng
+                                                            if (index == ct.size - 1) {
+                                                                cartApiViewModel.isCartDelete.observe(this@PaymentActivity) { isDelete ->
+                                                                    if (isDelete) {
+                                                                        Log.d("TAG123456", "All items processed")
+                                                                        showLoading(false)
+                                                                        navigateToPaymentResult(
+                                                                            "Đặt hàng thành công",
+                                                                            orderModel = order
+                                                                        )
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
                                         }
-                                        navigateToPaymentResult(
-                                            "Đặt hàng thành công",
-                                            orderModel = order
-                                        )
+
+
+
                                     }
 
                                 }
