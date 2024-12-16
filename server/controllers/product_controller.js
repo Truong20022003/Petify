@@ -423,15 +423,13 @@ const reduceProductQuantity = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            message: "Đã trừ số lượng sản phẩm thành công.",
-            product,
+            message: "Đã trừ số lượng sản phẩm"
         });
     } catch (error) {
         console.error("Error reducing product quantity:", error);
         return res.status(500).json({
             success: false,
-            message: "Lỗi máy chủ nội bộ.",
-            error: error.message,
+            message: "Lỗi máy chủ nội bộ."
         });
     }
 };

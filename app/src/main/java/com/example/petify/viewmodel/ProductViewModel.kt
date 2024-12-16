@@ -8,6 +8,7 @@ import com.example.petify.BaseViewModel
 import com.example.petify.data.server.CreateInteface
 import com.example.petify.data.server.enitities.ProductModel
 import com.example.petify.data.server.enitities.ProductModelSaleNew
+import com.example.petify.data.server.enitities.SuccessResponse
 import com.example.petify.data.server.enitities.UpdateQuantity
 import com.example.petify.data.server.repository.ProductRepository
 import com.example.petify.data.server.service.ProductCategoryService
@@ -32,6 +33,9 @@ class ProductViewModel : BaseViewModel() {
 
     private val _isProductDeleted = MutableLiveData<Boolean>()
     val isProductDeleted: LiveData<Boolean> get() = _isProductDeleted
+
+    private val _productQuantity = MutableLiveData<SuccessResponse?>()
+    val productQuantity: LiveData<SuccessResponse?> get() = _productQuantity
 
     private val _errorMessage = MutableLiveData<String?>()
     val errorMessage: LiveData<String?> get() = _errorMessage
@@ -92,7 +96,7 @@ class ProductViewModel : BaseViewModel() {
             try {
                 val apiService: ProductService = CreateInteface.createService()
                 val productRepository = ProductRepository(apiService)
-                _isProductUpdated.value = productRepository.updateQuantity(id, product) != null
+                _productQuantity.value = productRepository.updateQuantity(id, product)
             } catch (e: Exception) {
                 Log.e("ProductViewModel", "Error updating product", e)
                 _errorMessage.value = "Error updating product: ${e.message}"

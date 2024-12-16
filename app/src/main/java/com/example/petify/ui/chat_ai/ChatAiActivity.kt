@@ -1,7 +1,6 @@
 package com.example.petify.ui.chat_ai
 
 import android.content.Context
-import android.content.Intent
 import android.os.Handler
 import android.os.Looper
 import android.provider.Settings
@@ -12,10 +11,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.petify.BaseActivity
 import com.example.petify.BaseViewModel
-import com.example.petify.MainActivity
 import com.example.petify.R
 import com.example.petify.base.view.tap
-import com.example.petify.data.database.ModuleChat
+import com.example.petify.data.server.ModuleChat
 import com.example.petify.data.database.repository.ChatRepository
 import com.example.petify.data.server.enitities.APIFormatRequest
 import com.example.petify.data.server.enitities.ChatAnswer
@@ -150,10 +148,10 @@ class ChatAiActivity : BaseActivity<ActivityChatAiBinding, BaseViewModel>() {
                 inputs = APIFormatRequest(
                     name = name.toString(),
                     gender = gender.toString(),
-                    field = "",
-                    description = "",
+                    field = "pet",
+                    description = "animal",
                     language = "vietnamese",
-                    style = ""
+                    style = "animal"
                 ),
                 query = userMessageText,
                 responseMode = "blocking",

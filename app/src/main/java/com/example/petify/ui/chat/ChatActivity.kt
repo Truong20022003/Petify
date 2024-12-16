@@ -1,6 +1,7 @@
 package com.example.petify.ui.chat
 
 import android.content.Intent
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import androidx.core.widget.addTextChangedListener
@@ -23,12 +24,22 @@ class ChatActivity : BaseActivity<ActivityChatBinding, BaseViewModel>() {
     private val messages = mutableListOf<MessageModel>()
     override fun onResume() {
         super.onResume()
+//        val userModel = SharePreUtils.getUserModel(this)
+//        if (!ChatSocketManager.isConnected()) {
+//            ChatSocketManager.initializeSocket(userModel!!.id)
+//        }
+//
+//        ChatSocketManager.joinRoom(userModel!!.id)
         val userModel = SharePreUtils.getUserModel(this)
         if (!ChatSocketManager.isConnected()) {
-            ChatSocketManager.initializeSocket(userModel!!.id)
+            ChatSocketManager.initializeSocket(userModel!!.id) {
+                ChatSocketManager.joinRoom(userModel.id)
+                fetchChatHistory(userModel.id)
+            }
+        } else {
+            ChatSocketManager.joinRoom(userModel!!.id)
+            fetchChatHistory(userModel!!.id)
         }
-
-        ChatSocketManager.joinRoom(userModel!!.id)
     }
 
     override fun onPause() {
@@ -69,7 +80,16 @@ class ChatActivity : BaseActivity<ActivityChatBinding, BaseViewModel>() {
                 binding.editTextUserInput.text.clear()
             }
         }
-
+//        ChatSocketManager.fetchChatHistory(userModel.id) { historyMessages ->
+//            runOnUiThread {
+//                messages.clear()
+//                messages.addAll(historyMessages)
+//                chatAdapter.notifyDataSetChanged()
+//                if (messages.isNotEmpty()) {
+//                    binding.recyclerViewChat.scrollToPosition(messages.size - 1)
+//                }
+//            }
+//        }
         ChatSocketManager.onMessageReceived { userId, sender, content ->
             runOnUiThread {
 //                if (sender.equals("Admin")) {
@@ -87,6 +107,19 @@ class ChatActivity : BaseActivity<ActivityChatBinding, BaseViewModel>() {
     override fun onDestroy() {
         super.onDestroy()
         ChatSocketManager.disconnectSocket()
+    }
+    private fun fetchChatHistory(user_id: String) {
+        ChatSocketManager.fetchChatHistory(user_id) { historyMessages ->
+            runOnUiThread {
+                messages.clear()
+                messages.addAll(historyMessages)
+                Log.d("ChatActivity", "Fetched chat history: $historyMessages")
+                chatAdapter.notifyDataSetChanged()
+                if (messages.isNotEmpty()) {
+                    binding.recyclerViewChat.scrollToPosition(messages.size - 1)
+                }
+            }
+        }
     }
 
 }

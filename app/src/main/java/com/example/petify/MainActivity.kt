@@ -71,16 +71,20 @@ class MainActivity : BaseActivity<ActivityMainBinding, BaseViewModel>() {
 
 
     private fun subscribeToTopics() {
+
         val userModel = SharePreUtils.getUserModel(this)
         val topic = userModel!!.id
-        FirebaseMessaging.getInstance().subscribeToTopic(topic)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    Log.d("FCM", "Subscribed to topic: $topic")
-                } else {
-                    Log.e("FCM", "Failed to subscribe to topic: $topic", task.exception)
+        if (topic != null){
+            FirebaseMessaging.getInstance().subscribeToTopic(topic)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        Log.d("FCM", "Subscribed to topic: $topic")
+                    } else {
+                        Log.e("FCM", "Failed to subscribe to topic: $topic", task.exception)
+                    }
                 }
-            }
+        }
+
 
     }
 }
