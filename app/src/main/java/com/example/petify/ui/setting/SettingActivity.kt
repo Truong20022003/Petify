@@ -12,6 +12,7 @@ import com.example.petify.ui.chat.ChatActivity
 import com.example.petify.ui.chat_ai.ChatAiActivity
 import com.example.petify.ui.helpcenter.HelpCenterActivity
 import com.example.petify.ui.invoice.InvoiceActivity
+import com.example.petify.ui.login.LoginActivity
 import com.example.petify.ui.privacypolicy.PrivacyPolicyActivity
 import com.example.petify.ui.profile.ProfileActivity
 import com.example.petify.ultils.SharePreUtils
@@ -57,6 +58,11 @@ class SettingActivity : BaseActivity<ActivitySettingBinding, BaseViewModel>() {
             val intent = Intent(this, InvoiceActivity::class.java)
             startActivity(intent)
         }
+        binding.logout.tap {
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
+        }
+
 
     }
 

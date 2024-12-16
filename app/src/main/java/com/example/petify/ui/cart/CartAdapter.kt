@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.petify.R
+import com.example.petify.base.view.tap
 import com.example.petify.data.database.enitities.CartItem
 import com.example.petify.data.server.enitities.CartResponse
 import com.example.petify.databinding.ItemCartBinding
@@ -15,10 +16,12 @@ interface OnQuantityChangeListener {
 class CartAdapter(
     private var cartList: List<CartResponse>,
     private val onTotalPriceUpdated: (Double) -> Unit,
-    private val onQuantityChangeListener: OnQuantityChangeListener
+    private val onQuantityChangeListener: OnQuantityChangeListener,
+    private val onCheckAllStateChanged: (Boolean) -> Unit
 ) : RecyclerView.Adapter<CartAdapter.CartViewHolder>() {
 
-     val selectedItems = mutableSetOf<CartResponse>()
+    val selectedItems = mutableSetOf<CartResponse>()
+    private var isAllSelected = false
     private val selectedcarts = HashMap<String, Boolean>()
     fun updateItems(newItems: List<CartResponse>) {
         cartList = newItems
@@ -43,37 +46,47 @@ class CartAdapter(
                 }
                 ivNameSp.text = cart.productId.name
                 ivTypeSp.text = "${cart.productId.date}"
+                ivPriceSp.text = "${cart.productId.price} VND"
                 val originalPrice =  cart.productId.price * (1 - (cart.productId.sale / 100.0))
-                ivPriceSp.text = "${(originalPrice*cart.quantity).toInt()} VND"
+                ivPriceSpSale.text = "${(originalPrice*cart.quantity).toInt()} VND"
                 tvQuantity.text = cart.quantity.toString()
 
-                ivAddition.setOnClickListener {
+                // Cập nhật trạng thái nút tích chọn
+                val isSelected = selectedItems.contains(cart)
+                ivCheck.setImageResource(if (isSelected) R.drawable.ic_check_cart_on else R.drawable.ic_check_cart_off)
+
+
+                ivAddition.tap {
                     cart.quantity++
                     tvQuantity.text = cart.quantity.toString()
-                    selectedItems.remove(cart)
+                    notifyItemChanged(position) // Cập nhật lại giao diện
+                    onQuantityChangeListener.onQuantityUpdated(cart) // Gửi sự kiện cập nhật số lượng
+                    // Không reset trạng thái "được chọn"
                     notifyItemChanged(position)
-                    onQuantityChangeListener.onQuantityUpdated(cart)
+                    calculateTotalPrice() // Tính lại tổng tiền
                 }
 
-                ivSubtraction.setOnClickListener {
+                ivSubtraction.tap {
                     if (cart.quantity > 1) {
                         cart.quantity--
                         tvQuantity.text = cart.quantity.toString()
-                        selectedItems.remove(cart)
+                        notifyItemChanged(position) // Cập nhật lại giao diện
+                        onQuantityChangeListener.onQuantityUpdated(cart) // Gửi sự kiện cập nhật số lượng
+                        // Không reset trạng thái "được chọn"
                         notifyItemChanged(position)
-                        onQuantityChangeListener.onQuantityUpdated(cart)
+                        calculateTotalPrice() // Tính lại tổng tiền
                     } else if (cart.quantity == 1) {
-                        // Khi số lượng là 0, xóa sản phẩm khỏi giỏ hàng
+                        // Nếu số lượng giảm về 0, có thể xóa sản phẩm khỏi danh sách
                         cart.quantity = 0
                         tvQuantity.text = "0"
-                        selectedItems.remove(cart)
-                        onQuantityChangeListener.onQuantityUpdated(cart) // Xóa sản phẩm khỏi giỏ hàng
+                        notifyItemChanged(position) // Cập nhật lại giao diện
+                        onQuantityChangeListener.onQuantityUpdated(cart) // Gửi sự kiện cập nhật số lượng
+                        // Không reset trạng thái "được chọn"
+                        notifyItemChanged(position)
+                        calculateTotalPrice() // Tính lại tổng tiền
                     }
                 }
-               val isSelected = selectedcarts[cart.id] ?: false
-                ivCheck.setImageResource(if (isSelected) R.drawable.ic_check_cart_on else R.drawable.ic_check_cart_off)
-
-                binding.ivCheck.setOnClickListener {
+                binding.ivCheck.tap {
                     if (selectedItems.contains(cart)) {
                         selectedItems.remove(cart)
                         binding.ivCheck.setImageResource(R.drawable.ic_check_cart_off)
@@ -82,6 +95,10 @@ class CartAdapter(
                         binding.ivCheck.setImageResource(R.drawable.ic_check_cart_on)
                     }
                     calculateTotalPrice()
+
+                    // Kiểm tra trạng thái checkAll
+                    val isAllSelected = selectedItems.size == cartList.size
+                    onCheckAllStateChanged(isAllSelected) // Gửi trạng thái về Fragment
                 }
             }
         }
@@ -104,13 +121,20 @@ class CartAdapter(
         onTotalPriceUpdated(totalPrice)
     }
 
+    fun toggleSelectAll() {
+        isAllSelected = !isAllSelected
+        setAllSelected(isAllSelected)
+    }
+
     fun setAllSelected(isSelected: Boolean) {
-        cartList.forEach { cart ->
-            selectedcarts[cart.id] = isSelected
+        selectedItems.clear() // Xóa danh sách hiện tại
+        if (isSelected) {
+            selectedItems.addAll(cartList) // Thêm tất cả các item vào danh sách đã chọn
         }
+        updateTotalPrice()
         notifyDataSetChanged()
         calculateTotalPrice()
-        updateTotalPrice()
+
     }
 
     fun updateTotalPrice() {
