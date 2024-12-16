@@ -5,15 +5,25 @@ const headers = {
   "Content-Type": "application/json",
 };
 
-const getList = async () => {
+let currentPage = 1;
+let totalPages = 1;
+let allData = []; // Dữ liệu tổng hợp sau khi lấy từ API.
+let filteredData = []; // Dữ liệu đã lọc từ tìm kiếm
+
+const getList = async (page = 1, query = "") => {
   try {
+    const loadding = dialogLoading("Đang tải dữ liệu...");
     const response = await fetch(`${url}/supplier/getListSupplier`, {
       method: "GET",
       headers,
     });
     const data = await response.json();
+    console.log(data);
+    allData = data; // Lưu dữ liệu tổng hợp
+    filteredData = data; // Mặc định ban đầu là toàn bộ dữ liệu
+    totalPages = Math.ceil(allData.length / 10); // Giả sử mỗi trang có 10 bản ghi
     renderTable(data);
-
+    loadding.close();
   } catch (err) {
     console.log(err);
   }
@@ -37,22 +47,46 @@ const renderTable = (data) => {
       </thead>
       <tbody id="roleList">
       </tbody>
-    </table>`;
+    </table>
+    <div class="pagination flex justify-between mt-4">
+        <button id="prevPage" class="bg-[#008080] text-white px-4 py-2 rounded" disabled>Trang trước</button>
+        <span id="pageInfo" class="text-gray-700">Trang ${currentPage} / ${totalPages}</span>
+        <button id="nextPage" class="bg-[#008080] text-white px-4 py-2 rounded">Trang sau</button>
+    </div>`;
   document
     .getElementById("searchInput")
     .addEventListener("input", async (e) => {
       const query = e.target.value;
-      const filtered = searchUser(query, data);
-      renderList(filtered);
+      filteredData = search(query, allData);
+      currentPage = 1; // Reset về trang đầu khi tìm kiếm
+      totalPages = Math.ceil(filteredData.length / 10); // Tính lại số trang sau tìm kiếm
+      renderList(filteredData); // Render lại dữ liệu sau tìm kiếm
     });
+  // Xử lý chuyển trang
+  document.getElementById("nextPage").addEventListener("click", () => {
+    if (currentPage < totalPages) {
+      currentPage++;
+      renderList(filteredData); // Render lại dữ liệu sau khi chuyển trang
+    }
+  });
+
+  document.getElementById("prevPage").addEventListener("click", () => {
+    if (currentPage > 1) {
+      currentPage--;
+      renderList(filteredData); // Render lại dữ liệu khi quay lại trang trước
+    }
+  });
   renderList(data);
 };
 const renderList = (data) => {
   const tableBody = document.getElementById("roleList");
   tableBody.innerHTML = "";
   console.log(data, "dataaaa");
+  const start = (currentPage - 1) * 10;
+  const end = start + 10;
+  const paginatedData = data.slice(start, end);
 
-  if (data.length === 0) {
+  if (paginatedData.length === 0) {
     // Nếu không có người dùng nào trong kết quả tìm kiếm
     const noDataRow = /*html*/ `
       <tr>
@@ -62,49 +96,58 @@ const renderList = (data) => {
       </tr>`;
     tableBody.innerHTML = noDataRow;
   } else {
-    data.forEach((item, index) => {
+    paginatedData.forEach((item, index) => {
       const dateformat = formatDate(
         item.createdAt == null ? item.updatedAt : item.createdAt
       );
       const row = /*html*/ `
         <tr id="row-${item._id}">
           <td class="border border-gray-300 px-4 py-2 w-[50]">${index + 1}</td>
-          <td class="border border-gray-300 px-4 py-2 text-center align-middle">${item.name
-        }</td>
+          <td class="border border-gray-300 px-4 py-2 text-center align-middle">${
+            item.name
+          }</td>
           <td class="border border-gray-300 px-4 py-2 text-center align-middle">${dateformat}</td>
           <td class="border border-gray-300 px-4 py-2 w-[200]">
             <div class="button-group flex flex-col space-y-2">
-              <button class="bg-blue-500 text-white px-2 py-1 rounded btnedit" data-id="${item._id
-        }">Cập nhật</button>
-              <button class="bg-red-500 text-white px-2 py-1 rounded btndelete" data-id="${item._id
-        }">Xóa</button>
-              <button class="bg-[#008080] text-white px-2 py-1 rounded btndetail" data-id="${item._id
-        }">Chi tiết</button>
+              <button class="bg-blue-500 text-white px-2 py-1 rounded btnedit" data-id="${
+                item._id
+              }">Cập nhật</button>
+              <button class="bg-red-500 text-white px-2 py-1 rounded btndelete" data-id="${
+                item._id
+              }">Xóa</button>
+              <button class="bg-[#008080] text-white px-2 py-1 rounded btndetail" data-id="${
+                item._id
+              }">Chi tiết</button>
             </div>
           </td>
         </tr>`;
       tableBody.innerHTML += row;
     });
   }
+  updatePaginationButtons();
   addEventListeners();
 };
 
-////
-// Hàm tìm kiếm người dùng
-function searchUser(query, data) {
-  function removeVietnameseTones(str) {
-    return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-  }
+const updatePaginationButtons = () => {
+  document.getElementById(
+    "pageInfo"
+  ).textContent = `Trang ${currentPage} / ${totalPages}`;
+  document.getElementById("prevPage").disabled = currentPage === 1;
+  document.getElementById("nextPage").disabled = currentPage === totalPages;
+};
+
+function search(query, data) {
+  const removeVietnameseTones = (str) =>
+    str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
   const queryNormalized = removeVietnameseTones(query.toLowerCase());
 
-  // Lọc danh sách người dùng
-  const filtered = data.filter((role) => {
+  return data.filter((role) => {
     const userNameNormalized = removeVietnameseTones(role.name.toLowerCase());
     return userNameNormalized.includes(queryNormalized);
   });
-
-  return filtered;
 }
+////
+
 const addEventListeners = () => {
   document
     .querySelectorAll(".btndelete")
@@ -138,19 +181,27 @@ const handleDelete = async (id) => {
     );
     return;
   }
-  dialogDelete("Xóa nhà phân phối", "Bạn có chắc chắn muốn xóa nhà phân phối này?", async () => {
-    try {
-      await fetch(`${url}/supplier/deletesupplier/${id}`, { method: "DELETE", headers });
-      getList();
-    } catch (err) {
-      dialogError("Xóa thất bại", "")
-      console.log(err);
+  dialogDelete(
+    "Xóa nhà phân phối",
+    "Bạn có chắc chắn muốn xóa nhà phân phối này?",
+    async () => {
+      try {
+        await fetch(`${url}/supplier/deletesupplier/${id}`, {
+          method: "DELETE",
+          headers,
+        });
+        getList();
+      } catch (err) {
+        dialogError("Xóa thất bại", "");
+        console.log(err);
+      }
     }
-  })
+  );
 };
 
 const handleDetail = async (id) => {
   try {
+    const loadding = dialogLoading("Đang tải dữ liệu....");
     const response = await fetch(`${url}/supplier/getsupplierById/${id}`, {
       headers,
     });
@@ -160,13 +211,8 @@ const handleDetail = async (id) => {
     console.log(filerproduct, "filerproduct");
     const ProductHtml = productsOnSale(filerproduct);
     console.log(data, "getRoleById");
-    renderDetailForm(
-      data.result,
-      true,
-      false,
-      "Chi tiết nhà cung cấp",
-      ProductHtml
-    );
+    renderSupplierDetail(data.result, "Chi tiết nhà cung cấp", ProductHtml);
+    loadding.close();
   } catch (err) {
     console.log(err);
   }
@@ -195,8 +241,9 @@ const renderDetailForm = (
   const { _id = "", name = "", description = "", phone_number = "" } = supp;
   const readonlyAttr = isReadonly ? "readonly" : "";
   const saveButtonHTML = showSaveButton
-    ? `<button class="bg-green-500 text-white px-4 py-2 rounded save m-5" onclick="${_id ? `saveEdit('${_id}')` : "saveAdd()"
-    }">Lưu</button>`
+    ? `<button class="bg-green-500 text-white px-4 py-2 rounded save m-5" onclick="${
+        _id ? `saveEdit('${_id}')` : "saveAdd()"
+      }">Lưu</button>`
     : "";
   const htmlproduct = showSaveButton
     ? ""
@@ -229,79 +276,108 @@ const renderDetailForm = (
             </tbody>
     <div class="mt-4">${saveButtonHTML}<button class="bg-blue-500 text-white px-4 py-2 rounded back" onclick="getList()">Quay lại</button></div>`;
 };
+const renderSupplierDetail = (supp = {}, title = "", ProductHtml = "") => {
+  const { name = "", description = "", phone_number = "" } = supp;
 
+  content.innerHTML = /*html*/ `
+    <h2 class="text-2xl font-bold mb-6 text-gray-800">${title}</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+  <!-- Cột 1: Tên nhà cung cấp và số điện thoại -->
+  <div class="flex flex-col space-y-4">
+    <div>
+      <label class="block text-sm font-medium text-gray-700">Tên nhà cung cấp</label>
+      <div class="mt-1 w-full p-2 border border-gray-300 rounded-md bg-gray-50">
+        ${name}
+      </div>
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700">Số điện thoại</label>
+      <div class="mt-1 w-full p-2 border border-gray-300 rounded-md bg-gray-50">
+        ${phone_number}
+      </div>
+    </div>
+  </div>
+  
+  <!-- Cột 2: Mô tả -->
+  <div class="flex flex-col space-y-4">
+    <div>
+      <label class="block text-sm font-medium text-gray-700">Mô tả</label>
+      <div class="mt-1 w-full p-2 border border-gray-300 rounded-md bg-gray-50">
+        ${description}
+      </div>
+    </div>
+  </div>
+</div>
+
+    <h2 class="text-2xl font-bold">Các sản phẩm của nhà cung cấp</h2>
+    <div id="reviews-container" class="mt-8">
+    <table class="content w-full border-collapse">
+    <thead>
+    <tr class="bg-[#396060] text-white items-center">
+      <th class="border border-gray-300 py-2 w-[10]" >STT</th>
+      <th class="border border-gray-300 px-4 py-2 w-[40]">Ảnh sản phẩm</th>
+      <th class="border border-gray-300 px-4 py-2">Tên sản phẩm</th>
+      <th class="border border-gray-300 px-4 py-2 w-[60]" >Hành động</th>
+    </tr>
+  </thead>
+      ${ProductHtml}
+      </table>
+      <!-- <div id="pagination" class="flex justify-between mt-4">
+      <button id="prevPage" class="bg-[#008080] text-white px-4 py-2 rounded" disabled>Trang trước</button>
+      <span id="currentPage" class="text-gray-600">Trang 1</span>
+      <button id="nextPage" class="bg-[#008080] text-white px-4 py-2 rounded">Trang sau</button>
+    </div> -->
+    </div>
+    
+    <div class="mt-6 flex justify-between items-center">
+      <button class="bg-blue-500 text-white px-4 py-2 rounded back" onclick="getList()">Quay lại</button>
+    </div>
+  `;
+};
+
+// Hàm để hiển thị các sản phẩm
 const productsOnSale = (data) => {
   if (data.length === 0) {
     return `
-           <div class="flex justify-center items-center  h-[500px]">
-            <h2 class="text-2xl font-semibold mb-2 text-gray-800">Hiện tại chưa bán sản phẩm nào</h2>
-        </div>
-            `;
+      <div class="flex justify-center items-center h-[500px]">
+        <h2 class="text-2xl font-semibold mb-2 text-gray-800">Hiện tại chưa bán sản phẩm nào</h2>
+      </div>
+    `;
   }
-  const productListFilter = data.map((item) => {
+
+  const productListFilter = data.map((item, index) => {
     return /*html*/ `
-        <div class="border p-4 mb-4 rounded-lg shadow-md hover:shadow-lg">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 m-5">
-          <!-- cuc1 -->
-          <div class="space-y-4">
-            <div class="flex items-center mb-2 m-5">
-            <span class="text-2xl font-semibold">Tên sản phẩm: ${item.name
-      }</span>
-            </div>
-            <div class="flex flex-wrap gap-2 px-2 ">
-            ${item.image
-        .map(
-          (img) => /*html*/ `
-                <div
-                    class="w-[100px] h-[100px] flex-shrink-0 border border-gray-300 rounded-lg overflow-hidden hover:shadow-md hover:border-gray-400 transition"
-                >
-                    <img
+       <tr id="row-${item._id}">
+                <td class="w-[20px] border border-gray-300 px-4 py-2">${
+                  index + 1
+                }</td>
+          <td class="border border-gray-300 px-4 py-2"> 
+              <div class=" h-[60px] p-2 flex justify-center items-center ">
+              <img
                     alt="Product image"
-                    class="w-full h-full object-cover"
-                    src="${img}"
-                    />
-                </div>
-                `
-        )
-        .join("")}
-            </div>
-            <div class="space-y-4 m-5">
-                <div class="mb-2">
-                <strong class="text-lg">Giá sản phẩm:</strong>
-                <span class="text-gray-600">${item.price}</span>
-                </div>
-                <div class="mb-2">
-                <strong class="text-lg">Ngày nhập:</strong>
-                <span class="text-gray-600">${item.date}</span>
-                </div>
-                <div class="mb-2">
-                <strong class="text-lg">Trạng thái:</strong>
-                <span class="text-gray-600">${item.status}</span>
-                </div>
-                <div class="mb-2">
-                <strong class="text-lg">Ngày hết hạn:</strong>
-                <span class="text-gray-600">${item.expiry_Date}</span>
-                </div>
-                <div class="mb-2">
-                <strong class="text-lg">Số lượng sản phẩm:</strong>
-                <span class="text-gray-600">${item.quantity}</span>
-                </div>
-            </div>
+                    class="w-full h-full object-contain"
+                    src="${item.image[0]}"
+                  />
+              </div>
+              </td>
+              <td class="border border-gray-300 px-4 py-2 w-[400px] break-words">
+                  ${item.name}
+              </td>
+              <td class="border border-gray-300 px-4 py-2">
+              <div class="button-group flex flex-col space-y-2">
+      <button class="bg-[#008080] text-white px-2 py-1 rounded btndetail" data-id="${
+        item._id
+      }">Chi tiết</button>
           </div>
-        
-        <!-- cuc2 -->
-        <div class="">
-          <strong>Mô tả:</strong>
-          <p class="text-gray-700">
-            ${item.description.replace(/\n/g, "<br />")}
-          </p>
-        </div>
-        </div>
-        <!--  -->
-      </div>`;
+          </td>
+          </tr>
+     
+    `;
   });
+
   return productListFilter.join("");
 };
+
 const saveEdit = async (_id) => {
   const name = document.getElementById("name").value;
   const phone_number = document.getElementById("phone_number").value;
@@ -323,8 +399,9 @@ const saveEdit = async (_id) => {
     phone_number: phone_number,
     description: description,
   };
-  dialogInfo("Bạn có muốn lưu các thay đổi không?"
-    , async () => {
+  dialogInfo(
+    "Bạn có muốn lưu các thay đổi không?",
+    async () => {
       const loadingDialog = dialogLoading("Đang tải lên...");
 
       try {
@@ -336,11 +413,10 @@ const saveEdit = async (_id) => {
         const data = await response.json();
         if (data.status) {
           dialogSuccess("Cập nhật thành công!").then(() => {
-            getList();  // Chỉ gọi sau khi thông báo xong
+            getList(); // Chỉ gọi sau khi thông báo xong
           });
-
         } else {
-          dialogError("Cập nhật thất bại!")
+          dialogError("Cập nhật thất bại!");
         }
         loadingDialog.close();
       } catch (error) {
@@ -350,7 +426,8 @@ const saveEdit = async (_id) => {
     },
     () => {
       getList();
-    })
+    }
+  );
 };
 
 const saveAdd = async () => {
@@ -375,8 +452,9 @@ const saveAdd = async () => {
     description: description,
     phone_number: phone_number,
   };
-  dialogInfo("Bạn có muốn lưu không?"
-    , async () => {
+  dialogInfo(
+    "Bạn có muốn lưu không?",
+    async () => {
       const loadingDialog = dialogLoading("Đang tải lên...");
 
       try {
@@ -388,11 +466,10 @@ const saveAdd = async () => {
         const data = await response.json();
         if (data.status === "Add successfully") {
           dialogSuccess("Thêm thành công!").then(() => {
-            getList();  // Chỉ gọi sau khi thông báo xong
+            getList(); // Chỉ gọi sau khi thông báo xong
           });
-
         } else {
-          dialogError("Thêm thất bại!")
+          dialogError("Thêm thất bại!");
         }
         loadingDialog.close();
       } catch (error) {
@@ -402,7 +479,8 @@ const saveAdd = async () => {
     },
     () => {
       getList();
-    })
+    }
+  );
 };
 async function checkProduct(supplier_id) {
   console.log(supplier_id, "some");

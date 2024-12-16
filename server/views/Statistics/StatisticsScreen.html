@@ -10,6 +10,17 @@
     <script src="/views/exten/dialog.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/echarts@5"></script>
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1.10.7/dayjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1.10.7/locale/vi.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1.10.7/plugin/isoWeek.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"
+    />
+    <!-- Thêm Flatpickr JS -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <!-- Cho ngôn ngữ tiếng Việt -->
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1.10.7/plugin/advancedFormat.js"></script>
     <style>
       body {
         background-image: url("/views/img/n.jpg");
@@ -129,13 +140,13 @@
               >
                 Quản lý loại người dùng
               </a>
-              <a
+              <!-- <a
                 class="block py-2 px-6 text-gray-700 hover:bg-gray-200"
                 href="/views/User/userRole/userRoleScreen.html"
                 onclick="activateSubmenu(this)"
               >
                 Quản lý loại người dùng & ngươi dùng
-              </a>
+              </a> -->
             </div>
           </div>
           <!--  -->
@@ -189,6 +200,14 @@
             <i class="fas fa-shopping-cart"></i>
             <span class="ml-3"> Quản lý đơn hàng</span>
           </a>
+            <!-- Giảm giá -->
+            <a
+            class="flex items-center py-2 px-6 text-gray-700 hover:bg-gray-200"
+            href="/views/sale/SaleProduct.html"
+          >
+            <i class="fas fa-tag"></i>
+            <span class="ml-3"> Quản giảm giá</span>
+          </a>
           <!-- thông báo -->
           <!-- <a
             class="flex items-center py-2 px-6 text-gray-700 hover:bg-gray-200"
@@ -204,6 +223,14 @@
           >
             <i class="fas fa-truck"></i>
             <span class="ml-3"> Quản lý nhà cung cấp</span>
+          </a>
+          <!--  Quản lý đơn vị vận chuyển -->
+          <a
+            class="flex items-center py-2 px-6 text-gray-700 hover:bg-gray-200"
+            href="/views/Carrier/CarrierScreen.html"
+          >
+            <i class="fas fa-route"></i>
+            <span class="ml-3"> Quản lý đơn vị vận chuyển</span>
           </a>
           <!-- Thống kê  -->
           <a
@@ -238,124 +265,139 @@
             <div id="nameuser" class="text-lg font-bold"></div>
           </div>
         </div>
-        <div class="bg-white p-4 rounded shadow">
-          <!-- chon ngay thang nam -->
-          <div
-            class="flex flex-col space-y-4 md:flex-row md:space-y-0 md:space-x-6 items-center justify-center"
+        <div
+          class="bg-white p-4 rounded shadow"
+        >
+          <button
+            id="openDatePickerBtn"
+            class="bg-blue-500 text-white px-4 py-2 rounded mt-10 ml-10"
           >
-            <!-- Combobox chọn năm -->
-            <div class="w-40">
-              <label
-                for="yearSelect"
-                class="block text-sm font-medium text-gray-700"
-                >Năm</label
-              >
-              <select
-                id="yearSelect"
-                class="mt-1 block w-full rounded-lg border border-gray-300 bg-white py-2 px-3 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-gray-700 sm:text-sm"
-              ></select>
+            Chọn thời gian
+          </button>
+          <!--  -->
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <!-- Chart Section -->
+            <div class="col-span-1 lg:col-span-2 bg-white p-4 rounded shadow">
+              <div
+                id="comboChart"
+                style="width: 100%; height: 500px; margin: auto"
+                class="chart-container"
+              ></div>
             </div>
-
-            <!-- Combobox chọn tháng -->
-            <div class="w-40">
-              <label
-                for="monthSelect"
-                class="block text-sm font-medium text-gray-700"
-                >Tháng</label
-              >
-              <select
-                id="monthSelect"
-                class="mt-1 block w-full rounded-lg border border-gray-300 bg-white py-2 px-3 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-gray-700 sm:text-sm"
-              ></select>
-            </div>
-
-            <!-- Combobox chọn ngày -->
-            <div class="w-40">
-              <label
-                for="daySelect"
-                class="block text-sm font-medium text-gray-700"
-                >Ngày</label
-              >
-              <select
-                id="daySelect"
-                class="mt-1 block w-full rounded-lg border border-gray-300 bg-white py-2 px-3 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-gray-700 sm:text-sm"
-              ></select>
+            <!-- Pie Chart Section -->
+            <div class="bg-white p-4 rounded shadow">
+              <div
+                id="chart"
+                style="width: 100%; height: 500px; margin: auto"
+              ></div>
             </div>
           </div>
-
-          <!--  -->
-          <div class="container mx-auto p-6">
-            <!-- Kết quả thống kê -->
-            <div id="statistics" class="mt-8">
-              <h2 id="tv1" class="text-2xl font-semibold text-gray-700 mb-4">
-                Summary
-              </h2>
-              <p class="text-lg text-gray-600">
-                Tổng số đơn hàng:
-                <span id="totalOrders" class="font-bold text-blue-500">0</span>
-              </p>
-              <p class="text-lg text-gray-600">
-                Tổng doanh thu:
-                <span id="totalRevenue" class="font-bold text-blue-500">0</span>
-              </p>
-            </div>
-
-            <!-- Bảng sản phẩm bán chạy -->
-            <div id="topProducts" class="mt-8">
-              <h2
-                id="tv2"
-                class="text-2xl font-semibold text-gray-700 mb-4"
-              ></h2>
-              <table
-                id="productsTable"
-                class="min-w-full bg-white border border-gray-200 rounded-lg shadow-md"
-              >
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
+            <!-- Order List Section -->
+            <div class="bg-white p-4 rounded shadow">
+              <h1 class="font-bold">Danh sách đơn hàng mới</h1>
+              <table class="w-full mt-2" id="table_oder">
                 <thead>
-                  <tr>
-                    <th
-                      class="px-4 py-2 text-left text-sm font-medium text-gray-600 bg-gray-100"
-                    >
-                      Ảnh sản phẩm
-                    </th>
-                    <th
-                      class="px-4 py-2 text-left text-sm font-medium text-gray-600 bg-gray-100"
-                    >
-                      Tên sản phẩm
-                    </th>
-                    <th
-                      class="px-4 py-2 text-left text-sm font-medium text-gray-600 bg-gray-100"
-                    >
-                      Tổng số lượng đã bán
-                    </th>
+                  <tr class="text-left border-b">
+                    <th class="py-2">STT</th>
+                    <th class="py-2 px-4">Thông tin</th>
+                    <th class="py-2 px-4">Tổng đơn (Chưa gồm phí ship)</th>
+                    <th class="py-2 px-4">Loại tài khoản</th>
+                    <th class="py-2 px-4">Trạng thái</th>
+                    <th class="py-2 px-4">Thời gian</th>
                   </tr>
                 </thead>
-                <tbody id="content">
-                  <!-- Các sản phẩm sẽ được chèn ở đây -->
-                </tbody>
+                <tbody id="tbody_oder"></tbody>
               </table>
+            </div>
+            <!-- Top Products Section -->
+            <div class="bg-white p-4 rounded shadow">
+              <h2>Top 5 sản phẩm có luợt mua cao nhất</h2>
+              <div
+                class="mt-2"
+                id="table_product"
+                style="width: 100%; height: 400px"
+              ></div>
+            </div>
+          </div>
+          <!--  -->
+        </div>
+      </div>
+      <!-- Date Picker Dialog -->
+      <div
+        id="datePickerModal"
+        class="fixed inset-0 bg-gray-500 bg-opacity-50 hidden justify-center items-center"
+      >
+        <div class="bg-white p-6 rounded-lg w-96">
+          <h2 class="text-lg font-bold mb-4">Chọn ngày</h2>
+
+          <div class="space-y-4">
+            <!-- Button cho các lựa chọn nhanh -->
+            <button class="w-full py-2 bg-gray-200 rounded" id="todayBtn">
+              Hôm nay
+            </button>
+            <button class="w-full py-2 bg-gray-200 rounded" id="yesterdayBtn">
+              Hôm qua
+            </button>
+            <button class="w-full py-2 bg-gray-200 rounded" id="thisWeekBtn">
+              Tuần này
+            </button>
+            <button class="w-full py-2 bg-gray-200 rounded" id="thisMonthBtn">
+              Tháng này
+            </button>
+            <button
+              class="w-full py-2 bg-gray-200 rounded"
+              id="threeDaysAgoBtn"
+            >
+              3 ngày trước
+            </button>
+            <button class="w-full py-2 bg-gray-200 rounded" id="fiveDaysAgoBtn">
+              5 ngày trước
+            </button>
+            <!-- Thêm nút cho "Tuần trước" -->
+            <button class="w-full py-2 bg-gray-200 rounded" id="lastWeekBtn">
+              Tuần trước
+            </button>
+
+            <!-- Input date cho người dùng chọn phạm vi -->
+            <div class="space-y-2">
+              <label for="startDate" class="block">Ngày bắt đầu:</label>
+              <input
+                type="text"
+                id="startDate"
+                class="w-full p-2 border rounded"
+                placeholder="YYYY-MM-DD"
+              />
+
+              <label for="endDate" class="block">Ngày kết thúc:</label>
+              <input
+                type="text"
+                id="endDate"
+                class="w-full p-2 border rounded"
+                placeholder="YYYY-MM-DD"
+              />
             </div>
           </div>
 
-          <div
-            id="comboChart"
-            style="width: 100%; height: 500px; margin: auto"
-            class="chart-container"
-          ></div>
-          <table class="content w-full border-collapse">
-            <div class="flex gap-8 mt-8">
-              <!-- <div class="flex-1">
-                <h1 class="text-center text-lg font-semibold mb-4">Doanh Thu Theo Tháng</h1> -->
-              <div id="chart"></div>
-              <!-- </div> -->
-
-              <!-- <div class="flex-1"> -->
-              <!-- <div id="donutChart" class="mt-4"></div> -->
-              <!-- </div> -->
-            </div>
-          </table>
+          <div class="mt-4 flex justify-between">
+            <button
+              id="cancelBtn"
+              class="bg-red-500 text-white px-4 py-2 rounded"
+            >
+              Hủy
+            </button>
+            <button
+              id="applyBtn"
+              class="bg-green-500 text-white px-4 py-2 rounded"
+            >
+              Áp dụng
+            </button>
+          </div>
         </div>
       </div>
+      <!-- het -->
     </div>
+    <script src="./handDate.js"></script>
     <script src="./StatisticsMain.js"></script>
     <script src="/views/MenuMain.js"></script>
   </body>

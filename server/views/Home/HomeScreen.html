@@ -1,13 +1,18 @@
 <html>
   <head>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="/views/exten/dialog.js"></script>
     <link
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
       rel="stylesheet"
     />
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1.10.7/dayjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1.10.7/locale/vi.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1.10.7/plugin/isoWeek.min.js"></script>
     <title>Petify</title>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="/views//exten/dialog.js"></script>
     <style>
       body {
         background-image: url("/views/img/n.jpg");
@@ -31,152 +36,299 @@
       }
     </style>
   </head>
-  <body class="bg-gray-100">
+  <body class="bg-gray-800">
     <div class="flex h-screen">
-      <div class="w-[300px] bg-white shadow-md p-3" style="border-radius: 10px; flex-shrink: 0;">
-        <div>
-          <div class="flex items-center justify-center py-6">
-          <img alt="Logo" class="w-10 h-10 rounded-full" height="40"
-            src="https://storage.googleapis.com/a1aa/image/OUExK5J28dq6OpuT5zLsmJVfrR67zP22lhUtahVkXZlgpz0JA.jpg" width="40" />
-            <span class="ml-3 text-xl font-semibold"> Petify </span>
-          </div>
-          <nav class="mt-10">
-            <a
-              class="flex items-center py-2 px-6 cursor-pointer bg-[#6b9484] text-white"
-              href="../Home/HomeScreen.html"
-            >
-              <i class="fas fa-home"> </i>
-              <span class="ml-3"> Trang chủ </span>
-            </a>
-            <!-- quan ly nguoi dung -->
-            <div id="manageMenu">
-              <a
-                class="flex items-center py-2 px-6 text-gray-700 hover:bg-gray-200"
-                onclick="toggleUserSubmenu()"
-              >
-                <i class="fas fa-user"> </i>
-                <span class="ml-3"> Quản lý người dùng </span>
-                <i id="userManageIcon" class="fas fa-chevron-down ml-auto"></i>
-              </a>
-              <div id="userSubmenuItems" class="submenu pl-12">
-                <a
-                  class="block py-2 px-6 text-gray-700 hover:bg-gray-200"
-                  href="/views/User/user/UserScreen.html"
-                  onclick="activateSubmenu(this)"
-                >
-                  Quản lý người dùng
-                </a>
-                <a
-                  class="block py-2 px-6 text-gray-700 hover:bg-gray-200"
-                  href="/views/User/role/RoleScreen.html"
-                  onclick="activateSubmenu(this)"
-                >
-                  Quản lý loại người dùng
-                </a>
-                <a
-                  class="block py-2 px-6 text-gray-700 hover:bg-gray-200"
-                  href="/views/User/userRole/userRoleScreen.html"
-                  onclick="activateSubmenu(this)"
-                >
-                  Quản lý loại người dùng & ngươi dùng
-                </a>
-              </div>
-            </div>
-            <!-- quan ly san pham -->
-            <div id="manageMenu">
-              <a
-                class="flex items-center py-2 px-6 text-gray-700 hover:bg-gray-200 cursor-pointer"
-                onclick="toggleSubmenu()"
-              >
-                <i class="fas fa-tasks"> </i>
-                <span class="ml-3"> Quản lý sản phẩm & loại sản phẩm</span>
-                <i id="manageIcon" class="fas fa-chevron-down ml-auto"> </i>
-              </a>
-              <div id="submenuItems" class="submenu pl-12">
-                <a
-                  class="block py-2 px-6 text-gray-700 hover:bg-gray-200"
-                  href="/views/Product/product/ProductScreen.html"
-                  onclick="activateSubmenu(this)"
-                >
-                  Quản lý sản phẩm
-                </a>
-                <a
-                  class="block py-2 px-6 text-gray-700 hover:bg-gray-200"
-                  href="/views/Product/category/CategoryScreen.html"
-                  onclick="activateSubmenu(this)"
-                >
-                  Quản lý loại sản phẩm
-                </a>
-              </div>
-            </div>
-            <!-- danh gia -->
-            <a
-              class="flex items-center py-2 px-6 text-gray-700 hover:bg-gray-200"
-              href="/views/Review/ReviewScreen.html"
-            >
-              <i class="fas fa-star"></i>
-              <span class="ml-3"> Quản lý đánh giá</span>
-            </a>
-            <!-- hóa đơn -->
-            <a
-              class="flex items-center py-2 px-6 text-gray-700 hover:bg-gray-200"
-              href="/views/Invoice/InvoiceScreen.html"
-            >
-              <i class="fas fa-file-invoice"></i>
-              <span class="ml-3"> Quản lý hóa đơn</span>
-            </a>
-            <!-- đơn hàng -->
-            <a
-              class="flex items-center py-2 px-6 text-gray-700 hover:bg-gray-200"
-              href="/views/Oder/OderScreen.html"
-            >
-              <i class="fas fa-shopping-cart"></i>
-              <span class="ml-3"> Quản lý đơn hàng</span>
-            </a>
-            <!-- thông báo -->
-            <!-- <a
-              class="flex items-center py-2 px-6 text-gray-700 hover:bg-gray-200"
-              href="/views/Notification/NotificationScreen.html"
-            >
-              <i class="fas fa-bell"></i>
-              <span class="ml-3"> Quản lý thông báo</span>
-            </a> -->
-            <!-- nhà cung cấp -->
-            <a
-              class="flex items-center py-2 px-6 text-gray-700 hover:bg-gray-200"
-              href="/views/Supplier/SupplierScreen.html"
-            >
-              <i class="fas fa-truck"></i>
-              <span class="ml-3"> Quản lý nhà cung cấp</span>
-            </a>
-            <!-- Thống kê  -->
-            <a
-              class="flex items-center py-2 px-6 text-gray-700 hover:bg-gray-200"
-              href="/views/Statistics/StatisticsScreen.html"
-            >
-              <i class="fas fa-chart-bar"> </i>
-              <span class="ml-3"> Thống kê </span>
-            </a>
-          </nav>
-          <button
-            onclick="logout()"
-            class="bg-red-500 text-white text-lg font-semibold py-2 px-6 mb-4 mx-4 rounded hover:bg-red-600"
+      <!-- Sidebar -->
+      <div
+        class="w-[300px] bg-white shadow-md p-6"
+        style="border-radius: 10px; flex-shrink: 0"
+      >
+        <div class="flex items-center justify-center py-6">
+          <img
+            alt="Logo"
+            class="w-10 h-10 rounded-full"
+            height="40"
+            src="https://storage.googleapis.com/a1aa/image/OUExK5J28dq6OpuT5zLsmJVfrR67zP22lhUtahVkXZlgpz0JA.jpg"
+            width="40"
+          />
+          <span class="ml-3 text-xl font-semibold"> Petify </span>
+        </div>
+        <nav class="mt-10">
+          <a
+            class="flex items-center py-2 px-6 text-gray-700 hover:bg-gray-200 bg-[#6b9484] text-white"
+            href="/views/Home/HomeScreen.html"
           >
-            Đăng xuất
-          </button>
+            <i class="fas fa-home"> </i>
+            <span class="ml-3"> Trang chủ </span>
+          </a>
+          <!--  -->
+          <div id="manageMenu">
+            <a
+              class="flex items-center py-2 px-6 cursor-pointer"
+              onclick="toggleUserSubmenu()"
+            >
+              <i class="fas fa-user"> </i>
+              <span class="ml-3"> Quản lý người dùng </span>
+              <i id="userManageIcon" class="fas fa-chevron-down ml-auto"></i>
+            </a>
+            <div id="userSubmenuItems" class="submenu pl-12">
+              <a
+                class="block py-2 px-6 text-gray-700 hover:bg-gray-200 block py-2 px-6 text-gray-700 hover:bg-gray-200"
+                href="/views/User/user/UserScreen.html"
+                onclick="activateSubmenu(this)"
+              >
+                Quản lý người dùng
+              </a>
+              <a
+                class="block py-2 px-6 text-gray-700 hover:bg-gray-200"
+                href="/views/User/role/RoleScreen.html"
+                onclick="activateSubmenu(this)"
+              >
+                Quản lý loại người dùng
+              </a>
+              <!-- <a
+                class="block py-2 px-6 text-gray-700 hover:bg-gray-200"
+                href="/views/User/userRole/userRoleScreen.html"
+                onclick="activateSubmenu(this)"
+              >
+                Quản lý loại người dùng & ngươi dùng
+              </a> -->
+            </div>
+          </div>
+          <!--  -->
+          <div id="manageMenu">
+            <a
+              class="flex items-center py-2 px-6 text-gray-700 hover:bg-gray-200 cursor-pointer"
+              onclick="toggleSubmenu()"
+            >
+              <i class="fas fa-tasks"> </i>
+              <span class="ml-3">Quản lý sản phẩm & loại sản phẩm</span>
+              <i id="manageIcon" class="fas fa-chevron-down ml-auto"> </i>
+            </a>
+            <div id="submenuItems" class="submenu pl-12">
+              <a
+                class="block py-2 px-6 text-gray-700 hover:bg-gray-200"
+                href="/views/Product/product/ProductScreen.html"
+                onclick="activateSubmenu(this)"
+              >
+                Quản lý sản phẩm
+              </a>
+              <a
+                class="block py-2 px-6 text-gray-700 hover:bg-gray-200"
+                href="/views/Product/category/CategoryScreen.html"
+                onclick="activateSubmenu(this)"
+              >
+                Quản lý loại sản phẩm
+              </a>
+            </div>
+          </div>
+          <!-- danh gia -->
+          <a
+            class="flex items-center py-2 px-6 text-gray-700 hover:bg-gray-200"
+            href="/views/Review/ReviewScreen.html"
+          >
+            <i class="fas fa-star"></i>
+            <span class="ml-3"> Quản lý đánh giá</span>
+          </a>
+          <!-- hóa đơn -->
+          <a
+            class="flex items-center py-2 px-6 text-gray-700 hover:bg-gray-200"
+            href="/views/Invoice/InvoiceScreen.html"
+          >
+            <i class="fas fa-file-invoice"></i>
+            <span class="ml-3"> Quản lý hóa đơn</span>
+          </a>
+          <!-- đơn hàng -->
+          <a
+            class="flex items-center py-2 px-6 text-gray-700 hover:bg-gray-200"
+            href="/views/Oder/OderScreen.html"
+          >
+            <i class="fas fa-shopping-cart"></i>
+            <span class="ml-3"> Quản lý đơn hàng</span>
+          </a>
+          <!-- Giảm giá -->
+          <a
+            class="flex items-center py-2 px-6 text-gray-700 hover:bg-gray-200"
+            href="/views/sale/SaleProduct.html"
+          >
+            <i class="fas fa-tag"></i>
+            <span class="ml-3"> Quản giảm giá</span>
+          </a>
+          <!-- thông báo -->
+          <!-- <a
+           class="flex items-center py-2 px-6 text-gray-700 hover:bg-gray-200"
+           href="/views/Notification/NotificationScreen.html"
+         >
+           <i class="fas fa-bell"></i>
+           <span class="ml-3"> Quản lý thông báo</span>
+         </a> -->
+          <!-- nhà cung cấp -->
+          <a
+            class="flex items-center py-2 px-6 text-gray-700 hover:bg-gray-200"
+            href="/views/Supplier/SupplierScreen.html"
+          >
+            <i class="fas fa-truck"></i>
+            <span class="ml-3"> Quản lý nhà cung cấp</span>
+          </a>
+          <!--  Quản lý đơn vị vận chuyển -->
+          <a
+            class="flex items-center py-2 px-6 text-gray-700 hover:bg-gray-200"
+            href="/views/Carrier/CarrierScreen.html"
+          >
+            <i class="fas fa-route"></i>
+            <span class="ml-3"> Quản lý đơn vị vận chuyển</span>
+          </a>
+          <!-- Thống kê  -->
+          <a
+            class="flex items-center py-2 px-6 text-gray-700 hover:bg-gray-200"
+            href="/views/Statistics/StatisticsScreen.html"
+          >
+            <i class="fas fa-chart-bar"> </i>
+            <span class="ml-3"> Thống kê </span>
+          </a>
+        </nav>
+        <button
+          onclick="logout()"
+          class="bg-red-500 text-white text-lg font-semibold py-2 px-6 mb-4 mx-4 rounded hover:bg-red-600"
+        >
+          Đăng xuất
+        </button>
       </div>
-      <div class="absolute top-0 right-0 m-4 flex items-center mb-6 top-[20px]">
-        <img
-          id="userAvatar"
-          class="w-10 h-10 rounded-full"
-          src=""
-          alt="User Avatar"
-          style="margin-right: 10px"
-        />
-        <div id="nameuser" class="text-lg font-bold text-white"></div>
+      <!-- Main Content -->
+      <div
+        class="flex-grow bg-gray-100 p-6 overflow-y-auto"
+        style="border-radius: 10px; margin-left: 10px"
+      >
+        <!-- cuc 1 -->
+        <div class="flex justify-between items-center mb-6">
+          <h1 class="text-2xl font-bold">Trang chủ</h1>
+          <div class="flex items-center">
+            <img
+              id="userAvatar"
+              class="w-10 h-10 rounded-full mr-5"
+              src=""
+              alt="User Avatar"
+            />
+            <div id="nameuser" class="text-lg font-bold"></div>
+          </div>
+        </div>
+        <!-- cuc 2 -->
+        <div class="bg-white p-4 rounded shadow">
+          <main class="p-4">
+            <div class="grid grid-cols-4 gap-4 mb-4">
+              <!-- Ô đầu tiên -->
+              <div class="bg-blue-500 text-white p-4 rounded shadow">
+                <div class="flex items-center">
+                  <i class="fas fa-shopping-cart text-2xl"></i>
+                  <div class="ml-4">
+                    <p class="text-sm">Tổng số đơn hàng</p>
+                    <p class="text-xl font-semibold" id="sum_oder"></p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Ô thứ hai -->
+              <div class="bg-red-500 text-white p-4 rounded shadow">
+                <div class="flex items-center">
+                  <i class="fas fa-users text-2xl"></i>
+                  <div class="ml-4">
+                    <p class="text-sm">Thành viên</p>
+                    <p class="text-xl font-semibold" id="sum_user"></p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Ô thứ ba -->
+              <div class="bg-green-500 text-white p-4 rounded shadow">
+                <div class="flex items-center">
+                  <i class="fas fa-cogs text-2xl"></i>
+                  <div class="ml-4">
+                    <p class="text-sm">Sản phẩm</p>
+                    <p class="text-xl font-semibold" id="sum_product"></p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Combobox bộ lọc -->
+              <div class="bg-gray-100 text-black p-4 rounded shadow">
+                <p class="text-sm text-gray-700 mt-2">Chọn thời gian để lọc</p>
+                <select
+                  id="timeFilter"
+                  onchange="selectOption(this)"
+                  class="block w-full bg-white text-black px-4 py-2 rounded-lg border border-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 transition ease-in-out duration-300"
+                >
+                  <option value="today">Hôm nay</option>
+                  <option value="thisMonth">Tháng này</option>
+                  <option value="thisYear">Năm này</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="bg-white p-4 rounded shadow mb-4">
+              <h2 class="text-lg font-semibold mb-4">
+                Danh sách đơn hàng mới chờ xác nhận trong ngày hôm nay
+              </h2>
+              <table class="w-full text-left" id="table_oder">
+                <thead>
+                  <tr class="border-b">
+                    <th class="py-2">STT</th>
+                    <th class="py-2">Thông tin</th>
+                    <th class="py-2">Tổng đơn (Chưa gồm phí ship)</th>
+                    <th class="py-2">Loại tài khoản</th>
+                    <th class="py-2">Trạng thái</th>
+                    <th class="py-2">Thời gian</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody_oder"></tbody>
+              </table>
+              <div
+                id="tbody_oder-pagination"
+                class="flex justify-center items-center mt-4"
+              ></div>
+            </div>
+            <div class="grid grid-cols-3 gap-4">
+              <div class="bg-white p-4 rounded shadow col-span-1">
+                <h2 class="text-lg font-semibold mb-4">Thành viên mới</h2>
+                <table class="w-full text-left" id="table_user">
+                  <thead>
+                    <tr class="border-b">
+                      <th class="py-2">Số user</th>
+                      <th class="py-2">Thông tin</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tbody_user"></tbody>
+                </table>
+                <div
+                  id="tbody_user-pagination"
+                  class="flex justify-center items-center mt-4"
+                ></div>
+              </div>
+              <div class="bg-white p-4 rounded shadow col-span-2">
+                <h2 class="text-lg font-semibold mb-4">Sản phẩm mới</h2>
+                <table class="w-full text-left" id="table_product">
+                  <thead>
+                    <tr class="border-b">
+                      <th class="py-2">Tên sản phẩm</th>
+                      <th class="py-2">Danh mục</th>
+                      <th class="py-2">Người đăng</th>
+                      <th class="py-2">Giá</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tbody_product"></tbody>
+                </table>
+                <div
+                  id="tbody_product-pagination"
+                  class="flex justify-center items-center mt-4"
+                ></div>
+              </div>
+            </div>
+          </main>
+          <!--  -->
+        </div>
       </div>
     </div>
-    <script src="../MenuMain.js"></script>
-    <script src="MainHome.js"></script>
+    <script></script>
+    <script src="./MainHome.js"></script>
+    <script src="/views/MenuMain.js"></script>
   </body>
 </html>

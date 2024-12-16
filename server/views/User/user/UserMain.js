@@ -7,8 +7,14 @@ const headers = {
 };
 let tbody = document.querySelector("tbody");
 let table = document.querySelector("table");
+const productsPerPage = 10;
+let currentPage = 1;
+let totalPages = 0;
+let usersData = []; // Dữ liệu người dùng chưa được lọc
+let rolesData = []; // Dữ liệu vai trò chưa được lọc
+let filteredUsers = [];
+// Cập nhật hàm getListUser để hỗ trợ phân trang
 const getListUser = async () => {
-
   try {
     const loadingDialog = dialogLoading("Đang tải danh sách dữ liệu...");
     const response = await fetch(`${url}/getListUser`, {
@@ -17,57 +23,58 @@ const getListUser = async () => {
     });
     const data = await response.json();
 
-    // Lấy danh sách `roles` cho từng người dùng bằng cách đợi tất cả các hàm async hoàn thành
-    const roles = await Promise.all(
+    // Lấy danh sách `roles` cho từng người dùng
+    rolesData = await Promise.all(
       data.map((item) => getAllUsersWithRoles(item._id))
     );
 
+    // Lưu lại dữ liệu người dùng gốc
+    usersData = data;
+    // Cập nhật lại kết quả tìm kiếm khi tải dữ liệu lần đầu
+    filteredUsers = data;
+    // Tính toán tổng số trang
     // Hiển thị bảng với dữ liệu người dùng và vai trò
-    content.innerHTML = /*html*/ `<div class="flex mb-4">
-            <button class="bg-[#396060] text-white px-4 py-2 rounded mr-2 btnadd">
-              Thêm mới
-            </button>
-            <input
-              id="searchInput"
-              class="border border-gray-300 rounded px-4 py-2 flex-grow"
-              placeholder="Tìm kiếm"
-              type="text"
-            />
-            <button class="bg-[#396060] text-white px-4 py-2 rounded ml-2">
-              Tìm kiếm
-            </button>
-          </div>
-          <table class="content w-full border-collapse">
-            <thead>
-              <tr class="bg-[#396060] text-white">
-                <th class="border border-gray-300 px-4 py-2">STT</th>
-                <th class="border border-gray-300 px-4 py-2">Tên người dùng</th>
-                <th class="border border-gray-300 px-4 py-2" style="width: 300px;">Loại người dùng</th>
-                <th class="border border-gray-300 px-4 py-2">Email</th>
-                <th class="border border-gray-300 px-4 py-2">Địa chỉ</th>
-                <th class="border border-gray-300 px-4 py-2">Số điện thoại</th>
-                <th class="border border-gray-300 px-4 py-2">Ảnh</th>
-                <th class="border border-gray-300 px-4 py-2">Hành động</th>
-              </tr>
-            </thead>
-            <tbody id="userList">
-              <!-- Danh sách người dùng sẽ được chèn ở đây -->
-            </tbody>
-          </table>`;
+    content.innerHTML = /*html*/ `
+      <div class="flex mb-4">
+        <button class="bg-[#396060] text-white px-4 py-2 rounded mr-2 btnadd">Thêm mới</button>
+        <input id="searchInput" class="border border-gray-300 rounded px-4 py-2 flex-grow" placeholder="Tìm kiếm" type="text" />
+        <button class="bg-[#396060] text-white px-4 py-2 rounded ml-2">Tìm kiếm</button>
+      </div>
+      <table class="content w-full border-collapse">
+        <thead>
+          <tr class="bg-[#396060] text-white">
+            <th class="border border-gray-300 px-4 py-2">STT</th>
+            <th class="border border-gray-300 px-4 py-2">Tên người dùng</th>
+            <th class="border border-gray-300 px-4 py-2" style="width: 300px;">Loại người dùng</th>
+            <th class="border border-gray-300 px-4 py-2">Email</th>
+            <th class="border border-gray-300 px-4 py-2">Địa chỉ</th>
+            <th class="border border-gray-300 px-4 py-2">Số điện thoại</th>
+            <th class="border border-gray-300 px-4 py-2">Ảnh</th>
+            <th class="border border-gray-300 px-4 py-2">Hành động</th>
+          </tr>
+        </thead>
+        <tbody id="userList"></tbody>
+      </table>
+      <div class="pagination flex justify-between mt-4">
+        <button id="prevPage" class="bg-[#008080] text-white px-4 py-2 rounded" disabled>Trang trước</button>
+        <span id="pageInfo" class="text-gray-700">Trang 1 / ${totalPages}</span>
+        <button id="nextPage" class="bg-[#008080] text-white px-4 py-2 rounded">Trang sau</button>
+      </div>
+    `;
 
     // Lắng nghe sự kiện tìm kiếm
-    document
-      .getElementById("searchInput")
-      .addEventListener("input", async (e) => {
-        const query = e.target.value; // Lấy giá trị người dùng nhập
-        const filteredUsers = searchUser(query, data); // Tìm kiếm theo query trong danh sách người dùng
+    document.getElementById("searchInput").addEventListener("input", async (e) => {
+      const query = e.target.value; // Lấy giá trị người dùng nhập
+      filteredUsers = searchUser(query, usersData); // Tìm kiếm theo query trong danh sách người dùng
 
-        // Cập nhật lại giao diện với kết quả tìm kiếm
-        renderUserList(filteredUsers, roles);
-      });
+      // Cập nhật lại giao diện với kết quả tìm kiếm
+      currentPage = 1; // Reset trang về 1 khi tìm kiếm lại
+      renderUserList(filteredUsers, rolesData);
+    });
 
     // Gọi hàm renderUserList để hiển thị tất cả người dùng khi load lần đầu
-    renderUserList(data, roles);
+    renderUserList(filteredUsers, rolesData);
+    // Cập nhật phân trang cho dữ liệu
     loadingDialog.close();
   } catch (error) {
     console.log("Error fetching user data:", error);
@@ -79,8 +86,13 @@ function renderUserList(users, roles) {
   const tableBody = document.getElementById("userList");
   tableBody.innerHTML = ""; // Xóa các hàng cũ trong bảng trước khi thêm các kết quả mới
 
-  if (users.length === 0) {
-    // Nếu không có người dùng nào trong kết quả tìm kiếm
+  // Cập nhật phân trang
+  const startIndex = (currentPage - 1) * productsPerPage;
+  const endIndex = startIndex + productsPerPage;
+  const usersToDisplay = users.slice(startIndex, endIndex);
+  const rolesToDisplay = roles.slice(startIndex, endIndex);
+
+  if (usersToDisplay.length === 0) {
     const noDataRow = /*html*/ `
       <tr>
         <td colspan="8" class="border border-gray-300 px-4 py-2 text-center text-red-500">
@@ -90,39 +102,28 @@ function renderUserList(users, roles) {
     tableBody.innerHTML = noDataRow; // Hiển thị thông báo "Không có dữ liệu"
   } else {
     // Nếu có người dùng trong kết quả tìm kiếm, hiển thị bảng bình thường
-    users.forEach((user, index) => {
+    usersToDisplay.forEach((user, index) => {
       const row = /*html*/ `
         <tr id="row-${user._id}">
-          <td class="border border-gray-300 px-4 py-2">${index + 1}</td>
+          <td class="border border-gray-300 px-4 py-2">${startIndex + index + 1}</td>
           <td class="border border-gray-300 px-4 py-2">${user.name}</td>
           <td class="border border-gray-300 px-4 py-2">
-            ${Array.isArray(roles[index]) && roles[index].length > 0
-          ? roles[index]
-            .map((role, index) => {
-              return /*html*/`<span>${index + 1
-                }_</span><span class="role-item px-2 py-1 rounded mr-2 mt-2 mb-2">${role.name
-                }</span><br>`;
-            })
+            ${Array.isArray(rolesToDisplay[index]) && rolesToDisplay[index].length > 0
+          ? rolesToDisplay[index]
+            .map((role, index) => `<span class="role-item px-2 py-1 rounded mr-2 mt-2 mb-2">${role.name}</span>`)
             .join("")
-          : "Không có vai trò"
-        }
+          : "Không có vai trò"}
           </td>
           <td class="border border-gray-300 px-4 py-2">${user.email}</td>
-          <td class="border border-gray-300 px-4 py-2">${user.location || ""
-        }</td>
-          <td class="border border-gray-300 px-4 py-2">${user.phone_number || ""
-        }</td>
+          <td class="border border-gray-300 px-4 py-2">${user.location || ""}</td>
+          <td class="border border-gray-300 px-4 py-2">${user.phone_number || ""}</td>
           <td class="border border-gray-300 px-4 py-2">
-            <img alt="Product image" class="w-12 h-12" height="50" src="${user.avata
-        }" width="50" />
+            <img alt="Product image" class="w-12 h-12" height="50" src="${user.avata}" width="50" />
           </td>
           <td class="border border-gray-300 px-4 py-2">
             <div class="button-group flex flex-col space-y-2">
-              <button class="bg-blue-500 text-white px-2 py-1 rounded btnedit" data-id="${user._id
-        }">Cập nhật</button>
-   <!-- <button class="bg-red-500 text-white px-2 py-1 rounded btndelete" data-id="${user._id}">Xóa</button> -->
-              <button class="bg-[#008080] text-white px-2 py-1 rounded btndetail" data-id="${user._id
-        }">Chi tiết</button>
+              <button class="bg-blue-500 text-white px-2 py-1 rounded btnedit" data-id="${user._id}">Cập nhật</button>
+              <button class="bg-[#008080] text-white px-2 py-1 rounded btndetail" data-id="${user._id}">Chi tiết</button>
             </div>
           </td>
         </tr>`;
@@ -130,8 +131,32 @@ function renderUserList(users, roles) {
     });
   }
 
+  // Cập nhật thông tin phân trang
+
+  page(filteredUsers.length, filteredUsers, rolesData);
   // Thiết lập lại các sự kiện cho các nút sau khi cập nhật giao diện
   setupEventListeners(roles);
+}
+
+// Thêm sự kiện cho các nút phân trang
+const page = (totalItems, data, roles) => {
+  const totalPages = Math.ceil(totalItems / productsPerPage);
+  document.getElementById("pageInfo").innerText = `Trang ${currentPage} / ${totalPages}`;
+  document.getElementById("prevPage").disabled = currentPage === 1;
+  document.getElementById("nextPage").disabled = currentPage === totalPages;
+  document.getElementById("prevPage").addEventListener("click", () => {
+    if (currentPage > 1) {
+      currentPage--;
+      renderUserList(data, roles); // Cập nhật lại danh sách người dùng
+    }
+  });
+
+  document.getElementById("nextPage").addEventListener("click", () => {
+    if (currentPage < totalPages) {
+      currentPage++;
+      renderUserList(data, roles); // Cập nhật lại danh sách người dùng
+    }
+  });
 }
 
 // Hàm tìm kiếm người dùng
@@ -149,6 +174,7 @@ function searchUser(query, users) {
 
   return filteredUsers;
 }
+
 /////
 function setupEventListeners(roles) {
   ///xoa
@@ -192,14 +218,15 @@ function setupEventListeners(roles) {
           // console.log(data, "kkkk");
           const roles = await getAllUsersWithRoles(data._id);
           const rolesList = await getRoles();
-          createUserDetailHTML(
-            data,
-            true,
-            false,
-            "Chi tiết người dùng",
-            roles || [],
-            rolesList || []
-          );
+          dialogDetailUser(data)
+          // createUserDetailHTML(
+          //   data,
+          //   true,
+          //   false,
+          //   "Chi tiết người dùng",
+          //   roles || [],
+          //   rolesList || []
+          // );
           const passwordInput = document.getElementById("password");
           const eyeIcon = document.querySelector(".fas.fa-eye");
           eyeIcon.addEventListener("click", () => {
@@ -234,7 +261,7 @@ function setupEventListeners(roles) {
             roles || [],
             rolesList || []
           );
-          chosee()
+
           const passwordInput = document.getElementById("password");
           const eyeIcon = document.querySelector(".fas.fa-eye");
           eyeIcon.addEventListener("click", () => {
@@ -260,7 +287,7 @@ function setupEventListeners(roles) {
       roles || [],
       rolesList
     );
-    chosee()
+
     const passwordInput = document.getElementById("password");
     const eyeIcon = document.querySelector(".fas.fa-eye");
     eyeIcon.addEventListener("click", () => {
@@ -319,18 +346,46 @@ function createUserDetailHTML(
   function isRoleChecked(roleId) {
     return Array.isArray(roles) && roles.some((role) => role._id === roleId);
   }
+  const currentUserId = localStorage.getItem("currentUserId");
+  const isSuperAdmin = currentUserId === "67167e654a449a86951a6fa9"; // ID của Super Admin
+  const isEditingSuperAdmin = _id === "67167e654a449a86951a6fa9"; // Đang chỉnh sửa Super Admin
+  const isEditingSelf = currentUserId === _id; // Đang chỉnh sửa chính tài khoản mình
+
+  // Kiểm tra nếu tài khoản hiện tại là Super Admin và đang chỉnh sửa chính mình
+  const isSuperAdminEditingSelf = isSuperAdmin && isEditingSelf;
+
+  // Khóa các trường email, username, password nếu người dùng là Super Admin và đang chỉnh sửa chính mình hoặc nếu là Admin
+  const editableFields = {
+    email: (isSuperAdminEditingSelf || !isSuperAdmin) ? "readonly onclick='showError(\"email\")'" : "",
+    username: (isSuperAdminEditingSelf || !isSuperAdmin) ? "readonly onclick='showError(\"username\")'" : "",
+    password: (isSuperAdminEditingSelf || !isSuperAdmin) ? "readonly onclick='showError(\"password\")'" : "",
+  };
 
   const roleCheckboxes = rolesList
-    .map(
-      (role) => /*html*/ `
-     <label>
-       <input type="checkbox" name="option" value="${role._id}" ${isRoleChecked(role._id) ? "checked" : ""
-        }>
-       ${role.name}
-     </label><br>
-   `
-    )
+    .map((role) => {
+      const isAdminRole = role.name === "Admin";
+      const isChecked = isRoleChecked(role._id);
+
+      // Điều kiện khóa checkbox quyền Admin
+      const shouldDisable =
+        (isAdminRole && isEditingSuperAdmin) || // Super Admin không được bỏ chọn quyền Admin của mình
+        (isAdminRole && !isSuperAdmin); // Người không phải Super Admin không được chỉnh quyền Admin
+
+      return /*html*/ `
+        <label>
+          <input 
+            type="checkbox" 
+            name="option" 
+            value="${role._id}" 
+            ${isChecked ? "checked" : ""} 
+            ${shouldDisable ? "disabled" : ""}>
+          ${role.name}
+        </label><br>
+      `;
+    })
     .join("");
+
+
   content.innerHTML = /*html*/ `
     <h2 class="text-xl font-bold mb-4">${title}</h2>
     <div class="flex">
@@ -351,7 +406,7 @@ function createUserDetailHTML(
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700" for="email">Email</label>
-            <input class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" id="email" type="email" value="${email}" ${readonlyAttr} />
+            <input class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" id="email" type="email" value="${email}" ${editableFields.email} />
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700" for="address">Địa chỉ</label>
@@ -363,12 +418,12 @@ function createUserDetailHTML(
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700" for="username">Tên người dùng (tài khoản)</label>
-            <input class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" id="username" type="text" value="${user_name}" ${readonlyAttr} />
+            <input class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" id="username" type="text" value="${user_name}" ${editableFields.username} />
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700" for="password">Mật khẩu</label>
             <div class="relative mt-1">
-              <input class="block w-full border border-gray-300 rounded-md shadow-sm p-2 pr-10" id="password" type="password" value="${password}" ${readonlyAttr} />
+              <input class="block w-full border border-gray-300 rounded-md shadow-sm p-2 pr-10" id="password" type="password" value="${password}" ${editableFields.password} />
               <i class="fas fa-eye absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 cursor-pointer" onclick="togglePassword()"></i>
             </div>
           </div>
@@ -400,10 +455,10 @@ function createUserDetailHTML(
     }
   });
 }
-const chosee = () => {
-
-
+function showError(field) {
+  dialogError(`Bạn không đủ quyền hạn để sửa mục ${field}!`);
 }
+
 // console.log(datagetListUser, "dataget");
 //luu edit
 async function saveEditUser(_id) {
@@ -432,33 +487,10 @@ async function saveEditUser(_id) {
     console.error("currentRoles không phải là một mảng:", currentRoles);
     return;
   }
+
   if (selectedValues.length === 0) {
     dialogError("Hãy chọn ít nhất một vai trò.");
     return
-  } else {
-    if (currentRoles.length === 0) {
-      for (const roleId of selectedRoles) {
-        await addRolesUser(_id, roleId); // Gọi hàm thêm vai trò
-      }
-    } else {
-      // Nếu người dùng có vai trò, thực hiện thêm và xóa vai trò
-      // Thêm vai trò mới nếu vai trò checkbox chưa có trong currentRoles
-      for (const roleId of selectedRoles) {
-        const isRoleAlreadyAssigned = currentRoles.some(
-          (role) => role._id === roleId
-        );
-        if (!isRoleAlreadyAssigned) {
-          await addRolesUser(_id, roleId); // Gọi hàm thêm vai trò
-        }
-      }
-
-      // Xóa vai trò nếu vai trò checkbox không còn được chọn
-      for (const role of currentRoles) {
-        if (!selectedRoles.includes(role._id)) {
-          await removeRolesUser(_id, role._id); // Gọi hàm xóa vai trò
-        }
-      }
-    }
   }
 
   // Cập nhật thông tin người dùng
@@ -479,10 +511,11 @@ async function saveEditUser(_id) {
     return;
   }
 
-  if (!phone || !/^\d{10,15}$/.test(phone)) {
-    dialogError("Số điện thoại phải là số từ 10 đến 15 chữ số.");
+  if (!phone || !/^(?:\+84)?\d{9,12}$/.test(phone)) {
+    dialogError("Số điện thoại phải có từ 10 đến 15 chữ số .");
     return;
   }
+
 
   if (!user_name) {
     dialogError("Tên đăng nhập không được để trống.");
@@ -509,17 +542,6 @@ async function saveEditUser(_id) {
   for (let [key, value] of formData.entries()) {
     console.log(key, value);
   }
-  // const updatedUser = {
-  //   name,
-  //   email,
-  //   location,
-  //   phone_number: phone,
-  //   user_name,
-  //   password,
-  //   avata: avatar,
-  // };
-  // updatedUser.roles = selectedRoles;
-
   dialogInfo("Bạn có muốn lưu các thay đổi không?"
     , async () => {
       const loadingDialog = dialogLoading("Đang tải danh sách sản phẩm...");
@@ -533,7 +555,36 @@ async function saveEditUser(_id) {
           body: formData,
         });
         const data = await response.json();
+        const idUser = localStorage.getItem("currentUserId");
+        console.log(idUser, "idUser")
+        if (idUser === _id) {
+          updateUserInfo(data.result.name, data.result.avata)
+        }
+
         if (data.status) {
+          if (currentRoles.length === 0) {
+            for (const roleId of selectedRoles) {
+              await addRolesUser(_id, roleId); // Gọi hàm thêm vai trò
+            }
+          } else {
+            // Nếu người dùng có vai trò, thực hiện thêm và xóa vai trò
+            // Thêm vai trò mới nếu vai trò checkbox chưa có trong currentRoles
+            for (const roleId of selectedRoles) {
+              const isRoleAlreadyAssigned = currentRoles.some(
+                (role) => role._id === roleId
+              );
+              if (!isRoleAlreadyAssigned) {
+                await addRolesUser(_id, roleId); // Gọi hàm thêm vai trò
+              }
+            }
+
+            // Xóa vai trò nếu vai trò checkbox không còn được chọn
+            for (const role of currentRoles) {
+              if (!selectedRoles.includes(role._id)) {
+                await removeRolesUser(_id, role._id); // Gọi hàm xóa vai trò
+              }
+            }
+          }
           dialogSuccess("Cập nhật người dùng thành công!").then(() => {
             restoreRow(); // Chỉ gọi sau khi thông báo xong
           });
@@ -551,7 +602,15 @@ async function saveEditUser(_id) {
     })
 
 }
+function updateUserInfo(newName, newAvatar) {
+  // Cập nhật thông tin trong localStorage
+  localStorage.setItem("loggedInUser", newName);
+  localStorage.setItem("loggedInUserAvatar", newAvatar);
 
+  // Cập nhật lại nội dung trên trang
+  document.getElementById("nameuser").textContent = "Welcome, " + newName;
+  document.getElementById("userAvatar").src = newAvatar;
+}
 ///luu them moi
 async function saveAddUser() {
   console.log("Thêm mới");
@@ -706,6 +765,7 @@ async function getAllUsersWithRoles(id) {
     const data = await response.json();
     console.log(data.result, "getAllUsersWithRoles");
     const userRole = data.result.find((userRole) => userRole.user._id === id);
+    console.log(userRole, "userRole")
     if (userRole) {
       console.log(userRole.roles, "Tên người dùng");
       return userRole.roles;

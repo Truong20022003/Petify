@@ -138,6 +138,8 @@ document
           if (userRole) {
             localStorage.setItem("loggedInUser", user.name);
             localStorage.setItem("loggedInUserAvatar", user.avata);
+            localStorage.setItem("currentUserId", user._id);
+
             const roleAdmin = roles.some(
               (role) => role._id === "672f2c435367fbd3bf9f6831"
             );

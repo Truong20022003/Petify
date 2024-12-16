@@ -11,7 +11,7 @@ let allData = [];  // Dữ liệu tổng hợp sau khi lấy từ API.
 let filteredData = []; // Dữ liệu đã lọc từ tìm kiếm
 const urlParams = new URLSearchParams(window.location.search);
 let orderCode = urlParams.get("orderCode");
-console.log(orderCode, "dddddddddddddddddddddddddddddddddddd")
+// console.log(orderCode, "dddddddddddddddddddddddddddddddddddd")
 const getList = async () => {
   try {
     const response = await fetch(`${url}/order/getListOrder`, {
@@ -21,14 +21,14 @@ const getList = async () => {
     const data = await response.json();
     allData = data;  // Lưu dữ liệu tổng hợp
     filteredData = data;  // Mặc định ban đầu là toàn bộ dữ liệu
-    totalPages = Math.ceil(allData.length / 10);  // Giả sử mỗi trang có 10 bản gh
+    totalPages = Math.ceil(allData.length / 25);  // Giả sử mỗi trang có 10 bản gh
     if (orderCode && orderCode.startsWith("#")) {
       orderCode = orderCode.slice(1);
     }
     if (orderCode) {
       filteredData = search(orderCode, allData); // Tìm kiếm theo mã đơn hàng
       currentPage = 1; // Đặt lại trang đầu tiên
-      totalPages = Math.ceil(filteredData.length / 10); // Tính lại số trang
+      totalPages = Math.ceil(filteredData.length / 25); // Tính lại số trang
     }
     renderTable(filteredData);
   } catch (err) {
@@ -80,7 +80,7 @@ const renderTable = async (data) => {
       ? allData.filter(order => order.status === statusFilterValue)  // Lọc theo trạng thái
       : allData;  // Nếu không chọn trạng thái, hiển thị tất cả dữ liệu
     currentPage = 1;  // Đặt lại trang đầu tiên khi lọc theo trạng thái
-    totalPages = Math.ceil(filteredData.length / 10);  // Tính lại số trang sau khi lọc
+    totalPages = Math.ceil(filteredData.length / 25);  // Tính lại số trang sau khi lọc
     renderList(filteredData, datasuser);  // Render lại dữ liệu sau khi lọc theo trạng thái
   });
 
@@ -89,7 +89,7 @@ const renderTable = async (data) => {
     const query = e.target.value;
     filteredData = search(query, filteredData);  // Tìm kiếm chỉ trong filteredData đã lọc theo trạng thái
     currentPage = 1;  // Reset về trang đầu khi tìm kiếm
-    totalPages = Math.ceil(filteredData.length / 10);  // Tính lại số trang sau tìm kiếm
+    totalPages = Math.ceil(filteredData.length / 25);  // Tính lại số trang sau tìm kiếm
     renderList(filteredData, datasuser);  // Render lại dữ liệu sau tìm kiếm
   });
 
@@ -118,8 +118,8 @@ const renderList = async (data, namesuser) => {
   tableBody.innerHTML = "";
 
   // Phân trang dữ liệu đã lọc
-  const start = (currentPage - 1) * 10;
-  const end = start + 10;
+  const start = (currentPage - 1) * 25;
+  const end = start + 25;
   const paginatedData = data.slice(start, end);
 
   if (paginatedData.length === 0) {
@@ -306,6 +306,16 @@ const renderDetailForm = async (
 
   // Kiểm tra trạng thái hủy và vô hiệu hóa select
   const isDisabled = status === "Hủy đơn" ? "disabled" : "";
+  // // Kiểm tra trạng thái đơn hàng và vô hiệu hóa các tùy chọn tương ứng ko cho chọn 
+  // const isStep2OrHigher = status === "Chờ giao hàng" || status === "Thành công";
+  // const disableStep1 = isStep2OrHigher ? "disabled" : "";  // Nếu đã qua bước 2, không thể chọn "Đang chờ xác nhận"
+  // const disableStep2 = status === "Chờ giao hàng" ? "disabled" : ""; // Nếu đang ở "Chờ giao hàng", không thể chọn lại "Đang chờ xác nhận"
+
+  // Kiểm tra trạng thái đơn hàng và xác định các lựa chọn cần ẩn
+  const isStep2OrHigher = status === "Chờ giao hàng" || status === "Thành công";
+  const hideStep1 = isStep2OrHigher ? "hidden" : "";  // Ẩn "Đang chờ xác nhận" nếu trạng thái là "Chờ giao hàng" hoặc "Thành công"
+  const hideStep2 = status === "Chờ giao hàng" ? "hidden" : ""; // Ẩn "Chờ giao hàng" nếu trạng thái đang là "Chờ giao hàng"
+  const hideStep3 = status === "Hủy đơn" ? "hidden" : ""; // Ẩn "Hủy đơn" nếu trạng thái là "Hủy đơn"
 
   content.innerHTML = /*html*/ `
       <h2 class="text-xl font-bold mb-4">${title}</h2>
@@ -339,10 +349,17 @@ const renderDetailForm = async (
               <select id="statusSelect"
                 class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 " 
                 ${readonlyAttr} ${isDisabled}>
-                <option value="0" ${status === "Đang chờ xác nhận" ? "selected" : ""}>Đang chờ xác nhận</option>
-                <option value="1" ${status === "Hủy đơn" ? "selected" : ""}>Hủy đơn</option>
-                <option value="2" ${status === "Chờ giao hàng" ? "selected" : ""}>Chờ giao hàng</option>
-                <option value="3" ${status === "Thành công" ? "selected" : ""}>Thành công</option>
+                <!-- Trạng thái "Đang chờ xác nhận" -->
+                <option value="0" ${status === "Đang chờ xác nhận" ? "selected" : ""} class="${hideStep1}">Đang chờ xác nhận</option>
+
+                  <!-- Trạng thái "Hủy đơn" -->
+                  <option value="1" ${status === "Hủy đơn" ? "selected" : ""} class="${hideStep3}">Hủy đơn</option>
+
+                  <!-- Trạng thái "Chờ giao hàng" -->
+                  <option value="2" ${status === "Chờ giao hàng" ? "selected" : ""} class="${hideStep2}">Chờ giao hàng</option>
+
+                  <!-- Trạng thái "Thành công" -->
+                  <option value="3" ${status === "Thành công" ? "selected" : ""}>Thành công</option>
               </select>
           </div>
           <div class=""><label class="block text-sm font-medium text-gray-700">Phí vận chuyển (đ)</label>
@@ -375,21 +392,16 @@ const renderDetailForm = async (
   `;
 };
 const formatDate = (dateString) => {
-  const parts = dateString.split(' ');
+  const parts = dateString.split(' '); // Tách ngày và giờ
 
-  // Tách ngày và giờ
-  const dateParts = parts[0].split('-');
-  const timeParts = parts[1] ? parts[1].split('-') : ['00', '00', '00'];
+  const dateParts = parts[0].split('-'); // Tách ngày (dd-MM-yyyy)
+  const timeParts = parts[1].split(':'); // Tách giờ, phút, giây (hh:mm:ss)
 
-  // Kiểm tra giờ, phút, giây
-  const hour = parseInt(timeParts[0], 10);
-  const minute = parseInt(timeParts[1], 10);
-  const second = parseInt(timeParts[2], 10);
+  // Định dạng ngày và giờ
+  const formattedDate = `${dateParts[0]}-${dateParts[1]}-${dateParts[2]}`;
+  const formattedTime = `H:${timeParts[0]} m:${timeParts[1]} ${parts[2]}`; // Chèn AM/PM
 
-  // Tạo chuỗi hiển thị với các ký hiệu phân biệt
-  const formattedDate = `${dateParts[0]}/${dateParts[1]}/${dateParts[2]}`;
-  const formattedTime = `H:${timeParts[2]} m:${timeParts[1]}`;
-  return `${formattedDate}  ${formattedTime}`;
+  return `${formattedDate} ${formattedTime}`;
 };
 
 const saveEdit = async (_id, code, user_id) => {
@@ -500,14 +512,14 @@ const getInvoiceDetail = async (orderid) => {
     const detailsHTML = await Promise.all(
       details.map(async (detail) => {
         const product = await getByIdProduct(detail.product_id);
-
+        const discountedPrice = product.price - (product.price * product.sale) / 100;
         if (!product) {
           return `<tr><td colspan='3'>Không tìm thấy sản phẩm</td></tr>`;
         }
 
-        return `
+        return /*html*/`
           <tr>
-              <td class="border border-gray-300 px-4 py-2">
+              <td class="border border-gray-300 px-4 py-2 w-[100] text-center">
                    <img
                     alt="Product image"
                     class="w-12 h-12"
@@ -516,10 +528,10 @@ const getInvoiceDetail = async (orderid) => {
                     width="100"
                   />
                 </td>
-              <td class="border border-gray-300 px-4 py-2">${product.name}</td>
-             <td class="border border-gray-300 px-4 py-2">${detail.quantity}</td> 
-             <td class="border border-gray-300 px-4 py-2">${product.price}</td>
-              <td class="border border-gray-300 px-4 py-2">${detail.total_price}</td>
+              <td class="border border-gray-300 px-4 py-2 text-center">${product.name}</td>
+             <td class="border border-gray-300 px-4 py-2 text-center">${detail.quantity}</td> 
+             <td class="border border-gray-300 px-4 py-2 text-center">${discountedPrice.toLocaleString('vi-VN')}</td>
+              <td class="border border-gray-300 px-4 py-2 text-center">${detail.total_price.toLocaleString('vi-VN')}</td>
           </tr>
         `;
       })
@@ -543,7 +555,8 @@ const getByIdProduct = async (id) => {
     return {
       name: data.result.name,
       image: data.result.image,
-      price: data.result.price
+      price: data.result.price,
+      sale: data.result.sale
     };
   } catch (err) {
     console.log(err);

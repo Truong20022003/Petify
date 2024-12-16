@@ -4,6 +4,11 @@ const headers = {
   Authorization: "trinh_nhung"
 };
 
+let currentPage = 1;
+const productsPerPage = 10;
+let filteredData = []; // Dữ liệu đã lọc
+let originalData = []; // Dữ liệu ban đầu (chưa lọc)
+
 const getList = async () => {
   try {
     const loadingDialog = dialogLoading("Đang tải danh sách sản phẩm...");
@@ -13,11 +18,15 @@ const getList = async () => {
     });
     const data = await response.json();
 
+    // Lưu dữ liệu gốc vào `originalData`
+    originalData = data;
+    filteredData = data; // Khởi tạo `filteredData` bằng `originalData` ban đầu
+
     const categories = await Promise.all(
       data.map((item) => getProductsGroupedByCategory(item._id))
     );
-    renderTable(data, categories);
-    addEventListeners(categories);
+    renderTable(filteredData, categories); // Dùng filteredData
+
     loadingDialog.close();
   } catch (err) {
     console.log(err);
@@ -25,14 +34,14 @@ const getList = async () => {
 };
 
 const renderTable = (data, categories) => {
-
+  const maxPrice = Math.max(...data.map(item => item.price));
   content.innerHTML = /*html*/ `
     <div class="flex mb-4">
       <button class="bg-[#396060] text-white px-4 py-2 rounded mr-2 btnadd">Thêm mới</button>
       <input id="searchInput" class="border border-gray-300 rounded px-4 py-2 flex-grow" placeholder="Tìm kiếm theo tên sản phẩm" type="text" />
       <div class="ml-4 flex items-center space-x-2">
         <label for="priceRange" class="text-gray-600">Giá sản phẩm:</label>
-        <input id="priceRange" type="range" min="0" max="10000" step="100" value="10000" class="w-[200px]">
+        <input id="priceRange" type="range" min="0" max="${maxPrice}" step="100"  class="w-[200px]">
         <span id="priceValue" class="text-gray-600"></span>
       </div>
     </div>
@@ -49,110 +58,129 @@ const renderTable = (data, categories) => {
         </tr>
       </thead>
       <tbody id="dataList"></tbody>
-    </table>`;
+    </table>
+    <div id="pagination" class="flex justify-between mt-4">
+      <button id="prevPage" class="bg-[#008080] text-white px-4 py-2 rounded" disabled>Trang trước</button>
+      <span id="currentPage" class="text-gray-600">Trang 1</span>
+      <button id="nextPage" class="bg-[#008080] text-white px-4 py-2 rounded">Trang sau</button>
+    </div>
+  `;
 
-  document
-    .getElementById("searchInput")
-    .addEventListener("input", async (e) => {
-      const query = e.target.value;
-      const filteredUsers = searchUser(query, data);
-      document.getElementById("priceRange").addEventListener("input", (e) => {
-        const maxPrice = parseInt(e.target.value, 10);
-        document.getElementById("priceValue").textContent = `${maxPrice} đ`;
-        const filteredProducts = filterProductsByPrice(maxPrice, filteredUsers);
-        renderList(filteredProducts, categories);
-      });
-      renderList(filteredUsers, categories)
-    });
-  document.getElementById("priceRange").addEventListener("input", (e) => {
-    const maxPrice = parseInt(e.target.value, 10);
-    document.getElementById("priceValue").textContent = `${maxPrice} đ`;
-    const filteredProducts = filterProductsByPrice(maxPrice, data);
-    renderList(filteredProducts, categories);
+  // Tìm kiếm và lọc giá
+  document.getElementById("searchInput").addEventListener("input", (e) => {
+    const query = e.target.value;
+    filteredData = searchUser(query, originalData); // Lọc từ originalData
+    currentPage = 1; // Reset trang khi tìm kiếm mới
+    updateTable(filteredData, categories); // Cập nhật bảng
   });
 
-  renderList(data, categories)
+  document.getElementById("priceRange").addEventListener("input", (e) => {
+    const maxPrice = parseInt(e.target.value, 10);
+    document.getElementById("priceValue").textContent = `${maxPrice.toLocaleString('vi-VN')} đ`;
+    filteredData = filterProductsByPrice(maxPrice, originalData); // Lọc theo giá trên dữ liệu gốc
+    currentPage = 1; // Reset trang khi thay đổi giá
+    updateTable(filteredData, categories); // Cập nhật bảng
+  });
+
+  // Hiển thị dữ liệu sau khi lọc và phân trang
+  updateTable(data, categories);
 };
 
-const renderList = (data, categories) => {
+// Cập nhật bảng sau khi lọc, tìm kiếm và phân trang
+const updateTable = (filteredProducts, categories) => {
   const tableBody = document.getElementById("dataList");
   tableBody.innerHTML = "";
-  // console.log(data, "dataaaa")
-  if (data.length === 0) {
-    // Nếu không có người dùng nào trong kết quả tìm kiếm
+
+  const startIndex = (currentPage - 1) * productsPerPage;
+  const endIndex = startIndex + productsPerPage;
+  const paginatedData = filteredProducts.slice(startIndex, endIndex);
+
+  if (paginatedData.length === 0) {
     const noDataRow = /*html*/ `
       <tr>
-        <td colspan="8" class="border border-gray-300 px-4 py-2 text-center text-red-500">
+        <td colspan="7" class="border border-gray-300 px-4 py-2 text-center text-red-500">
           Không có dữ liệu
         </td>
       </tr>`;
     tableBody.innerHTML = noDataRow;
   } else {
-    data.forEach(
-      (item, index) => {
-        const row = /*html*/ `
-        <tr id="row-${item._id}">
-          <th class="border border-gray-300 px-4 py-2 text-xl w-[20]">${index + 1}</th>
-          <td class="border border-gray-300 py-2 w-[180px]"> 
-          <div class=" h-[220px]  flex justify-center items-center ">
-                  <img
-                    alt="Product image"
-                    class="w-full h-full object-contain"
-                    src="${item.image[0]}"
-                  />
-                </div>
-                </td>
-          <td class="border border-gray-300 px-4 py-2 ">${item.name}</td>
-          <td class="border border-gray-300 px-4 py-2 w-[200px]">
+    paginatedData.forEach((item, index) => {
+      const row = /*html*/ `
+      <tr id="row-${item._id}">
+        <th class="border border-gray-300 px-4 py-2 text-xl w-[20]">${startIndex + index + 1}</th>
+        <td class="border border-gray-300 py-2 w-[180px]">
+          <div class="h-[220px] flex justify-center items-center">
+            <img alt="Product image" class="w-full h-full object-contain" src="${item.image[0]}" />
+          </div>
+        </td>
+        <td class="border border-gray-300 px-4 py-2">${item.name}</td>
+        <td class="border border-gray-300 px-4 py-2 w-[200px]">
           ${Array.isArray(categories[index]) && categories[index].length > 0
-            ? categories[index]
-              .map((categories, index) => {
-                return /*html*/`<span>${index + 1
-                  }_</span><span class="role-item px-2 py-1 rounded mr-2 mt-2 mb-2">${categories.category_name
-                  }</span><br>`;
-              })
-              .join("")
-            : "Không thuộc loại sản phẩm nào"
-          }
-          </td>
-          <td class="border border-gray-300 px-4 py-2 ">${item.status}</td>
-          <td class="border border-gray-300 px-4 py-2 ">${item.price}</td>
-          <td class="border border-gray-300 px-4 py-2 w-[200]">
-            <div class="button-group flex flex-col space-y-2">
-              <button class="bg-blue-500 text-white px-2 py-1 rounded btnedit" data-id="${item._id
-          }">Cập nhật</button>
-              <button class="bg-red-500 text-white px-2 py-1 rounded btndelete" data-id="${item._id
-          }">Xóa</button>
-              <button class="bg-[#008080] text-white px-2 py-1 rounded btndetail" data-id="${item._id
-          }">Chi tiết</button>
-            </div>
-          </td>
-        </tr>`;
-        tableBody.innerHTML += row;
-      })
+          ? categories[index]
+            .map((category, idx) => {
+              return /*html*/`<span>${idx + 1}_</span><span class="role-item px-2 py-1 rounded mr-2 mt-2 mb-2">${category.category_name}</span><br>`;
+            })
+            .join(" ")
+          : "Không thuộc loại sản phẩm nào"
+        }
+        </td>
+        <td class="border border-gray-300 px-4 py-2">${item.quantity == 0 ? "Hết hàng" : item.status}</td>
+        <td class="border border-gray-300 px-4 py-2">${item.price.toLocaleString('vi-VN')}</td>
+        <td class="border border-gray-300 px-4 py-2 w-[200]">
+          <div class="button-group flex flex-col space-y-2">
+            <button class="bg-blue-500 text-white px-2 py-1 rounded btnedit" data-id="${item._id}">Cập nhật</button>
+            <button class="bg-red-500 text-white px-2 py-1 rounded btndelete" data-id="${item._id}">Xóa</button>
+            <button class="bg-[#008080] text-white px-2 py-1 rounded btndetail" data-id="${item._id}">Chi tiết</button>
+          </div>
+        </td>
+      </tr>`;
+      tableBody.innerHTML += row;
+    });
   }
+
+  updatePagination(filteredProducts.length, filteredProducts, categories);
   addEventListeners(categories);
-}
+};
 
-function filterProductsByPrice(maxPrice, data) {
-  return data.filter((product) => product.price <= maxPrice);
-}
+// Cập nhật phân trang
+const updatePagination = (totalItems, filteredProducts, categories) => {
+  const totalPages = Math.ceil(totalItems / productsPerPage);
+  document.getElementById("currentPage").textContent = `Trang ${currentPage} / ${totalPages}`;
 
-// Hàm tìm kiếm người dùng
+  document.getElementById("prevPage").disabled = currentPage === 1;
+  document.getElementById("nextPage").disabled = currentPage === totalPages;
+
+  document.getElementById("prevPage").onclick = () => {
+    if (currentPage > 1) {
+      currentPage--;
+      updateTable(filteredProducts, categories);
+    }
+  };
+
+  document.getElementById("nextPage").onclick = () => {
+    if (currentPage < totalPages) {
+      currentPage++;
+      updateTable(filteredProducts, categories);
+    }
+  };
+};
+
+
+// Lọc sản phẩm theo giá
+const filterProductsByPrice = (maxPrice, data) => {
+  return data.filter(item => item.price <= maxPrice);
+};
 function searchUser(query, data) {
   function removeVietnameseTones(str) {
     return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
   }
-  const queryNormalized = removeVietnameseTones(query.toLowerCase());
-
-  // Lọc danh sách người dùng
-  const filteredUsers = data.filter((data) => {
-    const dataNameNormalized = removeVietnameseTones(data.name.toLowerCase());
-    return dataNameNormalized.includes(queryNormalized);
+  query = removeVietnameseTones(query).toLowerCase();
+  return data.filter((item) => {
+    const itemName = removeVietnameseTones(item.name).toLowerCase();
+    return itemName.includes(query);
   });
-
-  return filteredUsers;
 }
+
 const addEventListeners = (categories) => {
   document
     .querySelectorAll(".btndelete")
@@ -184,13 +212,16 @@ const handleDelete = async (id) => {
 
   dialogDeleteProduct("Xóa sản phẩm", "Bạn có chắc chắn muốn xóa sản phẩm này?", async () => {
     try {
+      const loadding = dialogLoading("Đang tiến hành xóa...")
       const response = await fetch(`${url}/product/deleteproduct/${id}`, { method: "DELETE", headers });
       console.log(response)
       const data = await response.json()
+
       if (response.status == 400) {
         dialogError(data.message)
       } else {
         dialogSuccess("Xóa sản phẩm thành công")
+        loadding.close()
         getList();
       }
       // getList();
@@ -554,7 +585,7 @@ async function getCategoriesByProductId(id) {
 
   } catch (err) {
     console.log(err);
-    return "";
+    return [];
   }
 }
 const getProductsGroupedByCategory = async (id) => {
@@ -580,7 +611,7 @@ const getProductsGroupedByCategory = async (id) => {
 
   } catch (err) {
     console.log(err);
-    return "";
+    return [];
   }
 }
 
