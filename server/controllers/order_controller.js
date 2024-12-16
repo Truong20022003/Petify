@@ -75,7 +75,7 @@ exports.updateorder = async (req, res, next) => {
         obj.code = req.body.code
         obj.status = req.body.status;
         console.log(`aaaaaaaa ${req.body.user_id}`)
-        await sendStatusUpdateNotification(req.body.status, req.body.code,req.body.user_id)
+        await sendStatusUpdateNotification(req.body.status, req.body.code, req.body.user_id)
         let result = await orderModel.findByIdAndUpdate(id, obj, { new: true });
         res.status(200).json({ status: "Update successfully", result: result });
     } catch (error) {
@@ -152,7 +152,7 @@ exports.ProcessOrder = async (req, res, next) => {
             quantity: detail.quantity,
             total_price: detail.total_price
         }));
-
+        console.log(invoiceDetails, "jjjj")
         // Lưu chi tiết hóa đơn
         await invoice_detailModel.insertMany(invoiceDetails); // Đảm bảo insertMany được gọi trên model Mongoose
 

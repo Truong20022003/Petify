@@ -173,9 +173,10 @@ class PaymentActivity : BaseActivity<ActivityPaymentBinding, OrderViewModel>() {
         selectedItems?.let {
             paymentAdapter.updateItems(it)
         }
+
         binding.btnOrder.setOnClickListener {
             val currentDateTime = LocalDateTime.now()
-            val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy ss-mm-hh")
+            val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy hh:mm:ss a")
             val formattedDate = currentDateTime.format(formatter)
             if (paymentMethod.equals("Thanh toán khi nhận hàng")) {
                 val order = OrderModelRequest(
@@ -194,12 +195,13 @@ class PaymentActivity : BaseActivity<ActivityPaymentBinding, OrderViewModel>() {
                     if (order!!.id != null) {
                         selectedItems?.let {
                             for (item in it) {
+                                val originalPrice = item.productId.price * (1 - item.productId.sale / 100.0)
                                 val invoiceModel = InvoiceDetailModelRequest(
                                     userId,
                                     item.productId.id,
                                     order.id,
                                     item.quantity,
-                                    item.quantity * item.productId.price
+                                    item.quantity * originalPrice
                                 )
                                 invoiceDetailViewModel.addInvoiceDetail(invoiceModel)
                                 cartApiViewModel.deleteCart(item.productId.id, userId)

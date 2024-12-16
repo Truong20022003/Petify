@@ -249,7 +249,7 @@ const renderForm = (
   });
 }
 const renderDetailHtml = (dataproduct) => {
-  content.innerHTML = `    
+  content.innerHTML = /*html*/`    
    <h2 class="text-xl font-bold mb-4 items-center">Chi tiết sản phẩm</h2>
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4 m-5">
   <!-- cuc1 -->
