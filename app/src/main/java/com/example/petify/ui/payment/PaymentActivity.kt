@@ -12,6 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.petify.BaseActivity
 import com.example.petify.R
+import com.example.petify.data.server.enitities.CarrierModel
 import com.example.petify.data.server.enitities.CartResponse
 import com.example.petify.data.server.enitities.InvoiceDetailModelRequest
 import com.example.petify.data.server.enitities.OrderModel
@@ -20,6 +21,7 @@ import com.example.petify.databinding.ActivityPaymentBinding
 import com.example.petify.payment.zalopay.Api.CreateOrder
 import com.example.petify.payment.zalopay.PaymentNotificationActivity
 import com.example.petify.ultils.SharePreUtils
+import com.example.petify.viewmodel.CarrierViewModel
 import com.example.petify.viewmodel.CartApiViewModel
 import com.example.petify.viewmodel.InvoiceDetailViewModel
 import com.example.petify.viewmodel.OrderViewModel
@@ -39,16 +41,17 @@ class PaymentActivity : BaseActivity<ActivityPaymentBinding, OrderViewModel>() {
     private lateinit var paymentAdapter: PaymentAdapter
     private lateinit var userViewModel: UserViewModel
     private lateinit var invoiceDetailViewModel: InvoiceDetailViewModel
+    private lateinit var carrierViewmodel: CarrierViewModel
     private lateinit var cartApiViewModel: CartApiViewModel
     private var addressUser: String? = null
     private lateinit var carrierAdapter: CarrierAdapter
     private var checkPaymentMethodZaloPay = true
     private var checkPaymentMethodCOD = false
-    private var checkPaymentGHN = false
-    private var checkPaymentGHTK = true
     private var paymentMethod = ""
     private var carMethod = "Giao hàng tiết kiệm"
     private var shippingPrice = 10000.0
+    private var selectedCarrier: CarrierModel? = null
+
     override fun createBinding(): ActivityPaymentBinding {
         return ActivityPaymentBinding.inflate(layoutInflater)
     }
@@ -61,6 +64,7 @@ class PaymentActivity : BaseActivity<ActivityPaymentBinding, OrderViewModel>() {
         super.onResume()
         val userId = SharePreUtils.getUserModel(this)!!.id
         userViewModel.getUserById(userId)
+
 
         userViewModel.user.observe(this) { user ->
             addressUser = user?.location
@@ -130,41 +134,26 @@ class PaymentActivity : BaseActivity<ActivityPaymentBinding, OrderViewModel>() {
         val selectedItems = intent.getSerializableExtra("selectedItems") as? ArrayList<CartResponse>
         Log.d("PaymentActivity", "Total Price: $totalPrice")
         Log.d("PaymentActivity", "Selected Items: $selectedItems")
-        binding.tvTotalPriceHaveToPay.text = (totalPrice + shippingPrice).toString()
-        binding.tvPrice.text = totalPrice.toString()
-        binding.tvTotalPrice.text = (totalPrice + shippingPrice).toString()
-        binding.tvGHN.setOnClickListener {
-            checkPaymentGHN = true
-            checkPaymentGHTK = false
-            shippingPrice = 20000.0
-            carMethod = "Giao hàng tiết kiệm"
-            binding.tvShippingFee.text = shippingPrice.toString()
-            binding.tvTotalPrice.text = (totalPrice + shippingPrice).toString()
+
+        carrierAdapter = CarrierAdapter(mutableListOf()) { carrier, price ->
+
+            selectedCarrier = carrier // Lưu lại Carrier được chọn
+            Log.d("PaymentActivity", "Selected Carrier: $selectedCarrier")
+            shippingPrice = price.replace("đ", "").replace(".", "").toDouble() // Cập nhật phí giao hàng
+            binding.tvShippingFee.text = price // Hiển thị phí giao hàng trên giao diện
             binding.tvTotalPriceHaveToPay.text = (totalPrice + shippingPrice).toString()
-            binding.tvGHN.setCompoundDrawablesWithIntrinsicBounds(
-                0,
-                0,
-                R.drawable.ic_payment_selected,
-                0
-            )
-            binding.tvGHTK.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_payment, 0)
-        }
-        binding.tvGHTK.setOnClickListener {
-            checkPaymentGHN = false
-            checkPaymentGHTK = true
-            shippingPrice = 10000.0
-            carMethod = "Giao hàng nhanh"
-            binding.tvShippingFee.text = shippingPrice.toString()
+            binding.tvPrice.text = totalPrice.toString()
             binding.tvTotalPrice.text = (totalPrice + shippingPrice).toString()
-            binding.tvTotalPriceHaveToPay.text = (totalPrice + shippingPrice).toString()
-            binding.tvGHN.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_payment, 0)
-            binding.tvGHTK.setCompoundDrawablesWithIntrinsicBounds(
-                0,
-                0,
-                R.drawable.ic_payment_selected,
-                0
-            )
         }
+        carrierViewmodel = ViewModelProvider(this)[CarrierViewModel::class.java]
+        carrierViewmodel.getListCarrier()
+        carrierViewmodel.carrierList.observe(this){
+            if (it != null) {
+                carrierAdapter.fillData(it)
+            }
+        }
+        binding.rvCarrier.adapter = carrierAdapter
+
         paymentAdapter = PaymentAdapter(emptyList())
         binding.rvPayment.apply {
             layoutManager = LinearLayoutManager(this@PaymentActivity)
@@ -182,12 +171,12 @@ class PaymentActivity : BaseActivity<ActivityPaymentBinding, OrderViewModel>() {
                 val order = OrderModelRequest(
                     userId,
                     formattedDate,
-                    totalPrice,
+                    totalPrice + shippingPrice,
                     "Đang chờ xác nhận",
                     "Thanh toán khi nhận hàng",
                     addressUser!!,
                     shippingPrice,
-                    "67068264ecffca4b44fdef77"
+                    carrierId = selectedCarrier!!.id
                 )
                 viewModel.addOrder(order)
                 viewModel.order.observe(this) { order ->
@@ -195,7 +184,8 @@ class PaymentActivity : BaseActivity<ActivityPaymentBinding, OrderViewModel>() {
                     if (order!!.id != null) {
                         selectedItems?.let {
                             for (item in it) {
-                                val originalPrice = item.productId.price * (1 - item.productId.sale / 100.0)
+                                val originalPrice =
+                                    item.productId.price * (1 - item.productId.sale / 100.0)
                                 val invoiceModel = InvoiceDetailModelRequest(
                                     userId,
                                     item.productId.id,
@@ -235,7 +225,7 @@ class PaymentActivity : BaseActivity<ActivityPaymentBinding, OrderViewModel>() {
                                         token,
                                         userId,
                                         addressUser,
-                                        totalPrice,
+                                        totalPrice + shippingPrice,
                                         selectedItems,
                                         shippingPrice
                                     )
@@ -270,6 +260,8 @@ class PaymentActivity : BaseActivity<ActivityPaymentBinding, OrderViewModel>() {
         ZaloPaySDK.getInstance().onResult(intent)
     }
 
+
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun processZaloPayPayment(
         token: String,
         userId: String,
@@ -278,6 +270,9 @@ class PaymentActivity : BaseActivity<ActivityPaymentBinding, OrderViewModel>() {
         selectedItems: ArrayList<CartResponse>?,
         shippingPrice: Double
     ) {
+        val currentDateTime = LocalDateTime.now()
+        val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy hh:mm:ss a")
+        val formattedDate = currentDateTime.format(formatter)
         ZaloPaySDK.getInstance().payOrder(
             this@PaymentActivity, token, "demozpdk://app",
             object : PayOrderListener {
@@ -287,13 +282,13 @@ class PaymentActivity : BaseActivity<ActivityPaymentBinding, OrderViewModel>() {
                             lifecycleScope.launch(Dispatchers.Main) {
                                 val order = OrderModelRequest(
                                     userId,
-                                    addressUser!!,
-                                    totalPrice,
+                                    formattedDate,
+                                    totalPrice + shippingPrice,
                                     "Đang chờ xác nhận",
                                     "Thanh toán qua Zalo Pay",
-                                    addressUser,
+                                    addressUser!!,
                                     shippingPrice,
-                                    "67068264ecffca4b44fdef77"
+                                    carrierId = selectedCarrier!!.id
                                 )
                                 viewModel.addOrder(order)
                                 viewModel.order.observe(this@PaymentActivity) { order ->
@@ -337,7 +332,7 @@ class PaymentActivity : BaseActivity<ActivityPaymentBinding, OrderViewModel>() {
                 }
 
                 override fun onPaymentCanceled(s: String?, s1: String?) {
-                    navigateToPaymentResult("Hủy thanh toán",null)
+                    navigateToPaymentResult("Hủy thanh toán", null)
                 }
 
                 override fun onPaymentError(error: ZaloPayError?, s: String?, s1: String?) {
@@ -352,7 +347,7 @@ class PaymentActivity : BaseActivity<ActivityPaymentBinding, OrderViewModel>() {
         val intent = Intent(this@PaymentActivity, PaymentNotificationActivity::class.java)
         intent.putExtra("result", resultMessage)
         intent.putExtra("order", orderModel)
-        intent.putExtra("carMethod",carMethod)
+        intent.putExtra("carMethod", carMethod)
         startActivity(intent)
         finish()
     }
