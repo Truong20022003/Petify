@@ -8,6 +8,9 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.petify.BaseActivity
 import com.example.petify.BaseViewModel
+import com.example.petify.MainActivity
+import com.example.petify.R
+import com.example.petify.base.view.tap
 import com.example.petify.data.database.AppDatabase
 import com.example.petify.data.server.enitities.CartRequest
 import com.example.petify.data.server.enitities.FavoriteRequest
@@ -64,11 +67,21 @@ class ProductDetailActivity : BaseActivity<ActivityProductDetailBinding, BaseVie
                 if (isFavorite) {
                     val favoriteRequest = FavoriteRequest(productModel.id, userModel!!.id)
                     favoriteViewModel.addFavorites(favoriteRequest)
-                    Log.d("TAG12345", "ProductThanhCong ${productModel.id} favorite status: $isFavorite")
-                    Toast.makeText(this@ProductDetailActivity, "Thêm sản phẩm vào màn yêu thích thành công", Toast.LENGTH_SHORT).show()
+                    Log.d(
+                        "TAG12345",
+                        "ProductThanhCong ${productModel.id} favorite status: $isFavorite"
+                    )
+                    Toast.makeText(
+                        this@ProductDetailActivity,
+                        "Thêm sản phẩm vào màn yêu thích thành công",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 } else {
                     favoriteViewModel.deleteFavorite(productModel.id, userModel!!.id)
-                    Log.d("TAG12345", "ProductThatBai ${productModel.id} favorite status: $isFavorite")
+                    Log.d(
+                        "TAG12345",
+                        "ProductThatBai ${productModel.id} favorite status: $isFavorite"
+                    )
                 }
                 Log.d("TAG12345", "Product ${productModel.id} favorite status: $isFavorite")
             },
@@ -91,7 +104,11 @@ class ProductDetailActivity : BaseActivity<ActivityProductDetailBinding, BaseVie
                     }
                     Log.d("TAG12345", "Product ${productModel.id} favorite status: $isAddToCart")
                 } else {
-                    Toast.makeText(this, "Hoàn tất hồ sơ người dùng để thêm vào giỏ hàng", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        this,
+                        "Hoàn tất hồ sơ người dùng để thêm vào giỏ hàng",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
         )
@@ -134,25 +151,94 @@ class ProductDetailActivity : BaseActivity<ActivityProductDetailBinding, BaseVie
         setListeners()
     }
 
+
+    private fun share() {
+        val intentShare = Intent(Intent.ACTION_SEND)
+        intentShare.type = "text/plain"
+        intentShare.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.app_name))
+        intentShare.putExtra(
+            Intent.EXTRA_TEXT,
+            "${getString(R.string.app_name)}\nhttps://play.google.com/store/apps/details?id=${this.packageName}"
+        )
+        startActivity(Intent.createChooser(intentShare, "Share"))
+    }
+
+
+    private fun addProductToCart(product: ProductModel) {
+        val userModel = SharePreUtils.getUserModel(this@ProductDetailActivity)
+        if (userModel?.id != null) {
+            val cartItem = CartRequest(
+                productId = product.id,
+                userId = userModel.id,
+                quantity = 1 // Số lượng mặc định là 1
+            )
+            cartApi.addCart(cartItem)
+            cartApi.cartResponse.observe(this) { response ->
+                response?.let {
+                    when (it.status) {
+                        "success" -> {
+                            Toast.makeText(
+                                this,
+                                "Sản phẩm đã được thêm vào giỏ hàng thành công!",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                        else -> {
+                            Toast.makeText(
+                                this,
+                                "Sản phẩm đã được thêm vào giỏ hàng thành công!",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    }
+                    cartApi.clearCartResponse()
+                } ?: run {
+                    // Trường hợp response null hoặc lỗi khác
+                    Toast.makeText(
+                        this,
+                        "Thêm sản phẩm vào giỏ hàng thất bại. Vui lòng thử lại.",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        } else {
+            Toast.makeText(
+                this,
+                "Vui lòng hoàn tất hồ sơ người dùng trước khi thêm vào giỏ hàng.",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
+
+
+
     private fun setupViewPager(images: List<String>) {
         val adapter = ProductDetailImageAdapter(images)
         binding.viewPager2.adapter = adapter
     }
 
     private fun setListeners() {
-        binding.ivLeft.setOnClickListener {
-            finish()
+        binding.icBack.tap {
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
         }
 
-        binding.ivShare.setOnClickListener {
-            Toast.makeText(this, "Chia sẻ sản phẩm", Toast.LENGTH_SHORT).show()
+        binding.ivShare.tap {
+            share()
         }
 
-        binding.btnAddToCart.setOnClickListener {
-            Toast.makeText(this, "Sản phẩm đã được thêm vào giỏ hàng", Toast.LENGTH_SHORT).show()
+        binding.btnAddToCart.tap {
+            val productItem: ProductModel? = intent.getParcelableExtra("productModel")
+            productItem?.let {
+                addProductToCart(it)
+            } ?: run {
+                Toast.makeText(this, "Không tìm thấy thông tin sản phẩm.", Toast.LENGTH_SHORT).show()
+            }
         }
 
-        binding.btnBuyNow.setOnClickListener {
+
+
+        binding.btnBuyNow.tap {
             Toast.makeText(this, "Bạn đã chọn mua sản phẩm ", Toast.LENGTH_SHORT).show()
         }
     }

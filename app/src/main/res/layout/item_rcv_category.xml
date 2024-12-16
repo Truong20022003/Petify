@@ -1,47 +1,33 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
     xmlns:tools="http://schemas.android.com/tools"
->
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
     <TextView
         android:id="@+id/tvDes"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:paddingHorizontal="16dp"
-        android:text="Thức ăn cho chó"
-        android:textSize="20sp"
-        android:textColor="@color/black"
         android:fontFamily="@font/bevietnampro_semibold"
+        android:paddingHorizontal="16dp"
+        android:text="@string/th_c_n_cho_ch"
+        android:textColor="@color/black"
+        android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-
-    <TextView
-        android:id="@+id/tvViewMore"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingHorizontal="16dp"
-        android:text="Xem thêm"
-        android:textSize="14sp"
-        app:layout_constraintBottom_toBottomOf="@+id/tvDes"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/tvDes"
-        app:layout_constraintTop_toTopOf="@+id/tvDes"
-        app:layout_constraintVertical_bias="1.0" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rcv_itemProduct"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:clipToPadding="false"
         android:layout_marginTop="10dp"
+        android:clipToPadding="false"
         android:nestedScrollingEnabled="false"
         android:orientation="horizontal"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintTop_toBottomOf="@+id/tvDes"
-        tools:listitem="@layout/item_favorites"/>
+        tools:listitem="@layout/item_favorites" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

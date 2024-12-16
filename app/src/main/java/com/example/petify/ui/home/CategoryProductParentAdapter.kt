@@ -47,9 +47,6 @@ class CategoryProductParentAdapter(
                 onAddToCart
             )
             rcvItemProduct.adapter = productAdapter
-
-            tvViewMore.setOnClickListener {
-            }
         }
     }
 
