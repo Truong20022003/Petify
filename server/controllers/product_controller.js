@@ -436,6 +436,35 @@ const reduceProductQuantity = async (req, res) => {
     }
 };
 
+const getOutOfStockProducts = async (req, res, next) => {
+    try {
+        // Tìm các sản phẩm có số lượng bằng 0
+        let outOfStockProducts = await productModel.find({ quantity: 0 });
+
+        // Kiểm tra nếu không có sản phẩm nào hết hàng
+        if (outOfStockProducts.length === 0) {
+            return res.status(200).json({
+                status: "success",
+                message: "Không có sản phẩm nào hết hàng",
+                data: []
+            });
+        }
+
+        // Nếu có sản phẩm hết hàng
+        res.status(200).json({
+            status: "success",
+            message: "Danh sách sản phẩm hết hàng",
+            data: outOfStockProducts
+        });
+    } catch (error) {
+        // Xử lý lỗi và trả về thông báo lỗi
+        res.status(500).json({
+            status: "error",
+            message: "Đã xảy ra lỗi khi truy vấn dữ liệu",
+            error: error.message
+        });
+    }
+};
 
 module.exports = { getProductsToday };
 
@@ -448,5 +477,6 @@ module.exports = {
     updateSalePrice,
     getProductsToday,
     getLatestSaleUpdatedProduct,
-    reduceProductQuantity
+    reduceProductQuantity,
+    getOutOfStockProducts
 };
