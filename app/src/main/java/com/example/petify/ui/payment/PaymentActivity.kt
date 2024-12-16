@@ -282,44 +282,48 @@ class PaymentActivity : BaseActivity<ActivityPaymentBinding, OrderViewModel>() {
                 override fun onPaymentSucceeded(s: String?, s1: String?, s2: String?) {
                     lifecycleScope.launch(Dispatchers.IO) {
                         try {
-                            val order = OrderModelRequest(
-                                userId,
-                                addressUser!!,
-                                totalPrice,
-                                "Đang chờ xác nhận",
-                                "Thanh toán qua Zalo Pay",
-                                addressUser,
-                                shippingPrice,
-                                "67068264ecffca4b44fdef77"
-                            )
-                            viewModel.addOrder(order)
-                            viewModel.order.observe(this@PaymentActivity) { order ->
-                                if (order != null) {
-                                    Log.d("TAG123456", userId)
-                                    selectedItems?.let {
-                                        for (item in it) {
-                                            val invoiceModel = InvoiceDetailModelRequest(
-                                                userId,
-                                                item.id,
-                                                order.id,
-                                                item.quantity,
-                                                item.quantity * item.productId.price
-                                            )
-                                            invoiceDetailViewModel.addInvoiceDetail(invoiceModel)
-                                            cartApiViewModel.deleteCart(item.id, userId)
+                            lifecycleScope.launch(Dispatchers.Main) {
+                                val order = OrderModelRequest(
+                                    userId,
+                                    addressUser!!,
+                                    totalPrice,
+                                    "Đang chờ xác nhận",
+                                    "Thanh toán qua Zalo Pay",
+                                    addressUser,
+                                    shippingPrice,
+                                    "67068264ecffca4b44fdef77"
+                                )
+                                viewModel.addOrder(order)
+                                viewModel.order.observe(this@PaymentActivity) { order ->
+                                    if (order != null) {
+                                        Log.d("TAG123456", userId)
+                                        selectedItems?.let {
+                                            for (item in it) {
+                                                val invoiceModel = InvoiceDetailModelRequest(
+                                                    userId,
+                                                    item.id,
+                                                    order.id,
+                                                    item.quantity,
+                                                    item.quantity * item.productId.price
+                                                )
+                                                invoiceDetailViewModel.addInvoiceDetail(invoiceModel)
+                                                cartApiViewModel.deleteCart(item.id, userId)
+                                            }
+
                                         }
-
+                                        navigateToPaymentResult(
+                                            "Đặt hàng thành công",
+                                            orderModel = order
+                                        )
                                     }
-                                    navigateToPaymentResult(
-                                        "Đặt hàng thành công",
-                                        orderModel = order
-                                    )
-                                }
 
+                                }
                             }
+
 
                         } catch (e: Exception) {
                             withContext(Dispatchers.Main) {
+                                Log.d("Tag12222", e.message.toString())
                                 Toast.makeText(
                                     this@PaymentActivity,
                                     "Lỗi khi lưu dữ liệu: ${e.message}",

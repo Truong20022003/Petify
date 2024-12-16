@@ -1,4 +1,4 @@
-package com.example.petify.data.database
+package com.example.petify.data.server
 
 import com.example.petify.data.server.service.ChatService
 import okhttp3.Interceptor
