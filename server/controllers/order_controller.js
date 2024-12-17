@@ -50,6 +50,7 @@ exports.addorder = async (req, res, next) => {
             status: req.body.status,
             payment_method: req.body.payment_method,
             delivery_address: req.body.delivery_address,
+            carrier_id: req.body.carrier_id,
             shipping_fee: req.body.shipping_fee,
             code: generateCode()
         });

@@ -22,6 +22,8 @@ import com.example.petify.viewmodel.CartApiViewModel
 import com.example.petify.viewmodel.CartViewModel
 import com.example.petify.viewmodel.InvoiceDetailViewModel
 import com.example.petify.viewmodel.OrderViewModel
+import com.example.petify.viewmodel.ProductViewModel
+import java.text.DecimalFormat
 
 class CartFragment : BaseFragment<FragmentCartBinding>() {
 
@@ -84,6 +86,12 @@ class CartFragment : BaseFragment<FragmentCartBinding>() {
                         cartApi.updateCartQuantity(cartRequest)
                     }
                 }
+            },
+            onCheckAllStateChanged = { isAllSelected ->
+                this.isAllSelected = isAllSelected
+                viewBinding.ivCheckAll.setImageResource(
+                    if (isAllSelected) R.drawable.ic_check_cart_on else R.drawable.ic_check_cart_off
+                )
             }
         )
         cartApi.getListCart(userModel!!.id)
@@ -100,7 +108,7 @@ class CartFragment : BaseFragment<FragmentCartBinding>() {
         }
         cartAdapter.selectedItems.clear()
         updateTotalPrice(0.0)
-        viewBinding.ivCheckAll.setOnClickListener {
+        viewBinding.ivCheckAll.tap {
             toggleSelectAll()
         }
         orderViewModel = ViewModelProvider(requireActivity())[OrderViewModel::class.java]
@@ -108,7 +116,6 @@ class CartFragment : BaseFragment<FragmentCartBinding>() {
             ViewModelProvider(requireActivity())[InvoiceDetailViewModel::class.java]
 
         viewBinding.tvBuy.tap {
-
             addToOrder()
         }
     }
@@ -127,17 +134,20 @@ class CartFragment : BaseFragment<FragmentCartBinding>() {
         startActivity(intent)
     }
 
-    private fun toggleSelectAll() {
+    fun toggleSelectAll() {
+
         isAllSelected = !isAllSelected
         viewBinding.ivCheckAll.setImageResource(
             if (isAllSelected) R.drawable.ic_check_cart_on else R.drawable.ic_check_cart_off
         )
         cartAdapter.setAllSelected(isAllSelected)
+
     }
 
     private fun updateTotalPrice(totalPrice: Double) {
-        viewBinding.tvMoney.text = "$totalPrice"
-//        Log.d("TagCart", "$totalPrice")
+        val formatter = DecimalFormat("#,###")
+        val formattedPrice = formatter.format(totalPrice)
+        viewBinding.tvMoney.text = "$formattedPrice VND"
     }
 
 }

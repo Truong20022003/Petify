@@ -34,13 +34,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
     private var adapter: CategoryAdapter? = null
     val handler = Handler(Looper.getMainLooper())
 
-    val images =
-        listOf(
-            R.drawable.img_slide1,
-            R.drawable.img_slide2,
-            R.drawable.img_slide3,
-            R.drawable.img_slide2
-        )
+    val images = listOf(
+        R.drawable.img_slide1, R.drawable.img_slide2, R.drawable.img_slide3, R.drawable.img_slide2
+    )
 
 
     override fun inflateViewBinding(): FragmentHomeBinding {
@@ -64,9 +60,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
         productCategoryViewModel.getProductsGroupedByCategory()
         favoriteViewModel = ViewModelProvider(requireActivity())[FavoriteViewModel::class.java]
         favoriteViewModel.getListFavorites(userModel!!.id)
-        Glide.with(requireActivity())
-            .load(userModel?.avata)
-            .error(R.drawable.image_default)
+        Glide.with(requireActivity()).load(userModel?.avata).error(R.drawable.image_default)
             .into(viewBinding.ivUser)
         val cartDao = AppDatabase.getDatabase(requireContext()).cartDao()
 
@@ -120,14 +114,28 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
                             )
                             listFavorite1 =
                                 listFavorite1 + favoriteResponse // Thêm vào danh sách yêu thích
-                            Log.d("TAG12345", "ProductThanhCong ${productModel.id} favorite status: $isFavorite")
-                            Toast.makeText(requireActivity(), "Thêm sản phẩm vào màn yêu thích thành công", Toast.LENGTH_SHORT).show()
+                            Log.d(
+                                "TAG12345",
+                                "ProductThanhCong ${productModel.id} favorite status: $isFavorite"
+                            )
+                            Toast.makeText(
+                                requireActivity(),
+                                "Thêm sản phẩm vào màn yêu thích thành công",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         } else {
                             favoriteViewModel.deleteFavorite(productModel.id, userModel!!.id)
                             listFavorite1 =
                                 listFavorite1.filter { it.productId.id != productModel.id } // Loại bỏ sản phẩm khỏi danh sách yêu thích
-                            Log.d("TAG12345", "ProductThatBai ${productModel.id} favorite status: $isFavorite")
-                            Toast.makeText(requireActivity(), "Xóa sản phẩm yêu thích thành công", Toast.LENGTH_SHORT).show()
+                            Log.d(
+                                "TAG12345",
+                                "ProductThatBai ${productModel.id} favorite status: $isFavorite"
+                            )
+                            Toast.makeText(
+                                requireActivity(),
+                                "Xóa sản phẩm yêu thích thành công",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
 
                         // Cập nhật danh sách yêu thích trong adapter
@@ -136,21 +144,17 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
                         Log.d("TAG12345", "Product ${productModel.id} favorite status: $isFavorite")
                     },
                     onAddToCart = { productModel, isAddToCart ->
-                        if (userModel?.id != null || userModel.email != null || userModel.phoneNumber != null || userModel.location != null) {
+                        if (userModel.id.isNotEmpty() && userModel.email.isNotEmpty() && userModel.phoneNumber.isNotEmpty()) {
                             if (isAddToCart) {
                                 val cartItem = CartRequest(
-                                    productModel.id,
-                                    userModel!!.id,
-                                    1
+                                    productModel.id, userModel!!.id, 1
                                 )
                                 cartApi.addCart(cartItem)
                                 cartApi.cartResponse.observe(this) {
                                     it?.let {
                                         Log.d("TAG1234", "${it.status}")
                                         Toast.makeText(
-                                            requireActivity(),
-                                            "${it.status}",
-                                            Toast.LENGTH_SHORT
+                                            requireActivity(), "${it.status}", Toast.LENGTH_SHORT
                                         ).show()
                                         cartApi.clearCartResponse()
                                     }
@@ -219,10 +223,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
 
     private fun updateDots(position: Int) {
         val dotViews = listOf(
-            viewBinding.ivDot1,
-            viewBinding.ivDot2,
-            viewBinding.ivDot3,
-            viewBinding.ivDot4
+            viewBinding.ivDot1, viewBinding.ivDot2, viewBinding.ivDot3, viewBinding.ivDot4
         )
 
         dotViews.forEachIndexed { index, dotView ->
@@ -235,9 +236,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
     override fun onResume() {
         super.onResume()
         val userModel = SharePreUtils.getUserModel(requireActivity())
-        Glide.with(requireActivity())
-            .load(userModel?.avata)
-            .into(viewBinding.ivUser)
+        Glide.with(requireActivity()).load(userModel?.avata).into(viewBinding.ivUser)
         // Cập nhật lại danh sách yêu thích
         favoriteViewModel.getListFavorites(userModel!!.id)
 

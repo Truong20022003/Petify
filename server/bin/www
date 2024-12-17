@@ -28,11 +28,52 @@ io.on("connection", (socket) => {
   socket.on("register", (user_id) => {
     console.log(`Socket ${socket.id} joined room ${user_id}`);
     socket.join(user_id); 
-});
+  });
+
   console.log(`Client connected: ${socket.id}`);
+
   socket.on("error", (error) => {
     console.error("Socket error:", error);
   });
+
+  // Nhận yêu cầu lấy lịch sử chat
+  socket.on("getChatHistory", async (user_id) => {
+    try {
+      const chatHistory = await supportModel.findOne({ user_id }).select("messages");
+      if (!chatHistory) {
+        console.log(`No chat history found for user_id: ${user_id}`);
+        socket.emit("chatHistory", { user_id, messages: [] });
+      } else {
+        console.log("Chat History:", chatHistory);
+        socket.emit("chatHistory", { user_id, messages: chatHistory.messages });
+      }
+    } catch (err) {
+      console.error("Database error fetching chat history:", err);
+      socket.emit("chatHistoryError", { error: "Unable to fetch chat history." });
+    }
+    
+    // try {
+    //   // Tìm lịch sử tin nhắn từ database theo user_id
+    //   const chatHistory = await supportModel
+    //   .findOne({ user_id: user_id })
+    //   .select("messages")
+    
+    //     console.log("chatHistory" + chatHistory)
+    //   if (chatHistory) {
+    //     // Gửi lịch sử chat về client
+    //     console.log("Chat History Messages:", chatHistory);
+
+    //     socket.emit("chatHistory", { user_id, messages: chatHistory.messages });
+    //   } else {
+    //     // Trường hợp không tìm thấy dữ liệu
+    //     socket.emit("chatHistory", { user_id, messages: [] });
+    //   }
+    // } catch (err) {
+    //   console.error("Error fetching chat history:", err);
+    //   socket.emit("chatHistoryError", { error: "Unable to fetch chat history." });
+    // }
+  });
+
   // Nhận tin nhắn từ user
   socket.on("sendMessage", async ({ user_id, sender, content }) => {
     try {
@@ -42,7 +83,7 @@ io.on("connection", (socket) => {
         createdAt: new Date(),
       };
 
-      console.log(message)
+      console.log(message);
       await supportModel.updateOne(
         { user_id: user_id },
         { $push: { messages: message } },
@@ -58,6 +99,7 @@ io.on("connection", (socket) => {
     }
   });
 
+  // Nhận tin nhắn từ admin
   socket.on("sendAdminMessage", async ({ user_id, content }) => {
     try {
       const message = {
@@ -65,7 +107,9 @@ io.on("connection", (socket) => {
         content,
         createdAt: new Date(),
       };
-console.log(message)
+
+      console.log(message);
+
       // Lưu tin nhắn vào database
       await supportModel.updateOne(
         { user_id: user_id },
@@ -82,6 +126,8 @@ console.log(message)
         content,
         createdAt: message.createdAt,
       });
+      socket.emit("receiveMessage", { user_id, sender: "Admin", content, createdAt: message.createdAt });
+
       console.log(`Message sent to room ${user_id}: ${content}`);
     } catch (err) {
       console.error("Error sending admin message:", err);
@@ -93,6 +139,7 @@ console.log(message)
     console.log(`Client disconnected: ${socket.id}`);
   });
 });
+
 
 // Lắng nghe server
 server.listen(port, () => {

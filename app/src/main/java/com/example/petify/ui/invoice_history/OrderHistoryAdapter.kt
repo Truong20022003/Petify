@@ -1,5 +1,6 @@
 package com.example.petify.ui.invoice_history
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -63,6 +64,7 @@ class OrderHistoryAdapter(
     }
 
     fun fillData(newList: List<OrderResponse>) {
+        Log.d("TAG12345", "fillData: $newList")
         list.clear()
         list.addAll(newList)
         notifyDataSetChanged()

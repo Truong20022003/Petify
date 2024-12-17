@@ -1,6 +1,7 @@
 package com.example.petify.data.server
 
 import android.util.Log
+import com.example.petify.data.server.repository.MessageModel
 import com.example.petify.ultils.Constans
 import io.socket.client.IO
 import io.socket.client.Socket
@@ -9,18 +10,20 @@ import org.json.JSONObject
 object ChatSocketManager {
     private lateinit var socket: Socket
 
-    fun initializeSocket(user_id: String) {
+    fun initializeSocket(user_id: String, onConnect: (() -> Unit)? = null) {
         try {
             socket = IO.socket(Constans.DOMAIN_SOCKET)
             socket.connect()
             socket.on(Socket.EVENT_CONNECT) {
                 Log.d("ChatSocketManager", "Socket connected: ${socket.id()}")
                 socket.emit("register", user_id)
+                onConnect?.invoke()
             }
         } catch (e: Exception) {
             Log.e("ChatSocketManager", "Lỗi khi kết nối socket: ${e.message}")
         }
     }
+
 
 
     fun isConnected(): Boolean = socket.connected()
@@ -45,6 +48,31 @@ object ChatSocketManager {
             Log.d("ChatSocketManager", "Joined room: $user_id")
         } else {
             Log.e("ChatSocketManager", "Socket not connected")
+        }
+    }
+    fun fetchChatHistory(user_id: String, callback: (List<MessageModel>) -> Unit) {
+        if (socket.connected()) {
+            socket.emit("getChatHistory", user_id)
+
+            socket.on("chatHistory") { args ->
+                if (args.isNotEmpty()) {
+                    val data = args[0] as JSONObject
+                    val messagesArray = data.optJSONArray("messages")
+                    val messages = mutableListOf<MessageModel>()
+                    for (i in 0 until messagesArray.length()) {
+                        val messageJson = messagesArray.getJSONObject(i)
+                        val message = MessageModel(
+                            user_id = messageJson.optString("user_id"),
+                            sender = messageJson.optString("sender"),
+                            content = messageJson.optString("content")
+                        )
+                        messages.add(message)
+                    }
+                    callback(messages)
+                }
+            }
+        } else {
+            Log.e("ChatSocketManager", "Socket not connected for fetching history")
         }
     }
 

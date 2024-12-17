@@ -2,6 +2,7 @@ package com.example.petify.ui.invoice_history
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -22,9 +23,9 @@ class InvoiceHistoryFragment : BaseFragment<FragmentInvoiceHistoryBinding>() {
 
 
     private val invoiceAdapter by lazy {
-        InvoiceAdapter(mutableListOf(),onClick = {model ->
+        InvoiceAdapter(mutableListOf(), onClick = { model ->
             val intent = Intent(requireActivity(), ReviewWriteActivity::class.java)
-            intent.putExtra("idProduct",model.productId.id)
+            intent.putExtra("idProduct", model.productId.id)
             startActivity(intent)
         })
     }
@@ -33,14 +34,20 @@ class InvoiceHistoryFragment : BaseFragment<FragmentInvoiceHistoryBinding>() {
     private val pendingOrders = mutableListOf<OrderResponse>()
     private val shippingOrders = mutableListOf<OrderResponse>()
 
+    private val failedOrders = mutableListOf<OrderResponse>()
+
     private fun updateOrderLists(orders: List<OrderResponse>) {
         pendingOrders.clear()
         shippingOrders.clear()
+        failedOrders.clear()
+        Log.d("InvoiceActivity", orders.toString())
 
         orders.forEach { order ->
+            Log.d("InvoiceActivity", order.toString())
             when (order.order_id.status) {
                 "Đang chờ xác nhận" -> pendingOrders.add(order)
                 "Chờ giao hàng" -> shippingOrders.add(order)
+                "Hủy đơn" -> failedOrders.add(order)
                 else -> shippingOrders.add(order)
             }
         }
@@ -50,9 +57,9 @@ class InvoiceHistoryFragment : BaseFragment<FragmentInvoiceHistoryBinding>() {
 
 
     private val orderHistoryAdapter by lazy {
-        OrderHistoryAdapter(mutableListOf(),onClick = {model ->
+        OrderHistoryAdapter(mutableListOf(), onClick = { model ->
             val intent = Intent(requireActivity(), ReviewWriteActivity::class.java)
-            intent.putExtra("idProduct",model.product_id.id)
+            intent.putExtra("idProduct", model.product_id.id)
             startActivity(intent)
         })
     }
@@ -86,6 +93,12 @@ class InvoiceHistoryFragment : BaseFragment<FragmentInvoiceHistoryBinding>() {
                         viewBinding.rvOrder.visibility = View.GONE
 
                     }
+
+                    3 -> {
+                        viewBinding.rvInvoice.visibility = View.GONE
+                        viewBinding.rvOrder.visibility = View.VISIBLE
+                        orderHistoryAdapter.fillData(failedOrders)
+                    }
                 }
             })
 
@@ -98,13 +111,13 @@ class InvoiceHistoryFragment : BaseFragment<FragmentInvoiceHistoryBinding>() {
         invoiceDetailViewModel =
             ViewModelProvider(requireActivity())[InvoiceDetailViewModel::class.java]
         invoiceDetailViewModel.getinvoicedetailByIdUser(userModel!!.id)
-        invoiceDetailViewModel.invoiceDetailListIdUser.observe(requireActivity()) {invoiceDetails->
+        invoiceDetailViewModel.invoiceDetailListIdUser.observe(requireActivity()) { invoiceDetails ->
             invoiceDetails?.let {
                 invoiceAdapter.fillData(it)
             }
         }
         invoiceDetailViewModel.getAllOrderDetailsWithStatus(userModel.id)
-        invoiceDetailViewModel.orderDetailListIdUser.observe(requireActivity()) {orderDetails ->
+        invoiceDetailViewModel.orderDetailListIdUser.observe(requireActivity()) { orderDetails ->
             orderDetails?.let {
                 updateOrderLists(it.toMutableList())
                 orderHistoryAdapter.fillData(pendingOrders)

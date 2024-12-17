@@ -1,6 +1,7 @@
 package com.example.petify.ui.invoice
 
 import android.content.Intent
+import android.util.Log
 import android.view.View
 import androidx.lifecycle.ViewModelProvider
 import com.example.petify.BaseActivity
@@ -29,15 +30,20 @@ class InvoiceActivity : BaseActivity<ActivityInvoiceBinding, BaseViewModel>() {
 
     private val pendingOrders = mutableListOf<OrderResponse>()
     private val shippingOrders = mutableListOf<OrderResponse>()
+    private val failedOrders = mutableListOf<OrderResponse>()
 
     private fun updateOrderLists(orders: List<OrderResponse>) {
         pendingOrders.clear()
         shippingOrders.clear()
+        failedOrders.clear()
+        Log.d("InvoiceActivity",orders.toString())
 
         orders.forEach { order ->
+            Log.d("InvoiceActivity",order.toString())
             when (order.order_id.status) {
                 "Đang chờ xác nhận" -> pendingOrders.add(order)
                 "Chờ giao hàng" -> shippingOrders.add(order)
+                "Hủy đơn"-> failedOrders.add(order)
                 else -> shippingOrders.add(order)
             }
         }
@@ -89,6 +95,11 @@ class InvoiceActivity : BaseActivity<ActivityInvoiceBinding, BaseViewModel>() {
                         binding.rvOrder.visibility = View.GONE
 
                     }
+                    3-> {
+                        binding.rvInvoice.visibility = View.GONE
+                        binding.rvOrder.visibility = View.VISIBLE
+                        orderHistoryAdapter.fillData(failedOrders)
+                    }
                 }
             })
 
@@ -102,10 +113,12 @@ class InvoiceActivity : BaseActivity<ActivityInvoiceBinding, BaseViewModel>() {
             ViewModelProvider(this@InvoiceActivity)[InvoiceDetailViewModel::class.java]
         invoiceDetailViewModel.getinvoicedetailByIdUser(userModel!!.id)
         invoiceDetailViewModel.invoiceDetailListIdUser.observe(this@InvoiceActivity) { invoiceDetails ->
+            Log.d("InvoiceActivity", invoiceDetails.toString())
             invoiceDetails?.let {
                 invoiceAdapter.fillData(it)
             }
         }
+            Log.d("InvoiceActivity", "initView: ${userModel.id}")
         invoiceDetailViewModel.getAllOrderDetailsWithStatus(userModel.id)
         invoiceDetailViewModel.orderDetailListIdUser.observe(this@InvoiceActivity) { orderDetails ->
             orderDetails?.let {

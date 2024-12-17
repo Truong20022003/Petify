@@ -2,6 +2,7 @@ package com.example.petify.data.server.service
 
 import com.example.petify.data.server.enitities.ProductModel
 import com.example.petify.data.server.enitities.ProductModelSaleNew
+import com.example.petify.data.server.enitities.SuccessResponse
 import com.example.petify.data.server.enitities.UpdateQuantity
 import retrofit2.Response
 import retrofit2.http.Body
@@ -34,7 +35,7 @@ interface ProductService {
     suspend fun updateQuantity(
         @Path("id") id: String,
         @Body product: UpdateQuantity
-    ): Response<ProductModelSaleNew>
+    ): Response<SuccessResponse>
 
     @DELETE("product/deleteproduct/{id}")
     suspend fun deleteProduct(@Path("id") id: String): Response<Unit>
