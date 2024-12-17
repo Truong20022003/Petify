@@ -11,6 +11,7 @@ const paginationState = {
     tbody_oder: 1, // Trang hiện tại của bảng đơn hàng
     tbody_user: 1, // Trang hiện tại của bảng người dùng
     tbody_product: 1, // Trang hiện tại của bảng sản phẩm
+    tbody_quality: 1, // Trang hiện tại của bảng sản phẩm
 };
 
 const itemsPerPage = 5; // Số mục trên mỗi trang
@@ -29,8 +30,9 @@ function selectOption(selectElement) {
 }
 
 // Hàm tính toán thời gian bắt đầu và kết thúc
+// Hàm tính toán thời gian bắt đầu và kết thúc
 function calculateTimeRange(filter) {
-    const today = dayjs();
+    const today = dayjs(); // Ngày hôm nay
 
     if (filter === "today") {
         startDate = today.startOf("day");
@@ -41,12 +43,22 @@ function calculateTimeRange(filter) {
     } else if (filter === "thisYear") {
         startDate = today.startOf("year");
         endDate = today.endOf("year");
+    } else if (filter === "3daysAgo") {
+        startDate = today.subtract(3, "days").startOf("day"); // 3 ngày trước
+        endDate = today.endOf("day"); // Ngày hôm nay (kết thúc)
+    } else if (filter === "1weekAgo") {
+        startDate = today.subtract(1, "week").startOf("day"); // 1 tuần trước
+        endDate = today.endOf("day"); // Ngày hôm nay (kết thúc)
     }
+
+    console.log("Start Date:", startDate.format("YYYY-MM-DD"));
+    console.log("End Date:", endDate.format("YYYY-MM-DD"));
 }
+
 
 const loadData = async () => {
     try {
-        await Promise.all([getNewUser(), getAllUserOrders(), getNewProduct()]);
+        await Promise.all([getNewUser(), getAllUserOrders(), getNewProduct(), getQualityProduct(), getStatic()]);
     } catch (error) {
         console.error("Lỗi khi tải dữ liệu:", error);
     }
@@ -60,7 +72,6 @@ const fetchData = async (url) => {
             loadding.close()
         }
         return await response.json();
-        lo
     } catch (error) {
         console.error(`Lỗi khi gọi API: ${url}`, error);
         throw error;
@@ -147,7 +158,17 @@ const renderPaginatedTable = (elementId, data, emptyMessage, rowRenderer) => {
 const goToOrderPage = (orderCode) => {
     dialogConfirm(
         () => {
-            window.location.href = `/views/Oder/OderScreen.html?orderCode=${encodeURIComponent(orderCode)}`;
+            if (typeof orderCode !== 'string' || !orderCode.trim()) {
+                console.error("orderCode không hợp lệ.");
+                return;
+            }
+
+            // Tạo URL một cách an toàn bằng URL và URLSearchParams
+            const url = new URL('/views/Oder/OderScreen.html', window.location.origin);  // Tạo URL tuyệt đối
+            url.searchParams.set('orderCode', orderCode);  // Thêm tham số vào URL
+
+            // Chuyển hướng đến trang
+            window.location.href = url.toString();
         },
         () => {
             // Callback khi người dùng chọn "Không"
@@ -156,7 +177,28 @@ const goToOrderPage = (orderCode) => {
     );
 
 };
+const goToProductPage = (productname) => {
+    dialogConfirm(
+        () => {
+            if (typeof productname !== 'string' || !productname.trim()) {
+                console.error("Product không hợp lệ.");
+                return;
+            }
 
+            // Tạo URL một cách an toàn bằng URL và URLSearchParams
+            const url = new URL('/views/Product/product/ProductScreen.html', window.location.origin);  // Tạo URL tuyệt đối
+            url.searchParams.set('productname', productname);  // Thêm tham số vào URL
+
+            // Chuyển hướng đến trang
+            window.location.href = url.toString();
+        },
+        () => {
+            // Callback khi người dùng chọn "Không"
+            console.log("Người dùng đã hủy hành động.");
+        }
+    );
+
+};
 // Hàm lấy dữ liệu đơn hàng
 const getAllUserOrders = async () => {
     try {
@@ -164,9 +206,12 @@ const getAllUserOrders = async () => {
         const { data } = await fetchData(url);
 
         const title = document.getElementById("sum_oder");
-        title.innerText = data.length;
+        const title_oder = document.getElementById("title_oder");
 
-        renderPaginatedTable("tbody_oder", data, "Không đơn hàng mới nào trong ngày hôm nay", (item, index) => {
+        title.innerText = data.length;
+        title_oder.innerText = ` Danh sách đơn hàng mới chờ xác nhận (từ${startDate.format("YYYY-MM-DD")} đến ${endDate.format("YYYY-MM-DD")})`
+
+        renderPaginatedTable("tbody_oder", data, `Không đơn hàng chờ xác nhận nào  `, (item, index) => {
             const { user, order } = item;
 
             return /*html*/ `
@@ -201,15 +246,19 @@ const getNewUser = async () => {
         const { success, result } = await fetchData(url);
 
         const title = document.getElementById("sum_user");
+        const title_usernew = document.getElementById("title_usernew");
         title.innerText = result.length;
+        title_usernew.innerText = ` Thành viên gia nhập (từ ${startDate.format("YYYY-MM-DD")} đến ${endDate.format("YYYY-MM-DD")})`
 
-        renderPaginatedTable("tbody_user", result, "Không có người dùng mới nào trong ngày hôm nay", (item, index) => {
+        renderPaginatedTable("tbody_user", result, `Không có người dùng mới nào  `, (item, index) => {
             return /*html*/ `
                 <tr class="border-b">
                     <td class="py-2">${index + 1}</td>
                     <td class="py-2">
                       ${item.name}<br />
-                      ${item.email}
+                      ${item.email}<br/>
+                      ${item.phone_number}<br/>
+                      ${item.location}
                     </td>
                 </tr>
             `;
@@ -226,9 +275,13 @@ const getNewProduct = async () => {
         const { success, result } = await fetchData(url);
 
         const title = document.getElementById("sum_product");
-        title.innerText = result.length;
+        const title_newproduct = document.getElementById("title_newproduct");
 
-        renderPaginatedTable("tbody_product", result, "Không có sản phẩm mới nào trong ngày hôm nay", (item, index) => {
+        title.innerText = result.length;
+        title_newproduct.innerText = `Sản phẩm được thêm  (từ ${startDate.format("YYYY-MM-DD")} đến ${endDate.format("YYYY-MM-DD")})`;
+
+
+        renderPaginatedTable("tbody_product", result, `Không có sản phẩm nào được thêm  `, (item, index) => {
             const product = item.product;
             const categories = item.categories;
             const supplier = item.supplier;
@@ -248,6 +301,50 @@ const getNewProduct = async () => {
         console.error("Lỗi khi lấy dữ liệu sản phẩm:", error);
     }
 };
+const getQualityProduct = async () => {
+    try {
+        const url = `http://localhost:3000/product/out-of-stock`;
+        const { data } = await fetchData(url);
 
+        const title = document.getElementById("sum_quality");
+        title.innerText = data.length;
+
+        renderPaginatedTable("tbody_quality", data, "Không có sản phẩm nào hiện đang hết hàng", (item, index) => {
+            const product = item
+            const supplier = item.supplier_id;
+
+            return /*html*/ `
+            <tr class="border-b">
+                      <td class="py-2">
+                       ${product.name}
+                      </td>
+                      <td> <span class="bg-red-200 text-white-800 py-1 px-2 rounded align-middle">${product.status}</span></td>
+                     
+                      <td class="py-2">${supplier.name}</td>
+                      <td class="py-2"> 
+                      <button onclick="goToProductPage('${product.name}')" class="btn-view-order">Xem chi tiết</button>
+                        
+                    </tr>
+            `;
+        });
+    } catch (error) {
+        console.error("Lỗi khi lấy dữ liệu sản phẩm:", error);
+    }
+};
+const getStatic = async () => {
+    try {
+        const url = `http://localhost:3000/invoice/statisticsByDateRange?startDate=${startDate.format("YYYY-MM-DD")}&endDate=${endDate.format("YYYY-MM-DD")}`;
+        const { totalRevenue } = await fetchData(url);
+
+        const title = document.getElementById("sum_price");
+        const ngay = document.getElementById("ngay");
+
+        title.innerText = ` ${totalRevenue.toLocaleString('vi-VN')}đ`;
+        ngay.innerText = `Từ ${startDate.format("YYYY-MM-DD")} đến ${endDate.format("YYYY-MM-DD")}`;
+
+    } catch (error) {
+        console.error("Lỗi khi lấy dữ liệu sản phẩm:", error);
+    }
+};
 // Gọi dữ liệu lần đầu
 loadData();

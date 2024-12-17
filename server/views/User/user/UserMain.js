@@ -110,7 +110,7 @@ function renderUserList(users, roles) {
           <td class="border border-gray-300 px-4 py-2">
             ${Array.isArray(rolesToDisplay[index]) && rolesToDisplay[index].length > 0
           ? rolesToDisplay[index]
-            .map((role, index) => `<span class="role-item px-2 py-1 rounded mr-2 mt-2 mb-2">${role.name}</span>`)
+            .map((role, index) => /*html*/`<span class="role-item px-2 py-1 rounded mr-2 mt-2 mb-2">${role.name}</span>`)
             .join("")
           : "Không có vai trò"}
           </td>
@@ -443,6 +443,11 @@ function createUserDetailHTML(
     const file = event.target.files[0];
     if (file) {
       // Hiển thị ảnh đã chọn
+      const validExtensions = ["image/jpeg", "image/jpg", "image/png"];
+      if (!validExtensions.includes(file.type)) {
+        dialogWarning("Vui lòng chỉ chọn ảnh có đuôi jpg, jpeg, png!");
+        return;
+      }
       const reader = new FileReader();
       reader.onload = function (e) {
         const imgElement = document.getElementById('user-avatar');

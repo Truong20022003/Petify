@@ -200,8 +200,8 @@
             <i class="fas fa-shopping-cart"></i>
             <span class="ml-3"> Quản lý đơn hàng</span>
           </a>
-            <!-- Giảm giá -->
-            <a
+          <!-- Giảm giá -->
+          <a
             class="flex items-center py-2 px-6 text-gray-700 hover:bg-gray-200"
             href="/views/sale/SaleProduct.html"
           >
@@ -265,9 +265,43 @@
             <div id="nameuser" class="text-lg font-bold"></div>
           </div>
         </div>
-        <div
-          class="bg-white p-4 rounded shadow"
-        >
+        <div class="bg-white p-4 rounded shadow">
+          <div class="grid grid-cols-4 gap-4 mb-4">
+            <!-- Ô đầu tiên -->
+            <div class="bg-blue-500 text-white p-4 rounded shadow">
+              <div class="flex items-center">
+                <i class="fas fa-shopping-cart text-2xl"></i>
+                <div class="ml-4">
+                  <p class="text-sm">Tổng số đơn hàng</p>
+                  <p class="text-xl font-semibold" id="sum_oder"></p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Ô thứ hai: Thành viên -->
+            <div class="bg-blue-500 text-white p-4 rounded shadow">
+              <div class="flex items-center">
+                <i class="fas fa-user-friends text-2xl"></i>
+                <!-- Biểu tượng phù hợp cho "Thành viên" -->
+                <div class="ml-4">
+                  <p class="text-sm">Tổng doanh thu</p>
+                  <p class="text-xl font-semibold" id="sum_user"></p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Ô thứ ba: Số lượng sản phẩm mới -->
+            <div class="bg-yellow-400 text-white p-4 rounded shadow">
+              <div class="flex items-center">
+                <i class="fas fa-box-open text-2xl"></i>
+                <!-- Biểu tượng phù hợp cho "Sản phẩm mới" -->
+                <div class="ml-4">
+                  <p class="text-sm">Tổng số đơn hàng</p>
+                  <p class="text-xl font-semibold" id="sum_product"></p>
+                </div>
+              </div>
+            </div>
+          </div>
           <button
             id="openDatePickerBtn"
             class="bg-blue-500 text-white px-4 py-2 rounded mt-10 ml-10"
@@ -294,20 +328,27 @@
           </div>
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
             <!-- Order List Section -->
-            <div class="bg-white p-4 rounded shadow">
-              <h1 class="font-bold">Danh sách đơn hàng mới</h1>
-              <table class="w-full mt-2" id="table_oder">
+            <div class="overflow-x-auto bg-white shadow-lg rounded-lg p-6">
+              <table
+                class="min-w-full text-center table-auto"
+                id="revenueTable"
+              >
                 <thead>
-                  <tr class="text-left border-b">
-                    <th class="py-2">STT</th>
-                    <th class="py-2 px-4">Thông tin</th>
-                    <th class="py-2 px-4">Tổng đơn (Chưa gồm phí ship)</th>
-                    <th class="py-2 px-4">Loại tài khoản</th>
-                    <th class="py-2 px-4">Trạng thái</th>
-                    <th class="py-2 px-4">Thời gian</th>
+                  <tr class="bg-gray-200">
+                    <th class="px-4 py-2 text-lg font-semibold text-gray-600">
+                      Tháng
+                    </th>
+                    <th class="px-4 py-2 text-lg font-semibold text-gray-600">
+                      Doanh Thu (VND)
+                    </th>
+                    <th class="px-4 py-2 text-lg font-semibold text-gray-600">
+                      Thay Đổi So Với Tháng Trước (%)
+                    </th>
                   </tr>
                 </thead>
-                <tbody id="tbody_oder"></tbody>
+                <tbody id="revenueTableBody">
+                  <!-- Dữ liệu sẽ được chèn vào đây -->
+                </tbody>
               </table>
             </div>
             <!-- Top Products Section -->

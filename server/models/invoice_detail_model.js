@@ -1,10 +1,10 @@
 const db = require("../db/db");
 const invoiceDetailSchema = new db.mongoose.Schema(
   {
-
     user_id: {
-      type: String,
-      required: false
+      type: db.mongoose.Schema.Types.ObjectId,
+      required: false,
+      ref: "user"
     },
     product_id: {
       type: db.mongoose.Schema.Types.ObjectId,

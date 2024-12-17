@@ -11,6 +11,7 @@ let allData = [];  // Dữ liệu tổng hợp sau khi lấy từ API.
 let filteredData = []; // Dữ liệu đã lọc từ tìm kiếm
 const urlParams = new URLSearchParams(window.location.search);
 let orderCode = urlParams.get("orderCode");
+
 // console.log(orderCode, "dddddddddddddddddddddddddddddddddddd")
 const getList = async () => {
   try {
@@ -72,6 +73,9 @@ const renderTable = async (data) => {
   const datasuser = await Promise.all(
     data.map((item) => checkUser(item.user_id))
   );
+  if (orderCode) {
+    document.getElementById("searchInput").value = orderCode;  // Hiển thị mã đơn hàng lên thanh tìm kiếm
+  }
 
   // Xử lý lọc theo trạng thái
   document.getElementById("statusFilter").addEventListener("change", (e) => {
@@ -87,10 +91,26 @@ const renderTable = async (data) => {
   // Xử lý tìm kiếm (chỉ tìm trong filteredData)
   document.getElementById("searchInput").addEventListener("input", (e) => {
     const query = e.target.value;
-    filteredData = search(query, filteredData);  // Tìm kiếm chỉ trong filteredData đã lọc theo trạng thái
-    currentPage = 1;  // Reset về trang đầu khi tìm kiếm
-    totalPages = Math.ceil(filteredData.length / 25);  // Tính lại số trang sau tìm kiếm
-    renderList(filteredData, datasuser);  // Render lại dữ liệu sau tìm kiếm
+
+    if (query === "") {
+      // Nếu xóa hết mã tìm kiếm, khôi phục lại dữ liệu gốc và cập nhật lại URL
+      filteredData = allData;  // Khôi phục lại toàn bộ dữ liệu
+      totalPages = Math.ceil(filteredData.length / 25);  // Tính lại số trang
+      currentPage = 1;  // Reset về trang đầu tiên
+
+      // Cập nhật lại URL để không có tham số orderCode
+      const urlWithoutOrderCode = new URL(window.location.href);
+      urlWithoutOrderCode.searchParams.delete("orderCode");
+      window.history.replaceState({}, "", urlWithoutOrderCode);
+
+    } else {
+      // Tìm kiếm theo mã đơn hàng
+      filteredData = search(query, filteredData);  // Tìm kiếm chỉ trong filteredData đã lọc theo trạng thái
+      totalPages = Math.ceil(filteredData.length / 25);  // Tính lại số trang sau tìm kiếm
+      currentPage = 1;  // Reset về trang đầu khi tìm kiếm
+    }
+
+    renderList(filteredData, datasuser);  // Render lại dữ liệu sau tìm kiếm hoặc khôi phục
   });
 
   // Xử lý chuyển trang
@@ -544,6 +564,7 @@ const getInvoiceDetail = async (orderid) => {
 };
 const getByIdProduct = async (id) => {
   try {
+    console.log(id, "iddddd")
     const response = await fetch(
       `http://localhost:3000/product/getproductById/${id}`,
       {
@@ -552,6 +573,7 @@ const getByIdProduct = async (id) => {
       }
     );
     const data = await response.json();
+    console.log(data.result, "ciuuuuuuuuuuuuuuu")
     return {
       name: data.result.name,
       image: data.result.image,
