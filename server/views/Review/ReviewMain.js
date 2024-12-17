@@ -30,7 +30,7 @@ const renderTable = async (data) => {
   content.innerHTML = /*html*/ `
     <table class="content w-full border-collapse">
     <div class="flex mb-4">
-      <button class="bg-[#396060] text-white px-4 py-2 rounded mr-2 btnadd">Thêm mới</button>
+      <button class="bg-[#396060] text-white px-4 py-2 rounded mr-2 btnadd">Tìm kiếm</button>
       <input id="searchInput" class="border border-gray-300 rounded px-4 py-2 flex-grow" placeholder="Tìm kiếm theo tên sản phẩm" type="text" />
     </div>
     <thead>
@@ -79,9 +79,8 @@ const updateTable = (filteredProducts) => {
     paginatedData.forEach((item, index) => {
       const row = /*html*/ `
             <tr id="row-${item._id}">
-              <td class="w-[20px] border border-gray-300 px-4 py-2">${
-                startIndex + index + 1
-              }</td>
+              <td class="w-[20px] border border-gray-300 px-4 py-2">${startIndex + index + 1
+        }</td>
               <td class="border border-gray-300 px-4 py-2"> 
               <div class=" h-[220px] p-2 flex justify-center items-center ">
                 <img
@@ -97,9 +96,8 @@ const updateTable = (filteredProducts) => {
               <td class="border border-gray-300 px-4 py-2">${item.status}</td>
               <td class="border border-gray-300 px-4 py-2">
                 <div class="button-group flex flex-col space-y-2">
-                  <button class="bg-[#008080] text-white px-2 py-1 rounded btndetail" data-id="${
-                    item._id
-                  }">Chi tiết</button>
+                  <button class="bg-[#008080] text-white px-2 py-1 rounded btndetail" data-id="${item._id
+        }">Chi tiết</button>
                 </div>
               </td>
             </tr>`;
@@ -183,9 +181,8 @@ const renderDetailForm = async (
 ) => {
   const readonlyAttr = isReadonly ? "readonly" : "";
   const saveButtonHTML = showSaveButton
-    ? `<button class="bg-green-500 text-white px-4 py-2 rounded save" onclick="${
-        _id ? `saveEditUser('${_id}')` : "saveAddUser()"
-      }">Lưu</button>`
+    ? `<button class="bg-green-500 text-white px-4 py-2 rounded save" onclick="${_id ? `saveEditUser('${_id}')` : "saveAddUser()"
+    }">Lưu</button>`
     : "";
 
   content.innerHTML = /*html*/ `
@@ -206,14 +203,13 @@ const renderDetailForm = async (
           <!-- cuc1 -->
           <div class="space-y-4">
             <div class="flex items-center mb-2 m-5">
-            <span class="text-2xl font-semibold">Tên sản phẩm: ${
-              dataproduct.name
-            }</span>
+            <span class="text-2xl font-semibold">Tên sản phẩm: ${dataproduct.name
+    }</span>
             </div>
             <div class="flex flex-wrap gap-2 px-2 ">
             ${dataproduct.image
-              .map(
-                (img) => /*html*/ `
+      .map(
+        (img) => /*html*/ `
                 <div
                     class="w-[100px] h-[100px] flex-shrink-0 border border-gray-300 rounded-lg overflow-hidden hover:shadow-md hover:border-gray-400 transition"
                 >
@@ -224,8 +220,8 @@ const renderDetailForm = async (
                     />
                 </div>
                 `
-              )
-              .join("")}
+      )
+      .join("")}
             </div>
             <div class="space-y-4 m-5">
                 <div class="mb-2">
@@ -324,18 +320,16 @@ const getReviewsForProduct = async (productId, filterRating = "") => {
                 </button>
                 <!-- Menu thả xuống -->
                 <div class="hidden absolute right-0 mt-2 w-24 bg-white border border-gray-200 rounded-md shadow-lg z-10" id="menu">
-                  <button class="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100" onclick="handleEdit()">Sửa</button>
-                  <button class="block w-full text-left px-4 py-2 text-red-600 hover:bg-red-100" onclick="handleDelete('${
-                    item._id
-                  }')">Xóa</button>
+                  <!-- <button class="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100" onclick="handleEdit()">Sửa</button> -->
+                  <button class="block w-full text-left px-4 py-2 text-red-600 hover:bg-red-100" onclick="handleDelete('${item._id
+            }')">Xóa</button>
                 </div>
               </div>
 
               <!-- Nội dung chính -->
               <div class="flex items-center mb-2">
-                <img class="w-12 h-12 rounded-full mr-2" src="${
-                  item.user_id.avata || "default-avatar.jpg"
-                }" />
+                <img class="w-12 h-12 rounded-full mr-2" src="${item.user_id.avata || "default-avatar.jpg"
+            }" />
                 <span class="text-lg font-semibold">${item.user_id.name}</span>
               </div>
               <div class="mb-2">${renderRatingStars(item.rating)}</div>

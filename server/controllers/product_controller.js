@@ -281,7 +281,8 @@ const deleteproduct = async (req, res, next) => {
                 message: "Không thể xóa sản phẩm này vì nó vẫn còn tồn tại trong danh sách yêu thích của khách hàng."
             });
         }
-
+        // Xóa liên kết giữa sản phẩm và loại sản phẩm trong bảng trung gian (product_category)
+        await product_categoryModel.deleteMany({ product_id: id });
         // Xóa sản phẩm trong database
         let result = await productModel.findByIdAndDelete(id);
 
@@ -436,8 +437,9 @@ const reduceProductQuantity = async (req, res) => {
 
 const getOutOfStockProducts = async (req, res, next) => {
     try {
-        // Tìm các sản phẩm có số lượng bằng 0
-        let outOfStockProducts = await productModel.find({ quantity: 0 });
+        // Tìm các sản phẩm có số lượng bằng 0 và populate tên nhà cung cấp
+        let outOfStockProducts = await productModel.find({ quantity: 0 })
+            .populate('supplier_id', 'name');  // Populate tên nhà cung cấp
 
         // Kiểm tra nếu không có sản phẩm nào hết hàng
         if (outOfStockProducts.length === 0) {
@@ -448,11 +450,16 @@ const getOutOfStockProducts = async (req, res, next) => {
             });
         }
 
-        // Nếu có sản phẩm hết hàng
+        // Nếu có sản phẩm hết hàng, trả về thông tin bao gồm tên nhà cung cấp
+        const productsWithSupplier = outOfStockProducts.map(product => ({
+            ...product.toObject(),
+            supplier_name: product.supplier_id?.name || "Không có tên nhà cung cấp"
+        }));
+
         res.status(200).json({
             status: "success",
             message: "Danh sách sản phẩm hết hàng",
-            data: outOfStockProducts
+            data: productsWithSupplier
         });
     } catch (error) {
         // Xử lý lỗi và trả về thông báo lỗi
@@ -463,6 +470,7 @@ const getOutOfStockProducts = async (req, res, next) => {
         });
     }
 };
+
 
 module.exports = { getProductsToday };
 

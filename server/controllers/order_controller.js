@@ -151,7 +151,8 @@ exports.ProcessOrder = async (req, res, next) => {
             invoice_id: savedInvoice._id,
             product_id: detail.product_id,
             quantity: detail.quantity,
-            total_price: detail.total_price
+            total_price: detail.total_price,
+            user_id: detail.user_id
         }));
         console.log(invoiceDetails, "jjjj")
         // Lưu chi tiết hóa đơn

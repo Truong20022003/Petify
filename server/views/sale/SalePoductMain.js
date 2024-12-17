@@ -32,7 +32,6 @@ const getList = async (page = 1, query = "") => {
 const renderTable = (data) => {
   content.innerHTML = /*html*/ `
     <div class="flex mb-4">
-      <button class="bg-[#396060] text-white px-4 py-2 rounded mr-2 btnadd">Thêm mới</button>
       <input  id="searchInput" class="border border-gray-300 rounded px-4 py-2 flex-grow" placeholder="Tìm kiếm" type="text" />
       <button class="bg-[#396060] text-white px-4 py-2 rounded ml-2">Tìm kiếm</button>
     </div>
@@ -101,29 +100,24 @@ const renderList = (data) => {
       const discountedPrice = item.price - (item.price * item.sale) / 100;
       const row = /*html*/ `
         <tr id="row-${item._id}">
-          <td class="border border-gray-300 px-4 py-2 w-[50]">${
-            start + index + 1
-          }</td>
-          <td class="border border-gray-300 px-4 py-2 text-center align-middle">${
-            item.name
-          }</td>
+          <td class="border border-gray-300 px-4 py-2 w-[50]">${start + index + 1
+        }</td>
+          <td class="border border-gray-300 px-4 py-2 text-center align-middle">${item.name
+        }</td>
           <td class="border border-gray-300 px-4 py-2 text-center align-middle">${item.price.toLocaleString(
-            "vi-VN"
-          )}đ</td>
-          <td class="border border-gray-300 px-4 py-2 text-center align-middle">${
-            item.sale
-          }%</td>
+          "vi-VN"
+        )}đ</td>
+          <td class="border border-gray-300 px-4 py-2 text-center align-middle">${item.sale
+        }%</td>
           <td class="border border-gray-300 px-4 py-2 text-center align-middle">${discountedPrice.toLocaleString(
-            "vi-VN"
-          )}đ</td>
+          "vi-VN"
+        )}đ</td>
           <td class="border border-gray-300 px-4 py-2 w-[200]">
             <div class="button-group flex flex-col space-y-2">
-              <button class="bg-blue-500 text-white px-2 py-1 rounded btnedit" data-id="${
-                item._id
-              }">Cập nhật</button>
-              <!-- <button class="bg-[#008080] text-white px-2 py-1 rounded btndetail" data-id="${
-                item._id
-              }">Chi tiết</button> -->
+              <button class="bg-blue-500 text-white px-2 py-1 rounded btnedit" data-id="${item._id
+        }">Cập nhật</button>
+              <!-- <button class="bg-[#008080] text-white px-2 py-1 rounded btndetail" data-id="${item._id
+        }">Chi tiết</button> -->
             </div>
           </td>
         </tr>`;
