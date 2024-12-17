@@ -23,6 +23,9 @@ class FromNotificationActivity : BaseActivity<ActivityFromNotificationBinding, P
             Log.d("FromNotificationActivity", "initView: $it")
             binding.tvProductName.text = it?.product?.name
             binding.tvProductPrice.text = "${it?.product?.price} VNĐ"
+            val originalPrice =
+                it?.product?.price!! * (1 - it?.product?.sale!! / 100.0)
+            binding.tvProductPriceSale.text = "$originalPrice VNĐ"
             binding.tvDescribe.text = it?.product?.description
             binding.tvSold.text = "Số lượng: ${it?.product?.quantity}"
             setupViewPager(it?.product?.image!!)

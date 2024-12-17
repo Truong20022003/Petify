@@ -35,10 +35,11 @@ class PaymentAdapter(
     }
 
     override fun onBindViewHolder(holder: PaymentViewHolder, position: Int) {
-
+        val originalPrice =
+            paymentList[position].productId.price * (1 - paymentList[position].productId.sale / 100.0)
         holder.binding.tvQuantity.setText("${paymentList[position].quantity} sản phẩm")
         holder.binding.tvNameProduct.setText(paymentList[position].productId.name)
-        holder.binding.tvPriceProduct.setText("${paymentList[position].productId.price} đ")
+        holder.binding.tvPriceProduct.setText("${originalPrice} đ")
         Glide.with(holder.binding.root.context)
             .load(paymentList[position].productId.image[0])
             .into(holder.binding.ivImageProduct)

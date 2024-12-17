@@ -50,21 +50,22 @@
                 app:layout_constraintEnd_toStartOf="@id/cardView"
                 app:layout_constraintStart_toEndOf="@+id/iv_icon"
                 app:layout_constraintTop_toBottomOf="@+id/tv_title" />
+
             <androidx.cardview.widget.CardView
                 android:id="@+id/cardView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:cardCornerRadius="50dp"
                 android:layout_marginEnd="10dp"
+                app:cardCornerRadius="50dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" >
+                app:layout_constraintTop_toTopOf="parent">
+
                 <ImageView
                     android:id="@+id/iv_user"
                     android:layout_width="34dp"
                     android:layout_height="34dp"
-                    android:scaleType="centerCrop"
-                  />
+                    android:scaleType="centerCrop" />
             </androidx.cardview.widget.CardView>
 
 
@@ -165,8 +166,6 @@
                         android:drawableStart="@drawable/ic_search"
                         android:hint="   Khám phá sản phẩm yêu thích..."
                         android:paddingStart="12dp"
-                        android:focusable="false"
-                        android:cursorVisible="false"
                         android:textSize="14sp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -175,42 +174,59 @@
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_product_search"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24sp"
+                    android:orientation="vertical"
+                    android:visibility="gone"
+                    app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/constraint_home_2"
+                    app:spanCount="2"
+                    tools:listitem="@layout/item_favorites" />
+
                 <TextView
                     android:id="@+id/btn_all"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="35dp"
                     android:background="@drawable/bg_item_menu_selector"
+                    android:color="@color/text_color_selector"
                     android:paddingHorizontal="20dp"
                     android:paddingVertical="10dp"
                     android:text="Tất cả"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/constraint_home_2"
-                    android:layout_marginTop="35dp"
                     android:textAllCaps="false"
-                    android:color="@color/text_color_selector"/>
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/constraint_home_2" />
+
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rv_category"
                     android:layout_width="0dp"
-                    app:layout_constraintStart_toEndOf="@+id/btn_all"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
-                    android:padding="5dp"
-                    tools:listitem="@layout/item_rv_category"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     android:orientation="horizontal"
+                    android:padding="5dp"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/constraint_home_2" />
+                    app:layout_constraintStart_toEndOf="@+id/btn_all"
+                    app:layout_constraintTop_toBottomOf="@+id/constraint_home_2"
+                    tools:listitem="@layout/item_rv_category" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rv_product"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
+
                     android:layout_marginTop="24sp"
                     android:orientation="vertical"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/rv_category"
                     tools:listitem="@layout/item_rcv_category" />
+
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.core.widget.NestedScrollView>

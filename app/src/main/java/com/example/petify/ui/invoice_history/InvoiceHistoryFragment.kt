@@ -112,7 +112,9 @@ class InvoiceHistoryFragment : BaseFragment<FragmentInvoiceHistoryBinding>() {
             ViewModelProvider(requireActivity())[InvoiceDetailViewModel::class.java]
         invoiceDetailViewModel.getinvoicedetailByIdUser(userModel!!.id)
         invoiceDetailViewModel.invoiceDetailListIdUser.observe(requireActivity()) { invoiceDetails ->
+            Log.d("InvoiceDetail", invoiceDetails.toString())
             invoiceDetails?.let {
+                Log.d("InvoiceDetail", it.toString())
                 invoiceAdapter.fillData(it)
             }
         }
