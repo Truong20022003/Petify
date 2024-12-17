@@ -24,10 +24,15 @@ class ForgotPasswordActivity : BaseActivity<ActivityForgotPasswordBinding, BaseV
     override fun initView() {
         super.initView()
         binding.btnContinue.setOnClickListener {
-            val phoneNumber = binding.etOtpSMS.text.toString().trim()
-            if (phoneNumber.isEmpty()) {
-                Toast.makeText(this, "Please enter your phone number", Toast.LENGTH_SHORT).show()
+            val phoneNumberInput = binding.etOtpSMS.text.toString().trim()
+            if (phoneNumberInput.isEmpty()) {
+                Toast.makeText(this, "Vui lòng nhập số điện thoại", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
+            }
+            val phoneNumber = if (phoneNumberInput.startsWith("0")) {
+                "+84" + phoneNumberInput.substring(1)
+            } else {
+                phoneNumberInput
             }
             sendOtpToPhoneNumber(phoneNumber)
         }

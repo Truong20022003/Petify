@@ -45,7 +45,7 @@ class SignupActivity : BaseActivity<ActivitySignupBinding, UserViewModel>() {
                 navigateToLogin()
                 Toast.makeText(this, "Đăng ký thành công!", Toast.LENGTH_SHORT).show()
             } else {
-                Toast.makeText(this, "Thêm vai trò người dùng thất bại!", Toast.LENGTH_SHORT).show()
+//                Toast.makeText(this, "Thêm vai trò người dùng thất bại!", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -53,7 +53,7 @@ class SignupActivity : BaseActivity<ActivitySignupBinding, UserViewModel>() {
     private fun observeRegistrationSuccess() {
         viewModel.registrationSuccess.observe(this) { success ->
             if (!success) {
-                Toast.makeText(this, "Đăng ký thất bại!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Số điện thoại hoặc email đã được sử dụng", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -211,7 +211,7 @@ class SignupActivity : BaseActivity<ActivitySignupBinding, UserViewModel>() {
             } ?: run {
                 Toast.makeText(
                     this,
-                    "Đăng ký thất bại, số điện thoại hoặc email đã được sử dụng",
+                    "Số điện thoại hoặc email đã được sử dụng",
                     Toast.LENGTH_SHORT
                 ).show()
             }
