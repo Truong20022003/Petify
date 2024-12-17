@@ -128,19 +128,7 @@
 
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/textViewEmpty"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:text="@string/b_t_u_cu_c_tr_chuy_n"
-        android:textColor="@color/color_70757E"
-        android:textSize="14sp"
-        android:visibility="visible"
-        app:layout_constraintBottom_toTopOf="@id/editLayout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/recyclerViewChat" />
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

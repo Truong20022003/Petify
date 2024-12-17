@@ -50,7 +50,7 @@ class PaymentActivity : BaseActivity<ActivityPaymentBinding, OrderViewModel>() {
     private lateinit var carrierAdapter: CarrierAdapter
     private var checkPaymentMethodZaloPay = true
     private var checkPaymentMethodCOD = false
-    private var paymentMethod = ""
+    private var paymentMethod = "Thanh toán khi nhận hàng"
     private var carMethod = "Giao hàng tiết kiệm"
     private var shippingPrice = 10000.0
     private var selectedCarrier: CarrierModel? = null
