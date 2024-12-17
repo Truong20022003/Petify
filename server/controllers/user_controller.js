@@ -263,7 +263,8 @@ exports.resetPassword = async (req, res, next) => {
 };
 exports.changePassword = async (req, res, next) => {
     const { phone_number, newPassword } = req.body;
-
+    console.log(phone_number)
+    console.log(newPassword)
     // Kiểm tra đầu vào
     if (!phone_number || typeof phone_number !== 'string') {
         return res.status(400).json({
@@ -287,7 +288,12 @@ exports.changePassword = async (req, res, next) => {
         await admin.auth().updateUser(userRecord.uid, {
             password: newPassword,
         });
-
+        console.log("Password updated successfully for UID:", userRecord.uid);
+        await userModel.updateOne(
+            { phone_number: phone_number },
+            { password: newPassword }
+        );
+        
         return res.json({
             status: "Success",
             message: "Password updated successfully"
