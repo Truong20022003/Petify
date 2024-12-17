@@ -183,7 +183,7 @@ const renderList = async (data, namesuser) => {
           <td class="border border-gray-300 px-4 py-2">${item.delivery_address}</td>
           <td class="border border-gray-300 px-4 py-2">
             <button class="bg-blue-500 text-white px-2 py-1 rounded btnedit" data-id="${item._id}">Cập nhật</button>
-            <button class="bg-[#008080] text-white px-2 py-1 rounded btndetail" data-id="${item._id}">Chi tiết</button>
+            <!-- <button class="bg-[#008080] text-white px-2 py-1 rounded btndetail" data-id="${item._id}">Chi tiết</button> -->
           </td>
         </tr>`;
       tableBody.innerHTML += row;

@@ -1,21 +1,16 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
   <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Petify</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="/views/exten/dialog.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
       rel="stylesheet"
     />
-    <title>Petify</title>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="/views/exten/dialog.js"></script>
-    <!-- Thêm Font Awesome để sử dụng biểu tượng -->
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
-    />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.3.1/jspdf.umd.min.js"></script>
-
     <style>
       body {
         background-image: url("/views/img/n.jpg");
@@ -105,13 +100,13 @@
               onclick="toggleSubmenu()"
             >
               <i class="fas fa-tasks"> </i>
-              <span class="ml-3"> Quản lý sản phẩm & loại sản phẩm</span>
+              <span class="ml-3">Quản lý sản phẩm & loại sản phẩm</span>
               <i id="manageIcon" class="fas fa-chevron-down ml-auto"> </i>
             </a>
             <div id="submenuItems" class="submenu pl-12">
               <a
                 class="block py-2 px-6 text-gray-700 hover:bg-gray-200"
-                href="/views/Product/category/CategoryScreen.html"
+                href="/views/Product/product/ProductScreen.html"
                 onclick="activateSubmenu(this)"
               >
                 Quản lý sản phẩm
@@ -135,7 +130,7 @@
           </a>
           <!-- hóa đơn -->
           <a
-            class="flex items-center py-2 px-6 text-gray-700 hover:bg-gray-200 bg-[#6b9484] text-white"
+            class="flex items-center py-2 px-6 text-gray-700 hover:bg-gray-200"
             href="/views/Invoice/InvoiceScreen.html"
           >
             <i class="fas fa-file-invoice"></i>
@@ -159,7 +154,7 @@
           </a>
           <!-- Chat với người dùng -->
           <a
-            class="flex items-center py-2 px-6 text-gray-700 hover:bg-gray-200"
+            class="flex items-center py-2 px-6 text-gray-700 hover:bg-gray-200 bg-[#6b9484] text-white"
             href="/views/chat/ChatScreen.html"
           >
             <i class="fas fa-comments"></i>
@@ -167,12 +162,12 @@
           </a>
           <!-- thông báo -->
           <!-- <a
-           class="flex items-center py-2 px-6 text-gray-700 hover:bg-gray-200"
-           href="/views/Notification/NotificationScreen.html"
-         >
-           <i class="fas fa-bell"></i>
-           <span class="ml-3"> Quản lý thông báo</span>
-         </a> -->
+            class="flex items-center py-2 px-6 text-gray-700 hover:bg-gray-200"
+            href="/views/Notification/NotificationScreen.html"
+          >
+            <i class="fas fa-bell"></i>
+            <span class="ml-3"> Quản lý thông báo</span>
+          </a> -->
           <!-- nhà cung cấp -->
           <a
             class="flex items-center py-2 px-6 text-gray-700 hover:bg-gray-200"
@@ -211,7 +206,7 @@
         style="border-radius: 10px; margin-left: 10px"
       >
         <div class="flex justify-between items-center mb-6">
-          <h1 class="text-2xl font-bold">Quản lý hóa đơn</h1>
+          <h1 class="text-2xl font-bold">Chat với người dùng</h1>
           <div class="flex items-center">
             <img
               id="userAvatar"
@@ -223,13 +218,65 @@
           </div>
         </div>
         <div class="bg-white p-4 rounded shadow">
-          <table class="content w-full border-collapse">
-            <tbody></tbody>
-          </table>
+          <div class="flex h-screen">
+            <!-- Sidebar -->
+            <div class="w-1/4 bg-white shadow-lg p-4 flex-shrink-0">
+              <h2 class="text-xl font-bold mb-4">Danh sách người dùng</h2>
+              <input
+                id="searchUser"
+                type="text"
+                placeholder="Tìm kiếm người dùng..."
+                class="w-full p-2 mb-4 border rounded-lg"
+              />
+              <div
+                id="list_user"
+                class="overflow-y-auto max-h-[calc(100vh-200px)]"
+              >
+                <!-- Danh sách người dùng render tại đây -->
+              </div>
+            </div>
+
+            <!-- Chat Area -->
+            <div class="w-3/4 flex flex-col bg-white shadow-lg rounded-lg m-4">
+              <!-- Header -->
+              <div
+                class="flex items-center justify-between p-4 bg-blue-500 text-white rounded-t-lg"
+              >
+                <h2 id="chatHeader" class="text-lg font-semibold">
+                  To: Chọn người dùng
+                </h2>
+              </div>
+
+              <!-- Messages -->
+              <div
+                id="messages"
+                class="flex-1 p-4 overflow-y-auto bg-gray-50 space-y-4"
+              ></div>
+
+              <!-- Input -->
+              <div
+                class="p-4 border-t bg-gray-100 flex items-center rounded-b-lg"
+              >
+                <input
+                  id="messageInput"
+                  type="text"
+                  placeholder="Nhập tin nhắn..."
+                  class="w-full p-2 border rounded-lg"
+                />
+                <button
+                  id="sendMessageButton"
+                  class="ml-2 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+                >
+                  <i class="fas fa-paper-plane mr-2"></i> Gửi
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-    <script src="./InvoiceMain.js"></script>
+    <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
     <script src="/views/MenuMain.js"></script>
+    <script src="ChatMain.js"></script>
   </body>
 </html>

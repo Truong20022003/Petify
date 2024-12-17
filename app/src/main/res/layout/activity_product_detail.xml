@@ -284,6 +284,7 @@
             android:drawableEnd="@drawable/ic_cart_item_home"
             android:padding="10dp"
             android:text="@string/th_m"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -292,6 +293,7 @@
             android:layout_width="99dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
+            android:visibility="gone"
             android:background="@drawable/bg_btn_buynow"
             android:padding="10dp"
             android:text="@string/mua_ngay"

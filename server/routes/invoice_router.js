@@ -13,6 +13,7 @@ router.get("/statisticsByDateRange", invoiceController.statisticsByDateRange)///
 router.get("/getMonthlyRevenue", invoiceController.getMonthlyRevenue)
 router.get("/statisticsByDateRangeStatus", invoiceController.statisticsByDateRangeStatus)
 router.get("/getAllUserOrders", invoiceController.getAllUserOrders)///Thống kê ra những đơn hàng mà nó có trạng thái là đang chừo xác nhận
+router.get("/getCancelledInvoices", invoiceController.getCancelledInvoices)///Thống kê ra những đơn hàng mà nó có trạng thái là đang chừo xác nhận
 
 
 router.get("/getinvoiceByIdUser/:id", invoiceController.getInvoiceByIdUser)

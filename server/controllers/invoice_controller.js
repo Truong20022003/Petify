@@ -551,6 +551,45 @@ exports.getAllUserOrders = async (req, res, next) => {
         });
     }
 };
+////thong ke so dươn hang bi huy 
+exports.getCancelledInvoices = async (req, res, next) => {
+    try {
+        const { startDate, endDate } = req.query;
+
+        // Kiểm tra xem startDate và endDate có được cung cấp không
+        if (!startDate || !endDate) {
+            return res.status(400).json({ status: "Error", message: "Start date and end date are required." });
+        }
+
+        // Chuyển đổi startDate và endDate thành đối tượng Date
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+
+        // Kiểm tra định dạng ngày tháng
+        if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+            return res.status(400).json({ status: "Error", message: "Invalid date format." });
+        }
+
+        // Lấy danh sách các hóa đơn có trạng thái "Hủy đơn" và trong khoảng ngày đã cho
+        const cancelledInvoices = await invoiceModel.find({
+            status: "Hủy đơn",
+            createdAt: {
+                $gte: start,
+                $lte: end
+            }
+        });
+
+        // Trả về số lượng và thông tin của các hóa đơn
+        res.json({
+            status: "Successfully",
+            count: cancelledInvoices.length,
+            invoices: cancelledInvoices
+        });
+    } catch (error) {
+        res.status(500).json({ status: "Error", message: error.message });
+    }
+};
+
 
 
 
