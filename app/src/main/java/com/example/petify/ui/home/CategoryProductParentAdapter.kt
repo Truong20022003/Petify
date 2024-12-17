@@ -50,5 +50,6 @@ class CategoryProductParentAdapter(
         }
     }
 
+
     override fun getItemCount(): Int = categoryModels.size
 }

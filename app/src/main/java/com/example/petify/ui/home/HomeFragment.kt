@@ -3,6 +3,8 @@ package com.example.petify.ui.home
 import android.content.Intent
 import android.os.Handler
 import android.os.Looper
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.widget.Toast
@@ -50,6 +52,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
     private lateinit var cartViewModel: CartViewModel
     private lateinit var favoriteViewModel: FavoriteViewModel
     private lateinit var cartApi: CartApiViewModel
+    private lateinit var productAdapter: ProductAdapter
     private var listFavorite1: List<FavoriteResponse> = emptyList()
     override fun initView() {
         super.initView()
@@ -86,8 +89,40 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
 //                viewBinding.rvCategory.adapter = adapter
             }
         }
-
-
+        productAdapter = ProductAdapter(
+            productList = emptyList(), // Danh sách sản phẩm ban đầu rỗng
+            favoriteList = listFavorite1, // Danh sách yêu thích ban đầu
+            itemClickListener = { productModel ->
+                // Xử lý sự kiện khi click vào item
+                val intent = Intent(context, ProductDetailActivity::class.java)
+                intent.putExtra("productModel", productModel)
+                startActivity(intent)
+            },
+            onFavoriteChanged = { productModel, isFavorite ->
+                // Xử lý thêm/xóa sản phẩm khỏi danh sách yêu thích
+                if (isFavorite) {
+                    val favoriteRequest = FavoriteRequest(productModel.id, userModel!!.id)
+                    favoriteViewModel.addFavorites(favoriteRequest)
+                } else {
+                    favoriteViewModel.deleteFavorite(productModel.id, userModel!!.id)
+                }
+            },
+            onAddToCart = { productModel, isAddToCart ->
+                // Xử lý thêm sản phẩm vào giỏ hàng
+                if (isAddToCart) {
+                    val cartItem = CartRequest(productModel.id, userModel!!.id, 1)
+                    cartApi.addCart(cartItem)
+                }
+            }
+        )
+        productViewModel.getListProduct()
+        productViewModel.productList.observe(this) { listProduct ->
+            Log.d("listPRODUCT", listProduct.toString())
+            listProduct?.let {
+                productAdapter.fillData(it.toMutableList())
+            }
+        }
+        viewBinding.rvProductSearch.adapter = productAdapter
         favoriteViewModel.favoriteList.observe(this) { listFavorite ->
             listFavorite1 =
                 listFavorite ?: emptyList() // Gán danh sách trống nếu listFavorite là null
@@ -188,11 +223,27 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
             startActivity(intent)
 
         }
-        viewBinding.ivSearch.setOnClickListener {
-            val intent = Intent(requireContext(), SearchActivity::class.java)
-            startActivity(intent)
+        viewBinding.ivSearch.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
 
-        }
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                val query = s.toString().trim()
+                if (query.isNotEmpty()) {
+                    hideOtherViews() // Ẩn các view khác
+                    viewBinding.rvProductSearch.visibility = View.VISIBLE
+                    filterProducts(query)
+                } else {
+                    showOtherViews() // Hiển thị lại các view
+                    viewBinding.rvProductSearch.visibility = View.GONE
+                }
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+
+            }
+        })
         val slideshowAdapter = Home_SlideshowAdapter(images)
         viewBinding.viewPager.adapter = slideshowAdapter
 
@@ -242,6 +293,34 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
 
         // Cập nhật lại danh sách sản phẩm nếu cần thiết
         productCategoryViewModel.getProductsGroupedByCategory()
+    }
+
+    private fun filterProducts(query: String) {
+        val filteredList = productViewModel.productList.value?.filter { product ->
+            product.name.contains(query, ignoreCase = true)
+        } ?: emptyList()
+        Log.d("list12333", filteredList.toString())
+        productAdapter.fillData(filteredList.toMutableList())
+    }
+
+    // Hàm ẩn các View khác
+    private fun hideOtherViews() {
+        viewBinding.constraintHomeTop.visibility = View.GONE
+        viewBinding.viewPager.visibility = View.GONE
+        viewBinding.btnAll.visibility = View.GONE
+        viewBinding.rvCategory.visibility = View.GONE
+        viewBinding.rvProduct.visibility = View.GONE
+        viewBinding.rvProductSearch.visibility = View.VISIBLE
+    }
+
+    private fun showOtherViews() {
+        viewBinding.constraintHomeTop.visibility = View.VISIBLE
+        viewBinding.viewPager.visibility = View.VISIBLE
+        viewBinding.btnAll.visibility = View.VISIBLE
+        viewBinding.rvCategory.visibility = View.VISIBLE
+        viewBinding.rvProduct.visibility = View.VISIBLE
+        viewBinding.rvProductSearch.visibility = View.GONE
+
     }
 
 }

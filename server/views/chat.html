@@ -35,7 +35,7 @@
       const socket = io("http://localhost:3000");
 
       // Admin đăng ký vào phòng 'admin' để nhận tin nhắn
-      socket.emit("register", "675c53ee1a5b2c003f94a04c");
+      socket.emit("register", "676048dc2f99e66885417dd6");
 
       // Lắng nghe tin nhắn từ người dùng
       socket.on("receiveMessage", (message) => {
@@ -54,7 +54,7 @@
           const content = messageInput.value.trim();
 
           if (content) {
-            const userId = "675c53ee1a5b2c003f94a04c"; // ID người dùng mà Admin đang trò chuyện
+            const userId = "676048dc2f99e66885417dd6"; // ID người dùng mà Admin đang trò chuyện
             socket.emit("sendAdminMessage", { user_id: userId, content });
 
             messageInput.value = ""; // Clear input field

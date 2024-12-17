@@ -25,19 +25,23 @@ class ChatAdapter(private val messages: List<MessageModel>) :
         val message = messages[position]
         holder.tvMessageContent.text = message.content
 
-        // Tùy chỉnh kiểu hiển thị dựa trên người gửi
-        val layoutParams = holder.itemView.layoutParams as ViewGroup.MarginLayoutParams
+        val cardLayoutParams = holder.itemView.findViewById<View>(R.id.cardMessage).layoutParams as androidx.constraintlayout.widget.ConstraintLayout.LayoutParams
+
         if (message.sender == "user") {
-            layoutParams.marginStart = 50
-            layoutParams.marginEnd = 10
-            holder.itemView.setBackgroundResource(R.drawable.bg_item_menu_off) // Thay bằng background tùy chỉnh
+            // Neo tin nhắn bên phải
+            cardLayoutParams.endToEnd = androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.PARENT_ID
+            cardLayoutParams.startToStart = -1 // Xóa ràng buộc bên trái
+            holder.itemView.findViewById<View>(R.id.cardMessage).setBackgroundResource(R.drawable.bg_user_message)
         } else {
-            layoutParams.marginStart = 10
-            layoutParams.marginEnd = 50
-            holder.itemView.setBackgroundResource(R.drawable.bg_item_menu_on) // Thay bằng background tùy chỉnh
+            // Neo tin nhắn bên trái
+            cardLayoutParams.startToStart = androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.PARENT_ID
+            cardLayoutParams.endToEnd = -1 // Xóa ràng buộc bên phải
+            holder.itemView.findViewById<View>(R.id.cardMessage).setBackgroundResource(R.drawable.bg_bot_message)
         }
-        holder.itemView.layoutParams = layoutParams
+
+        holder.itemView.findViewById<View>(R.id.cardMessage).layoutParams = cardLayoutParams
     }
+
 
     override fun getItemCount(): Int = messages.size
 }
