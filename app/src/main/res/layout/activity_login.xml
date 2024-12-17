@@ -188,6 +188,7 @@
             android:layout_marginHorizontal="40dp"
             android:background="@drawable/bg_intro"
             android:gravity="center"
+            android:visibility="invisible"
             android:orientation="horizontal"
             android:padding="12dp">
 

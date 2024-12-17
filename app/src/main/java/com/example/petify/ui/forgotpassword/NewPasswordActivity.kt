@@ -43,7 +43,13 @@ class NewPasswordActivity : BaseActivity<ActivityNewPasswordBinding, UserViewMod
 
             // Gọi API để đổi mật khẩu
             viewModel.changePassword(phoneNumber, newPassword)
-            finish()
+            viewModel.isPasswordChanged.observe(this) { isChanged ->
+                if (isChanged) {
+                    Toast.makeText(this, "Đổi mật khẩu thành công", Toast.LENGTH_SHORT).show()
+                    finish()
+                }
+
+            }
         }
 
     }

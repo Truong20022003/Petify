@@ -27,9 +27,9 @@ class CarrierAdapter(
         holder.binding.apply {
             tvNameCarrier.text = list[position].name
             val price = if (position == 0) {
-                "10.000đ"
-            } else {
                 "20.000đ"
+            } else {
+                "10.000đ"
             }
             tvCarrierPrice.text = price
 
@@ -58,7 +58,7 @@ class CarrierAdapter(
     fun fillData(newList: List<CarrierModel>) {
         list.clear()            // Xóa danh sách cũ
         list.addAll(newList)    // Thêm danh sách mới
-        selectedPosition = RecyclerView.NO_POSITION // Reset trạng thái chọn
+        selectedPosition = 0 // Reset trạng thái chọn
         notifyDataSetChanged()  // Thông báo RecyclerView cập nhật lại dữ liệu
     }
 }

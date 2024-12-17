@@ -50,7 +50,7 @@ class PaymentActivity : BaseActivity<ActivityPaymentBinding, OrderViewModel>() {
     private lateinit var carrierAdapter: CarrierAdapter
     private var checkPaymentMethodZaloPay = true
     private var checkPaymentMethodCOD = false
-    private var paymentMethod = ""
+    private var paymentMethod = "Thanh toán khi nhận hàng"
     private var carMethod = "Giao hàng tiết kiệm"
     private var shippingPrice = 10000.0
     private var selectedCarrier: CarrierModel? = null
@@ -177,6 +177,8 @@ class PaymentActivity : BaseActivity<ActivityPaymentBinding, OrderViewModel>() {
             val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy hh:mm:ss a")
             val formattedDate = currentDateTime.format(formatter)
             if (paymentMethod.equals("Thanh toán khi nhận hàng")) {
+                showLoading(true)
+
                 val order = OrderModelRequest(
                     userId,
                     formattedDate,
@@ -188,11 +190,13 @@ class PaymentActivity : BaseActivity<ActivityPaymentBinding, OrderViewModel>() {
                     carrierId = selectedCarrier!!.id
                 )
                 viewModel.addOrder(order)
-                viewModel.order.observe(this) { order ->
-                    Log.d("TAG123456", userId)
-                    if (order!!.id != null) {
-                        selectedItems?.let {
-                            for (item in it) {
+                viewModel.order.observe(this@PaymentActivity) { order ->
+                    if (order != null) {
+                        Log.d("TAG123456", userId)
+                        selectedItems?.let { ct ->
+                            val processedItems = mutableListOf<String>() // Lưu các sản phẩm đã xử lý
+
+                            for ((index, item) in ct.withIndex()) {
                                 val originalPrice =
                                     item.productId.price * (1 - item.productId.sale / 100.0)
                                 val invoiceModel = InvoiceDetailModelRequest(
@@ -203,31 +207,51 @@ class PaymentActivity : BaseActivity<ActivityPaymentBinding, OrderViewModel>() {
                                     item.quantity * originalPrice
                                 )
                                 val quantityProduct = UpdateQuantity(item.quantity)
-                                productViewModel.updateQuantity(item.productId.id, quantityProduct)
-                                productViewModel.productQuantity.observe(this) { suc ->
-                                    suc?.let {
-                                        if (it.success) {
-                                            Toast.makeText(this, it.message, Toast.LENGTH_SHORT)
-                                                .show()
 
-                                        } else {
-                                            Log.d("TAG123456", it.message!!)
+                                // Cập nhật số lượng sản phẩm
+                                productViewModel.updateQuantity(item.productId.id, quantityProduct)
+
+                                productViewModel.productQuantity.observe(this@PaymentActivity) { suc ->
+                                    suc?.let {
+                                        if (!it.success) {
+                                            Toast.makeText(
+                                                this@PaymentActivity,
+                                                it.message,
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        } else if (!processedItems.contains(item.id)) { // Chỉ xử lý nếu chưa xử lý
+                                            processedItems.add(item.id)
+
+                                            // Thêm chi tiết hóa đơn
                                             invoiceDetailViewModel.addInvoiceDetail(invoiceModel)
+
+                                            // Xóa sản phẩm khỏi giỏ hàng
                                             cartApiViewModel.deleteCart(item.productId.id, userId)
+
+                                            // Nếu là phần tử cuối cùng, kiểm tra và điều hướng
+                                            if (index == ct.size - 1) {
+                                                cartApiViewModel.isCartDelete.observe(this@PaymentActivity) { isDelete ->
+                                                    if (isDelete) {
+                                                        Log.d("TAG123456", "All items processed")
+                                                        showLoading(false)
+                                                        navigateToPaymentResult(
+                                                            "Đặt hàng thành công",
+                                                            orderModel = order
+                                                        )
+                                                    }
+                                                }
+                                            }
                                         }
                                     }
-
                                 }
-
                             }
-
                         }
-                        navigateToPaymentResult("Đặt hàng thành công", orderModel = order)
+
+
+
                     }
 
                 }
-
-
             } else {
                 lifecycleScope.launch(Dispatchers.IO) {
                     try {
@@ -323,12 +347,14 @@ class PaymentActivity : BaseActivity<ActivityPaymentBinding, OrderViewModel>() {
                                             val processedItems = mutableListOf<String>() // Lưu các sản phẩm đã xử lý
 
                                             for ((index, item) in ct.withIndex()) {
+                                                val originalPrice =
+                                                    item.productId.price * (1 - item.productId.sale / 100.0)
                                                 val invoiceModel = InvoiceDetailModelRequest(
                                                     userId,
-                                                    item.id,
+                                                    item.productId.id,
                                                     order.id,
                                                     item.quantity,
-                                                    item.quantity * item.productId.price
+                                                    item.quantity * originalPrice
                                                 )
                                                 val quantityProduct = UpdateQuantity(item.quantity)
 
