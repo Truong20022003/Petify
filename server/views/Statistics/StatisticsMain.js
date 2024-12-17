@@ -15,8 +15,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         fetchDataAndRenderChart(year); // Chỉ truyền năm
         productTop5(year, month, day); // Truyền đầy đủ năm, tháng, ngày
-        getStatic()
         fetchStatus();
+        checkData()
+        checkOderClear()
         fetchRevenueData()
     }
 });
@@ -34,8 +35,9 @@ applyBtn.addEventListener('click', () => {
 
         fetchDataAndRenderChart(year);
         productTop5(year, month, day);
-        getStatic()
         fetchStatus();
+        checkData()
+        checkOderClear()
         fetchRevenueData()
         datePickerModal.classList.add('hidden');
     } else {
@@ -230,7 +232,8 @@ async function fetchDataAndRenderChart(year) {
         alert("Lỗi khi tải dữ liệu: " + error.message);
     }
 }
-
+///
+document.getElementById('thoigian').innerText = `Từ ${startDateInput.value} đến ${endDateInput.value}`
 const table_product = document.querySelector("#table_product");
 
 const productTop5 = async (year, month, day) => {
@@ -437,7 +440,7 @@ function calculatePercentageChange(lastMonth, currentMonth) {
 }
 
 
-const getStatic = async () => {
+const checkData = async () => {
     try {
         const startDate = startDateInput.value || "2024-01-01";
         const endDate = endDateInput.value || "2024-12-31";
@@ -447,10 +450,12 @@ const getStatic = async () => {
             { headers: { Authorization: "trinh_nhung" } }
         ); // Thay thế bằng URL thực tế của bạn
         const data = await response.json();
+        console.log(data, "data")
         const { totalOrders, totalRevenue } = data
         const sum_doanhthu = document.getElementById("sum_doanhthu");
+        console.log(sum_doanhthu, "sum_doanhthu")
 
-        const sum_oder = document.getElementById("sum_oder");
+        const sum_oder = document.getElementById("sum_invoice");
 
 
         sum_doanhthu.innerText = ` ${totalRevenue.toLocaleString('vi-VN')}đ`;
@@ -460,5 +465,24 @@ const getStatic = async () => {
     } catch (error) {
         console.error("Lỗi khi lấy dữ liệu sản phẩm:", error);
     }
-};
+}
 
+const checkOderClear = async () => {
+    try {
+        const startDate = startDateInput.value || "2024-01-01";
+        const endDate = endDateInput.value || "2024-12-31";
+
+        const response = await fetch(
+            `http://localhost:3000/invoice/getCancelledInvoices?startDate=${startDate}&endDate=${endDate}`,
+            { headers: { Authorization: "trinh_nhung" } }
+        ); // Thay thế bằng URL thực tế của bạn
+        const data = await response.json();
+
+        const sum_invoice_clear = document.getElementById("sum_oder_huy");
+        sum_invoice_clear.innerText = data.count;
+
+
+    } catch (error) {
+        console.error("Lỗi khi lấy dữ liệu sản phẩm:", error);
+    }
+}

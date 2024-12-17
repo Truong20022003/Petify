@@ -1,65 +1,45 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Admin Chat</title>
-    <style>
-      /* CSS for the chat interface */
-      body {
-        font-family: Arial, sans-serif;
-        padding: 20px;
-      }
-      #messages {
-        max-height: 300px;
-        overflow-y: auto;
-        margin-bottom: 10px;
-      }
-      #sendMessageButton {
-        padding: 10px;
-        background-color: #007bff;
-        color: white;
-      }
-    </style>
-  </head>
-  <body>
-    <h1>Admin Chat</h1>
+<div class="flex h-screen">
+  <!-- Sidebar -->
+  <div class="w-1/4 bg-white shadow-lg p-4">
+    <h2 class="text-xl font-bold mb-4">Danh sách người dùng</h2>
+    <input
+      id="searchUser"
+      type="text"
+      placeholder="Tìm kiếm người dùng..."
+      class="w-full p-2 mb-4 border rounded-lg"
+    />
+    <div id="list_user" class="overflow-y-auto h-[80%]"></div>
+  </div>
 
-    <div id="messages"></div>
+  <!-- Chat Area -->
+  <div class="w-3/4 flex flex-col bg-white shadow-lg rounded-lg m-4">
+    <!-- Header -->
+    <div
+      class="flex items-center justify-between p-4 bg-blue-500 text-white rounded-t-lg"
+    >
+      <h2 id="chatHeader" class="text-lg font-semibold">To: Chọn người dùng</h2>
+    </div>
 
-    <input type="text" id="messageInput" placeholder="Type your message" />
-    <button id="sendMessageButton">Send Message</button>
+    <!-- Messages -->
+    <div
+      id="messages"
+      class="flex-1 p-4 overflow-y-auto bg-gray-50 space-y-4"
+    ></div>
 
-    <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
-    <script>
-      const socket = io("http://localhost:3000");
-
-      // Admin đăng ký vào phòng 'admin' để nhận tin nhắn
-      socket.emit("register", "675c53ee1a5b2c003f94a04c");
-
-      // Lắng nghe tin nhắn từ người dùng
-      socket.on("receiveMessage", (message) => {
-        console.log("Message from user: ", message); // Log tin nhắn nhận từ người dùng
-        const messagesContainer = document.getElementById("messages");
-        const messageElement = document.createElement("div");
-        messageElement.textContent = `${message.sender}: ${message.content}`;
-        messagesContainer.appendChild(messageElement);
-      });
-
-      // Gửi tin nhắn admin tới người dùng
-      document
-        .getElementById("sendMessageButton")
-        .addEventListener("click", () => {
-          const messageInput = document.getElementById("messageInput");
-          const content = messageInput.value.trim();
-
-          if (content) {
-            const userId = "675c53ee1a5b2c003f94a04c"; // ID người dùng mà Admin đang trò chuyện
-            socket.emit("sendAdminMessage", { user_id: userId, content });
-
-            messageInput.value = ""; // Clear input field
-          }
-        });
-    </script>
-  </body>
-</html>
+    <!-- Input -->
+    <div class="p-4 border-t bg-gray-100 flex items-center rounded-b-lg">
+      <input
+        id="messageInput"
+        type="text"
+        placeholder="Nhập tin nhắn..."
+        class="w-full p-2 border rounded-lg"
+      />
+      <button
+        id="sendMessageButton"
+        class="ml-2 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+      >
+        <i class="fas fa-paper-plane mr-2"></i> Gửi
+      </button>
+    </div>
+  </div>
+</div>
