@@ -7,6 +7,8 @@ import com.bumptech.glide.Glide
 import com.example.petify.data.database.enitities.CartItem
 import com.example.petify.data.server.enitities.CartResponse
 import com.example.petify.databinding.ItemRvPaymentBinding
+import java.text.NumberFormat
+import java.util.Locale
 
 class PaymentAdapter(
     private var paymentList: List<CartResponse>
@@ -38,9 +40,16 @@ class PaymentAdapter(
 
         holder.binding.tvQuantity.setText("${paymentList[position].quantity} sản phẩm")
         holder.binding.tvNameProduct.setText(paymentList[position].productId.name)
-        holder.binding.tvPriceProduct.setText("${paymentList[position].productId.price} đ")
+        val formattedPrice = formatPrice(paymentList[position].productId.price)
+        holder.binding.tvPriceProduct.text = "$formattedPrice đ"
         Glide.with(holder.binding.root.context)
             .load(paymentList[position].productId.image[0])
             .into(holder.binding.ivImageProduct)
+    }
+
+
+    fun formatPrice(price: Double): String {
+        val formatter = NumberFormat.getNumberInstance(Locale("vi", "VN")) // Định dạng kiểu Việt Nam
+        return formatter.format(price)
     }
 }

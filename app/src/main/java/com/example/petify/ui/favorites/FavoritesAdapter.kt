@@ -11,6 +11,8 @@ import com.example.petify.data.server.enitities.CartResponse
 import com.example.petify.data.server.enitities.FavoriteResponse
 import com.example.petify.data.server.enitities.ProductModel
 import com.example.petify.databinding.ItemFavoritesBinding
+import java.text.NumberFormat
+import java.util.Locale
 
 
 class FavoritesAdapter(
@@ -68,9 +70,9 @@ class FavoritesAdapter(
 
             tvProductName.text = product.productId.name
             tvDiscount.text = "${product.productId.sale} %"
-            tvSalePrice.text = "${product.productId.price} đ"
+            tvSalePrice.text = "${formatPrice(product.productId.price)} đ"
             tvOriginalPrice.apply {
-                text = "${product.productId.price} đ"
+                text = "${formatPrice(product.productId.price)} đ"
                 paintFlags = paintFlags or android.graphics.Paint.STRIKE_THRU_TEXT_FLAG
             }
             tvSold.text = "Đã bán ${product.productId.quantity}"
@@ -93,5 +95,10 @@ class FavoritesAdapter(
                 itemClickListener(product.productId)
             }
         }
+    }
+
+    fun formatPrice(price: Double): String {
+        val formatter = NumberFormat.getNumberInstance(Locale("vi", "VN")) // Định dạng kiểu Việt Nam
+        return formatter.format(price)
     }
 }

@@ -24,6 +24,8 @@ import com.example.petify.viewmodel.CartViewModelFactory
 import com.example.petify.viewmodel.FavoriteViewModel
 import com.example.petify.viewmodel.ProductViewModel
 import com.example.petify.viewmodel.ReviewViewModel
+import java.text.NumberFormat
+import java.util.Locale
 
 
 class ProductDetailActivity : BaseActivity<ActivityProductDetailBinding, BaseViewModel>() {
@@ -119,7 +121,8 @@ class ProductDetailActivity : BaseActivity<ActivityProductDetailBinding, BaseVie
         productItem?.let { product ->
             revirewViewModel.getReviewByProductId(product.id)
             binding.tvProductName.text = product.name
-            binding.tvProductPrice.text = "${product.price} VNĐ"
+            val originalPrice = product.price * (1 - product.sale / 100.0)
+            binding.tvProductPrice.text = "${formatPrice(originalPrice)} VNĐ"
             binding.tvDescribe.text = product.description
             binding.tvSold.text = "Số lượng: ${product.quantity}"
             setupViewPager(product.image)
@@ -183,6 +186,7 @@ class ProductDetailActivity : BaseActivity<ActivityProductDetailBinding, BaseVie
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
+
                         else -> {
                             Toast.makeText(
                                 this,
@@ -211,7 +215,6 @@ class ProductDetailActivity : BaseActivity<ActivityProductDetailBinding, BaseVie
     }
 
 
-
     private fun setupViewPager(images: List<String>) {
         val adapter = ProductDetailImageAdapter(images)
         binding.viewPager2.adapter = adapter
@@ -232,7 +235,8 @@ class ProductDetailActivity : BaseActivity<ActivityProductDetailBinding, BaseVie
             productItem?.let {
                 addProductToCart(it)
             } ?: run {
-                Toast.makeText(this, "Không tìm thấy thông tin sản phẩm.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Không tìm thấy thông tin sản phẩm.", Toast.LENGTH_SHORT)
+                    .show()
             }
         }
 
@@ -241,6 +245,12 @@ class ProductDetailActivity : BaseActivity<ActivityProductDetailBinding, BaseVie
         binding.btnBuyNow.tap {
             Toast.makeText(this, "Bạn đã chọn mua sản phẩm ", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    fun formatPrice(price: Double): String {
+        val formatter =
+            NumberFormat.getNumberInstance(Locale("vi", "VN")) // Định dạng kiểu Việt Nam
+        return formatter.format(price)
     }
 
 }

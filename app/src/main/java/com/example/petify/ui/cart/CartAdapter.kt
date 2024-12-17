@@ -9,6 +9,10 @@ import com.example.petify.base.view.tap
 import com.example.petify.data.database.enitities.CartItem
 import com.example.petify.data.server.enitities.CartResponse
 import com.example.petify.databinding.ItemCartBinding
+import java.text.DecimalFormat
+import java.text.NumberFormat
+import java.util.Locale
+
 interface OnQuantityChangeListener {
     fun onQuantityUpdated(cart: CartResponse)
 }
@@ -46,9 +50,9 @@ class CartAdapter(
                 }
                 ivNameSp.text = cart.productId.name
                 ivTypeSp.text = "${cart.productId.date}"
-                ivPriceSp.text = "${cart.productId.price} VND"
+                ivPriceSp.text = "${formatPrice(cart.productId.price)} VND"
                 val originalPrice =  cart.productId.price * (1 - (cart.productId.sale / 100.0))
-                ivPriceSpSale.text = "${(originalPrice*cart.quantity).toInt()} VND"
+                ivPriceSpSale.text = "${formatPrice((originalPrice*cart.quantity))} VND"
                 tvQuantity.text = cart.quantity.toString()
 
                 // Cập nhật trạng thái nút tích chọn
@@ -121,9 +125,9 @@ class CartAdapter(
         onTotalPriceUpdated(totalPrice)
     }
 
-    fun toggleSelectAll() {
-        isAllSelected = !isAllSelected
-        setAllSelected(isAllSelected)
+    fun formatPrice(price: Double): String {
+        val formatter = NumberFormat.getNumberInstance(Locale("vi", "VN")) // Định dạng kiểu Việt Nam
+        return formatter.format(price)
     }
 
     fun setAllSelected(isSelected: Boolean) {
