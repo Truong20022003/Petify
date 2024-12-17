@@ -227,10 +227,11 @@
                 </div>
               </div>
 
-              <!-- Ô thứ hai -->
-              <div class="bg-red-500 text-white p-4 rounded shadow">
+              <!-- Ô thứ hai: Thành viên -->
+              <div class="bg-blue-500 text-white p-4 rounded shadow">
                 <div class="flex items-center">
-                  <i class="fas fa-users text-2xl"></i>
+                  <i class="fas fa-user-friends text-2xl"></i>
+                  <!-- Biểu tượng phù hợp cho "Thành viên" -->
                   <div class="ml-4">
                     <p class="text-sm">Thành viên</p>
                     <p class="text-xl font-semibold" id="sum_user"></p>
@@ -238,17 +239,41 @@
                 </div>
               </div>
 
-              <!-- Ô thứ ba -->
-              <div class="bg-green-500 text-white p-4 rounded shadow">
+              <!-- Ô thứ ba: Số lượng sản phẩm mới -->
+              <div class="bg-yellow-400 text-white p-4 rounded shadow">
                 <div class="flex items-center">
-                  <i class="fas fa-cogs text-2xl"></i>
+                  <i class="fas fa-box-open text-2xl"></i>
+                  <!-- Biểu tượng phù hợp cho "Sản phẩm mới" -->
                   <div class="ml-4">
-                    <p class="text-sm">Sản phẩm</p>
+                    <p class="text-sm">Số lượng sản phẩm mới</p>
                     <p class="text-xl font-semibold" id="sum_product"></p>
                   </div>
                 </div>
               </div>
 
+              <!-- Ô thứ tư: Sản phẩm hết hàng -->
+              <div class="bg-red-500 text-white p-4 rounded shadow">
+                <div class="flex items-center">
+                  <i class="fas fa-archive text-2xl"></i>
+                  <!-- Biểu tượng phù hợp cho "Sản phẩm hết hàng" -->
+                  <div class="ml-4">
+                    <p class="text-sm">Sản phẩm hết hàng</p>
+                    <p class="text-xl font-semibold" id="sum_quality"></p>
+                  </div>
+                </div>
+              </div>
+              <!-- Ô thứ tư: Doanh thu-->
+              <div class="bg-red-500 text-white p-4 rounded shadow">
+                <div class="flex items-center">
+                  <i class="fas fa-archive text-2xl"></i>
+                  <!-- Biểu tượng phù hợp cho "Sản phẩm hết hàng" -->
+                  <div class="ml-4">
+                    <p class="text-sm">Tổng doanh thu</p>
+                    <p class="text-sm" id="ngay"></p>
+                    <p class="text-xl font-semibold" id="sum_price">0</p>
+                  </div>
+                </div>
+              </div>
               <!-- Combobox bộ lọc -->
               <div class="bg-gray-100 text-black p-4 rounded shadow">
                 <p class="text-sm text-gray-700 mt-2">Chọn thời gian để lọc</p>
@@ -258,6 +283,8 @@
                   class="block w-full bg-white text-black px-4 py-2 rounded-lg border border-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 transition ease-in-out duration-300"
                 >
                   <option value="today">Hôm nay</option>
+                  <option value="3daysAgo">3 ngày trước</option>
+                  <option value="1weekAgo">1 tuần trước</option>
                   <option value="thisMonth">Tháng này</option>
                   <option value="thisYear">Năm này</option>
                 </select>
@@ -265,8 +292,8 @@
             </div>
 
             <div class="bg-white p-4 rounded shadow mb-4">
-              <h2 class="text-lg font-semibold mb-4">
-                Danh sách đơn hàng mới chờ xác nhận trong ngày hôm nay
+              <h2 class="text-lg font-semibold mb-4" id="title_oder">
+                Danh sách đơn hàng mới chờ xác nhận
               </h2>
               <table class="w-full text-left" id="table_oder">
                 <thead>
@@ -287,8 +314,11 @@
               ></div>
             </div>
             <div class="grid grid-cols-3 gap-4">
+              <!-- Cột bên trái: Thành viên mới -->
               <div class="bg-white p-4 rounded shadow col-span-1">
-                <h2 class="text-lg font-semibold mb-4">Thành viên mới</h2>
+                <h2 class="text-lg font-semibold mb-4" id="title_usernew">
+                  Thành viên gia nhập
+                </h2>
                 <table class="w-full text-left" id="table_user">
                   <thead>
                     <tr class="border-b">
@@ -303,23 +333,55 @@
                   class="flex justify-center items-center mt-4"
                 ></div>
               </div>
+
+              <!-- Cột bên phải: Sản phẩm mới và Sản phẩm hết hàng -->
               <div class="bg-white p-4 rounded shadow col-span-2">
-                <h2 class="text-lg font-semibold mb-4">Sản phẩm mới</h2>
-                <table class="w-full text-left" id="table_product">
-                  <thead>
-                    <tr class="border-b">
-                      <th class="py-2">Tên sản phẩm</th>
-                      <th class="py-2">Danh mục</th>
-                      <th class="py-2">Người đăng</th>
-                      <th class="py-2">Giá</th>
-                    </tr>
-                  </thead>
-                  <tbody id="tbody_product"></tbody>
-                </table>
-                <div
-                  id="tbody_product-pagination"
-                  class="flex justify-center items-center mt-4"
-                ></div>
+                <div class="grid grid-cols-1 gap-4">
+                  <!-- Sản phẩm mới -->
+                  <div class="bg-white p-4 rounded shadow">
+                    <h2
+                      class="text-lg font-semibold mb-4"
+                      id="title_newproduct"
+                    >
+                      Sản phẩm được thêm
+                    </h2>
+                    <table class="w-full text-left" id="table_product">
+                      <thead>
+                        <tr class="border-b">
+                          <th class="py-2">Tên sản phẩm</th>
+                          <th class="py-2">Danh mục</th>
+                          <th class="py-2">Người đăng</th>
+                          <th class="py-2">Giá</th>
+                        </tr>
+                      </thead>
+                      <tbody id="tbody_product"></tbody>
+                    </table>
+                    <div
+                      id="tbody_product-pagination"
+                      class="flex justify-center items-center mt-4"
+                    ></div>
+                  </div>
+                  <!-- Sản phẩm hết hàng -->
+                  <div class="bg-white p-4 rounded shadow">
+                    <h2 class="text-lg font-semibold mb-4">
+                      Sản phẩm hết hàng
+                    </h2>
+                    <table class="w-full text-left" id="table_quality">
+                      <thead>
+                        <tr class="border-b">
+                          <th class="py-2">Tên sản phẩm</th>
+                          <th class="py-2">Trạng thái</th>
+                          <th class="py-2">Người đăng</th>
+                        </tr>
+                      </thead>
+                      <tbody id="tbody_quality"></tbody>
+                    </table>
+                    <div
+                      id="tbody_quality-pagination"
+                      class="flex justify-center items-center mt-4"
+                    ></div>
+                  </div>
+                </div>
               </div>
             </div>
           </main>

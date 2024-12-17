@@ -1,13 +1,20 @@
 const content = document.querySelector(".shadow");
 const url = "http://localhost:3000";
 const headers = {
-  Authorization: "trinh_nhung"
+  Authorization: "trinh_nhung",
 };
 
 let currentPage = 1;
 const productsPerPage = 10;
 let filteredData = []; // Dữ liệu đã lọc
 let originalData = []; // Dữ liệu ban đầu (chưa lọc)
+// Lấy tên sản phẩm từ URL
+const urlParams = new URLSearchParams(window.location.search);
+const productNameFromUrl = urlParams.get('productname');
+console.log(productNameFromUrl, 'productNameFromUrl')
+// Lọc sản phẩm theo tên từ dữ liệu gốc
+
+
 
 const getList = async () => {
   try {
@@ -21,7 +28,11 @@ const getList = async () => {
     // Lưu dữ liệu gốc vào `originalData`
     originalData = data;
     filteredData = data; // Khởi tạo `filteredData` bằng `originalData` ban đầu
-
+    // Lọc sản phẩm nếu có tên sản phẩm trong URL
+    if (productNameFromUrl) {
+      filteredData = searchUser(productNameFromUrl, originalData)
+      currentPage = 1; // Đặt lại trang đầu tiên
+    }
     const categories = await Promise.all(
       data.map((item) => getProductsGroupedByCategory(item._id))
     );
@@ -34,7 +45,7 @@ const getList = async () => {
 };
 
 const renderTable = (data, categories) => {
-  const maxPrice = Math.max(...data.map(item => item.price));
+  const maxPrice = Math.max(...data.map((item) => item.price));
   content.innerHTML = /*html*/ `
     <div class="flex mb-4">
       <button class="bg-[#396060] text-white px-4 py-2 rounded mr-2 btnadd">Thêm mới</button>
@@ -65,18 +76,36 @@ const renderTable = (data, categories) => {
       <button id="nextPage" class="bg-[#008080] text-white px-4 py-2 rounded">Trang sau</button>
     </div>
   `;
+  if (productNameFromUrl) {
+    document.getElementById("searchInput").value = productNameFromUrl;  // Hiển thị mã đơn hàng lên thanh tìm kiếm
+  }
 
   // Tìm kiếm và lọc giá
   document.getElementById("searchInput").addEventListener("input", (e) => {
     const query = e.target.value;
-    filteredData = searchUser(query, originalData); // Lọc từ originalData
-    currentPage = 1; // Reset trang khi tìm kiếm mới
+    if (query === "") {
+      // Nếu xóa hết mã tìm kiếm, khôi phục lại dữ liệu gốc và cập nhật lại URL
+      filteredData = originalData;  // Khôi phục lại toàn bộ dữ liệu
+      currentPage = 1;  // Reset về trang đầu tiên
+
+      // Cập nhật lại URL để không có tham số orderCode
+      const urlWithoutOrderCode = new URL(window.location.href);
+      urlWithoutOrderCode.searchParams.delete("productname");
+      window.history.replaceState({}, "", urlWithoutOrderCode);
+
+    } else {
+      filteredData = searchUser(query, originalData); // Lọc từ originalData
+      currentPage = 1; // Reset trang khi tìm kiếm mới
+    }
+
     updateTable(filteredData, categories); // Cập nhật bảng
   });
 
   document.getElementById("priceRange").addEventListener("input", (e) => {
     const maxPrice = parseInt(e.target.value, 10);
-    document.getElementById("priceValue").textContent = `${maxPrice.toLocaleString('vi-VN')} đ`;
+    document.getElementById(
+      "priceValue"
+    ).textContent = `${maxPrice.toLocaleString("vi-VN")} đ`;
     filteredData = filterProductsByPrice(maxPrice, originalData); // Lọc theo giá trên dữ liệu gốc
     currentPage = 1; // Reset trang khi thay đổi giá
     updateTable(filteredData, categories); // Cập nhật bảng
@@ -90,7 +119,7 @@ const renderTable = (data, categories) => {
 const updateTable = (filteredProducts, categories) => {
   const tableBody = document.getElementById("dataList");
   tableBody.innerHTML = "";
-
+  console.log(categories, "categories");
   const startIndex = (currentPage - 1) * productsPerPage;
   const endIndex = startIndex + productsPerPage;
   const paginatedData = filteredProducts.slice(startIndex, endIndex);
@@ -105,32 +134,34 @@ const updateTable = (filteredProducts, categories) => {
     tableBody.innerHTML = noDataRow;
   } else {
     paginatedData.forEach((item, index) => {
+      const productCategories = categories.find(category => category.product._id === item._id)?.categories || [];
       const row = /*html*/ `
       <tr id="row-${item._id}">
-        <th class="border border-gray-300 px-4 py-2 text-xl w-[20]">${startIndex + index + 1}</th>
+        <th class="border border-gray-300 px-4 py-2 text-xl w-[20]">${startIndex + index + 1
+        }</th>
         <td class="border border-gray-300 py-2 w-[180px]">
           <div class="h-[220px] flex justify-center items-center">
-            <img alt="Product image" class="w-full h-full object-contain" src="${item.image[0]}" />
+            <img alt="Product image" class="w-full h-full object-contain" src="${item.image[0]
+        }" />
           </div>
         </td>
         <td class="border border-gray-300 px-4 py-2">${item.name}</td>
         <td class="border border-gray-300 px-4 py-2 w-[200px]">
-          ${Array.isArray(categories[index]) && categories[index].length > 0
-          ? categories[index]
-            .map((category, idx) => {
-              return /*html*/`<span>${idx + 1}_</span><span class="role-item px-2 py-1 rounded mr-2 mt-2 mb-2">${category.category_name}</span><br>`;
-            })
-            .join(" ")
-          : "Không thuộc loại sản phẩm nào"
-        }
+      ${productCategories.map((cat) => cat.category_name).join(", ") || "Không có loại"}
         </td>
-        <td class="border border-gray-300 px-4 py-2">${item.quantity == 0 ? "Hết hàng" : item.status}</td>
-        <td class="border border-gray-300 px-4 py-2">${item.price.toLocaleString('vi-VN')}</td>
+        <td class="border border-gray-300 px-4 py-2">${item.quantity == 0 ? "Hết hàng" : item.status
+        }</td>
+        <td class="border border-gray-300 px-4 py-2">${item.price.toLocaleString(
+          "vi-VN"
+        )}</td>
         <td class="border border-gray-300 px-4 py-2 w-[200]">
           <div class="button-group flex flex-col space-y-2">
-            <button class="bg-blue-500 text-white px-2 py-1 rounded btnedit" data-id="${item._id}">Cập nhật</button>
-            <button class="bg-red-500 text-white px-2 py-1 rounded btndelete" data-id="${item._id}">Xóa</button>
-            <button class="bg-[#008080] text-white px-2 py-1 rounded btndetail" data-id="${item._id}">Chi tiết</button>
+            <button class="bg-blue-500 text-white px-2 py-1 rounded btnedit" data-id="${item._id
+        }">Cập nhật</button>
+            <button class="bg-red-500 text-white px-2 py-1 rounded btndelete" data-id="${item._id
+        }">Xóa</button>
+            <button class="bg-[#008080] text-white px-2 py-1 rounded btndetail" data-id="${item._id
+        }">Chi tiết</button>
           </div>
         </td>
       </tr>`;
@@ -145,7 +176,9 @@ const updateTable = (filteredProducts, categories) => {
 // Cập nhật phân trang
 const updatePagination = (totalItems, filteredProducts, categories) => {
   const totalPages = Math.ceil(totalItems / productsPerPage);
-  document.getElementById("currentPage").textContent = `Trang ${currentPage} / ${totalPages}`;
+  document.getElementById(
+    "currentPage"
+  ).textContent = `Trang ${currentPage} / ${totalPages}`;
 
   document.getElementById("prevPage").disabled = currentPage === 1;
   document.getElementById("nextPage").disabled = currentPage === totalPages;
@@ -165,10 +198,9 @@ const updatePagination = (totalItems, filteredProducts, categories) => {
   };
 };
 
-
 // Lọc sản phẩm theo giá
 const filterProductsByPrice = (maxPrice, data) => {
-  return data.filter(item => item.price <= maxPrice);
+  return data.filter((item) => item.price <= maxPrice);
 };
 function searchUser(query, data) {
   function removeVietnameseTones(str) {
@@ -197,49 +229,54 @@ const addEventListeners = (categories) => {
     .forEach((btn) =>
       btn.addEventListener("click", () => handleEdit(btn.dataset.id))
     );
-  document
-    .querySelector(".btnadd")
-    ?.addEventListener("click", async () => {
-      const selectedFiles = [];
-      const suppliers = await getListSupplier();
-      const categorylist = await getListCategory();
-      renderForm({}, false, true, "Thêm sản phẩm", suppliers, categories || [], categorylist)
-      handleImageUpload(selectedFiles);
-    });
+  document.querySelector(".btnadd")?.addEventListener("click", async () => {
+    const selectedFiles = [];
+    const suppliers = await getListSupplier();
+    const categorylist = await getListCategory();
+    renderForm({}, false, true, "Thêm sản phẩm", suppliers, [], categorylist);
+    handleImageUpload(selectedFiles);
+  });
 };
 
 const handleDelete = async (id) => {
+  dialogDeleteProduct(
+    "Xóa sản phẩm",
+    "Bạn có chắc chắn muốn xóa sản phẩm này?",
+    async () => {
+      try {
+        const loadding = dialogLoading("Đang tiến hành xóa...");
+        const response = await fetch(`${url}/product/deleteproduct/${id}`, {
+          method: "DELETE",
+          headers,
+        });
+        console.log(response);
+        const data = await response.json();
 
-  dialogDeleteProduct("Xóa sản phẩm", "Bạn có chắc chắn muốn xóa sản phẩm này?", async () => {
-    try {
-      const loadding = dialogLoading("Đang tiến hành xóa...")
-      const response = await fetch(`${url}/product/deleteproduct/${id}`, { method: "DELETE", headers });
-      console.log(response)
-      const data = await response.json()
-
-      if (response.status == 400) {
-        dialogError(data.message)
-      } else {
-        dialogSuccess("Xóa sản phẩm thành công")
-        loadding.close()
-        getList();
+        if (response.status == 400) {
+          dialogError(data.message);
+        } else {
+          dialogSuccess("Xóa sản phẩm thành công");
+          loadding.close();
+          getList();
+        }
+        // getList();
+      } catch (err) {
+        dialogError("Xóa thất bại", "");
+        console.log(err);
       }
-      // getList();
-    } catch (err) {
-      dialogError("Xóa thất bại", "")
-      console.log(err);
     }
-  })
-
+  );
 };
 
 const handleDetail = async (id) => {
   try {
-    const response = await fetch(`${url}/product/getproductById/${id}`, { headers });
+    const response = await fetch(`${url}/product/getproductById/${id}`, {
+      headers,
+    });
     const data = await response.json();
     // console.log(data, "getRoleById");
     renderDetailHtml(data.result);
-    console.log(selectedSupplierId, "id nha phan phoi")
+    console.log(selectedSupplierId, "id nha phan phoi");
   } catch (err) {
     console.log(err);
   }
@@ -247,25 +284,35 @@ const handleDetail = async (id) => {
 
 const handleEdit = async (id) => {
   try {
-    const response = await fetch(`${url}/product/getproductById/${id}`, { headers });
+    const response = await fetch(`${url}/product/getproductById/${id}`, {
+      headers,
+    });
     const data = await response.json();
     const suppliers = await getListSupplier();
     const category = await getCategoriesByProductId(id);
     const categorylist = await getListCategory();
     // console.log(data, "getRoleById----edit");
 
-    renderForm(data.result, false, true, "Cập nhật sản phẩm", suppliers, category || [], categorylist);
+    renderForm(
+      data.result,
+      false,
+      true,
+      "Cập nhật sản phẩm",
+      suppliers,
+      category || [],
+      categorylist
+    );
     handleImageUpload(data.result.image);
     // console.log(getAllDisplayedImages(),"link ảnh")
   } catch (err) {
     console.log(err);
   }
-}
+};
 function convertDateFormat(dateString) {
   // Kiểm tra nếu dateString rỗng hoặc undefined
   if (!dateString) {
     const today = new Date();
-    return today.toISOString().split('T')[0]; // Trả về ngày hiện tại với định dạng yyyy-mm-dd
+    return today.toISOString().split("T")[0]; // Trả về ngày hiện tại với định dạng yyyy-mm-dd
   }
 
   const [day, month, year] = dateString.split("/");
@@ -274,16 +321,21 @@ function convertDateFormat(dateString) {
 function convertDateFormatUpData(dateString) {
   if (!dateString) {
     const today = new Date();
-    return `${today.getDate().toString().padStart(2, '0')}/${(today.getMonth() + 1).toString().padStart(2, '0')}/${today.getFullYear()}`;
+    return `${today.getDate().toString().padStart(2, "0")}/${(
+      today.getMonth() + 1
+    )
+      .toString()
+      .padStart(2, "0")}/${today.getFullYear()}`;
   }
 
   // Chuyển đổi ngày từ yyyy-mm-dd sang dd/mm/yyyy
   const [year, month, day] = dateString.split("-");
-  return `${day}/${month}/${year}`;  // Trả về định dạng dd/mm/yyyy
+  return `${day}/${month}/${year}`; // Trả về định dạng dd/mm/yyyy
 }
+
 const saveEdit = async (_id, event, image_id) => {
   event.preventDefault();
-  console.log(image_id, "image_id")
+  console.log(image_id, "image_id");
   // Lấy dữ liệu từ form
   const getValue = (id) => document.getElementById(id)?.value || "";
   const name = getValue("name");
@@ -292,27 +344,29 @@ const saveEdit = async (_id, event, image_id) => {
   const start_date = getValue("start-date");
   const end_date = getValue("end-date");
   const quantity = getValue("quantity");
-  const sale = getValue("sale");
+
   const status = getValue("status");
   const supplierSelect = document.getElementById("supplier");
   const selectedSupplierId = supplierSelect?.value || "";
   const selectedValues = Array.from(
     document.querySelectorAll('input[name="option"]:checked')
   ).map((cb) => cb.value);
-  console.log(selectedValues, "selectedValues")
+  console.log(selectedValues, "selectedValues");
   const images = getAllDisplayedImages();
-  console.log(images, "image")
+  console.log(images, "image");
   // Kiểm tra dữ liệu đầu vào
   const validateInput = () => {
     if (!name) return "Tên sản phẩm là bắt buộc.";
     if (!description) return "Mô tả sản phẩm là bắt buộc.";
     if (!price || isNaN(price)) return "Giá sản phẩm phải là một số hợp lệ.";
     if (!quantity || isNaN(quantity)) return "Số lượng phải là một số hợp lệ.";
-    if (!sale || isNaN(sale)) return "Giảm giá phải là một số hợp lệ.";
+
     if (!status) return "Trạng thái là bắt buộc.";
-    if (!start_date || !end_date) return "Ngày bắt đầu và ngày hết hạn là bắt buộc.";
+    if (!start_date || !end_date)
+      return "Ngày bắt đầu và ngày hết hạn là bắt buộc.";
     if (images.length === 0) return "Hãy thêm ít nhất 1 ảnh.";
-    if (selectedValues.length === 0) return "Hãy chọn ít nhất một Loại sản phẩm.";
+    if (selectedValues.length === 0)
+      return "Hãy chọn ít nhất một Loại sản phẩm.";
     if (!selectedSupplierId) return "Bạn phải chọn nhà phân phối.";
     return null;
   };
@@ -322,8 +376,18 @@ const saveEdit = async (_id, event, image_id) => {
     dialogError(errorMessage);
     return;
   }
+  if (quantity == 0 && status === "Còn hàng") {
+    dialogError("Không thể chọn trạng thái 'Còn hàng' khi số lượng sản phẩm là 0.");
+    return;
+  }
+
+  // 2. Nếu số lượng > 0 và trạng thái là 'Hết hàng', thông báo lỗi
+  if (quantity > 0 && status === "Hết hàng") {
+    dialogError("Không thể chọn trạng thái 'Hết hàng' khi số lượng sản phẩm lớn hơn 0.");
+    return;
+  }
   const currentProduct = await getCategoriesByProductId(_id);
-  console.log(currentProduct, "currentProduct")
+  console.log(currentProduct, "currentProduct");
   const formData = new FormData();
   const imageUrls = images
     .filter((img) => !img.file) // Chỉ lấy URL của ảnh cũ
@@ -340,8 +404,6 @@ const saveEdit = async (_id, event, image_id) => {
     }
   });
 
-
-
   formData.append("name", name);
   formData.append("price", price);
   formData.append("date", convertDateFormatUpData(start_date));
@@ -349,7 +411,7 @@ const saveEdit = async (_id, event, image_id) => {
   formData.append("quantity", quantity);
   formData.append("status", status);
   formData.append("description", description);
-  formData.append("sale", sale);
+
   formData.append("supplier_id", selectedSupplierId);
 
   // In ra dữ liệu để kiểm tra
@@ -357,13 +419,18 @@ const saveEdit = async (_id, event, image_id) => {
     console.log(key, value);
   }
 
+  const selectedCategoryIds = new Set(selectedValues);
+  const currentCategoryIds = new Set(currentProduct.map(category => category.category_id));
+
+
   // Xác nhận cập nhật
   dialogInfo(
     "Bạn có muốn cập nhật không?",
     async () => {
-      const loadingDialog = dialogLoading("Dữ liệu đang được đẩy lên, vui lòng đợi...");
+      const loadingDialog = dialogLoading(
+        "Dữ liệu đang được đẩy lên, vui lòng đợi..."
+      );
       try {
-
         const response = await fetch(
           `http://localhost:3000/product/updateproduct/${_id}`,
           {
@@ -375,41 +442,44 @@ const saveEdit = async (_id, event, image_id) => {
 
         if (response.ok) {
           const result = await response.json();
-          if (result.status == 200) {
-            Swal.close();
-            if (currentProduct.length === 0) {
-              for (const categoryId of selectedValues) {
-                await addCategoryProduct(_id, categoryId); // Gọi hàm thêm vai trò
-              }
-            } else {
-              for (const categoryId of selectedValues) {
-                const isCategoryAlreadyAssigned = currentProduct.some(
-                  (category) => category.category_id === categoryId
-                );
-                console.log(isCategoryAlreadyAssigned, "isCategoryAlreadyAssigned")
-                if (!isCategoryAlreadyAssigned) {
+          if (result.success) {
+            // Thêm loại sản phẩm chưa có
+            for (const categoryId of selectedValues) {
+              if (!currentCategoryIds.has(categoryId)) {
+                try {
                   await addCategoryProduct(_id, categoryId);
-                }
-              }
-
-              // Xóa loại sản phẩm không còn được chọn
-              for (const category of currentProduct) {
-                if (!selectedValues.includes(category.category_id)) {
-                  await removeCategoryProduct(_id, category.category_id);
+                } catch (error) {
+                  console.error("Error adding category:", error);
+                  dialogError("Không thể thêm loại sản phẩm.");
+                  return;
                 }
               }
             }
-          }
-          dialogSuccess("Sửa sản phẩm và loại sản phẩm thành công!").then(() => {
-            getList(); // Chỉ gọi sau khi thông báo xong
-          });;
 
+            // Xóa loại sản phẩm không còn được chọn
+            for (const category of currentProduct) {
+              if (!selectedCategoryIds.has(category.category_id)) {
+                try {
+                  await removeCategoryProduct(_id, category.category_id);
+                } catch (error) {
+                  console.error("Error removing category:", error);
+                  dialogError("Không thể xóa loại sản phẩm.");
+                  return;
+                }
+              }
+            }
+            loadingDialog.close()
+            dialogSuccess("Sửa sản phẩm và loại sản phẩm thành công!").then(
+              () => {
+                getList(); // Chỉ gọi sau khi thông báo xong
+              }
+            );
+          }
 
         } else {
           Swal.close();
           dialogError("Sửa sản phẩm thất bại");
         }
-
       } catch (error) {
         console.error("Đã xảy ra lỗi:", error);
         dialogError("Đã xảy ra lỗi");
@@ -433,7 +503,7 @@ const saveAdd = async (event) => {
   const start_date = getValue("start-date");
   const end_date = getValue("end-date");
   const quantity = getValue("quantity");
-  const sale = getValue("sale");
+
   const status = getValue("status");
   const supplierSelect = document.getElementById("supplier");
   const selectedSupplierId = supplierSelect?.value || "";
@@ -449,11 +519,11 @@ const saveAdd = async (event) => {
     if (!description) return "Mô tả sản phẩm là bắt buộc.";
     if (!price || isNaN(price)) return "Giá sản phẩm phải là một số hợp lệ.";
     if (!quantity || isNaN(quantity)) return "Số lượng phải là một số hợp lệ.";
-    if (!sale || isNaN(sale)) return "Giảm giá phải là một số hợp lệ.";
-    if (!status) return "Trạng thái là bắt buộc.";
-    if (!start_date || !end_date) return "Ngày bắt đầu và ngày hết hạn là bắt buộc.";
+    if (!start_date || !end_date)
+      return "Ngày bắt đầu và ngày hết hạn là bắt buộc.";
     if (images.length === 0) return "Hãy thêm ít nhất 1 ảnh.";
-    if (selectedValues.length === 0) return "Hãy chọn ít nhất một Loại sản phẩm.";
+    if (selectedValues.length === 0)
+      return "Hãy chọn ít nhất một Loại sản phẩm.";
     if (!selectedSupplierId) return "Bạn phải chọn nhà phân phối.";
     return null;
   };
@@ -463,7 +533,16 @@ const saveAdd = async (event) => {
     dialogError(errorMessage);
     return;
   }
+  if (quantity == 0 && status === "Còn hàng") {
+    dialogError("Không thể chọn trạng thái 'Còn hàng' khi số lượng sản phẩm là 0.");
+    return;
+  }
 
+  // 2. Nếu số lượng > 0 và trạng thái là 'Hết hàng', thông báo lỗi
+  if (quantity > 0 && status === "Hết hàng") {
+    dialogError("Không thể chọn trạng thái 'Hết hàng' khi số lượng sản phẩm lớn hơn 0.");
+    return;
+  }
   // Chuẩn bị dữ liệu form
   const formData = new FormData();
   images.forEach((file) => formData.append("image", file.file));
@@ -474,7 +553,7 @@ const saveAdd = async (event) => {
   formData.append("quantity", quantity);
   formData.append("status", status);
   formData.append("description", description);
-  formData.append("sale", sale);
+
   formData.append("supplier_id", selectedSupplierId);
 
   // Hiển thị dữ liệu để kiểm tra
@@ -484,7 +563,9 @@ const saveAdd = async (event) => {
 
   // Thực hiện thêm sản phẩm
   const addProduct = async () => {
-    const loadingDialog = dialogLoading("Dữ liệu đang được đẩy lên, vui lòng đợi...");
+    const loadingDialog = dialogLoading(
+      "Dữ liệu đang được đẩy lên, vui lòng đợi..."
+    );
     try {
       const response = await fetch("http://localhost:3000/product/addproduct", {
         method: "POST",
@@ -506,33 +587,38 @@ const saveAdd = async (event) => {
           product_id: productId,
           category_id: categoryId,
         };
-        return fetch("http://localhost:3000/productCategory/addproduct_category", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "trinh_nhung",
-          },
-          body: JSON.stringify(productCategoryData),
-        });
+        return fetch(
+          "http://localhost:3000/productCategory/addproduct_category",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "trinh_nhung",
+            },
+            body: JSON.stringify(productCategoryData),
+          }
+        );
       });
 
-      const productCategoryResponses = await Promise.all(productCategoryPromises);
-      const allCategoryAssigned = productCategoryResponses.every((res) => res.ok);
+      const productCategoryResponses = await Promise.all(
+        productCategoryPromises
+      );
+      const allCategoryAssigned = productCategoryResponses.every(
+        (res) => res.ok
+      );
 
       if (allCategoryAssigned) {
-        Swal.close(); // Đóng loading trước
+        loadingDialog.close(); // Đóng loading trước
         dialogSuccess("Thêm sản phẩm và loại sản phẩm thành công!").then(() => {
           getList(); // Chỉ gọi sau khi thông báo xong
-        });;
-
+        });
       } else {
-        Swal.close(); // Đóng loading trước
+        loadingDialog.close(); // Đóng loading trước
         dialogError("Thêm loại sản phẩm thất bại!");
       }
-
     } catch (error) {
       console.error("Đã xảy ra lỗi:", error);
-      Swal.close(); // Đóng loading trước
+      loadingDialog.close(); // Đóng loading trước
       dialogError("Đã xảy ra lỗi khi thêm sản phẩm!");
     }
   };
@@ -548,10 +634,10 @@ const getListSupplier = async () => {
       headers,
     });
     const data = await response.json(); // Dữ liệu trả về từ API
-    return data // Gọi hàm render options
+    return data; // Gọi hàm render options
   } catch (err) {
     console.log(err);
-    return []
+    return [];
   }
 };
 
@@ -562,10 +648,10 @@ const getListCategory = async () => {
       headers,
     });
     const data = await response.json(); // Dữ liệu trả về từ API
-    return data// Gọi hàm render options
+    return data; // Gọi hàm render options
   } catch (err) {
     console.log(err);
-    return []
+    return [];
   }
 };
 async function getCategoriesByProductId(id) {
@@ -582,7 +668,6 @@ async function getCategoriesByProductId(id) {
     const data = await response.json();
     // console.log(data.result.categories, "categories");
     return data.result.categories;
-
   } catch (err) {
     console.log(err);
     return [];
@@ -599,25 +684,24 @@ const getProductsGroupedByCategory = async (id) => {
     );
 
     const data = await response.json();
-    // console.log(data.result, "doandododo");
-    const category = data.result.find((pr) => pr._id === id)
+    // console.log(data.result[0], "doandododo");
+    const category = data.result.find((pr) => pr._id === id);
     if (category) {
       // console.log(category.categories, "loai san pham");
-      return category.categories;
+      return category;
     } else {
       // console.log("User không tồn tại");
       return [];
     }
-
   } catch (err) {
     console.log(err);
     return [];
   }
-}
+};
 
 async function removeCategoryProduct(productId, catedoryId) {
-  console.log(productId, "productId")
-  console.log(catedoryId, "catedoryId")
+  console.log(productId, "productId");
+  console.log(catedoryId, "catedoryId");
   try {
     const response = await fetch(
       `http://localhost:3000/productCategory/product_category/${productId}/remove`,
@@ -625,7 +709,7 @@ async function removeCategoryProduct(productId, catedoryId) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: "trinh_nhung"
+          Authorization: "trinh_nhung",
         },
         body: JSON.stringify({ category_id: catedoryId }), // Gửi roleId trong body để xóa vai trò
       }
@@ -640,8 +724,8 @@ async function removeCategoryProduct(productId, catedoryId) {
 }
 
 async function addCategoryProduct(productId, catedoryId) {
-  console.log(productId, "productId---aaa")
-  console.log(catedoryId, "catedoryId0---aaa")
+  console.log(productId, "productId---aaa");
+  console.log(catedoryId, "catedoryId0---aaa");
   try {
     const response = await fetch(
       `http://localhost:3000/productCategory/product_category/${productId}/add`,

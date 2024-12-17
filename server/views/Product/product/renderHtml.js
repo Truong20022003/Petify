@@ -177,17 +177,19 @@ const renderForm = (
               />
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700" for="product-name">
-                Trạng thái
-              </label>
-              <input
-                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                id="status"
-                placeholder="Tên sản phẩm"
-                value="${status}"
-                type="text"
-              />
-            </div>
+            <label class="block text-sm font-medium text-gray-700" for="status">
+              Trạng thái
+            </label>
+            <select
+              id="status"
+              name="status"
+              class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            >
+              <option value="Còn hàng" ${status === "Còn hàng" ? 'selected' : ''}>Còn hàng</option>
+              <option value="Hết hàng" ${status === "Hết hàng" ? 'selected' : ''}>Hết hàng</option>
+            </select>
+          </div>
+
             <div>
               <label class="block text-sm font-medium text-gray-700"  >
                 Số lượng
@@ -199,18 +201,6 @@ const renderForm = (
                 value="${quantity}"
               />
             </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700"  >
-                Giảm giá
-              </label>
-              <input
-                class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                id="sale"
-                type="text"
-                value="${sale}"
-              />
-            </div>
-            
           </div>
           <div class="mb-6">
            
@@ -247,6 +237,7 @@ const renderForm = (
     console.log("ID Nhà phân phối:", selectedSupplierId);
     console.log("Tên Nhà phân phối:", name);
   });
+
 }
 const renderDetailHtml = (dataproduct) => {
   content.innerHTML = /*html*/`    
